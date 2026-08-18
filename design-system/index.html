@@ -226,7 +226,6 @@ a{color:var(--color-primary);text-decoration:none}
   font-family:var(--font-sans);font-size:var(--text-base);transition:border-color .12s,box-shadow .12s}
 textarea.input{height:auto;padding:var(--space-2) var(--space-3);min-height:84px}
 .input--lg,.select--lg{height:var(--control-h-lg)}
-.input--sm,.select--sm{height:var(--control-h-sm)}
 .input::placeholder{color:var(--color-text-muted)}
 .input:hover:not(:disabled):not(:focus),.select:hover:not(:disabled):not(:focus),textarea.input:hover:not(:disabled):not(:focus){border-color:var(--color-text-muted)}
 .input:focus,.select:focus{outline:none;border-color:var(--color-primary);box-shadow:0 0 0 3px color-mix(in srgb, var(--color-primary) 22%, transparent)}
@@ -1042,23 +1041,24 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
           </div>
         </div></div>
 
-        <h3 style="margin-top:var(--space-8)">Tamanhos de controle · input e botão com a mesma altura</h3>
-        <p class="sec__hint">Três alturas, por token: <code>--control-h-sm</code> 32 · <code>--control-h</code> 40 · <code>--control-h-lg</code> 44. Input e botão do mesmo tamanho compartilham a altura, então alinham perfeitamente lado a lado. Input: <code>.input--sm</code> / <code>.input</code> / <code>.input--lg</code>. Botão: <code>.btn--sm</code> / <code>.btn</code> / <code>.btn--lg</code>.</p>
+        <h3 style="margin-top:var(--space-8)">Tamanhos de controle</h3>
+        <p class="sec__hint">Alturas por token: <code>--control-h-sm</code> 32 · <code>--control-h</code> 40 · <code>--control-h-lg</code> 44. <strong>Botões</strong> têm as 3 alturas (<code>.btn--sm</code> · <code>.btn</code> · <code>.btn--lg</code>). <strong>Inputs</strong> têm 2 (<code>.input</code> 40 · <code>.input--lg</code> 44); não há input de 32, pequeno demais para digitar. Input e botão da mesma altura alinham lado a lado.</p>
         <div class="card"><div class="card__body">
-          <p class="sec__hint">Pequeno (sm) · 32px</p>
+          <p class="sec__hint">Botões · sm 32 · base 40 · lg 44</p>
           <div class="demo" style="align-items:center">
-            <input class="input input--sm" style="max-width:220px" placeholder="Ex.: buscar">
-            <button class="btn btn--primary btn--sm">Botão</button>
+            <button class="btn btn--primary btn--sm">32 (sm)</button>
+            <button class="btn btn--primary">40 (base)</button>
+            <button class="btn btn--primary btn--lg">44 (lg)</button>
           </div>
-          <p class="sec__hint" style="margin-top:var(--space-6)">Médio (base) · 40px</p>
+          <p class="sec__hint" style="margin-top:var(--space-6)">Inputs · base 40 · lg 44</p>
           <div class="demo" style="align-items:center">
-            <input class="input" style="max-width:220px" placeholder="Ex.: nome do contribuinte">
-            <button class="btn btn--primary">Botão</button>
+            <input class="input" style="max-width:200px" placeholder="40px (base)">
+            <input class="input input--lg" style="max-width:200px" placeholder="44px (lg)">
           </div>
-          <p class="sec__hint" style="margin-top:var(--space-6)">Grande (lg) · 44px</p>
+          <p class="sec__hint" style="margin-top:var(--space-6)">Par grande (44): input + botão alinhados</p>
           <div class="demo" style="align-items:center">
             <input class="input input--lg" style="max-width:220px" placeholder="Ex.: senha">
-            <button class="btn btn--primary btn--lg">Botão</button>
+            <button class="btn btn--primary btn--lg">Confirmar</button>
           </div>
         </div></div>
 
