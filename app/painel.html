@@ -407,7 +407,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 /* Variante ESCURA institucional: navy gov.br (#071d41) com gradiente + pontinhos sutis.
    Redefine tokens no escopo → todas as regras .sidenav__* já renderizam sobre o navy. */
 .sidenav--navy{
-  --color-text:#dbe4f5; --color-text-muted:#8ea6c8;
+  --color-text:#e6eefb; --color-text-muted:#aec4e6; --color-heading:#f2f6fd;
   --color-primary:#9dc0f0; --color-primary-subtle:rgba(255,255,255,.10);
   --color-border:rgba(255,255,255,.12); --color-divider:rgba(255,255,255,.14);
   color:#dbe4f5; border:1px solid rgba(255,255,255,.08);
@@ -845,6 +845,43 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   .row__b .m{font-size:var(--text-xs);color:var(--color-text-muted);margin:2px 0 0}
   .row__due{font-size:var(--text-xs);font-weight:600;color:var(--color-text-muted);flex:0 0 auto}
   @media(max-width:820px){.stats{grid-template-columns:1fr}}
+
+  /* ==== painel: blocos ==== */
+  .pblock{margin-bottom:32px}
+  .pblock__h{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin:0 0 4px}
+  .pblock__h h2{font-size:var(--text-lg)!important;margin:0}
+  .pblock__prog{font-size:var(--text-xs);font-weight:700;color:var(--color-text-muted);white-space:nowrap;flex:0 0 auto}
+  .pblock__sub{color:var(--color-text-muted);font-size:var(--text-sm);margin:0 0 16px;line-height:1.55;max-width:74ch}
+  .progbar{height:6px;border-radius:var(--radius-pill);background:var(--color-surface-2);overflow:hidden;margin:0 0 16px}
+  .progbar__fill{height:100%;background:var(--color-primary)}
+  /* tarefas de configuração */
+  .tasks{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);overflow:hidden}
+  .task{display:flex;align-items:center;gap:16px;padding:16px 20px;border-top:1px solid var(--color-border)}
+  .task:first-child{border-top:0}
+  .task__ic{width:40px;height:40px;border-radius:var(--radius-base);background:var(--color-primary-subtle);color:var(--color-primary);display:grid;place-items:center;flex:0 0 auto}
+  .task.is-done .task__ic{background:var(--color-success-bg);color:var(--color-success-fg)}
+  .task__b{flex:1;min-width:0}
+  .task__b .t{font-size:var(--text-sm);font-weight:600;color:var(--color-heading);margin:0}
+  .task__b .m{font-size:var(--text-xs);color:var(--color-text-muted);margin:2px 0 0;line-height:1.5}
+  .task__side{display:flex;align-items:center;gap:14px;flex:0 0 auto}
+  /* timeline dos próximos passos */
+  .tl__step{display:flex;gap:18px}
+  .tl__rail{display:flex;flex-direction:column;align-items:center;flex:0 0 auto}
+  .tl__node{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--color-surface-2);color:var(--color-text-muted);border:1px solid var(--color-border);flex:0 0 auto}
+  .tl__step.is-available .tl__node{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+  .tl__conn{width:2px;flex:1;background:var(--color-border);margin:4px 0;min-height:22px}
+  .tl__step:last-child .tl__conn{display:none}
+  .tl__card{flex:1;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:16px 20px;margin-bottom:12px;min-width:0}
+  .tl__step.is-available .tl__card{border-left:3px solid var(--color-primary)}
+  .tl__step.is-locked .tl__card{opacity:.72}
+  .tl__hd{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:3px}
+  .tl__hd .t{font-size:var(--text-sm);font-weight:700;color:var(--color-heading);margin:0}
+  .tl__card > p{font-size:var(--text-xs);color:var(--color-text-muted);margin:0;line-height:1.5}
+  .tl__card .btn{margin-top:12px}
+  .pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:3px 9px;border-radius:var(--radius-pill);white-space:nowrap;flex:0 0 auto}
+  .pill svg{width:12px;height:12px}
+  .pill--go{background:var(--color-primary-subtle);color:var(--color-primary)}
+  .pill--muted{background:var(--color-surface-2);color:var(--color-text-onmuted)}
 </style>
 </head><body>
 <div id="dere-gate-app" style="position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;padding:24px;font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;background:radial-gradient(120% 120% at 20% 8%,#0c326f 0%,#071d41 55%,#05152e 100%)">
@@ -926,30 +963,28 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 
     <main id="conteudo" tabindex="-1" class="content">
       <div class="wrap">
-        <div class="page-h"><h1>Painel</h1><p>Visão geral da conta da Mercado Pago.</p></div>
-
-        <div class="setup">
-          <span class="setup__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></span>
-          <div class="setup__b">
-            <h2>Configuração inicial em andamento</h2>
-            <p>Finalize as informações do contribuinte, o certificado digital e as permissões para começar a declarar.</p>
-            <div class="bar"><span class="bar__fill"></span></div>
-            <div class="setup__pct">1 de 3 concluídos</div>
+        <div class="page-h"><h1>Olá, Ricardo</h1><p>Veja o que falta para a Mercado Pago começar a declarar na a-DeRE.</p></div>
+        <section class="pblock">
+          <div class="pblock__h"><h2>Configuração inicial da conta</h2><span class="pblock__prog">1 de 3 concluídas</span></div>
+          <p class="pblock__sub">Conclua as configurações necessárias para preparar a conta da Mercado Pago na a-DeRE.</p>
+          <div class="progbar"><span class="progbar__fill" style="width:33%"></span></div>
+          <div class="tasks">
+            <div class="task is-done"><span class="task__ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4M10 10h4M10 14h4"/></svg></span><div class="task__b"><p class="t">Dados da conta</p><p class="m">Revise e complete as informações da empresa, como nome, dados de contato e identidade visual.</p></div><div class="task__side"><span class="status status--success"><span class="status__dot"></span>Concluído</span></div></div>
+            <div class="task"><span class="task__ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><div class="task__b"><p class="t">Perfis e acessos</p><p class="m">Adicione usuários e defina suas permissões de acesso.</p></div><div class="task__side"><span class="status"><span class="status__dot"></span>Opcional</span><a class="btn btn--ghost btn--sm" href="#">Configurar</a></div></div>
+            <div class="task"><span class="task__ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg></span><div class="task__b"><p class="t">Certificado digital</p><p class="m">Cadastre o certificado digital que será utilizado pela empresa.</p></div><div class="task__side"><span class="status"><span class="status__dot"></span>Pendente</span><a class="btn btn--primary btn--sm" href="#">Cadastrar certificado</a></div></div>
           </div>
-          <a class="btn btn--primary" href="onboarding.html">Continuar configuração</a>
-        </div>
+        </section>
 
-        <div class="stats">
-          <div class="stat"><div class="stat__lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 2v4"/><path d="M16 2v4"/></svg>Próxima competência</div><div class="stat__val">07/2026</div><div class="stat__meta">Entrega até 20/08/2026</div></div>
-          <div class="stat"><div class="stat__lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>Status da conta</div><div class="stat__val" style="font-size:var(--text-xl)"><span class="status"><span class="status__dot"></span>Em configuração</span></div><div class="stat__meta">Certificado e equipe pendentes</div></div>
-          <div class="stat"><div class="stat__lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>Pendências</div><div class="stat__val">2</div><div class="stat__meta">Itens que precisam da sua ação</div></div>
-        </div>
-
-        <div class="panel">
-          <div class="panel__hd"><h2>Próximos prazos</h2><a href="#">Ver declarações</a></div>
-          <div class="row"><span class="row__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 2v4"/><path d="M16 2v4"/></svg></span><div class="row__b"><p class="t">Declaração mensal · competência 07/2026</p><p class="m">Preencher, validar e transmitir</p></div><div class="row__due">em 3 dias</div></div>
-          <div class="row"><span class="row__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg></span><div class="row__b"><p class="t">Certificado digital</p><p class="m">Cadastrar o certificado ICP-Brasil do contribuinte</p></div><div class="row__due">pendente</div></div>
-        </div>
+        <section class="pblock">
+          <div class="pblock__h"><h2>Próximos passos</h2></div>
+          <p class="pblock__sub">Após configurar sua conta, complete as etapas necessárias para começar a enviar declarações pela a-DeRE.</p>
+          <div class="tl">
+            <div class="tl__step is-available"><div class="tl__rail"><span class="tl__node"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg></span><span class="tl__conn"></span></div><div class="tl__card"><div class="tl__hd"><p class="t">Informações do contribuinte</p><span class="pill pill--go">Disponível</span></div><p>Cadastre e envie as informações do contribuinte. Após o envio, elas são processadas automaticamente.</p><a class="btn btn--primary btn--sm" href="#">Preencher informações</a></div></div>
+            <div class="tl__step is-locked"><div class="tl__rail"><span class="tl__node"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" x2="21" y1="22" y2="22"/><line x1="6" x2="6" y1="18" y2="11"/><line x1="10" x2="10" y1="18" y2="11"/><line x1="14" x2="14" y1="18" y2="11"/><line x1="18" x2="18" y1="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg></span><span class="tl__conn"></span></div><div class="tl__card"><div class="tl__hd"><p class="t">Processamento e Recibo</p><span class="pill pill--muted"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Aguardando envio</span></div><p>As informações são processadas automaticamente. O próximo passo é liberado quando o Recibo de Processamento volta com sucesso.</p></div></div>
+            <div class="tl__step is-locked"><div class="tl__rail"><span class="tl__node"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12h-8"/><path d="M21 6H8"/><path d="M21 18h-8"/><path d="M3 6v4c0 1.1.9 2 2 2h3"/><path d="M3 10v6c0 1.1.9 2 2 2h3"/></svg></span><span class="tl__conn"></span></div><div class="tl__card"><div class="tl__hd"><p class="t">Plano de contas</p><span class="pill pill--muted"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Bloqueado até o Recibo</span></div><p>Importe e envie o plano de contas que será utilizado nas declarações.</p></div></div>
+            <div class="tl__step is-locked"><div class="tl__rail"><span class="tl__node"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 2v4"/><path d="M16 2v4"/></svg></span><span class="tl__conn"></span></div><div class="tl__card"><div class="tl__hd"><p class="t">Declaração mensal</p><span class="pill pill--muted"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Indisponível</span></div><p>Após concluir as etapas anteriores, você poderá preparar e transmitir suas declarações.</p></div></div>
+          </div>
+        </section>
       </div>
     </main>
   </div>
