@@ -845,6 +845,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   .reqs li{display:flex;align-items:center;gap:7px;font-size:var(--text-xs);color:var(--color-text-onmuted);transition:color .12s}
   .reqs li svg{width:14px;height:14px;flex:0 0 auto}
   .reqs li.ok{color:var(--color-success-fg);font-weight:600}
+  .reqs li.bad{color:var(--color-danger)}
   .twofa{border:1px solid var(--color-border);border-radius:var(--radius-base);padding:14px;margin-bottom:18px;background:var(--color-surface-2)}
   .twofa__hd{display:flex;align-items:center;gap:8px;margin-bottom:4px;color:var(--color-heading);font-weight:600;font-size:var(--text-sm)}
   .twofa__hd svg{width:16px;height:16px;color:var(--color-primary)}
@@ -880,13 +881,12 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   </style>
   <span class="dots"></span>
   <form class="card" onsubmit="return dereGate(this)" style="position:relative;background:#fff;padding:38px 34px 26px;border-radius:14px;width:100%;max-width:360px;text-align:center;box-shadow:0 24px 70px -12px rgba(3,17,42,.55)">
-    <span style="display:grid;place-items:center;width:54px;height:54px;border-radius:13px;margin:0 auto 16px;background:linear-gradient(160deg,#1a5fd0,#071d41);color:#fff;font-weight:800;font-size:23px;letter-spacing:-.03em;box-shadow:0 6px 16px -4px rgba(19,81,180,.5)">De</span>
     <div style="font-size:21px;font-weight:800;color:#0b1f3a;letter-spacing:-.01em;font-family:inherit">DeRE</div>
     <div style="display:inline-flex;align-items:center;gap:6px;color:#5b6b82;font-size:13px;margin:5px 0 22px;font-family:inherit"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Protótipo &middot; acesso restrito</div>
     <label for="dere-pw" style="display:block;text-align:left;font-size:12.5px;font-weight:600;color:#334155;margin:0 0 6px;font-family:inherit">Senha de acesso</label>
     <input id="dere-pw" type="password" placeholder="Digite a senha" autofocus autocomplete="off" aria-label="Senha de acesso" style="width:100%;height:44px;border:1px solid #cbd5e1;border-radius:8px;padding:0 14px;font-size:16px;box-sizing:border-box;outline:none;color:#0f172a;background:#fff;font-family:inherit">
-    <button type="submit" style="width:100%;height:44px;margin-top:14px;background:#1351b4;color:#fff;border:0;border-radius:8px;font-weight:700;font-size:15px;cursor:pointer;font-family:inherit">Entrar</button>
-    <div id="dere-err" style="color:#dc2626;font-size:12.5px;min-height:16px;margin-top:10px;text-align:left;display:flex;align-items:center;gap:5px;font-family:inherit"></div>
+    <div id="dere-err" style="color:#dc2626;font-size:12.5px;min-height:18px;margin-top:8px;text-align:left;display:flex;align-items:center;gap:5px;font-family:inherit"></div>
+    <button type="submit" style="width:100%;height:44px;margin-top:6px;background:#1351b4;color:#fff;border:0;border-radius:8px;font-weight:700;font-size:15px;cursor:pointer;font-family:inherit">Entrar</button>
     <div style="margin-top:20px;font-size:11.5px;color:#94a3b8;letter-spacing:.02em;font-family:inherit">uma solução Axians</div>
   </form>
 </div>
@@ -929,9 +929,10 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 
           <div class="terms">
             <label class="check"><input type="checkbox" id="terms" onchange="revalidate()"><span>Li e aceito os <a href="#">Termos de Uso</a> e a <a href="#">Política de Privacidade</a>.</span></label>
+            <span id="termse" class="field__msg field__msg--error hide" role="alert" style="margin-top:8px"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>Aceite os Termos de Uso e a Política de Privacidade para continuar.</span>
           </div>
 
-          <button type="submit" id="submit" class="btn btn--primary btn--lg btn--block" disabled>Ativar acesso</button>
+          <button type="submit" id="submit" class="btn btn--primary btn--lg btn--block">Ativar acesso</button>
           <p class="secnote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Conexão segura. A DeRE nunca pede sua senha por telefone ou e-mail.</p>
         </form>
 
@@ -954,23 +955,33 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   function pick2fa(b){b.parentNode.querySelectorAll('.segmented__btn').forEach(function(x){x.classList.remove('is-active');x.setAttribute('aria-pressed','false');});b.classList.add('is-active');b.setAttribute('aria-pressed','true');}
   function reqs(v){return {len:v.length>=8, letra:/[A-Z]/.test(v), num:/[0-9]/.test(v)};}
   function clearMismatch(){var f=document.getElementById('f-conf'),e=document.getElementById('pw2e');f.classList.remove('is-invalid');e.classList.add('hide');document.getElementById('pw2').removeAttribute('aria-invalid');}
+  // Botão sempre habilitado. A validação aparece ao clicar em "Ativar acesso"; some conforme o usuário corrige.
   function revalidate(){
     var v=document.getElementById('pw').value, r=reqs(v);
-    document.querySelectorAll('#reqs li').forEach(function(li){var ok=r[li.getAttribute('data-req')];li.classList.toggle('ok',ok);li.querySelector('svg').outerHTML=ok?CHK:DOT;});
+    document.querySelectorAll('#reqs li').forEach(function(li){var ok=r[li.getAttribute('data-req')];li.classList.toggle('ok',ok);li.classList.remove('bad');li.querySelector('svg').outerHTML=ok?CHK:DOT;});
     clearMismatch();
-    var allReq=r.len&&r.letra&&r.num;
-    document.getElementById('submit').disabled=!(allReq&&document.getElementById('terms').checked);
+    document.getElementById('termse').classList.add('hide');
   }
   document.getElementById('pw').addEventListener('input',revalidate);
   document.getElementById('pw2').addEventListener('input',revalidate);
   document.getElementById('form').addEventListener('submit',function(ev){
     ev.preventDefault();
-    var v=document.getElementById('pw').value, v2=document.getElementById('pw2').value;
+    var v=document.getElementById('pw').value, v2=document.getElementById('pw2').value, r=reqs(v);
+    var focusEl=null;
+    if(!(r.len&&r.letra&&r.num)){
+      document.querySelectorAll('#reqs li').forEach(function(li){if(!r[li.getAttribute('data-req')])li.classList.add('bad');});
+      focusEl=document.getElementById('pw');
+    }
     if(v!==v2){
       var f=document.getElementById('f-conf'),e=document.getElementById('pw2e'),p2=document.getElementById('pw2');
-      f.classList.add('is-invalid');e.classList.remove('hide');p2.setAttribute('aria-invalid','true');p2.focus();
-      return;
+      f.classList.add('is-invalid');e.classList.remove('hide');p2.setAttribute('aria-invalid','true');
+      focusEl=focusEl||p2;
     }
+    if(!document.getElementById('terms').checked){
+      document.getElementById('termse').classList.remove('hide');
+      focusEl=focusEl||document.getElementById('terms');
+    }
+    if(focusEl){focusEl.focus();return;}
     var b=document.getElementById('submit');b.disabled=true;b.textContent='Ativando…';
     setTimeout(function(){document.getElementById('form').classList.add('hide');document.getElementById('ok').classList.remove('hide');},900);
   });
