@@ -888,7 +888,10 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   .mail__steps .s{display:flex;flex-direction:column;gap:var(--space-1)}
   .mail__steps .s b{color:var(--color-heading);font-size:var(--text-sm);font-weight:400;display:block}
   .mail__steps .s span{color:var(--color-text-muted);font-size:var(--text-sm)}
-  .mail__after{margin:0 0 var(--space-4);padding-left:calc(24px + var(--space-3));color:var(--color-text-onmuted);font-size:var(--text-sm);line-height:1.5}
+  .mail__after{display:flex;gap:var(--space-3);align-items:flex-start;margin:0 0 var(--space-4);color:var(--color-text-onmuted);font-size:var(--text-sm);line-height:1.5}
+  .mail__after .n{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;flex:0 0 auto}
+  .mail__after .n--rocket{background:var(--color-primary);color:#fff}
+  .mail__after .n svg{width:14px;height:14px}
   .mail__cta{text-align:center;margin:var(--space-8) 0 var(--space-3)}
   .mail__cta .btn{text-decoration:none;padding:0 52px}
   .mail__done{display:flex;align-items:center;gap:var(--space-3);background:var(--color-primary-subtle);border-radius:var(--radius-base);padding:var(--space-3) var(--space-4);margin:var(--space-2) 0 0}
@@ -1027,7 +1030,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
                   <li><span class="n">2</span><span class="s"><b>Aceitar os Termos de Uso</b></span></li>
                   <li><span class="n">3</span><span class="s"><b>Confirmar a ativação do acesso</b></span></li>
                 </ul>
-                <p class="mail__after">Depois disso, seu acesso estará ativo e você poderá iniciar a configuração da conta.</p>
+                <div class="mail__after"><span class="n n--rocket"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></span><span>Depois disso, seu acesso estará ativo e você poderá iniciar a configuração da conta.</span></div>
                 <div class="mail__cta">
                   <a class="btn btn--primary btn--lg" href="senha.html" target="_blank" rel="noopener">Ativar meu acesso</a>
                 </div>
