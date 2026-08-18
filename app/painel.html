@@ -916,6 +916,11 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   .next__bar{width:190px;height:6px;border-radius:var(--radius-pill);background:var(--color-surface);overflow:hidden;flex:0 0 auto}
   .next__bar span{display:block;height:100%;width:33%;background:var(--color-primary)}
   .next__ptxt{font-size:var(--text-xs);font-weight:700;color:var(--color-primary)}
+  .page-prog{display:flex;align-items:center;gap:12px;margin:14px 0 0}
+  .page-prog__bar{width:170px;height:6px;border-radius:var(--radius-pill);background:var(--color-surface-2);overflow:hidden;flex:0 0 auto}
+  .page-prog__bar span{display:block;height:100%;width:33%;background:var(--color-primary)}
+  .page-prog__txt{font-size:var(--text-sm);color:var(--color-text-muted)}
+  .page-prog__txt strong{color:var(--color-heading);font-weight:700}
 </style>
 </head><body>
 <div id="dere-gate-app" style="position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;padding:24px;font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;background:radial-gradient(120% 120% at 20% 8%,#0c326f 0%,#071d41 55%,#05152e 100%)">
@@ -997,12 +1002,11 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 
     <main id="conteudo" tabindex="-1" class="content">
       <div class="wrap">
-        <div class="page-h"><h1>Olá, Ricardo</h1><p>Veja o que falta para a Mercado Pago começar a declarar na a-DeRE.</p></div>
+        <div class="page-h"><h1>Olá, Ricardo</h1><p>Veja o que falta para a Mercado Pago começar a declarar na a-DeRE.</p><div class="page-prog"><span class="page-prog__bar"><span></span></span><span class="page-prog__txt"><strong>1 de 3</strong> etapas da configuração concluídas</span></div></div>
         <div class="next">
           <p class="next__eyebrow">Próxima ação</p>
           <h2 class="next__title">Cadastre o certificado digital</h2>
           <p class="next__desc">Conclua esta etapa para avançar na configuração da conta.</p>
-          <div class="next__prog"><span class="next__bar"><span></span></span><span class="next__ptxt">1 de 3 etapas concluídas</span></div>
           <div class="next__actions"><a class="btn btn--primary" href="#">Cadastrar certificado</a><a class="btn btn--ghost" href="#">Ver configuração da conta</a></div>
         </div>
 
