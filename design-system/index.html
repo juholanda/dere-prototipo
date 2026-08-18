@@ -816,6 +816,11 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
     .nav__k{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--color-text-muted);padding:14px 8px 4px}
     .nav a{display:block;padding:.38rem .55rem;border-radius:var(--radius-base);font-size:13.5px;color:var(--color-text-onmuted)}
     .nav a:hover{background:var(--color-surface-2);color:var(--color-heading)}
+    .nav a.is-active{background:var(--color-primary-subtle);color:var(--color-primary);font-weight:700;box-shadow:inset 3px 0 0 var(--color-primary)}
+    .card{position:relative}
+    .card>.code-toggle{position:absolute;top:12px;right:12px;margin:0;z-index:2}
+    .code-toggle.is-active{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+    .card>.codeblock{margin:0;border-width:1px 0 0 0;border-radius:0 0 var(--radius-lg) var(--radius-lg)}
     .nav__foot{margin-top:auto;padding:12px 8px 0;border-top:1px solid var(--color-border)}
     .main{min-width:0}
     .main__head{position:sticky;top:0;z-index:10;background:color-mix(in srgb, var(--color-surface) 90%, transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--color-border);padding:12px 32px;display:flex;align-items:center;justify-content:space-between;gap:16px}
@@ -1926,30 +1931,45 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
     document.addEventListener('click',function(e){ if(!menu.contains(e.target)){ panel.hidden=true; btn.setAttribute('aria-expanded','false'); } });
   });
 
-  /* Ver código de cada componente (extrai o HTML do demo, limpa hooks de JS e estado) */
+  /* Ver código: um botão por card, com o código logo abaixo dele e feedback (estilo Storybook) */
   (function(){
     function clean(el){
       return el.outerHTML
         .replace(/ data-[a-z0-9-]+(="[^"]*")?/gi,'')
         .replace(/ (aria-expanded|aria-selected|aria-activedescendant)="[^"]*"/gi,'')
         .replace(/ hidden(="[^"]*")?/gi,'')
+        .replace(/ style="[^"]*"/gi,'')
         .replace(/></g,'>\n<')
         .trim();
     }
-    document.querySelectorAll('section.sec[id]').forEach(function(sec){
-      var demo=sec.querySelector('.card, .table, .sidenav, .bulkbar, .stepper, .timeline, .demo');
-      var h2=sec.querySelector('h2');
-      if(!demo||!h2) return;
+    document.querySelectorAll('section.sec[id] .card').forEach(function(card){
+      if(card.closest('.codeblock')) return;
+      var body=card.querySelector('.card__body')||card;
       var pre=document.createElement('pre'); pre.className='codeblock'; pre.hidden=true;
-      var code=document.createElement('code'); code.textContent=clean(demo); pre.appendChild(code);
+      var code=document.createElement('code'); code.textContent=clean(body); pre.appendChild(code);
       var copy=document.createElement('button'); copy.type='button'; copy.className='code-copy'; copy.textContent='Copiar';
       copy.addEventListener('click',function(){ try{ navigator.clipboard.writeText(code.textContent); }catch(e){} copy.textContent='Copiado!'; setTimeout(function(){copy.textContent='Copiar';},1400); });
       pre.appendChild(copy);
-      var btn=document.createElement('button'); btn.type='button'; btn.className='code-toggle'; btn.setAttribute('aria-expanded','false'); btn.textContent='</> código';
-      btn.addEventListener('click',function(){ var willOpen=pre.hidden; pre.hidden=!willOpen; btn.setAttribute('aria-expanded',String(willOpen)); });
-      h2.appendChild(btn);
-      demo.parentNode.insertBefore(pre, demo.nextSibling);
+      var btn=document.createElement('button'); btn.type='button'; btn.className='code-toggle'; btn.setAttribute('aria-expanded','false'); btn.innerHTML='&lt;/&gt; Código';
+      btn.addEventListener('click',function(){ var open=pre.hidden; pre.hidden=!open; btn.setAttribute('aria-expanded',String(open)); btn.classList.toggle('is-active',open); btn.innerHTML=open?'&lt;/&gt; Ocultar':'&lt;/&gt; Código'; });
+      card.appendChild(btn);
+      card.appendChild(pre);
     });
+  })();
+  /* Scrollspy: destaca na navegação a seção que está sendo vista */
+  (function(){
+    var links=[].slice.call(document.querySelectorAll('.nav a[href^="#"]'));
+    var secs=links.map(function(a){ return document.getElementById(a.getAttribute('href').slice(1)); });
+    function spy(){
+      var cur=0;
+      for(var i=0;i<secs.length;i++){ if(secs[i] && secs[i].getBoundingClientRect().top<=140) cur=i; }
+      links.forEach(function(a){ a.classList.remove('is-active'); });
+      if(links[cur]) links[cur].classList.add('is-active');
+    }
+    window.addEventListener('scroll',spy,{passive:true});
+    window.addEventListener('resize',spy);
+    links.forEach(function(a){ a.addEventListener('click',function(){ setTimeout(spy,60); }); });
+    spy();
   })();
 </script>
 </body>
