@@ -827,7 +827,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 
   .topic{width:52px;height:52px;border-radius:50%;background:var(--color-primary-subtle);color:var(--color-primary);display:grid;place-items:center;margin:0 auto 16px}
   .topic svg{width:26px;height:26px}
-  .acct{display:flex;align-items:center;justify-content:flex-start;gap:10px;margin:40px 0 24px}
+  .acct{display:flex;align-items:center;justify-content:flex-start;gap:10px;margin:24px 0 24px}
   .acct__av{width:34px;height:34px;border-radius:50%;background:var(--slate-200);color:var(--color-text-onmuted);display:grid;place-items:center;flex:0 0 auto}
   .acct__av svg{width:18px;height:18px}
   .acct__col{display:flex;flex-direction:column;min-width:0}
@@ -845,7 +845,29 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   .reqs li{display:flex;align-items:center;gap:7px;font-size:var(--text-xs);color:var(--color-text-onmuted);transition:color .12s}
   .reqs li svg{width:14px;height:14px;flex:0 0 auto}
   .reqs li.ok{color:var(--color-success-fg);font-weight:600}
-  .reqs li.bad{color:var(--color-danger)}
+  /* microinteração sutil de reforço no aceite (reforço visual, nunca substitui a mensagem); respeita prefers-reduced-motion */
+  @media (prefers-reduced-motion:no-preference){.terms .check.nudge{animation:dere-nudge .22s ease}}
+  @keyframes dere-nudge{0%,100%{transform:translateX(0)}45%{transform:translateX(4px)}}
+  /* ===== microinterações (sutis, 120–200ms; o decorativo só roda fora de prefers-reduced-motion) ===== */
+  /* mensagens de erro: presença animada — fade + leve deslize + colapso, sem "saltar" o form */
+  .field__msg--error{opacity:0;max-height:0;overflow:hidden;transform:translateY(-4px);margin-top:calc(-1 * var(--space-1-5))}
+  .field__msg--error.show{opacity:1;max-height:5em;transform:none;margin-top:0}
+  .terms .field__msg--error{margin-top:0}
+  .terms .field__msg--error.show{margin-top:8px}
+  .input{transition:border-color .15s ease,box-shadow .15s ease}
+  .check input{transition:transform .14s ease}
+  .btn--block{transition:transform .16s ease,background-color .16s ease,filter .16s ease}
+  .btn-spin{width:15px;height:15px;border:2px solid rgba(255,255,255,.45);border-top-color:#fff;border-radius:50%;display:inline-block;margin-right:8px;vertical-align:-2px}
+  @media (prefers-reduced-motion:no-preference){
+    .field__msg--error{transition:opacity .16s ease,transform .16s ease,max-height .18s ease,margin-top .18s ease}
+    .reqs li svg{transition:transform .18s ease}
+    .reqs li.ok svg{animation:req-pop .18s ease}
+    @keyframes req-pop{from{transform:scale(.9);opacity:.55}to{transform:scale(1);opacity:1}}
+    .check input:active{transform:scale(.9)}
+    .btn--block:active{transform:scale(.985)}
+    .btn-spin{animation:btn-spin .7s linear infinite}
+  }
+  @keyframes btn-spin{to{transform:rotate(360deg)}}
   .twofa{border:1px solid var(--color-border);border-radius:var(--radius-base);padding:14px;margin-bottom:18px;background:var(--color-surface-2)}
   .twofa__hd{display:flex;align-items:center;gap:8px;margin-bottom:4px;color:var(--color-heading);font-weight:600;font-size:var(--text-sm)}
   .twofa__hd svg{width:16px;height:16px;color:var(--color-primary)}
@@ -905,10 +927,10 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
           <p class="lead">Crie uma senha para usar nos seus próximos acessos à plataforma.</p>
           <div class="acct"><span class="acct__av"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><span class="acct__col"><span class="acct__label">E-mail cadastrado</span><span class="acct__mail">ricardo.almeida@mercadopago.com.br</span></span></div>
 
-          <div class="field">
+          <div class="field" id="f-pw">
             <label class="field__label" for="pw">Senha</label>
             <div class="pw">
-              <input id="pw" class="input input--lg" type="password" placeholder="Digite uma senha forte" autocomplete="new-password" aria-describedby="reqs">
+              <input id="pw" class="input input--lg" type="password" placeholder="Digite uma senha forte" autocomplete="new-password" aria-describedby="reqs pwe">
               <button type="button" class="pw__toggle" aria-label="Mostrar senha" aria-pressed="false" onclick="toggle('pw',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>
             </div>
             <ul class="reqs" id="reqs">
@@ -916,6 +938,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
               <li data-req="letra"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/></svg>Pelo menos uma letra maiúscula</li>
               <li data-req="num"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/></svg>Pelo menos um número</li>
             </ul>
+            <span id="pwe" class="field__msg field__msg--error" role="alert"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>A senha ainda não atende a todos os requisitos.</span>
           </div>
 
           <div class="field" id="f-conf">
@@ -924,12 +947,12 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
               <input id="pw2" class="input input--lg" type="password" placeholder="Repita a senha" autocomplete="new-password" aria-describedby="pw2e">
               <button type="button" class="pw__toggle" aria-label="Mostrar senha" aria-pressed="false" onclick="toggle('pw2',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>
             </div>
-            <span id="pw2e" class="field__msg field__msg--error hide" role="alert"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>As senhas não coincidem. Digite a mesma senha nos dois campos.</span>
+            <span id="pw2e" class="field__msg field__msg--error" role="alert"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>As senhas não coincidem. Digite a mesma senha nos dois campos.</span>
           </div>
 
           <div class="terms">
-            <label class="check"><input type="checkbox" id="terms" onchange="revalidate()"><span>Li e aceito os <a href="#">Termos de Uso</a> e a <a href="#">Política de Privacidade</a>.</span></label>
-            <span id="termse" class="field__msg field__msg--error hide" role="alert" style="margin-top:8px"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>Aceite os Termos de Uso e a Política de Privacidade para continuar.</span>
+            <label class="check"><input type="checkbox" id="terms" aria-describedby="termse" onchange="revalidate()"><span>Li e aceito os <a href="#">Termos de Uso</a> e a <a href="#">Política de Privacidade</a>.</span></label>
+            <span id="termse" class="field__msg field__msg--error" role="alert"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>Aceite os Termos de Uso e a Política de Privacidade para continuar.</span>
           </div>
 
           <button type="submit" id="submit" class="btn btn--primary btn--lg btn--block">Ativar acesso</button>
@@ -939,7 +962,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
         <div class="ok-panel hide" id="ok">
           <div class="ok-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
           <h1>Acesso ativado</h1>
-          <p class="lead">Sua senha foi criada e a verificação em 2 etapas está ativa. Vamos para a configuração da conta.</p>
+          <p class="lead">Sua senha foi criada. Vamos para a configuração da conta.</p>
           <a class="btn btn--primary btn--lg btn--block" href="ativacao.html">Ir para a configuração</a>
         </div>
       </div>
@@ -954,35 +977,50 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   function toggle(id,btn){var i=document.getElementById(id);var show=i.type==='password';i.type=show?'text':'password';btn.setAttribute('aria-pressed',show);btn.setAttribute('aria-label',show?'Ocultar senha':'Mostrar senha');btn.innerHTML=show?EYEOFF:EYE;}
   function pick2fa(b){b.parentNode.querySelectorAll('.segmented__btn').forEach(function(x){x.classList.remove('is-active');x.setAttribute('aria-pressed','false');});b.classList.add('is-active');b.setAttribute('aria-pressed','true');}
   function reqs(v){return {len:v.length>=8, letra:/[A-Z]/.test(v), num:/[0-9]/.test(v)};}
-  function clearMismatch(){var f=document.getElementById('f-conf'),e=document.getElementById('pw2e');f.classList.remove('is-invalid');e.classList.add('hide');document.getElementById('pw2').removeAttribute('aria-invalid');}
-  // Botão sempre habilitado. A validação aparece ao clicar em "Ativar acesso"; some conforme o usuário corrige.
+  function clearPwError(){document.getElementById('f-pw').classList.remove('is-invalid');document.getElementById('pwe').classList.remove('show');document.getElementById('pw').removeAttribute('aria-invalid');}
+  function clearMismatch(){document.getElementById('f-conf').classList.remove('is-invalid');document.getElementById('pw2e').classList.remove('show');document.getElementById('pw2').removeAttribute('aria-invalid');}
+  function clearTerms(){document.getElementById('terms').removeAttribute('aria-invalid');document.getElementById('termse').classList.remove('show');}
+  // Botão sempre habilitado. Os requisitos respondem em tempo real; os erros aparecem ao clicar em "Ativar acesso" e somem conforme o usuário corrige.
   function revalidate(){
     var v=document.getElementById('pw').value, r=reqs(v);
-    document.querySelectorAll('#reqs li').forEach(function(li){var ok=r[li.getAttribute('data-req')];li.classList.toggle('ok',ok);li.classList.remove('bad');li.querySelector('svg').outerHTML=ok?CHK:DOT;});
-    clearMismatch();
-    document.getElementById('termse').classList.add('hide');
+    document.querySelectorAll('#reqs li').forEach(function(li){
+      var ok=r[li.getAttribute('data-req')];
+      if(ok!==li.classList.contains('ok')){ li.classList.toggle('ok',ok); li.querySelector('svg').outerHTML=ok?CHK:DOT; } // troca o ícone só na virada de estado (evita repetir o pop a cada tecla)
+    });
+    clearPwError();clearMismatch();clearTerms();
   }
   document.getElementById('pw').addEventListener('input',revalidate);
   document.getElementById('pw2').addEventListener('input',revalidate);
   document.getElementById('form').addEventListener('submit',function(ev){
     ev.preventDefault();
-    var v=document.getElementById('pw').value, v2=document.getElementById('pw2').value, r=reqs(v);
+    var pw=document.getElementById('pw'), pw2=document.getElementById('pw2'), terms=document.getElementById('terms');
+    var v=pw.value, v2=pw2.value, r=reqs(v);
     var focusEl=null;
+    // 1) Senha atende a todos os requisitos
     if(!(r.len&&r.letra&&r.num)){
-      document.querySelectorAll('#reqs li').forEach(function(li){if(!r[li.getAttribute('data-req')])li.classList.add('bad');});
-      focusEl=document.getElementById('pw');
+      document.getElementById('f-pw').classList.add('is-invalid');
+      document.getElementById('pwe').classList.add('show');
+      pw.setAttribute('aria-invalid','true');
+      focusEl=pw;
     }
+    // 2) Confirmação coincide com a senha
     if(v!==v2){
-      var f=document.getElementById('f-conf'),e=document.getElementById('pw2e'),p2=document.getElementById('pw2');
-      f.classList.add('is-invalid');e.classList.remove('hide');p2.setAttribute('aria-invalid','true');
-      focusEl=focusEl||p2;
+      document.getElementById('f-conf').classList.add('is-invalid');
+      document.getElementById('pw2e').classList.add('show');
+      pw2.setAttribute('aria-invalid','true');
+      focusEl=focusEl||pw2;
     }
-    if(!document.getElementById('terms').checked){
-      document.getElementById('termse').classList.remove('hide');
-      focusEl=focusEl||document.getElementById('terms');
+    // 3) Aceite dos Termos (obrigatório)
+    if(!terms.checked){
+      terms.setAttribute('aria-invalid','true');
+      document.getElementById('termse').classList.add('show');
+      var lbl=terms.closest('.check');
+      if(lbl){lbl.classList.remove('nudge');void lbl.offsetWidth;lbl.classList.add('nudge');}
+      focusEl=focusEl||terms;
     }
+    // Foco no primeiro campo inválido (uso por teclado, sem mouse)
     if(focusEl){focusEl.focus();return;}
-    var b=document.getElementById('submit');b.disabled=true;b.textContent='Ativando…';
+    var b=document.getElementById('submit');b.disabled=true;b.innerHTML='<span class="btn-spin"></span>Ativando…';
     setTimeout(function(){document.getElementById('form').classList.add('hide');document.getElementById('ok').classList.remove('hide');},900);
   });
 </script>
