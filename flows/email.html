@@ -881,13 +881,22 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   .mail__who .t b{color:var(--color-heading);font-size:var(--text-sm);display:block}
   .mail__who .t span{color:var(--color-text-onmuted);font-size:var(--text-sm)}
   .mail__steps{list-style:none;margin:0 0 var(--space-4);padding:0;display:flex;flex-direction:column;gap:var(--space-3)}
-  .mail__steps li{display:flex;gap:var(--space-3);align-items:center}
+  .mail__steps li{display:flex;gap:var(--space-3);align-items:flex-start}
   .mail__steps .n{width:24px;height:24px;border-radius:50%;background:var(--color-primary-subtle);color:var(--color-primary);font-weight:700;font-size:var(--text-xs);display:grid;place-items:center;flex:0 0 auto}
   .mail__steps .s{display:flex;flex-direction:column;gap:var(--space-1)}
   .mail__steps .s b{color:var(--color-heading);font-size:var(--text-sm);font-weight:600;display:block}
-  .mail__steps .s span{color:var(--color-text-muted);font-size:var(--text-xs)}
+  .mail__steps .s span{color:var(--color-text-muted);font-size:var(--text-sm)}
   .mail__cta{text-align:center;margin:var(--space-8) 0 var(--space-3)}
   .mail__cta .btn{text-decoration:none;padding:0 var(--space-8)}
+  .mail__done{display:flex;align-items:center;gap:var(--space-3);background:var(--color-primary-subtle);border-radius:var(--radius-base);padding:var(--space-3) var(--space-4);margin:var(--space-2) 0 0}
+  .mail__done__ic{width:28px;height:28px;border-radius:50%;background:var(--color-primary);color:#fff;display:grid;place-items:center;flex:0 0 auto}
+  .mail__done__ic svg{width:17px;height:17px}
+  .mail__done p{margin:0;color:var(--color-heading);font-size:var(--text-sm)}
+  .mail__done b{color:var(--color-primary)}
+  .mail__sec{display:flex;gap:var(--space-2);align-items:flex-start;margin-top:var(--space-8);color:var(--color-text-muted);font-size:var(--text-sm);line-height:1.5}
+  .mail__sec__ic{flex:0 0 auto;line-height:0}
+  .mail__sec__ic svg{width:16px;height:16px;display:block;margin-top:2px}
+  .mail__sec p{margin:0}
   /* Fallback do botão: auxiliar e quieto. URL num chip discreto (cor de texto, não link; quebra controlada) */
   .mail__fallback{margin:0 0 var(--space-6);text-align:center}
   .mail__fallback__label{margin:0 0 var(--space-2);font-size:var(--text-xs);color:var(--color-text-muted);line-height:var(--leading-snug)}
@@ -1011,17 +1020,17 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
                 </div>
                 <p>Para ativar seu acesso, você vai:</p>
                 <ul class="mail__steps">
-                  <li><span class="n">1</span><span class="s"><b>Criar sua senha</b></span></li>
-                  <li><span class="n">2</span><span class="s"><b>Aceitar os Termos de Uso</b></span></li>
-                  <li><span class="n">3</span><span class="s"><b>Ativar a verificação em 2 etapas</b></span></li>
+                  <li><span class="n">1</span><span class="s"><b>Ativar seu acesso</b><span>Clique no botão "Ativar meu acesso", abaixo.</span></span></li>
+                  <li><span class="n">2</span><span class="s"><b>Criar sua senha</b><span>Uma senha forte, só sua.</span></span></li>
+                  <li><span class="n">3</span><span class="s"><b>Aceitar os Termos de Uso</b><span>E a Política de Privacidade.</span></span></li>
                 </ul>
-                <p>Pronto. A partir daí, você acessa a conta e começa a configuração.</p>
+                <div class="mail__done"><span class="mail__done__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><p><b>Pronto!</b> Agora você já pode configurar a conta da Mercado Pago.</p></div>
                 <div class="mail__cta">
                   <a class="btn btn--primary btn--lg" href="#ativar">Ativar meu acesso</a>
                 </div>
-                <div class="alert alert--info" role="note">
-                  <span class="alert__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
-                  <div class="alert__body"><p class="alert__text">Este link é pessoal, não compartilhe. Ele vale até <b>25/08/2026</b>, às 23h59 (horário de Brasília). Se o prazo passar, solicite um novo acesso ao suporte. Se você não esperava este convite, ignore este e-mail. A DeRE nunca pede senha, código de verificação ou certificado por e-mail.</p></div>
+                <div class="mail__sec" role="note">
+                  <span class="mail__sec__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+                  <p>Este link é pessoal, não compartilhe. Ele vale até <b>25/08/2026</b>, às 23h59 (horário de Brasília). Se o prazo passar, solicite um novo acesso ao suporte. Se você não esperava este convite, ignore este e-mail. A DeRE nunca pede senha, código de verificação ou certificado por e-mail.</p>
                 </div>
               </div>
               <div class="mail__foot">
