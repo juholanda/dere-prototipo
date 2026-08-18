@@ -826,10 +826,12 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 
   .topic{width:52px;height:52px;border-radius:50%;background:var(--color-primary-subtle);color:var(--color-primary);display:grid;place-items:center;margin:0 auto 16px}
   .topic svg{width:26px;height:26px}
-  .acct{display:flex;align-items:center;justify-content:center;gap:8px;margin:20px 0 20px}
-  .acct__av{width:26px;height:26px;border-radius:50%;background:var(--color-surface-2);color:var(--color-text-muted);display:grid;place-items:center;flex:0 0 auto}
-  .acct__av svg{width:15px;height:15px}
-  .acct__mail{color:var(--color-text-muted);font-size:var(--text-sm);font-style:italic}
+  .acct{display:flex;align-items:center;justify-content:flex-start;gap:10px;margin:20px 0 20px}
+  .acct__av{width:34px;height:34px;border-radius:50%;background:var(--slate-200);color:var(--color-text-onmuted);display:grid;place-items:center;flex:0 0 auto}
+  .acct__av svg{width:18px;height:18px}
+  .acct__col{display:flex;flex-direction:column;min-width:0}
+  .acct__label{font-size:var(--text-xs);color:var(--color-text-muted);font-weight:600}
+  .acct__mail{color:var(--color-heading);font-size:var(--text-sm)}
   h1{font-size:var(--text-2xl);text-align:center;margin:0 0 6px;color:var(--color-heading)}
   .lead{text-align:center;color:var(--color-text-muted);font-size:var(--text-sm);line-height:1.5;margin:0 0 8px}
   .field{margin-bottom:18px}
@@ -900,7 +902,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
           <div class="topic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"/><circle cx="16.5" cy="7.5" r=".5" fill="currentColor"/></svg></div>
           <h1>Crie sua senha</h1>
           <p class="lead">É o primeiro acesso da conta. Defina uma senha para ativar seu acesso.</p>
-          <div class="acct"><span class="acct__av"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><span class="acct__mail">ricardo.almeida@mercadopago.com.br</span></div>
+          <div class="acct"><span class="acct__av"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><span class="acct__col"><span class="acct__label">E-mail cadastrado</span><span class="acct__mail">ricardo.almeida@mercadopago.com.br</span></span></div>
 
           <div class="field">
             <label class="field__label" for="pw">Nova senha</label>
