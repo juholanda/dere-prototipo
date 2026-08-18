@@ -1,4 +1,4 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Criar senha · DeRE</title>
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Entrar · a-DeRE</title>
 <style>/* =============================================================================
    Design System — DeRE (Plataforma de Gestão Tributária Especial)
    Tokens + componentes. CSS puro por variável: portável (funciona sem build) e
@@ -921,107 +921,33 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
     <div class="pane-form__logo"><span class="wm">a-DeRE</span></div>
     <div class="pane-form__center">
       <div class="box">
-        <form id="form">
-          <div class="topic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"/><circle cx="16.5" cy="7.5" r=".5" fill="currentColor"/></svg></div>
-          <h1>Crie sua senha</h1>
-          <p class="lead">Crie uma senha para usar nos seus próximos acessos à plataforma.</p>
-          <div class="acct"><span class="acct__av"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><span class="acct__col"><span class="acct__label">E-mail cadastrado</span><span class="acct__mail">ricardo.almeida@mercadopago.com.br</span></span></div>
-
-          <div class="field" id="f-pw">
+        <form id="login">
+          <div class="topic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" x2="3" y1="12" y2="12"/></svg></div>
+          <h1>Entrar</h1>
+          <p class="lead">Use seu e-mail e a senha que você acabou de criar.</p>
+          <div class="field">
+            <label class="field__label" for="email">E-mail</label>
+            <input id="email" class="input input--lg" type="email" value="ricardo.almeida@mercadopago.com.br" autocomplete="username">
+          </div>
+          <div class="field">
             <label class="field__label" for="pw">Senha</label>
             <div class="pw">
-              <input id="pw" class="input input--lg" type="password" placeholder="Digite uma senha forte" autocomplete="new-password" aria-describedby="reqs pwe">
-              <button type="button" class="pw__toggle" aria-label="Mostrar senha" aria-pressed="false" onclick="toggle('pw',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>
+              <input id="pw" class="input input--lg" type="password" placeholder="Digite sua senha" autocomplete="current-password">
+              <button type="button" class="pw__toggle" aria-label="Mostrar senha" aria-pressed="false" onclick="toggle(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>
             </div>
-            <ul class="reqs" id="reqs">
-              <li data-req="len"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/></svg>Pelo menos 8 caracteres</li>
-              <li data-req="letra"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/></svg>Pelo menos uma letra maiúscula</li>
-              <li data-req="num"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/></svg>Pelo menos um número</li>
-            </ul>
-            <span id="pwe" class="field__msg field__msg--error" role="alert"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>A senha ainda não atende a todos os requisitos.</span>
+            <div style="text-align:right;margin-top:8px"><a href="#" style="color:var(--color-primary);font-weight:600;font-size:var(--text-sm);text-decoration:none">Esqueci minha senha</a></div>
           </div>
-
-          <div class="field" id="f-conf">
-            <label class="field__label" for="pw2">Confirmar senha</label>
-            <div class="pw">
-              <input id="pw2" class="input input--lg" type="password" placeholder="Repita a senha" autocomplete="new-password" aria-describedby="pw2e">
-              <button type="button" class="pw__toggle" aria-label="Mostrar senha" aria-pressed="false" onclick="toggle('pw2',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>
-            </div>
-            <span id="pw2e" class="field__msg field__msg--error" role="alert"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>As senhas não coincidem. Digite a mesma senha nos dois campos.</span>
-          </div>
-
-          <div class="terms">
-            <label class="check"><input type="checkbox" id="terms" aria-describedby="termse" onchange="revalidate()"><span>Li e aceito os <a href="#">Termos de Uso</a> e a <a href="#">Política de Privacidade</a>.</span></label>
-            <span id="termse" class="field__msg field__msg--error" role="alert"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>Aceite os Termos de Uso e a Política de Privacidade para continuar.</span>
-          </div>
-
-          <button type="submit" id="submit" class="btn btn--primary btn--lg btn--block">Ativar acesso</button>
+          <button type="submit" class="btn btn--primary btn--lg btn--block" style="margin-top:4px">Entrar</button>
           <p class="secnote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Conexão segura. A DeRE nunca pede sua senha por telefone ou e-mail.</p>
         </form>
-
-        <div class="ok-panel hide" id="ok">
-          <div class="ok-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
-          <h1>Acesso ativado</h1>
-          <p class="lead">Sua senha foi criada. Agora entre com o seu e-mail e a nova senha.</p>
-          <a class="btn btn--primary btn--lg btn--block" href="login.html">Fazer login</a>
-        </div>
       </div>
     </div>
   </section>
 </div>
 <script>
-  var CHK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
-  var DOT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/></svg>';
-  var EYE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>';
-  var EYEOFF='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><line x1="2" x2="22" y1="2" y2="22"/></svg>';
-  function toggle(id,btn){var i=document.getElementById(id);var show=i.type==='password';i.type=show?'text':'password';btn.setAttribute('aria-pressed',show);btn.setAttribute('aria-label',show?'Ocultar senha':'Mostrar senha');btn.innerHTML=show?EYEOFF:EYE;}
-  function pick2fa(b){b.parentNode.querySelectorAll('.segmented__btn').forEach(function(x){x.classList.remove('is-active');x.setAttribute('aria-pressed','false');});b.classList.add('is-active');b.setAttribute('aria-pressed','true');}
-  function reqs(v){return {len:v.length>=8, letra:/[A-Z]/.test(v), num:/[0-9]/.test(v)};}
-  function clearPwError(){document.getElementById('f-pw').classList.remove('is-invalid');document.getElementById('pwe').classList.remove('show');document.getElementById('pw').removeAttribute('aria-invalid');}
-  function clearMismatch(){document.getElementById('f-conf').classList.remove('is-invalid');document.getElementById('pw2e').classList.remove('show');document.getElementById('pw2').removeAttribute('aria-invalid');}
-  function clearTerms(){document.getElementById('terms').removeAttribute('aria-invalid');document.getElementById('termse').classList.remove('show');}
-  // Botão sempre habilitado. Os requisitos respondem em tempo real; os erros aparecem ao clicar em "Ativar acesso" e somem conforme o usuário corrige.
-  function revalidate(){
-    var v=document.getElementById('pw').value, r=reqs(v);
-    document.querySelectorAll('#reqs li').forEach(function(li){
-      var ok=r[li.getAttribute('data-req')];
-      if(ok!==li.classList.contains('ok')){ li.classList.toggle('ok',ok); li.querySelector('svg').outerHTML=ok?CHK:DOT; } // troca o ícone só na virada de estado (evita repetir o pop a cada tecla)
-    });
-    clearPwError();clearMismatch();clearTerms();
-  }
-  document.getElementById('pw').addEventListener('input',revalidate);
-  document.getElementById('pw2').addEventListener('input',revalidate);
-  document.getElementById('form').addEventListener('submit',function(ev){
-    ev.preventDefault();
-    var pw=document.getElementById('pw'), pw2=document.getElementById('pw2'), terms=document.getElementById('terms');
-    var v=pw.value, v2=pw2.value, r=reqs(v);
-    var focusEl=null;
-    // 1) Senha atende a todos os requisitos
-    if(!(r.len&&r.letra&&r.num)){
-      document.getElementById('f-pw').classList.add('is-invalid');
-      document.getElementById('pwe').classList.add('show');
-      pw.setAttribute('aria-invalid','true');
-      focusEl=pw;
-    }
-    // 2) Confirmação coincide com a senha
-    if(v!==v2){
-      document.getElementById('f-conf').classList.add('is-invalid');
-      document.getElementById('pw2e').classList.add('show');
-      pw2.setAttribute('aria-invalid','true');
-      focusEl=focusEl||pw2;
-    }
-    // 3) Aceite dos Termos (obrigatório)
-    if(!terms.checked){
-      terms.setAttribute('aria-invalid','true');
-      document.getElementById('termse').classList.add('show');
-      var lbl=terms.closest('.check');
-      if(lbl){lbl.classList.remove('nudge');void lbl.offsetWidth;lbl.classList.add('nudge');}
-      focusEl=focusEl||terms;
-    }
-    // Foco no primeiro campo inválido (uso por teclado, sem mouse)
-    if(focusEl){focusEl.focus();return;}
-    var b=document.getElementById('submit');b.disabled=true;b.innerHTML='<span class="btn-spin"></span>Ativando…';
-    setTimeout(function(){document.getElementById('form').classList.add('hide');document.getElementById('ok').classList.remove('hide');},900);
-  });
+var EYE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>';
+var EYEOFF='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><line x1="2" x2="22" y1="2" y2="22"/></svg>';
+function toggle(btn){var i=document.getElementById("pw");var show=i.type==="password";i.type=show?"text":"password";btn.setAttribute("aria-pressed",show);btn.setAttribute("aria-label",show?"Ocultar senha":"Mostrar senha");btn.innerHTML=show?EYEOFF:EYE;}
+document.getElementById("login").addEventListener("submit",function(ev){ev.preventDefault();var b=this.querySelector("button[type=submit]");b.disabled=true;b.innerHTML='<span class="btn-spin"></span>Entrando…';});
 </script>
 </body></html>
