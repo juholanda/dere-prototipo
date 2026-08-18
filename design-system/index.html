@@ -817,10 +817,8 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
     .nav a{display:block;padding:.38rem .55rem;border-radius:var(--radius-base);font-size:13.5px;color:var(--color-text-onmuted)}
     .nav a:hover{background:var(--color-surface-2);color:var(--color-heading)}
     .nav a.is-active{background:var(--color-primary-subtle);color:var(--color-primary);font-weight:700;box-shadow:inset 3px 0 0 var(--color-primary)}
-    .card{position:relative}
-    .card>.code-toggle{position:absolute;top:12px;right:12px;margin:0;z-index:2}
+    .code-bar{display:flex;justify-content:flex-end;margin-top:var(--space-2)}
     .code-toggle.is-active{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
-    .card>.codeblock{margin:0;border-width:1px 0 0 0;border-radius:0 0 var(--radius-lg) var(--radius-lg)}
     .nav__foot{margin-top:auto;padding:12px 8px 0;border-top:1px solid var(--color-border)}
     .main{min-width:0}
     .main__head{position:sticky;top:0;z-index:10;background:color-mix(in srgb, var(--color-surface) 90%, transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--color-border);padding:12px 32px;display:flex;align-items:center;justify-content:space-between;gap:16px}
@@ -1931,7 +1929,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
     document.addEventListener('click',function(e){ if(!menu.contains(e.target)){ panel.hidden=true; btn.setAttribute('aria-expanded','false'); } });
   });
 
-  /* Ver código: um botão por card, com o código logo abaixo dele e feedback (estilo Storybook) */
+  /* Ver código: um botão por bloco de exemplo, logo abaixo dele, com feedback (estilo Storybook) */
   (function(){
     function clean(el){
       return el.outerHTML
@@ -1942,18 +1940,23 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
         .replace(/></g,'>\n<')
         .trim();
     }
-    document.querySelectorAll('section.sec[id] .card').forEach(function(card){
-      if(card.closest('.codeblock')) return;
-      var body=card.querySelector('.card__body')||card;
-      var pre=document.createElement('pre'); pre.className='codeblock'; pre.hidden=true;
-      var code=document.createElement('code'); code.textContent=clean(body); pre.appendChild(code);
-      var copy=document.createElement('button'); copy.type='button'; copy.className='code-copy'; copy.textContent='Copiar';
-      copy.addEventListener('click',function(){ try{ navigator.clipboard.writeText(code.textContent); }catch(e){} copy.textContent='Copiado!'; setTimeout(function(){copy.textContent='Copiar';},1400); });
-      pre.appendChild(copy);
-      var btn=document.createElement('button'); btn.type='button'; btn.className='code-toggle'; btn.setAttribute('aria-expanded','false'); btn.innerHTML='&lt;/&gt; Código';
-      btn.addEventListener('click',function(){ var open=pre.hidden; pre.hidden=!open; btn.setAttribute('aria-expanded',String(open)); btn.classList.toggle('is-active',open); btn.innerHTML=open?'&lt;/&gt; Ocultar':'&lt;/&gt; Código'; });
-      card.appendChild(btn);
-      card.appendChild(pre);
+    var SEL='.card, .stack, .overflow, .accordion, .tabs, .sidenav, .timeline, .stepper, .demo';
+    document.querySelectorAll('section.sec[id]').forEach(function(sec){
+      var all=Array.prototype.slice.call(sec.querySelectorAll(SEL));
+      var blocks=all.filter(function(b){ return !all.some(function(o){ return o!==b && o.contains(b); }); });
+      blocks.forEach(function(block){
+        var pre=document.createElement('pre'); pre.className='codeblock'; pre.hidden=true;
+        var code=document.createElement('code'); code.textContent=clean(block); pre.appendChild(code);
+        var copy=document.createElement('button'); copy.type='button'; copy.className='code-copy'; copy.textContent='Copiar';
+        copy.addEventListener('click',function(){ try{ navigator.clipboard.writeText(code.textContent); }catch(e){} copy.textContent='Copiado!'; setTimeout(function(){copy.textContent='Copiar';},1400); });
+        pre.appendChild(copy);
+        var bar=document.createElement('div'); bar.className='code-bar';
+        var btn=document.createElement('button'); btn.type='button'; btn.className='code-toggle'; btn.setAttribute('aria-expanded','false'); btn.innerHTML='&lt;/&gt; Código';
+        btn.addEventListener('click',function(){ var open=pre.hidden; pre.hidden=!open; btn.setAttribute('aria-expanded',String(open)); btn.classList.toggle('is-active',open); btn.innerHTML=open?'&lt;/&gt; Ocultar':'&lt;/&gt; Código'; });
+        bar.appendChild(btn);
+        block.parentNode.insertBefore(bar, block.nextSibling);
+        bar.parentNode.insertBefore(pre, bar.nextSibling);
+      });
     });
   })();
   /* Scrollspy: destaca na navegação a seção que está sendo vista */
