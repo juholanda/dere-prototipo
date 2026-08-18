@@ -807,6 +807,8 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   .hero{margin:20px 0 32px}
   .hero .k{font-size:var(--text-xs);font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--color-primary);margin:0 0 6px}
   .hero h1{font-size:var(--text-3xl);margin:0}
+  .hero__row{display:flex;align-items:center;gap:var(--space-6);flex-wrap:wrap}
+  .count{padding:3px 10px;border-radius:var(--radius-pill);background:var(--color-surface-2);color:var(--color-text-onmuted);font-size:var(--text-xs);font-weight:600}
   .hero .sub{color:var(--color-text-muted);font-size:var(--text-base);margin:8px 0 0;line-height:1.6;max-width:62ch}
   .flows{display:grid;grid-template-columns:1fr;gap:16px}
   .flow{display:flex;flex-direction:column;text-decoration:none;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-sm)}
@@ -852,15 +854,15 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 <div class="wrap">
   <div class="backrow"><a class="btn btn--ghost btn--sm" href="../"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>Voltar</a></div>
   <div class="hero">
-    <p class="k">DeRE</p>
-    <h1>Fluxos</h1>
-    <p class="sub">As jornadas do contribuinte na plataforma, do início ao fim. Comece pela ativação de conta; os demais fluxos entram conforme a gente monta.</p>
+    <p class="k">a-DeRE</p>
+    <div class="hero__row"><h1>Jornada do contribuinte</h1><span class="count">3 fluxos</span></div>
+    <p class="sub">Os fluxos que o contribuinte percorre na plataforma, do início ao fim. Comece pela ativação de conta; os demais entram conforme a gente monta.</p>
   </div>
   <div class="flows">
     <a class="flow" href="ativacao.html">
-      <div class="flow__top"><span class="flow__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="m16 11 2 2 4-4"/></svg></span><h2>Ativação de conta</h2></div>
+      <div class="flow__top"><span class="flow__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="m16 11 2 2 4-4"/></svg></span><h2>Ativação de conta</h2><span class="go">Abrir<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span></div>
       <p>Do e-mail que o contribuinte recebe até a conta configurada, pronta para preparar declarações.</p>
-      <div class="flow__foot"><span class="status status--success"><span class="status__dot"></span>Disponível</span><span class="go">Abrir<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span></div>
+      <div class="flow__foot"><span class="status status--success"><span class="status__dot"></span>Disponível</span></div>
     </a>
     <div class="flow is-soon">
       <div class="flow__top"><span class="flow__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg></span><h2>Cadastro do contribuinte</h2></div>
@@ -870,16 +872,6 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
     <div class="flow is-soon">
       <div class="flow__top"><span class="flow__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 2v4"/><path d="M16 2v4"/></svg></span><h2>Declaração mensal</h2></div>
       <p>Do rascunho ao fechamento do período, evento a evento (D-1101 a D-1199).</p>
-      <div class="flow__foot"><span class="status"><span class="status__dot"></span>Em breve</span></div>
-    </div>
-    <div class="flow is-soon">
-      <div class="flow__top"><span class="flow__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m17 8-5-5-5 5"/><path d="M12 3v12"/></svg></span><h2>Transmissão e assinatura</h2></div>
-      <p>Assinatura ICP-Brasil e envio ao SPED, com o retorno do processamento.</p>
-      <div class="flow__foot"><span class="status"><span class="status__dot"></span>Em breve</span></div>
-    </div>
-    <div class="flow is-soon">
-      <div class="flow__top"><span class="flow__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></span><h2>Retificação</h2></div>
-      <p>Corrigir uma declaração já transmitida e reenviar.</p>
       <div class="flow__foot"><span class="status"><span class="status__dot"></span>Em breve</span></div>
     </div>
   </div>

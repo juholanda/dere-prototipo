@@ -814,7 +814,11 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   .step .n{width:32px;height:32px;border-radius:50%;background:var(--color-surface-2);color:var(--color-text-muted);font-weight:700;display:grid;place-items:center;flex:0 0 auto}
   .step.is-done .n{background:var(--color-primary-subtle);color:var(--color-primary)}
   .step .b{flex:1;min-width:0}
-  .step .b h2{color:var(--color-heading);font-size:var(--text-sm);margin:0 0 3px}
+  .step .b h2{color:var(--color-heading);font-size:var(--text-sm);margin:0}
+  .step__hd{display:flex;align-items:center;gap:16px;margin-bottom:3px}
+  .step__hd .go{margin-left:auto}
+  .go{color:var(--color-primary);font-weight:700;font-size:var(--text-sm);display:inline-flex;align-items:center;gap:6px;flex:0 0 auto}
+  .go svg{width:15px;height:15px}
   .step .b p{color:var(--color-text-muted);font-size:var(--text-xs);margin:0;line-height:1.5}
   .step .st{flex:0 0 auto}
   /* status usa o componente .status do DS (com .status__dot) */
@@ -852,9 +856,9 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
     <p class="sub">Do e-mail de ativação até a conta configurada e pronta para uso.</p>
   </div>
   <div class="steps">
-    <a class="step is-done" href="email.html"><span class="n">1</span><span class="b"><h2>E-mail de ativação</h2><p>Chega na caixa do responsável (Administrador). Contexto e botão "Ativar meu acesso". Na moldura do Gmail, corpo no nosso design.</p></span><span class="st"><span class="status status--success"><span class="status__dot"></span>Pronto</span></span></a>
-    <a class="step is-done" href="senha.html"><span class="n">2</span><span class="b"><h2>Ativar conta</h2><p>Confirma o e-mail, cria a senha, ativa a verificação em 2 etapas e aceita os Termos e a Política de Privacidade.</p></span><span class="st"><span class="status status--success"><span class="status__dot"></span>Pronto</span></span></a>
-    <div class="step"><span class="n">3</span><span class="b"><h2>Configuração</h2><p>Dados do contribuinte, certificado digital ICP-Brasil (A1/A3) e procuração eletrônica. É a identidade que assina e transmite.</p></span><span class="st"><span class="status"><span class="status__dot"></span>Em breve</span></span></div>
+    <a class="step is-done" href="email.html"><span class="n">1</span><span class="b"><span class="step__hd"><h2>E-mail de ativação</h2><span class="status status--success"><span class="status__dot"></span>Pronto</span><span class="go">Iniciar<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span></span><p>Chega na caixa do responsável (Administrador). Contexto e botão "Ativar meu acesso". Na moldura do Gmail, corpo no nosso design.</p></span></a>
+    <a class="step is-done" href="senha.html"><span class="n">2</span><span class="b"><span class="step__hd"><h2>Ativar conta</h2><span class="status status--success"><span class="status__dot"></span>Pronto</span><span class="go">Iniciar<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span></span><p>Confirma o e-mail, cria a senha, ativa a verificação em 2 etapas e aceita os Termos e a Política de Privacidade.</p></span></a>
+    <div class="step"><span class="n">3</span><span class="b"><span class="step__hd"><h2>Configuração</h2><span class="status"><span class="status__dot"></span>Em breve</span></span><p>Dados do contribuinte, certificado digital ICP-Brasil (A1/A3) e procuração eletrônica. É a identidade que assina e transmite.</p></span></div>
   </div>
 </div>
 </body></html>
