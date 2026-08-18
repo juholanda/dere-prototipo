@@ -823,7 +823,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   .pane-form__logo .sym svg{width:19px;height:19px;color:#fff}
   .pane-form__logo .wm{font-weight:800;font-size:18px;color:var(--color-heading);letter-spacing:-.01em}
   .pane-form__center{flex:1;display:grid;place-items:center;padding:96px 40px 48px}
-  .box{width:100%;max-width:392px}
+  .box{width:100%;max-width:440px}
 
   .topic{width:52px;height:52px;border-radius:50%;background:var(--color-primary-subtle);color:var(--color-primary);display:grid;place-items:center;margin:0 auto 16px}
   .topic svg{width:26px;height:26px}
@@ -953,17 +953,26 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   function toggle(id,btn){var i=document.getElementById(id);var show=i.type==='password';i.type=show?'text':'password';btn.setAttribute('aria-pressed',show);btn.setAttribute('aria-label',show?'Ocultar senha':'Mostrar senha');btn.innerHTML=show?EYEOFF:EYE;}
   function pick2fa(b){b.parentNode.querySelectorAll('.segmented__btn').forEach(function(x){x.classList.remove('is-active');x.setAttribute('aria-pressed','false');});b.classList.add('is-active');b.setAttribute('aria-pressed','true');}
   function reqs(v){return {len:v.length>=8, letra:/[a-z]/.test(v)&&/[A-Z]/.test(v), num:/[0-9]/.test(v)};}
+  function clearMismatch(){var f=document.getElementById('f-conf'),e=document.getElementById('pw2e');f.classList.remove('is-invalid');e.classList.add('hide');document.getElementById('pw2').removeAttribute('aria-invalid');}
   function revalidate(){
-    var v=document.getElementById('pw').value, v2=document.getElementById('pw2').value, r=reqs(v);
+    var v=document.getElementById('pw').value, r=reqs(v);
     document.querySelectorAll('#reqs li').forEach(function(li){var ok=r[li.getAttribute('data-req')];li.classList.toggle('ok',ok);li.querySelector('svg').outerHTML=ok?CHK:DOT;});
-    var allReq=r.len&&r.letra&&r.num, match=v2.length>0&&v===v2;
-    var f=document.getElementById('f-conf'), e=document.getElementById('pw2e');
-    if(v2.length>0&&!match){f.classList.add('is-invalid');e.classList.remove('hide');document.getElementById('pw2').setAttribute('aria-invalid','true');}
-    else{f.classList.remove('is-invalid');e.classList.add('hide');document.getElementById('pw2').removeAttribute('aria-invalid');}
-    document.getElementById('submit').disabled=!(allReq&&match&&document.getElementById('terms').checked);
+    clearMismatch();
+    var allReq=r.len&&r.letra&&r.num;
+    document.getElementById('submit').disabled=!(allReq&&document.getElementById('terms').checked);
   }
   document.getElementById('pw').addEventListener('input',revalidate);
   document.getElementById('pw2').addEventListener('input',revalidate);
-  document.getElementById('form').addEventListener('submit',function(ev){ev.preventDefault();var b=document.getElementById('submit');b.disabled=true;b.textContent='Ativando…';setTimeout(function(){document.getElementById('form').classList.add('hide');document.getElementById('ok').classList.remove('hide');},900);});
+  document.getElementById('form').addEventListener('submit',function(ev){
+    ev.preventDefault();
+    var v=document.getElementById('pw').value, v2=document.getElementById('pw2').value;
+    if(v!==v2){
+      var f=document.getElementById('f-conf'),e=document.getElementById('pw2e'),p2=document.getElementById('pw2');
+      f.classList.add('is-invalid');e.classList.remove('hide');p2.setAttribute('aria-invalid','true');p2.focus();
+      return;
+    }
+    var b=document.getElementById('submit');b.disabled=true;b.textContent='Ativando…';
+    setTimeout(function(){document.getElementById('form').classList.add('hide');document.getElementById('ok').classList.remove('hide');},900);
+  });
 </script>
 </body></html>
