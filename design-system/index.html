@@ -94,7 +94,7 @@
   /* Foco: anel opaco na cor da marca, separado por um anel de superfície. Passa AA (≥3:1) e fica elegante. */
   --ring: 0 0 0 2px var(--color-surface), 0 0 0 4px var(--color-primary);
   --font-sans:"Source Sans 3","Source Sans Pro","Segoe UI",system-ui,-apple-system,Arial,sans-serif;
-  --control-h:40px; --control-h-sm:32px; --control-h-lg:48px;
+  --control-h:40px; --control-h-sm:32px; --control-h-lg:44px;
 }
 
 /* ---- Dark mode: só re-mapeia semânticos (as primitivas ficam) ----
@@ -225,6 +225,8 @@ a{color:var(--color-primary);text-decoration:none}
   border:1px solid var(--color-field-border);border-radius:var(--radius-base);
   font-family:var(--font-sans);font-size:var(--text-base);transition:border-color .12s,box-shadow .12s}
 textarea.input{height:auto;padding:var(--space-2) var(--space-3);min-height:84px}
+.input--lg,.select--lg{height:var(--control-h-lg)}
+.input--sm,.select--sm{height:var(--control-h-sm)}
 .input::placeholder{color:var(--color-text-muted)}
 .input:hover:not(:disabled):not(:focus),.select:hover:not(:disabled):not(:focus),textarea.input:hover:not(:disabled):not(:focus){border-color:var(--color-text-muted)}
 .input:focus,.select:focus{outline:none;border-color:var(--color-primary);box-shadow:0 0 0 3px color-mix(in srgb, var(--color-primary) 22%, transparent)}
@@ -1037,6 +1039,26 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
             <button class="btn btn--primary" style="background:var(--color-primary-active)">Ativo</button>
             <button class="btn btn--primary is-loading">Salvando</button>
             <button class="btn btn--primary" disabled>Desabilitado</button>
+          </div>
+        </div></div>
+
+        <h3 style="margin-top:var(--space-8)">Tamanhos de controle · input e botão com a mesma altura</h3>
+        <p class="sec__hint">Três alturas, por token: <code>--control-h-sm</code> 32 · <code>--control-h</code> 40 · <code>--control-h-lg</code> 44. Input e botão do mesmo tamanho compartilham a altura, então alinham perfeitamente lado a lado. Input: <code>.input--sm</code> / <code>.input</code> / <code>.input--lg</code>. Botão: <code>.btn--sm</code> / <code>.btn</code> / <code>.btn--lg</code>.</p>
+        <div class="card"><div class="card__body">
+          <p class="sec__hint">Pequeno (sm) · 32px</p>
+          <div class="demo" style="align-items:center">
+            <input class="input input--sm" style="max-width:220px" placeholder="Ex.: buscar">
+            <button class="btn btn--primary btn--sm">Botão</button>
+          </div>
+          <p class="sec__hint" style="margin-top:var(--space-6)">Médio (base) · 40px</p>
+          <div class="demo" style="align-items:center">
+            <input class="input" style="max-width:220px" placeholder="Ex.: nome do contribuinte">
+            <button class="btn btn--primary">Botão</button>
+          </div>
+          <p class="sec__hint" style="margin-top:var(--space-6)">Grande (lg) · 44px</p>
+          <div class="demo" style="align-items:center">
+            <input class="input input--lg" style="max-width:220px" placeholder="Ex.: senha">
+            <button class="btn btn--primary btn--lg">Botão</button>
           </div>
         </div></div>
 

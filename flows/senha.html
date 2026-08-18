@@ -88,7 +88,7 @@
   /* Foco: anel opaco na cor da marca, separado por um anel de superfície. Passa AA (≥3:1) e fica elegante. */
   --ring: 0 0 0 2px var(--color-surface), 0 0 0 4px var(--color-primary);
   --font-sans:"Source Sans 3","Source Sans Pro","Segoe UI",system-ui,-apple-system,Arial,sans-serif;
-  --control-h:40px; --control-h-sm:32px; --control-h-lg:48px;
+  --control-h:40px; --control-h-sm:32px; --control-h-lg:44px;
 }
 
 /* ---- Dark mode: só re-mapeia semânticos (as primitivas ficam) ----
@@ -219,6 +219,8 @@ a{color:var(--color-primary);text-decoration:none}
   border:1px solid var(--color-field-border);border-radius:var(--radius-base);
   font-family:var(--font-sans);font-size:var(--text-base);transition:border-color .12s,box-shadow .12s}
 textarea.input{height:auto;padding:var(--space-2) var(--space-3);min-height:84px}
+.input--lg,.select--lg{height:var(--control-h-lg)}
+.input--sm,.select--sm{height:var(--control-h-sm)}
 .input::placeholder{color:var(--color-text-muted)}
 .input:hover:not(:disabled):not(:focus),.select:hover:not(:disabled):not(:focus),textarea.input:hover:not(:disabled):not(:focus){border-color:var(--color-text-muted)}
 .input:focus,.select:focus{outline:none;border-color:var(--color-primary);box-shadow:0 0 0 3px color-mix(in srgb, var(--color-primary) 22%, transparent)}
@@ -907,7 +909,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
           <div class="field">
             <label class="field__label" for="pw">Nova senha</label>
             <div class="pw">
-              <input id="pw" class="input" type="password" placeholder="Digite uma senha forte" autocomplete="new-password" aria-describedby="reqs">
+              <input id="pw" class="input input--lg" type="password" placeholder="Digite uma senha forte" autocomplete="new-password" aria-describedby="reqs">
               <button type="button" class="pw__toggle" aria-label="Mostrar senha" aria-pressed="false" onclick="toggle('pw',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>
             </div>
             <ul class="reqs" id="reqs">
@@ -920,7 +922,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
           <div class="field" id="f-conf">
             <label class="field__label" for="pw2">Confirmar senha</label>
             <div class="pw">
-              <input id="pw2" class="input" type="password" placeholder="Repita a senha" autocomplete="new-password" aria-describedby="pw2e">
+              <input id="pw2" class="input input--lg" type="password" placeholder="Repita a senha" autocomplete="new-password" aria-describedby="pw2e">
               <button type="button" class="pw__toggle" aria-label="Mostrar senha" aria-pressed="false" onclick="toggle('pw2',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>
             </div>
             <span id="pw2e" class="field__msg field__msg--error hide" role="alert"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>As senhas não conferem.</span>
