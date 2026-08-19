@@ -912,6 +912,12 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   .ob__foot--far{margin-top:32px}
   .ob__foot .btn{min-width:116px;justify-content:center}
   @media(max-width:560px){.ob__bar,.ob__steps{padding-left:20px;padding-right:20px}.step__label{display:none}}
+  .drawer-backdrop{z-index:80}
+  .drawer{z-index:81}
+  .drawer__header h2{font-size:var(--text-lg);margin:0;color:var(--color-heading)}
+  .drawer__close{background:none;border:0;cursor:pointer;color:var(--color-text-muted);padding:6px;border-radius:var(--radius-base);display:grid;place-items:center}
+  .drawer__close:hover{color:var(--color-text);background:var(--color-surface-2)}
+  .drawer__close svg{width:20px;height:20px}
 </style>
 </head><body>
 <div id="dere-gate-app" style="position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;padding:24px;font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;background:radial-gradient(120% 120% at 20% 8%,#0c326f 0%,#071d41 55%,#05152e 100%)">
@@ -1022,21 +1028,6 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 
         <button type="button" class="btn btn--outline addbtn" id="addbtn" onclick="showAdd()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg>Adicionar membro da equipe</button>
 
-        <div class="addbox" id="addbox" hidden>
-          <div class="field"><label class="field__label" for="ap-nome">Nome completo</label><input id="ap-nome" class="input input--lg" type="text" placeholder="Ex.: Marina Souza" autocomplete="off"></div>
-          <div class="field"><label class="field__label" for="ap-mail">E-mail</label><input id="ap-mail" class="input input--lg" type="email" placeholder="Ex.: marina.souza@mercadopago.com.br" autocomplete="off"></div>
-          <div class="field">
-            <label class="field__label">Perfis de acesso</label>
-            <div class="pcards">
-              <button type="button" class="pcard" data-role="Preparador" onclick="togglePcard(this)"><span class="pcard__chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><p class="pcard__t">Preparador</p><p class="pcard__d">Preenche e atualiza as informações do contribuinte, o plano de contas e os dados das declarações.</p></button>
-              <button type="button" class="pcard" data-role="Revisor" onclick="togglePcard(this)"><span class="pcard__chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><p class="pcard__t">Revisor</p><p class="pcard__d">Revisa as informações preparadas e realiza a transmissão quando estiverem prontas.</p></button>
-              <button type="button" class="pcard" data-role="Administrador" onclick="togglePcard(this)"><span class="pcard__chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><p class="pcard__t">Administrador</p><p class="pcard__d">Gerencia usuários, perfis, permissões e configurações da conta.</p></button>
-            </div>
-            <p class="field__hint">Uma pessoa pode ter mais de um perfil. Selecione todos os que se aplicam.</p>
-          </div>
-          <div class="addbox__foot"><button type="button" class="btn btn--ghost btn--sm" onclick="cancelAdd()">Cancelar</button><button type="button" class="btn btn--primary btn--sm" onclick="addMember()">Adicionar membro</button></div>
-        </div>
-
         <p class="teammsg" id="teamMsg" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg><span></span></p>
 
         <div class="ob__foot ob__foot--far"><button type="button" class="btn btn--secondary" onclick="go(1)">Voltar</button><button type="button" class="btn btn--primary" onclick="finishTeam()">Concluir configuração</button></div>
@@ -1054,6 +1045,16 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   </main>
 </div>
 
+<div class="drawer-backdrop" id="addBackdrop" hidden onclick="cancelAdd()"></div>
+<aside class="drawer" id="addDrawer" hidden role="dialog" aria-modal="true" aria-labelledby="addDrawerTitle">
+  <div class="drawer__header"><h2 id="addDrawerTitle">Adicionar membro da equipe</h2><button type="button" class="drawer__close" aria-label="Fechar" onclick="cancelAdd()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div>
+  <div class="drawer__body">
+    <div class="field"><label class="field__label" for="ap-nome">Nome completo</label><input id="ap-nome" class="input input--lg" type="text" placeholder="Ex.: Marina Souza" autocomplete="off"></div>
+    <div class="field"><label class="field__label" for="ap-mail">E-mail</label><input id="ap-mail" class="input input--lg" type="email" placeholder="Ex.: marina.souza@mercadopago.com.br" autocomplete="off"></div>
+    <div class="field"><label class="field__label">Perfis de acesso</label><div class="pcards"><button type="button" class="pcard" data-role="Preparador" onclick="togglePcard(this)"><span class="pcard__chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><p class="pcard__t">Preparador</p><p class="pcard__d">Preenche e atualiza as informações do contribuinte, o plano de contas e os dados das declarações.</p></button><button type="button" class="pcard" data-role="Revisor" onclick="togglePcard(this)"><span class="pcard__chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><p class="pcard__t">Revisor</p><p class="pcard__d">Revisa as informações preparadas e realiza a transmissão quando estiverem prontas.</p></button><button type="button" class="pcard" data-role="Administrador" onclick="togglePcard(this)"><span class="pcard__chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><p class="pcard__t">Administrador</p><p class="pcard__d">Gerencia usuários, perfis, permissões e configurações da conta.</p></button></div><p class="field__hint">Uma pessoa pode ter mais de um perfil. Selecione todos os que se aplicam.</p></div>
+  </div>
+  <div class="drawer__footer"><button type="button" class="btn btn--ghost" onclick="cancelAdd()">Cancelar</button><button type="button" class="btn btn--primary" onclick="addMember()">Adicionar membro</button></div>
+</aside>
 <script>
   var CHK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
   var DOT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/></svg>';
@@ -1088,13 +1089,13 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   function togglePcard(b){ if(b.classList.contains('pcard--locked'))return; b.classList.toggle('is-on'); }
   function setChips(el,roles){ var order=['Administrador','Preparador','Revisor']; roles.sort(function(a,b){return order.indexOf(a)-order.indexOf(b);}); el.innerHTML=''; roles.forEach(function(r){var t=document.createElement('span');t.className='tagr';t.textContent=r;el.appendChild(t);}); }
   // adicionar membro
-  function showAdd(){document.getElementById('addbtn').hidden=true;document.getElementById('addbox').hidden=false;document.getElementById('ap-nome').focus();}
-  function resetAdd(){var b=document.getElementById('addbox');b.hidden=true;document.getElementById('addbtn').hidden=false;document.getElementById('ap-nome').value='';document.getElementById('ap-mail').value='';b.querySelectorAll('.pcard.is-on').forEach(function(c){c.classList.remove('is-on');});}
+  function showAdd(){document.getElementById('addBackdrop').hidden=false;document.getElementById('addDrawer').hidden=false;document.body.style.overflow='hidden';document.getElementById('ap-nome').focus();}
+  function resetAdd(){document.getElementById('addDrawer').hidden=true;document.getElementById('addBackdrop').hidden=true;document.body.style.overflow='';document.getElementById('ap-nome').value='';document.getElementById('ap-mail').value='';document.querySelectorAll('#addDrawer .pcard.is-on').forEach(function(c){c.classList.remove('is-on');});}
   function cancelAdd(){resetAdd();}
   function addMember(){
     var n=document.getElementById('ap-nome'), m=document.getElementById('ap-mail');
     var nome=n.value.trim(), mail=m.value.trim();
-    var roles=[].slice.call(document.querySelectorAll('#addbox .pcard.is-on')).map(function(c){return c.getAttribute('data-role');});
+    var roles=[].slice.call(document.querySelectorAll('#addDrawer .pcard.is-on')).map(function(c){return c.getAttribute('data-role');});
     if(!nome){n.focus();return;}
     if(!roles.length){return;}
     var ini=nome.split(/\s+/).map(function(w){return w[0]||'';}).slice(0,2).join('').toUpperCase();
@@ -1151,6 +1152,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
     window.scrollTo(0,0);
     if(history&&history.replaceState) history.replaceState(null,'', n>1?('#s'+n):location.pathname);
   }
+  document.addEventListener('keydown',function(ev){if(ev.key==='Escape'&&!document.getElementById('addDrawer').hidden)cancelAdd();});
   (function(){var m=(location.hash||'').match(/^#s([1-3])$/);if(m)go(+m[1]);})();
 </script>
 </body></html>
