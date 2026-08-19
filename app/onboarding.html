@@ -840,6 +840,10 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 
   .field{margin-bottom:18px}
   .field__hint{font-size:var(--text-xs);color:var(--color-text-muted);margin:6px 0 0}
+  /* campo somente-leitura (e-mail do convite): visual bloqueado, com cadeado */
+  .ro{display:flex;align-items:center;gap:10px;height:44px;padding:0 14px;border:1px solid var(--color-border);border-radius:var(--radius-base);background:var(--color-surface-2);color:var(--color-text-onmuted);font-size:var(--text-sm)}
+  .ro span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .ro svg{width:16px;height:16px;color:var(--color-text-muted);flex:0 0 auto;margin-left:auto}
   .pw{position:relative}
   .pw .input{padding-right:44px}
   .pw__toggle{position:absolute;top:0;right:0;height:100%;width:42px;display:grid;place-items:center;background:none;border:0;cursor:pointer;color:var(--color-text-muted)}
@@ -1010,8 +1014,8 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
           <input id="nome" class="input input--lg" type="text" value="Ricardo Almeida" autocomplete="name">
         </div>
         <div class="field">
-          <label class="field__label" for="email2">E-mail</label>
-          <input id="email2" class="input input--lg" type="email" value="ricardo.almeida@mercadopago.com.br" readonly aria-describedby="email2h">
+          <label class="field__label">E-mail</label>
+          <div class="ro" aria-describedby="email2h"><span>ricardo.almeida@mercadopago.com.br</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
           <p class="field__hint" id="email2h">É o e-mail do seu convite e não pode ser alterado aqui.</p>
         </div>
 
