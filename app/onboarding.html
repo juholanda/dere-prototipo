@@ -817,6 +817,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   .ob__body{flex:1;display:flex;justify-content:center;padding:48px 24px 72px}
   .ob__panel{width:100%;max-width:452px}
   .step-sec[hidden]{display:none}
+  [hidden]{display:none!important} /* garante que hidden esconda mesmo com classes que definem display (teamMsg, addbox, addbtn) */
   .topic{position:relative;width:84px;height:84px;border-radius:50%;display:grid;place-items:center;margin:0 auto 18px;background:linear-gradient(180deg, color-mix(in srgb,var(--color-primary) 11%, var(--color-surface)) 0%, color-mix(in srgb,var(--color-primary) 7%, var(--color-surface)) 26%, transparent 48%)}
   .topic__ic{width:54px;height:54px;border-radius:50%;background:var(--color-surface);display:grid;place-items:center;color:var(--color-primary);box-shadow:0 3px 8px color-mix(in srgb,var(--color-primary) 10%, transparent),0 1px 2px color-mix(in srgb,var(--color-primary) 8%, transparent)}
   .topic__ic svg{width:26px;height:26px}
