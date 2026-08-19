@@ -289,7 +289,7 @@ textarea.input{height:auto;padding:var(--space-2) var(--space-3);min-height:84px
 
 /* Status (cor + dot + rótulo) */
 .status{display:inline-flex;align-items:center;gap:var(--space-1-5);padding:var(--space-1) var(--space-2);border-radius:var(--radius-pill);
-  font-size:var(--text-xs);font-weight:600;background:var(--color-surface-2);color:var(--color-text-onmuted)}
+  font-size:var(--text-xs);font-weight:600;background:var(--color-surface-2);color:var(--color-text-onmuted);border:1px solid color-mix(in srgb, currentColor 25%, transparent)}
 .status__dot{width:7px;height:7px;border-radius:50%;background:currentColor}
 .status--success{background:var(--color-success-bg);color:var(--color-success-fg)}
 .status--warning{background:var(--color-warning-bg);color:var(--color-warning-fg)}
@@ -835,7 +835,8 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   .topbar{height:64px;flex:0 0 auto;background:var(--color-surface);border-bottom:1px solid var(--color-border);display:flex;align-items:center;gap:16px;padding:0 24px}
   .content{flex:1;overflow:auto;min-height:0}
   .wrap{padding:28px 32px 48px;max-width:1120px;width:100%;margin:0 auto;box-sizing:border-box}
-  .page-h{background:var(--color-surface-2);padding:var(--space-6) var(--space-8);margin:-28px -32px var(--space-8)}
+  .page-h{background:var(--slate-100)}
+  .page-h .wrap{padding-top:var(--space-6);padding-bottom:var(--space-6)}
   .page-h h1{margin:0;font-size:var(--text-2xl)}
   .page-h p{color:var(--color-text-muted);font-size:var(--text-base);margin:4px 0 0}
 
@@ -1001,13 +1002,13 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   .jrn__hd{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 6px}
   .jrn__thd{display:inline-flex;align-items:center;gap:6px;min-width:0}
   .jrn__t{font-size:var(--text-base)!important;font-weight:600;color:var(--color-heading);margin:0}
-  .jrn__desc{font-size:var(--text-sm);color:var(--color-text-muted);margin:0 0 14px;line-height:1.55;max-width:84ch}
+  .jrn__desc{font-size:var(--text-sm);color:var(--slate-600);margin:0 0 14px;line-height:1.55;max-width:84ch}
   .jrn__actions{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
   .jrn__note{display:inline-flex;align-items:center;gap:6px;font-size:var(--text-xs);color:var(--color-text-muted)}
   .jrn__note svg{width:13px;height:13px;flex:0 0 auto}
   /* estados: azul=ação atual, azul-claro=disponível, âmbar=em análise, verde=aprovado, cinza=travado */
   .jrn__step.is-active .jrn__node{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
-  .jrn__step.is-active .jrn__card{border-left:3px solid var(--color-primary);background:color-mix(in srgb, var(--color-primary) 4%, var(--color-surface))}
+  .jrn__step.is-active .jrn__card{border-left:3px solid var(--color-primary);background:color-mix(in srgb, var(--color-primary) 6%, var(--color-surface))}
   .jrn__step.is-available .jrn__node{background:var(--color-primary-subtle);color:var(--color-primary);border-color:transparent}
   .jrn__step.is-analysis .jrn__node{background:var(--color-warning-bg);color:var(--color-warning-fg);border-color:transparent}
   .jrn__step.is-done .jrn__node{background:var(--color-success-bg);color:var(--color-success-fg);border-color:transparent}
@@ -1098,8 +1099,8 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
     </header>
 
     <main id="conteudo" tabindex="-1" class="content">
+      <div class="page-h"><div class="wrap"><h1>Olá, Ricardo</h1><p>Acompanhe o que falta para a Mercado Pago começar a declarar na a-DeRE.</p></div></div>
       <div class="wrap">
-        <div class="page-h"><h1>Olá, Ricardo</h1><p>Acompanhe o que falta para a Mercado Pago começar a declarar na a-DeRE.</p></div>
         <section class="sec">
           <div class="sec__h"><h2>Prepare-se para declarar</h2></div>
           <p class="sec__sub">Conclua as etapas iniciais para habilitar as declarações mensais da empresa.</p>
