@@ -954,6 +954,11 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   .tl__step.is-locked .tl__card{opacity:.58}
   .tl__note{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:var(--text-xs);color:var(--color-text-muted)}
   .tl__note svg{width:13px;height:13px;flex:0 0 auto}
+
+  .sec__h + .checklist{margin-top:18px}
+  .ck--locked{opacity:.55}
+  .ck__note{display:inline-flex;align-items:center;gap:6px;margin:8px 0 0;font-size:var(--text-xs);color:var(--color-text-muted);line-height:1.4}
+  .ck__note svg{width:13px;height:13px;flex:0 0 auto}
 </style>
 </head><body>
 <div id="dere-gate-app" style="position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;padding:24px;font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;background:radial-gradient(120% 120% at 20% 8%,#0c326f 0%,#071d41 55%,#05152e 100%)">
@@ -1059,10 +1064,10 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
         <section class="sec">
           <div class="sec__h"><h2>Prepare-se para declarar</h2></div>
           <p class="sec__sub">Complete as próximas etapas para preparar a empresa para declarar na a-DeRE.</p>
-          <div class="tl">
-            <div class="tl__step is-next"><div class="tl__rail"><span class="tl__node"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg></span><span class="tl__conn"></span></div><div class="tl__card"><div class="tl__hd"><p class="t">Informações do contribuinte</p><span class="status"><span class="status__dot"></span>Não iniciado</span></div><p>Cadastre e envie as informações do contribuinte para a Receita Federal.</p><a class="btn btn--ghost btn--sm" href="#">Preencher informações</a></div></div>
-            <div class="tl__step is-available"><div class="tl__rail"><span class="tl__node"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12h-8"/><path d="M21 6H8"/><path d="M21 18h-8"/><path d="M3 6v4c0 1.1.9 2 2 2h3"/><path d="M3 10v6c0 1.1.9 2 2 2h3"/></svg></span><span class="tl__conn"></span></div><div class="tl__card"><div class="tl__hd"><p class="t">Plano de contas</p><span class="status status--info"><span class="status__dot"></span>Preenchimento disponível</span></div><p>Você já pode preencher enquanto prepara a conta. O envio libera após a aprovação das informações do contribuinte.</p><a class="btn btn--primary btn--sm" href="#">Preencher plano de contas</a><span class="tl__note"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Envio indisponível até a aprovação</span></div></div>
-            <div class="tl__step is-locked"><div class="tl__rail"><span class="tl__node"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 2v4"/><path d="M16 2v4"/></svg></span><span class="tl__conn"></span></div><div class="tl__card"><div class="tl__hd"><p class="t">Declaração mensal</p><span class="status"><span class="status__dot"></span>Indisponível</span></div><p>Disponível após a conclusão das etapas anteriores.</p></div></div>
+          <div class="checklist">
+            <div class="ck"><span class="ck__ic"></span><div class="ck__b"><p class="ck__t">Informações do contribuinte</p><p class="ck__m">Cadastre e envie as informações do contribuinte para a Receita Federal.</p></div><div class="ck__side"><span class="status"><span class="status__dot"></span>Não iniciado</span><a class="btn btn--ghost btn--sm" href="#">Preencher informações</a></div></div>
+            <div class="ck"><span class="ck__ic"></span><div class="ck__b"><p class="ck__t">Plano de contas</p><p class="ck__m">Você já pode preencher enquanto prepara a conta.</p><p class="ck__note"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Envio disponível após a aprovação das informações do contribuinte.</p></div><div class="ck__side"><span class="status status--info"><span class="status__dot"></span>Preenchimento disponível</span><a class="btn btn--primary btn--sm" href="#">Preencher plano de contas</a></div></div>
+            <div class="ck ck--locked"><span class="ck__ic"></span><div class="ck__b"><p class="ck__t">Declaração mensal</p><p class="ck__m">Disponível após a conclusão das etapas anteriores.</p></div><div class="ck__side"><span class="status"><span class="status__dot"></span>Indisponível</span></div></div>
           </div>
         </section>
       </div>
