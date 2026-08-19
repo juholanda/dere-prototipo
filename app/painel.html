@@ -990,6 +990,11 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   .jrn__step.is-analysis .jrn__node{background:var(--color-warning-bg);color:var(--color-warning-fg);border-color:transparent}
   .jrn__step.is-done .jrn__node{background:var(--color-success-bg);color:var(--color-success-fg);border-color:transparent}
   .jrn__step.is-locked{opacity:.55}
+
+  .jrn__eyebrow{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin:0 0 5px;color:var(--color-primary)}
+  .jrn__step.is-locked .jrn__eyebrow{color:var(--color-text-muted)}
+  .jrn__step.is-analysis .jrn__eyebrow{color:var(--color-warning-fg)}
+  .jrn__step.is-done .jrn__eyebrow{color:var(--color-success-fg)}
 </style>
 </head><body>
 <div id="dere-gate-app" style="position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;padding:24px;font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;background:radial-gradient(120% 120% at 20% 8%,#0c326f 0%,#071d41 55%,#05152e 100%)">
@@ -1079,6 +1084,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
             <div class="jrn__step is-active">
               <div class="jrn__rail"><span class="jrn__node"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg></span><span class="jrn__conn"></span></div>
               <div class="jrn__card">
+                <p class="jrn__eyebrow">Etapa 1</p>
                 <div class="jrn__hd"><p class="jrn__t">Informações do contribuinte</p><span class="status"><span class="status__dot"></span>Não iniciado</span></div>
                 <p class="jrn__desc">Complete as informações do contribuinte e envie para análise da Receita Federal.</p>
                 <div class="jrn__actions"><a class="btn btn--primary btn--sm" href="#">Preencher informações</a></div>
@@ -1087,6 +1093,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
             <div class="jrn__step is-available">
               <div class="jrn__rail"><span class="jrn__node"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12h-8"/><path d="M21 6H8"/><path d="M21 18h-8"/><path d="M3 6v4c0 1.1.9 2 2 2h3"/><path d="M3 10v6c0 1.1.9 2 2 2h3"/></svg></span><span class="jrn__conn"></span></div>
               <div class="jrn__card">
+                <p class="jrn__eyebrow">Etapa 2</p>
                 <div class="jrn__hd"><p class="jrn__t">Plano de contas</p><span class="status status--info"><span class="status__dot"></span>Preenchimento disponível</span></div>
                 <p class="jrn__desc">Você já pode preencher e revisar o plano de contas. O envio será liberado após a aprovação das informações do contribuinte.</p>
                 <div class="jrn__actions"><a class="btn btn--outline btn--sm" href="#">Preencher plano de contas</a><span class="jrn__note"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Envio disponível após aprovação</span></div>
@@ -1095,6 +1102,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
             <div class="jrn__step is-locked">
               <div class="jrn__rail"><span class="jrn__node"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 2v4"/><path d="M16 2v4"/></svg></span><span class="jrn__conn"></span></div>
               <div class="jrn__card">
+                <p class="jrn__eyebrow">Etapa 3</p>
                 <div class="jrn__hd"><p class="jrn__t">Declaração mensal</p><span class="status"><span class="status__dot"></span>Indisponível</span></div>
                 <p class="jrn__desc">Disponível após a conclusão das etapas necessárias.</p>
               </div>
