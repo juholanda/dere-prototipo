@@ -367,7 +367,7 @@ button.avatar:hover,button.avatar[aria-expanded="true"]{box-shadow:0 0 0 2px var
 button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 
 /* Navegação lateral (expansível / colapsável) */
-.sidenav{width:240px;flex:0 0 auto;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);
+.sidenav{width:250px;flex:0 0 auto;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);
   padding:var(--space-2);display:flex;flex-direction:column;gap:2px;transition:width .22s ease}
 /* Respeita quem pede menos movimento: sidenav (largura/drawer), knob do switch e slide do toast */
 @media (prefers-reduced-motion:reduce){.sidenav,.switch__track::after,.toast{transition:none}}
@@ -822,6 +822,8 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   .topic{position:relative;width:84px;height:84px;border-radius:50%;display:grid;place-items:center;margin:0 auto 18px;background:linear-gradient(180deg, color-mix(in srgb,var(--color-primary) 11%, var(--color-surface)) 0%, color-mix(in srgb,var(--color-primary) 7%, var(--color-surface)) 26%, transparent 48%)}
   .topic__ic{width:54px;height:54px;border-radius:50%;background:var(--color-surface);display:grid;place-items:center;color:var(--color-primary);box-shadow:0 3px 8px color-mix(in srgb,var(--color-primary) 10%, transparent),0 1px 2px color-mix(in srgb,var(--color-primary) 8%, transparent)}
   .topic__ic svg{width:26px;height:26px}
+  .topic--done{background:linear-gradient(180deg, color-mix(in srgb,var(--color-success) 15%, var(--color-surface)) 0%, color-mix(in srgb,var(--color-success) 9%, var(--color-surface)) 26%, transparent 48%)}
+  .topic--done .topic__ic{color:var(--color-success-fg);box-shadow:0 3px 8px color-mix(in srgb,var(--color-success) 14%, transparent),0 1px 2px color-mix(in srgb,var(--color-success) 11%, transparent)}
   .ob__h{font-size:var(--text-2xl);text-align:center;margin:0 0 8px;color:var(--color-heading)}
   .ob__h:focus{outline:none;box-shadow:none}
   .ob__lead{text-align:center;color:var(--color-text-muted);font-size:var(--text-base);line-height:1.5;margin:0 auto 24px;max-width:46ch}
@@ -900,7 +902,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   .btn[disabled]{opacity:.55;cursor:not-allowed}
   .secnote{display:flex;align-items:center;gap:7px;justify-content:center;margin-top:16px;font-size:var(--text-xs);color:var(--color-text-muted);line-height:1.4;text-align:center}
   .secnote svg{width:14px;height:14px;flex:0 0 auto}
-  .done{text-align:center}
+  .done{text-align:center;margin-top:56px}
   .done__ic{width:64px;height:64px;border-radius:50%;background:var(--color-success-bg);color:var(--color-success-fg);display:grid;place-items:center;margin:0 auto 20px}
   .done__ic svg{width:34px;height:34px}
 
@@ -1035,10 +1037,10 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 
       <!-- CONCLUSÃO -->
       <section class="step-sec done" data-step="3" hidden>
-        <div class="done__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></div>
+        <div class="topic topic--done"><span class="topic__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></div>
         <h2 class="ob__h" tabindex="-1">Seu acesso está pronto</h2>
         <p class="ob__lead">Já pode acessar e preparar as informações.</p>
-        <a class="btn btn--primary btn--lg btn--block" href="painel.html">Acessar a a-DeRE</a>
+        <a class="btn btn--primary btn--lg btn--block" href="login.html">Acessar a a-DeRE</a>
       </section>
 
     </div>

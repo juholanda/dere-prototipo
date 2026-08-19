@@ -1,4 +1,4 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Painel · a-DeRE</title>
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Entrar · a-DeRE</title>
 <style>/* =============================================================================
    Design System — DeRE (Plataforma de Gestão Tributária Especial)
    Tokens + componentes. CSS puro por variável: portável (funciona sem build) e
@@ -808,197 +808,98 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 .dropzone__hint{font-size:var(--text-xs)}
 </style>
 <style>
-  body{margin:0;background:var(--color-bg)}
-  .shell{display:flex;height:100vh;overflow:hidden}
-  /* sidenav ocupa altura cheia, cantos retos (igual ao _template) */
-  .shell > .sidenav{border:0;border-right:1px solid var(--color-border);border-radius:0;padding:0}
-  .brandrow{height:64px;flex:0 0 auto;display:flex;align-items:center;gap:12px;padding:0 16px 0 20px;border-bottom:1px solid var(--color-border)}
-  .brandrow .wm{font-weight:800;font-size:18px;letter-spacing:-.01em;color:var(--color-heading)}
-  .navlist{flex:1;overflow:auto;min-height:0;padding:12px 12px 0;display:flex;flex-direction:column;gap:2px}
-  .col{flex:1;display:flex;flex-direction:column;min-width:0;min-height:0}
-  .topbar{height:64px;flex:0 0 auto;background:var(--color-surface);border-bottom:1px solid var(--color-border);display:flex;align-items:center;gap:16px;padding:0 24px}
-  .content{flex:1;overflow:auto;min-height:0}
-  .wrap{padding:28px 32px 48px;max-width:1120px;width:100%;margin:0 auto;box-sizing:border-box}
-  .page-h h1{margin:0;font-size:var(--text-2xl)}
-  .page-h p{color:var(--color-text-muted);font-size:var(--text-sm);margin:4px 0 24px}
+  html,body{height:100%}
+  body{background:var(--color-surface)}
+  .split{display:flex;min-height:100vh}
 
-  /* banner de configuração em progresso */
-  .setup{display:flex;align-items:center;gap:20px;background:var(--color-surface);border:1px solid var(--color-border);border-left:3px solid var(--color-primary);border-radius:var(--radius-lg);padding:20px 22px;box-shadow:var(--shadow-sm);margin-bottom:24px}
-  .setup__ic{width:44px;height:44px;border-radius:var(--radius-base);background:var(--color-primary-subtle);color:var(--color-primary);display:grid;place-items:center;flex:0 0 auto}
-  .setup__ic svg{width:22px;height:22px}
-  .setup__b{flex:1;min-width:0}
-  .setup__b h2{font-size:var(--text-base)!important;margin:0 0 3px}
-  .setup__b p{font-size:var(--text-sm);color:var(--color-text-muted);margin:0 0 12px;line-height:1.5}
-  .bar{height:8px;border-radius:var(--radius-pill);background:var(--color-surface-2);overflow:hidden;max-width:340px}
-  .bar__fill{height:100%;width:33%;background:var(--color-primary)}
-  .setup__pct{font-size:var(--text-xs);font-weight:600;color:var(--color-text-muted);margin-top:6px}
+  /* ---- metade esquerda: imagem com filtro ---- */
+  .pane-img{position:relative;flex:1 1 40%;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-start;padding:48px;color:#fff;isolation:isolate}
+  .pane-img::before{content:"";position:absolute;inset:0;z-index:-2;background:linear-gradient(160deg,#1351b4 0%,#0c326f 55%,#071d41 100%)}
+  .pane-img::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background-image:radial-gradient(120% 80% at 80% 0%,rgba(255,255,255,.14),transparent 60%),radial-gradient(2px 2px at 14% 30%,rgba(255,255,255,.06),transparent),radial-gradient(2px 2px at 78% 18%,rgba(255,255,255,.05),transparent),radial-gradient(1.5px 1.5px at 62% 62%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 28% 78%,rgba(255,255,255,.045),transparent),radial-gradient(1.5px 1.5px at 88% 82%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 42% 40%,rgba(255,255,255,.04),transparent),radial-gradient(1.5px 1.5px at 10% 58%,rgba(255,255,255,.05),transparent)}
+  .pane-img__brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px;letter-spacing:-.01em}
+  .pane-img__brand .sym{width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.14);display:grid;place-items:center;backdrop-filter:blur(2px)}
+  .pane-img__brand .sym svg{width:19px;height:19px}
+  .pane-img__hl{max-width:440px}
+  .pane-img__lead{margin-top:20vh}
+  .pane-img__title{font-size:28px!important;line-height:1.3;font-weight:800;letter-spacing:-.015em;color:#fff;margin:0 0 16px}
+  .pane-img__desc{font-size:16px;line-height:1.6;color:rgba(255,255,255,.82);margin:0;max-width:38ch}
+  .pane-img__hl p{margin:14px 0 0;font-size:16px;line-height:1.6;color:rgba(255,255,255,.82)}
+  .pane-img__foot{position:absolute;left:48px;bottom:48px;font-size:14px;color:rgba(255,255,255,.72);letter-spacing:.01em}
 
-  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
-  .stat{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:18px 20px;box-shadow:var(--shadow-sm)}
-  .stat__lbl{display:flex;align-items:center;gap:8px;font-size:var(--text-xs);font-weight:600;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:10px}
-  .stat__lbl svg{width:15px;height:15px}
-  .stat__val{font-size:var(--text-2xl);font-weight:700;color:var(--color-heading);line-height:1.1}
-  .stat__meta{font-size:var(--text-xs);color:var(--color-text-muted);margin-top:4px}
+  /* ---- metade direita: formulario ---- */
+  .pane-form{flex:1 1 60%;position:relative;display:flex;flex-direction:column}
+  .pane-form__logo{position:absolute;top:32px;left:40px;display:flex;align-items:center;gap:9px;z-index:1}
+  .pane-form__logo .sym{width:34px;height:34px;border-radius:9px;background:linear-gradient(160deg,#2f7bf0,#0b3d91);display:grid;place-items:center;box-shadow:0 4px 12px rgba(3,17,42,.22)}
+  .pane-form__logo .sym svg{width:19px;height:19px;color:#fff}
+  .pane-form__logo .wm{font-weight:800;font-size:18px;color:var(--color-heading);letter-spacing:-.01em}
+  .pane-form__center{flex:1;display:grid;place-items:center;padding:96px 40px 48px}
+  .box{width:100%;max-width:440px}
 
-  .panel{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm)}
-  .panel__hd{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--color-border)}
-  .panel__hd h2{font-size:var(--text-base)!important;margin:0}
-  .panel__hd a{font-size:var(--text-sm);font-weight:600;color:var(--color-primary);text-decoration:none}
-  .row{display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid var(--color-border)}
-  .row:last-child{border-bottom:0}
-  .row__ic{width:38px;height:38px;border-radius:var(--radius-base);background:var(--color-primary-subtle);color:var(--color-primary);display:grid;place-items:center;flex:0 0 auto}
-  .row__ic svg{width:19px;height:19px}
-  .row__b{flex:1;min-width:0}
-  .row__b .t{font-size:var(--text-sm);font-weight:600;color:var(--color-heading);margin:0}
-  .row__b .m{font-size:var(--text-xs);color:var(--color-text-muted);margin:2px 0 0}
-  .row__due{font-size:var(--text-xs);font-weight:600;color:var(--color-text-muted);flex:0 0 auto}
-  @media(max-width:820px){.stats{grid-template-columns:1fr}}
+  .topic{width:52px;height:52px;border-radius:50%;background:var(--color-primary-subtle);color:var(--color-primary);display:grid;place-items:center;margin:0 auto 16px}
+  .topic svg{width:26px;height:26px}
+  .acct{display:flex;align-items:center;justify-content:flex-start;gap:10px;margin:24px 0 24px}
+  .acct__av{width:34px;height:34px;border-radius:50%;background:var(--slate-200);color:var(--color-text-onmuted);display:grid;place-items:center;flex:0 0 auto}
+  .acct__av svg{width:18px;height:18px}
+  .acct__col{display:flex;flex-direction:column;min-width:0}
+  .acct__label{font-size:var(--text-xs);color:var(--color-text-muted);font-weight:600}
+  .acct__mail{color:var(--color-heading);font-size:var(--text-sm)}
+  h1{font-size:var(--text-2xl);text-align:center;margin:0 0 6px;color:var(--color-heading)}
+  .lead{text-align:center;color:var(--color-text-muted);font-size:var(--text-base);line-height:1.5;margin:0 0 8px}
+  .field{margin-bottom:18px}
+  .pw{position:relative}
+  .pw .input{padding-right:44px}
+  .pw__toggle{position:absolute;top:0;right:0;height:100%;width:42px;display:grid;place-items:center;background:none;border:0;cursor:pointer;color:var(--color-text-muted)}
+  .pw__toggle:hover{color:var(--color-text)}
+  .pw__toggle svg{width:18px;height:18px}
+  .reqs{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:5px}
+  .reqs li{display:flex;align-items:center;gap:7px;font-size:var(--text-xs);color:var(--color-text-onmuted);transition:color .12s}
+  .reqs li svg{width:14px;height:14px;flex:0 0 auto}
+  .reqs li.ok{color:var(--color-success-fg);font-weight:600}
+  /* microinteração sutil de reforço no aceite (reforço visual, nunca substitui a mensagem); respeita prefers-reduced-motion */
+  @media (prefers-reduced-motion:no-preference){.terms .check.nudge{animation:dere-nudge .22s ease}}
+  @keyframes dere-nudge{0%,100%{transform:translateX(0)}45%{transform:translateX(4px)}}
+  /* ===== microinterações (sutis, 120–200ms; o decorativo só roda fora de prefers-reduced-motion) ===== */
+  /* mensagens de erro: presença animada — fade + leve deslize + colapso, sem "saltar" o form */
+  .field__msg--error{opacity:0;max-height:0;overflow:hidden;transform:translateY(-4px);margin-top:calc(-1 * var(--space-1-5))}
+  .field__msg--error.show{opacity:1;max-height:5em;transform:none;margin-top:0}
+  .terms .field__msg--error{margin-top:0}
+  .terms .field__msg--error.show{margin-top:8px}
+  .input{transition:border-color .15s ease,box-shadow .15s ease}
+  .check input{transition:transform .14s ease}
+  .btn--block{transition:transform .16s ease,background-color .16s ease,filter .16s ease}
+  .btn-spin{width:15px;height:15px;border:2px solid rgba(255,255,255,.45);border-top-color:#fff;border-radius:50%;display:inline-block;margin-right:8px;vertical-align:-2px}
+  @media (prefers-reduced-motion:no-preference){
+    .field__msg--error{transition:opacity .16s ease,transform .16s ease,max-height .18s ease,margin-top .18s ease}
+    .reqs li svg{transition:transform .18s ease}
+    .reqs li.ok svg{animation:req-pop .18s ease}
+    @keyframes req-pop{from{transform:scale(.9);opacity:.55}to{transform:scale(1);opacity:1}}
+    .check input:active{transform:scale(.9)}
+    .btn--block:active{transform:scale(.985)}
+    .btn-spin{animation:btn-spin .7s linear infinite}
+  }
+  @keyframes btn-spin{to{transform:rotate(360deg)}}
+  .twofa{border:1px solid var(--color-border);border-radius:var(--radius-base);padding:14px;margin-bottom:18px;background:var(--color-surface-2)}
+  .twofa__hd{display:flex;align-items:center;gap:8px;margin-bottom:4px;color:var(--color-heading);font-weight:600;font-size:var(--text-sm)}
+  .twofa__hd svg{width:16px;height:16px;color:var(--color-primary)}
+  .twofa__note{color:var(--color-text-muted);font-size:var(--text-xs);line-height:1.5;margin:0 0 12px}
+  .terms{margin-bottom:20px}
+  .terms .check{font-size:var(--text-sm)}
+  .terms a{color:var(--color-primary);font-weight:600;text-decoration:none}
+  .terms a:hover{text-decoration:underline}
+  .btn--block{width:100%;justify-content:center}
+  .btn[disabled]{opacity:.55;cursor:not-allowed}
+  .secnote{display:flex;align-items:center;gap:7px;justify-content:center;margin-top:16px;font-size:var(--text-xs);color:var(--color-text-muted);line-height:1.4;text-align:center}
+  .secnote svg{width:14px;height:14px;flex:0 0 auto}
+  .ok-panel{text-align:center}
+  .ok-panel .ok-ic{width:56px;height:56px;border-radius:50%;background:var(--color-success-bg);color:var(--color-success-fg);display:grid;place-items:center;margin:0 auto 16px}
+  .ok-panel .ok-ic svg{width:30px;height:30px}
+  .ok-panel .btn{margin-top:24px}
+  .hide{display:none!important}
 
-  /* ==== painel: blocos ==== */
-  .pblock{margin-bottom:32px}
-  .pblock__h{display:flex;align-items:flex-start;gap:14px;margin:0 0 18px}
-  .pblock__ic{width:42px;height:42px;border-radius:var(--radius-base);background:var(--color-primary-subtle);color:var(--color-primary);display:grid;place-items:center;flex:0 0 auto}
-  .pblock__titles{flex:1;min-width:0}
-  .pblock__titles h2{font-size:var(--text-lg)!important;margin:0 0 3px}
-  .pblock__prog{font-size:var(--text-xs);font-weight:700;color:var(--color-text-muted);white-space:nowrap;flex:0 0 auto;padding-top:8px}
-  .pblock__sub{color:var(--color-text-muted);font-size:var(--text-sm);margin:0;line-height:1.5;max-width:70ch}
-  .progbar{height:6px;border-radius:var(--radius-pill);background:var(--color-surface-2);overflow:hidden;margin:0 0 16px}
-  .progbar__fill{height:100%;background:var(--color-primary)}
-  /* tarefas de configuração */
-  .tasks{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);overflow:hidden}
-  .task{display:flex;align-items:center;gap:16px;padding:16px 20px;border-top:1px solid var(--color-border)}
-  .task:first-child{border-top:0}
-  .task__ic{width:40px;height:40px;border-radius:var(--radius-base);background:var(--color-primary-subtle);color:var(--color-primary);display:grid;place-items:center;flex:0 0 auto}
-  .task.is-done .task__ic{background:var(--color-success-bg);color:var(--color-success-fg)}
-  .task__b{flex:1;min-width:0}
-  .task__b .t{font-size:var(--text-sm);font-weight:600;color:var(--color-heading);margin:0}
-  .task__b .m{font-size:var(--text-xs);color:var(--color-text-muted);margin:2px 0 0;line-height:1.5}
-  .task__side{display:flex;align-items:center;gap:14px;flex:0 0 auto}
-  /* timeline dos próximos passos */
-  .tl__step{display:flex;gap:18px}
-  .tl__rail{display:flex;flex-direction:column;align-items:center;flex:0 0 auto}
-  .tl__node{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--color-surface-2);color:var(--color-text-muted);border:1px solid var(--color-border);flex:0 0 auto}
-  .tl__step.is-available .tl__node{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
-  .tl__step.is-analysis .tl__node{background:var(--color-warning);color:#fff;border-color:var(--color-warning)}
-  .tl__step.is-analysis .tl__card{border-left:3px solid var(--color-warning)}
-  .tl__note{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:var(--text-xs);color:var(--color-text-muted)}
-  .tl__note svg{width:13px;height:13px;flex:0 0 auto}
-  .tl__conn{width:2px;flex:1;background:var(--color-border);margin:4px 0;min-height:22px}
-  .tl__step:last-child .tl__conn{display:none}
-  .tl__card{flex:1;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:16px 20px;margin-bottom:12px;min-width:0}
-  .tl__step.is-available .tl__card{border-left:3px solid var(--color-primary)}
-  .tl__step.is-locked .tl__card{opacity:.72}
-  .tl__hd{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:3px}
-  .tl__hd .t{font-size:var(--text-sm);font-weight:700;color:var(--color-heading);margin:0}
-  .tl__card > p{font-size:var(--text-xs);color:var(--color-text-muted);margin:0;line-height:1.5}
-  .tl__card .btn{margin-top:12px}
-  .pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:3px 9px;border-radius:var(--radius-pill);white-space:nowrap;flex:0 0 auto}
-  .pill svg{width:12px;height:12px}
-  .pill--go{background:var(--color-primary-subtle);color:var(--color-primary)}
-  .pill--muted{background:var(--color-surface-2);color:var(--color-text-onmuted)}
-
-  .page-meta{display:inline-flex;align-items:center;gap:10px;font-size:var(--text-xs);font-weight:600;color:var(--color-text-muted);margin:12px 0 0}
-  .page-meta .mini{width:96px;height:5px;border-radius:var(--radius-pill);background:var(--color-surface-2);overflow:hidden}
-  .page-meta .mini span{display:block;height:100%;width:33%;background:var(--color-primary)}
-  .next{background:var(--color-primary-subtle);border:1px solid color-mix(in srgb,var(--color-primary) 20%,transparent);border-radius:var(--radius-lg);padding:22px 26px;margin:22px 0 36px}
-  .next__eyebrow{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--color-primary);margin:0 0 7px}
-  .next__title{font-size:var(--text-xl)!important;margin:0 0 4px;color:var(--color-heading)}
-  .next__desc{font-size:var(--text-sm);color:var(--color-text-onmuted);margin:0 0 16px;line-height:1.5}
-  .next__actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-  .sec{margin-bottom:34px}
-  .sec__h{display:flex;align-items:baseline;gap:12px;margin:0 0 4px}
-  .sec__h h2{font-size:var(--text-lg)!important;margin:0}
-  .sec__meta{font-size:var(--text-xs);font-weight:700;color:var(--color-text-muted)}
-  .sec__sub{font-size:var(--text-sm);color:var(--color-text-muted);margin:0 0 16px;line-height:1.5;max-width:72ch}
-  /* timeline: nós neutros; verde = concluído, azul = acionável; futuro apagado; cor só no status */
-  .tl__node{background:var(--color-surface-2);color:var(--color-text-muted);border:1px solid var(--color-border)}
-  .tl__step.is-done .tl__node{background:var(--color-success-bg);color:var(--color-success-fg);border-color:transparent}
-  .tl__step.is-available .tl__node{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
-  .tl__step.is-available .tl__card{border-left:3px solid var(--color-primary)}
-  .tl__step.is-locked .tl__card{opacity:.6}
-  .tl__note{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:var(--text-xs);color:var(--color-text-muted)}
-  .tl__note svg{width:13px;height:13px;flex:0 0 auto}
-  .tl__step.is-analysis .tl__node{background:var(--color-surface-2)!important;color:var(--color-text-muted)!important;border-color:var(--color-border)!important}
-  .tl__step.is-analysis .tl__card{border-left:0!important}
-  .next__prog{display:flex;align-items:center;gap:12px;margin:0 0 18px}
-  .next__bar{width:190px;height:6px;border-radius:var(--radius-pill);background:var(--color-surface);overflow:hidden;flex:0 0 auto}
-  .next__bar span{display:block;height:100%;width:33%;background:var(--color-primary)}
-  .next__ptxt{font-size:var(--text-xs);font-weight:700;color:var(--color-primary)}
-  .page-prog{display:flex;align-items:center;gap:12px;margin:14px 0 0}
-  .page-prog__bar{width:170px;height:6px;border-radius:var(--radius-pill);background:var(--color-surface-2);overflow:hidden;flex:0 0 auto}
-  .page-prog__bar span{display:block;height:100%;width:33%;background:var(--color-primary)}
-  .page-prog__txt{font-size:var(--text-sm);color:var(--color-text-muted)}
-  .page-prog__txt strong{color:var(--color-heading);font-weight:700}
-
-  /* hero: presença forte (ícone + borda esquerda + título grande + progresso dentro) */
-  .next{display:flex;gap:18px;align-items:flex-start;background:color-mix(in srgb,var(--color-primary) 9%,var(--color-surface));border:1px solid color-mix(in srgb,var(--color-primary) 26%,transparent);border-left:4px solid var(--color-primary);border-radius:var(--radius-lg);padding:24px 26px;margin:24px 0 40px;box-shadow:var(--shadow-sm)}
-  .next__ic{width:46px;height:46px;border-radius:var(--radius-base);background:var(--color-primary);color:#fff;display:grid;place-items:center;flex:0 0 auto}
-  .next__ic svg{width:23px;height:23px}
-  .next__b{flex:1;min-width:0}
-  .next__eyebrow{font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--color-primary);margin:0 0 8px;opacity:.9}
-  .next__title{font-size:var(--text-2xl)!important;margin:0 0 5px;color:var(--color-heading);letter-spacing:-.012em}
-  .next__desc{font-size:var(--text-sm);color:var(--color-text-onmuted);margin:0 0 16px;line-height:1.5}
-  .next__prog{display:flex;align-items:center;gap:12px;margin:0 0 18px}
-  .next__bar{width:210px;height:6px;border-radius:var(--radius-pill);background:var(--color-surface);overflow:hidden;flex:0 0 auto}
-  .next__bar span{display:block;height:100%;width:33%;background:var(--color-primary)}
-  .next__ptxt{font-size:var(--text-xs);font-weight:700;color:var(--color-primary)}
-  .next__actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-  /* checklist leve: 1 card, divisores, sem type-icons, CTA à direita */
-  .checklist{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);overflow:hidden}
-  .ck{display:flex;align-items:center;gap:14px;padding:14px 20px;border-top:1px solid var(--color-border)}
-  .ck:first-child{border-top:0}
-  .ck__ic{width:24px;height:24px;border-radius:50%;border:1.6px solid var(--color-border);display:grid;place-items:center;color:var(--color-text-muted);background:var(--color-surface);flex:0 0 auto}
-  .ck--done .ck__ic{background:var(--color-success-bg);border-color:transparent;color:var(--color-success-fg)}
-  .ck__ic svg{width:13px;height:13px}
-  .ck__b{flex:1;min-width:0}
-  .ck__t{font-size:var(--text-sm);font-weight:600;color:var(--color-heading);margin:0}
-  .ck__m{font-size:var(--text-xs);color:var(--color-text-muted);margin:1px 0 0;line-height:1.45}
-  .ck__side{display:flex;align-items:center;gap:16px;flex:0 0 auto}
-  /* timeline: item acionável com mais ênfase (fundo azul bem claro) */
-  .tl__node{background:var(--color-surface-2);color:var(--color-text-muted);border:1px solid var(--color-border)}
-  .tl__step.is-available .tl__node{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
-  .tl__step.is-available .tl__card{border-left:3px solid var(--color-primary);background:color-mix(in srgb,var(--color-primary) 6%,var(--color-surface))}
-  .tl__step.is-next .tl__node{background:var(--color-surface-2);color:var(--color-text);border-color:var(--color-border)}
-  .tl__step.is-locked .tl__card{opacity:.58}
-  .tl__note{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:var(--text-xs);color:var(--color-text-muted)}
-  .tl__note svg{width:13px;height:13px;flex:0 0 auto}
-
-  .sec__h + .checklist{margin-top:18px}
-  .ck--locked{opacity:.55}
-  .ck__note{display:inline-flex;align-items:center;gap:6px;margin:8px 0 0;font-size:var(--text-xs);color:var(--color-text-muted);line-height:1.4}
-  .ck__note svg{width:13px;height:13px;flex:0 0 auto}
-  .orgswitch__logo--brand{background:#00B1EA}
-  .orgswitch__logo--brand svg{width:22px;height:22px;fill:#fff}
-
-  .jrn{display:flex;flex-direction:column}
-  .jrn__step{display:flex;gap:18px}
-  .jrn__rail{display:flex;flex-direction:column;align-items:center;flex:0 0 auto}
-  .jrn__node{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;flex:0 0 auto;background:var(--color-surface-2);color:var(--color-text-muted);border:1px solid var(--color-border)}
-  .jrn__node svg{width:20px;height:20px}
-  .jrn__conn{width:2px;flex:1;background:var(--color-border);margin:6px 0;min-height:26px}
-  .jrn__step:last-child .jrn__conn{display:none}
-  .jrn__card{flex:1;min-width:0;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:18px 20px;margin-bottom:20px}
-  .jrn__step:last-child .jrn__card{margin-bottom:0}
-  .jrn__hd{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 6px}
-  .jrn__t{font-size:var(--text-base)!important;font-weight:600;color:var(--color-heading);margin:0}
-  .jrn__desc{font-size:var(--text-sm);color:var(--color-text-muted);margin:0 0 14px;line-height:1.55;max-width:66ch}
-  .jrn__actions{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-  .jrn__note{display:inline-flex;align-items:center;gap:6px;font-size:var(--text-xs);color:var(--color-text-muted)}
-  .jrn__note svg{width:13px;height:13px;flex:0 0 auto}
-  /* estados: azul=ação atual, azul-claro=disponível, âmbar=em análise, verde=aprovado, cinza=travado */
-  .jrn__step.is-active .jrn__node{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
-  .jrn__step.is-active .jrn__card{border-left:3px solid var(--color-primary)}
-  .jrn__step.is-available .jrn__node{background:var(--color-primary-subtle);color:var(--color-primary);border-color:transparent}
-  .jrn__step.is-analysis .jrn__node{background:var(--color-warning-bg);color:var(--color-warning-fg);border-color:transparent}
-  .jrn__step.is-done .jrn__node{background:var(--color-success-bg);color:var(--color-success-fg);border-color:transparent}
-  .jrn__step.is-locked .jrn__t{color:var(--color-text)}
-  .jrn__step.is-locked .jrn__desc{color:var(--color-text-onmuted)}
-  .jrn__step.is-locked .jrn__node{opacity:.85}
-
-  .jrn__eyebrow{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin:0 0 5px;color:var(--color-primary)}
-  .jrn__step.is-locked .jrn__eyebrow{color:var(--color-text-muted)}
-  .jrn__step.is-analysis .jrn__eyebrow{color:var(--color-warning-fg)}
-  .jrn__step.is-done .jrn__eyebrow{color:var(--color-success-fg)}
+  @media(max-width:880px){
+    .pane-img{display:none}
+    .pane-form__center{padding:96px 24px 40px}
+  }
 </style>
 </head><body>
 <div id="dere-gate-app" style="position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;padding:24px;font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;background:radial-gradient(120% 120% at 20% 8%,#0c326f 0%,#071d41 55%,#05152e 100%)">
@@ -1025,103 +926,41 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 <script>if(localStorage.getItem('dere_app_ok')==='1'){var _g=document.getElementById('dere-gate-app');if(_g)_g.remove();}function dereGate(f){var i=f.querySelector('input'),e=document.getElementById('dere-err');if(i.value==='AXIANS-APP'){localStorage.setItem('dere_app_ok','1');document.getElementById('dere-gate-app').remove();}else{e.innerHTML='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 auto"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>Senha incorreta. Tente novamente.';i.select();}return false;}</script>
 
 <div style="position:fixed;top:12px;right:12px;z-index:2147483000;background:#f59e0b;color:#fff;font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:5px 11px;border-radius:999px;box-shadow:0 4px 12px rgba(0,0,0,.18);font-family:system-ui,sans-serif">Em progresso</div>
-<div class="shell">
-  <nav class="sidenav sidenav--navy" data-sidenav aria-label="Navegação principal">
-    <div class="brandrow"><span class="wm sidenav__label">a-DeRE</span></div>
-    <div class="menu" data-menu style="padding:12px 12px 0;flex:0 0 auto">
-      <button class="orgswitch" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Contribuinte atual: Mercado Pago. Trocar contribuinte">
-        <span class="orgswitch__logo orgswitch__logo--brand"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11.115 16.479a.93.927 0 0 1-.939-.886c-.002-.042-.006-.155-.103-.155-.04 0-.074.023-.113.059-.112.103-.254.206-.46.206a.816.814 0 0 1-.305-.066c-.535-.214-.542-.578-.521-.725.006-.038.007-.08-.02-.11l-.032-.03h-.034c-.027 0-.055.012-.093.039a.788.786 0 0 1-.454.16.7.699 0 0 1-.253-.05c-.708-.27-.65-.928-.617-1.126.005-.041-.005-.072-.03-.092l-.05-.04-.047.043a.728.726 0 0 1-.505.203.73.728 0 0 1-.732-.725c0-.4.328-.722.732-.722.364 0 .675.27.721.63l.026.195.11-.165c.01-.018.307-.46.852-.46.102 0 .21.016.316.05.434.13.508.52.519.68.008.094.075.1.09.1.037 0 .064-.024.083-.045a.746.744 0 0 1 .54-.225c.128 0 .263.03.402.09.69.293.379 1.158.374 1.167-.058.144-.061.207-.005.244l.027.013h.02c.03 0 .07-.014.134-.035.093-.032.235-.08.367-.08a.944.942 0 0 1 .94.93.936.934 0 0 1-.94.928zm7.302-4.171c-1.138-.98-3.768-3.24-4.481-3.77-.406-.302-.685-.462-.928-.533a1.559 1.554 0 0 0-.456-.07c-.182 0-.376.032-.58.095-.46.145-.918.505-1.362.854l-.023.018c-.414.324-.84.66-1.164.73a1.986 1.98 0 0 1-.43.049c-.362 0-.687-.104-.81-.258-.02-.025-.007-.066.04-.125l.008-.008 1-1.067c.783-.774 1.525-1.506 3.23-1.545h.085c1.062 0 2.12.469 2.24.524a7.03 7.03 0 0 0 3.056.724c1.076 0 2.188-.263 3.354-.795a9.135 9.11 0 0 0-.405-.317c-1.025.44-2.003.66-2.946.66-.962 0-1.925-.229-2.858-.68-.05-.022-1.22-.567-2.44-.57-.032 0-.065 0-.096.002-1.434.033-2.24.536-2.782.976-.528.013-.982.138-1.388.25-.361.1-.673.186-.979.185-.125 0-.35-.01-.37-.012-.35-.01-2.115-.437-3.518-.962-.143.1-.28.203-.415.31 1.466.593 3.25 1.053 3.812 1.089.157.01.323.027.491.027.372 0 .744-.103 1.104-.203.213-.059.446-.123.692-.17l-.196.194-1.017 1.087c-.08.08-.254.294-.14.557a.705.703 0 0 0 .268.292c.243.162.677.27 1.08.271.152 0 .297-.015.43-.044.427-.095.874-.448 1.349-.82.377-.296.913-.672 1.323-.782a1.494 1.49 0 0 1 .37-.05.611.61 0 0 1 .095.005c.27.034.533.125 1.003.472.835.62 4.531 3.815 4.566 3.846.002.002.238.203.22.537-.007.186-.11.352-.294.466a.902.9 0 0 1-.484.15.804.802 0 0 1-.428-.124c-.014-.01-1.28-1.157-1.746-1.543-.074-.06-.146-.115-.22-.115a.122.122 0 0 0-.096.045c-.073.09.01.212.105.294l1.48 1.47c.002 0 .184.17.204.395.012.244-.106.447-.35.606a.957.955 0 0 1-.526.171.766.764 0 0 1-.42-.127l-.214-.206a21.035 20.978 0 0 0-1.08-1.009c-.072-.058-.148-.112-.221-.112a.127.127 0 0 0-.094.038c-.033.037-.056.103.028.212a.698.696 0 0 0 .075.083l1.078 1.198c.01.01.222.26.024.511l-.038.048a1.18 1.178 0 0 1-.1.096c-.184.15-.43.164-.527.164a.8.798 0 0 1-.147-.012c-.106-.018-.178-.048-.212-.089l-.013-.013c-.06-.06-.602-.609-1.054-.98-.059-.05-.133-.11-.21-.11a.128.128 0 0 0-.096.042c-.09.096.044.24.1.293l.92 1.003a.204.204 0 0 1-.033.062c-.033.044-.144.155-.479.196a.91.907 0 0 1-.122.007c-.345 0-.712-.164-.902-.264a1.343 1.34 0 0 0 .13-.576 1.368 1.365 0 0 0-1.42-1.357c.024-.342-.025-.99-.697-1.274a1.455 1.452 0 0 0-.575-.125c-.146 0-.287.025-.42.075a1.153 1.15 0 0 0-.671-.564 1.52 1.515 0 0 0-.494-.085c-.28 0-.537.08-.767.242a1.168 1.165 0 0 0-.903-.43 1.173 1.17 0 0 0-.82.335c-.287-.217-1.425-.93-4.467-1.613a17.39 17.344 0 0 1-.692-.189 4.822 4.82 0 0 0-.077.494l.67.157c3.108.682 4.136 1.391 4.309 1.525a1.145 1.142 0 0 0-.09.442 1.16 1.158 0 0 0 1.378 1.132c.096.467.406.821.879 1.003a1.165 1.162 0 0 0 .415.08c.09 0 .179-.012.266-.034.086.22.282.493.722.668a1.233 1.23 0 0 0 .457.094c.122 0 .241-.022.355-.063a1.373 1.37 0 0 0 1.269.841c.37.002.726-.147.985-.41.221.121.688.341 1.163.341.06 0 .118-.002.175-.01.47-.059.689-.24.789-.382a.571.57 0 0 0 .048-.078c.11.032.234.058.373.058.255 0 .501-.086.75-.265.244-.174.418-.424.444-.637v-.01c.083.017.167.026.251.026.265 0 .527-.082.773-.242.48-.31.562-.715.554-.98a1.28 1.279 0 0 0 .978-.194 1.04 1.04 0 0 0 .502-.808 1.088 1.085 0 0 0-.16-.653c.804-.342 2.636-1.003 4.795-1.483a4.734 4.721 0 0 0-.067-.492 27.742 27.667 0 0 0-5.049 1.62zm5.123-.763c0 4.027-5.166 7.293-11.537 7.293-6.372 0-11.538-3.266-11.538-7.293 0-4.028 5.165-7.293 11.539-7.293 6.371 0 11.537 3.265 11.537 7.293zm.46.004c0-4.272-5.374-7.755-12-7.755S.002 7.277.002 11.55L0 12.004c0 4.533 4.695 8.203 11.999 8.203 7.347 0 12-3.67 12-8.204z"/></svg></span>
-        <span class="orgswitch__info"><span class="orgswitch__name">Mercado Pago</span><span class="orgswitch__cnpj">10.573.521/0001-91</span></span>
-        <svg class="orgswitch__chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg>
-      </button>
-      <div class="menu__panel" hidden style="min-width:236px">
-        <button class="menu__item" aria-current="true">Mercado Pago · 0001-91</button>
-        <div class="menu__sep"></div>
-        <button class="menu__item">Novo contribuinte</button>
-      </div>
-    </div>
-    <div class="navlist">
-      <p class="sidenav__group">Principal</p>
-      <a class="sidenav__item is-active" href="#" aria-current="page"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg><span class="sidenav__label">Painel</span></a>
-      <p class="sidenav__group">Cadastro</p>
-      <a class="sidenav__item" href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4M10 10h4M10 14h4"/></svg><span class="sidenav__label">Informações do contribuinte</span></a>
-      <a class="sidenav__item" href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12h-8"/><path d="M21 6H8"/><path d="M21 18h-8"/><path d="M3 6v4c0 1.1.9 2 2 2h3"/><path d="M3 10v6c0 1.1.9 2 2 2h3"/></svg><span class="sidenav__label">Plano de contas</span></a>
-      <p class="sidenav__group">Declarações</p>
-      <a class="sidenav__item" href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 2v4"/><path d="M16 2v4"/></svg><span class="sidenav__label">Declaração mensal</span></a>
-      <a class="sidenav__item" href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 17.5v-11"/></svg><span class="sidenav__label">Recibos &amp; envios</span></a>
-      <p class="sidenav__group">Sistema</p>
-      <a class="sidenav__item" href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg><span class="sidenav__label">Configurações</span></a>
-    </div>
-    <div class="sidenav__foot">
-      <button class="sidenav__item sidenav__toggle" type="button" aria-label="Colapsar menu" aria-expanded="true" data-sidenav-toggle><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m11 17-5-5 5-5"/><path d="m18 17-5-5 5-5"/></svg><span class="sidenav__label">Colapsar</span></button>
-    </div>
-  </nav>
+<div class="split">
+  <aside class="pane-img"><div class="pane-img__lead"><h2 class="pane-img__title">Prepare sua DeRE de forma<br>simples e estruturada</h2><p class="pane-img__desc">Organize, valide e transmita as informações da Declaração de Regimes Específicos em um só ambiente.</p></div><div class="pane-img__foot">Desenvolvido por Axians</div></aside>
 
-  <div class="col">
-    <header class="topbar">
-      <button class="icon-btn hamburger" type="button" aria-label="Abrir menu" data-drawer-open><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" x2="21" y1="6" y2="6"/><line x1="3" x2="21" y1="12" y2="12"/><line x1="3" x2="21" y1="18" y2="18"/></svg></button>
-      <nav class="breadcrumb" aria-label="Trilha"><a href="#">Início</a><span class="breadcrumb__sep">/</span><span class="breadcrumb__current">Painel</span></nav>
-      <div style="margin-left:auto;display:flex;align-items:center;gap:4px">
-        <span class="tooltip"><button class="icon-btn" type="button" aria-label="Buscar"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></button><span class="tooltip__bubble" role="tooltip">Buscar</span></span>
-        <span class="tooltip"><button class="icon-btn" type="button" aria-label="Notificações, 3 não lidas" style="position:relative"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="badge badge--danger" style="position:absolute;top:3px;right:3px">3</span></button><span class="tooltip__bubble" role="tooltip">Notificações</span></span>
-      </div>
-      <span aria-hidden="true" style="width:1px;height:22px;background:var(--color-divider);flex:0 0 auto"></span>
-      <div class="menu" data-menu>
-        <span class="tooltip tooltip--end"><button class="avatar" aria-haspopup="true" aria-expanded="false" aria-label="Ricardo Almeida, abrir menu do usuário">RA</button><span class="tooltip__bubble tooltip__bubble--stack" role="tooltip"><strong>Ricardo Almeida</strong>ricardo.almeida@mercadopago.com.br</span></span>
-        <div class="menu__panel" hidden>
-          <div class="menu__head"><p class="menu__head-name">Ricardo Almeida</p><p class="menu__head-mail">ricardo.almeida@mercadopago.com.br</p></div>
-          <div class="menu__sep"></div>
-          <button class="menu__item">Meu perfil</button>
-          <button class="menu__item">Configurações</button>
-          <button class="menu__item menu__item--danger">Sair</button>
-        </div>
-      </div>
-    </header>
-
-    <main id="conteudo" tabindex="-1" class="content">
-      <div class="wrap">
-        <div class="page-h"><h1>Olá, Ricardo</h1><p>Acompanhe o que falta para a Mercado Pago começar a declarar na a-DeRE.</p></div>
-        <section class="sec">
-          <div class="sec__h"><h2>Prepare-se para declarar</h2></div>
-          <p class="sec__sub">Conclua as etapas para habilitar a declaração mensal.</p>
-          <div class="jrn">
-            <div class="jrn__step is-active">
-              <div class="jrn__rail"><span class="jrn__node"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg></span><span class="jrn__conn"></span></div>
-              <div class="jrn__card">
-                <p class="jrn__eyebrow">Etapa 1</p>
-                <div class="jrn__hd"><p class="jrn__t">Informações do contribuinte</p><span class="status"><span class="status__dot"></span>Não iniciado</span></div>
-                <p class="jrn__desc">Complete as informações do contribuinte e envie para análise da Receita Federal.</p>
-                <div class="jrn__actions"><a class="btn btn--primary btn--sm" href="#">Preencher informações</a></div>
-              </div>
-            </div>
-            <div class="jrn__step is-available">
-              <div class="jrn__rail"><span class="jrn__node"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12h-8"/><path d="M21 6H8"/><path d="M21 18h-8"/><path d="M3 6v4c0 1.1.9 2 2 2h3"/><path d="M3 10v6c0 1.1.9 2 2 2h3"/></svg></span><span class="jrn__conn"></span></div>
-              <div class="jrn__card">
-                <p class="jrn__eyebrow">Etapa 2</p>
-                <div class="jrn__hd"><p class="jrn__t">Plano de contas</p><span class="status"><span class="status__dot"></span>Não iniciado</span></div>
-                <p class="jrn__desc">Você já pode preencher e revisar o plano de contas. O envio será liberado após a aprovação das informações do contribuinte.</p>
-                <div class="jrn__actions"><a class="btn btn--outline btn--sm" href="#">Preencher plano de contas</a><span class="jrn__note"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Envio disponível após aprovação</span></div>
-              </div>
-            </div>
-            <div class="jrn__step is-locked">
-              <div class="jrn__rail"><span class="jrn__node"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 2v4"/><path d="M16 2v4"/></svg></span><span class="jrn__conn"></span></div>
-              <div class="jrn__card">
-                <p class="jrn__eyebrow">Etapa 3</p>
-                <div class="jrn__hd"><p class="jrn__t">Declaração mensal</p><span class="status"><span class="status__dot"></span>Aguardando etapas anteriores</span></div>
-                <p class="jrn__desc">Disponível após a conclusão das etapas necessárias.</p>
-              </div>
-            </div>
+  <section class="pane-form">
+    
+    
+    <div class="pane-form__center">
+      <div class="box">
+        <form id="login">
+          <div style="text-align:center;margin:0 0 24px;font-weight:800;font-size:26px;letter-spacing:-.01em;color:var(--color-heading)">a-DeRE</div>
+          <h1 style="margin-bottom:14px">Bem-vindo(a) de volta</h1>
+          <p class="lead" style="margin-bottom:32px">Use suas credenciais corporativas para acessar a plataforma.</p>
+          <div class="field">
+            <label class="field__label" for="email">E-mail</label>
+            <input id="email" class="input input--lg" type="email" placeholder="Ex.: nome@empresa.com.br" autocomplete="username">
           </div>
-        </section>
+          <div class="field">
+            <label class="field__label" for="pw">Senha</label>
+            <div class="pw">
+              <input id="pw" class="input input--lg" type="password" placeholder="Digite sua senha" autocomplete="current-password">
+              <button type="button" class="pw__toggle" aria-label="Mostrar senha" aria-pressed="false" onclick="toggle(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>
+            </div>
+            <div style="text-align:right;margin-top:8px"><a href="#" style="color:var(--color-primary);font-weight:600;font-size:var(--text-sm);text-decoration:none">Esqueci minha senha</a></div>
+          </div>
+          <button type="submit" class="btn btn--primary btn--lg btn--block" style="margin-top:4px">Entrar</button>
+          <p class="secnote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Conexão segura. A a-DeRE nunca pede sua senha por telefone ou e-mail.</p>
+        </form>
       </div>
-    </main>
-  </div>
+    </div>
+  </section>
 </div>
-<div class="sidenav-backdrop" data-drawer-backdrop></div>
 <script>
-  document.querySelectorAll('[data-sidenav-toggle]').forEach(function(btn){var nav=btn.closest('[data-sidenav]');btn.addEventListener('click',function(){var c=nav.classList.toggle('is-collapsed');btn.setAttribute('aria-expanded',String(!c));btn.setAttribute('aria-label',c?'Expandir menu':'Colapsar menu');});});
-  document.querySelectorAll('[data-menu]').forEach(function(menu){var b=menu.querySelector('button'),p=menu.querySelector('.menu__panel');b.addEventListener('click',function(){var o=p.hidden;p.hidden=!o;b.setAttribute('aria-expanded',String(o));});document.addEventListener('click',function(e){if(!menu.contains(e.target)){p.hidden=true;b.setAttribute('aria-expanded','false');}});});
-  document.querySelectorAll('.sidenav__item').forEach(function(it){var l=it.querySelector('.sidenav__label');if(l)it.setAttribute('title',l.textContent.trim());});
-  (function(){var nav=document.querySelector('[data-sidenav]'),opener=document.querySelector('[data-drawer-open]'),backdrop=document.querySelector('[data-drawer-backdrop]');function openD(){nav.classList.add('is-open');if(backdrop)backdrop.classList.add('is-open');}function closeD(){nav.classList.remove('is-open');if(backdrop)backdrop.classList.remove('is-open');}if(opener)opener.addEventListener('click',openD);if(backdrop)backdrop.addEventListener('click',closeD);document.addEventListener('keydown',function(e){if(e.key==='Escape'&&nav.classList.contains('is-open'))closeD();});var mq=window.matchMedia('(min-width:768px) and (max-width:1024px)');function tablet(e){if(e.matches)nav.classList.add('is-collapsed');}if(mq.addEventListener)mq.addEventListener('change',tablet);tablet(mq);})();
+var EYE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>';
+var EYEOFF='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><line x1="2" x2="22" y1="2" y2="22"/></svg>';
+function toggle(btn){var i=document.getElementById("pw");var show=i.type==="password";i.type=show?"text":"password";btn.setAttribute("aria-pressed",show);btn.setAttribute("aria-label",show?"Ocultar senha":"Mostrar senha");btn.innerHTML=show?EYEOFF:EYE;}
+document.getElementById("login").addEventListener("submit",function(ev){ev.preventDefault();var b=this.querySelector("button[type=submit]");b.disabled=true;b.innerHTML='<span class="btn-spin"></span>Entrando…';});
 </script>
 </body></html>
