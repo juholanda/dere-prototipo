@@ -813,14 +813,14 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   .ob__bar{height:64px;flex:0 0 auto;display:flex;align-items:center;gap:16px;padding:0 32px;background:var(--color-surface);border-bottom:1px solid var(--color-border)}
   .ob__logo{font-weight:800;font-size:18px;color:var(--color-heading);letter-spacing:-.01em}
   .ob__steps{flex:0 0 auto;background:var(--color-surface);border-bottom:1px solid var(--color-border);padding:18px 32px}
-  .ob__steps .stepper{max-width:560px;margin:0 auto}
+  .ob__steps .stepper{max-width:420px;margin:0 auto}
   .ob__body{flex:1;display:flex;justify-content:center;padding:48px 24px 72px}
   .ob__panel{width:100%;max-width:452px}
   .step-sec[hidden]{display:none}
   .topic{position:relative;width:84px;height:84px;border-radius:50%;display:grid;place-items:center;margin:0 auto 18px;background:linear-gradient(180deg, color-mix(in srgb,var(--color-primary) 11%, var(--color-surface)) 0%, color-mix(in srgb,var(--color-primary) 7%, var(--color-surface)) 26%, transparent 48%)}
   .topic__ic{width:54px;height:54px;border-radius:50%;background:var(--color-surface);display:grid;place-items:center;color:var(--color-primary);box-shadow:0 3px 8px color-mix(in srgb,var(--color-primary) 10%, transparent),0 1px 2px color-mix(in srgb,var(--color-primary) 8%, transparent)}
   .topic__ic svg{width:26px;height:26px}
-  .ob__h{font-size:var(--text-2xl);text-align:center;margin:0 0 6px;color:var(--color-heading)}
+  .ob__h{font-size:var(--text-2xl);text-align:center;margin:0 0 8px;color:var(--color-heading)}
   .ob__h:focus{outline:none;box-shadow:none}
   .ob__lead{text-align:center;color:var(--color-text-muted);font-size:var(--text-base);line-height:1.5;margin:0 auto 24px;max-width:46ch}
 
@@ -843,37 +843,34 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   .reqs li svg{width:14px;height:14px;flex:0 0 auto}
   .reqs li.ok{color:var(--color-success-fg);font-weight:600}
 
-  /* 2FA */
-  .twofa{border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:16px 18px;margin:0 0 18px;background:var(--color-surface)}
-  .twofa__hd{display:flex;align-items:center;gap:9px;margin-bottom:5px;color:var(--color-heading);font-weight:600;font-size:var(--text-sm)}
-  .twofa__hd svg{width:17px;height:17px;color:var(--color-primary)}
-  .twofa__note{color:var(--color-text-muted);font-size:var(--text-xs);line-height:1.55;margin:0 0 14px}
-  .twofa__skip{text-align:center;margin:14px 0 0}
-  .linkbtn{background:none;border:0;cursor:pointer;color:var(--color-primary);font-weight:600;font-size:var(--text-sm);padding:6px}
-  .linkbtn:hover{text-decoration:underline}
-
-  /* Equipe: regra + lista + form inline + cards de perfil */
-  .rule{display:flex;gap:9px;align-items:flex-start;font-size:var(--text-sm);line-height:1.5;color:var(--color-text-onmuted);background:var(--color-info-bg);border-radius:var(--radius-base);padding:12px 14px;margin:0 0 20px}
-  .rule svg{width:16px;height:16px;flex:0 0 auto;color:var(--color-info-fg);margin-top:1px}
-  .rule b{color:var(--color-heading);font-weight:600}
-  .people{display:flex;flex-direction:column;gap:10px}
+  /* ==== Equipe ==== */
+  .orient{display:flex;gap:8px;align-items:flex-start;font-size:var(--text-sm);line-height:1.5;color:var(--color-text-onmuted);margin:0 0 4px}
+  .orient svg{width:16px;height:16px;flex:0 0 auto;color:var(--color-text-muted);margin-top:2px}
+  .orient b{color:var(--color-heading);font-weight:600}
+  .orient-sub{font-size:var(--text-xs);color:var(--color-text-muted);margin:0 0 28px;padding-left:24px;line-height:1.5}
+  .people{display:flex;flex-direction:column;gap:12px;margin:8px 0 0}
   .person{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--color-border);border-radius:var(--radius-base);background:var(--color-surface)}
   .person__av{width:38px;height:38px;border-radius:50%;background:var(--color-primary-subtle);color:var(--color-primary);display:grid;place-items:center;font-size:var(--text-xs);font-weight:700;flex:0 0 auto}
   .person__b{flex:1;min-width:0}
   .person__name{font-weight:600;color:var(--color-heading);font-size:var(--text-sm);margin:0}
   .person__mail{font-size:var(--text-xs);color:var(--color-text-muted);margin:1px 0 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .person__roles{display:flex;flex-wrap:wrap;gap:5px;justify-content:flex-end;flex:0 0 auto}
+  .person__roles{display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:flex-end}
   .tagr{font-size:var(--text-xs);font-weight:600;color:var(--color-primary);background:var(--color-primary-subtle);border-radius:var(--radius-pill);padding:3px 9px;white-space:nowrap}
-  .person__note{font-size:var(--text-xs);color:var(--color-text-muted);margin:8px 2px 0;line-height:1.45}
-  .addbtn{width:100%;justify-content:center;margin-top:12px;gap:7px}
+  .person__edit{background:none;border:0;cursor:pointer;color:var(--color-primary);font-size:var(--text-xs);font-weight:600;padding:4px 2px;white-space:nowrap;flex:0 0 auto}
+  .person__edit:hover{text-decoration:underline}
+  .person__note{font-size:var(--text-xs);color:var(--color-text-muted);margin:10px 2px 0;line-height:1.5}
+  .addbtn{width:100%;justify-content:center;margin-top:24px;gap:7px}
   .addbtn svg{width:16px;height:16px}
-  .addbox{margin-top:14px;padding:16px;border:1px dashed var(--color-border-strong);border-radius:var(--radius-lg);background:var(--color-surface-2)}
+  .editbox,.addbox{margin-top:12px;padding:16px;border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-surface-2)}
   .addbox__foot{display:flex;justify-content:flex-end;gap:10px;margin-top:4px}
+  .teammsg{display:flex;gap:8px;align-items:flex-start;font-size:var(--text-sm);line-height:1.45;color:var(--color-heading);margin:24px 0 0}
+  .teammsg svg{width:16px;height:16px;flex:0 0 auto;color:var(--color-warning);margin-top:1px}
   .pcards{display:flex;flex-direction:column;gap:10px}
   .pcard{position:relative;display:block;width:100%;text-align:left;padding:13px 42px 13px 15px;border:1px solid var(--color-border);border-radius:var(--radius-base);background:var(--color-surface);cursor:pointer;font:inherit;transition:border-color .12s,background-color .12s}
   .pcard:hover{border-color:var(--color-border-strong)}
   .pcard.is-on{border-color:var(--color-primary);background:color-mix(in srgb,var(--color-primary) 5%,var(--color-surface))}
   .pcard:focus-visible{outline:none;box-shadow:var(--ring)}
+  .pcard--locked{cursor:default}
   .pcard__t{font-weight:600;color:var(--color-heading);font-size:var(--text-sm);margin:0}
   .pcard__d{font-size:var(--text-xs);color:var(--color-text-muted);margin:3px 0 0;line-height:1.45}
   .pcard__chk{position:absolute;top:12px;right:12px;width:20px;height:20px;border-radius:50%;border:1.6px solid var(--color-border);display:grid;place-items:center;color:transparent;background:var(--color-surface)}
@@ -911,6 +908,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   .terms a:hover{text-decoration:underline}
   .ob__foot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:24px}
   .ob__foot--end{justify-content:flex-end}
+  .ob__foot--far{margin-top:32px}
   .ob__foot .btn{min-width:116px;justify-content:center}
   @media(max-width:560px){.ob__bar,.ob__steps{padding-left:20px;padding-right:20px}.step__label{display:none}}
 </style>
@@ -946,9 +944,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
     <ol class="stepper" id="stepper">
       <li class="step is-active" data-s="1"><span class="step__dot">1</span><span class="step__label">Senha</span></li>
       <span class="step__bar"></span>
-      <li class="step" data-s="2"><span class="step__dot">2</span><span class="step__label">Segurança</span></li>
-      <span class="step__bar"></span>
-      <li class="step" data-s="3"><span class="step__dot">3</span><span class="step__label">Equipe</span></li>
+      <li class="step" data-s="2"><span class="step__dot">2</span><span class="step__label">Equipe</span></li>
     </ol>
   </div>
 
@@ -994,43 +990,36 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
         <p class="secnote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Conexão segura. A a-DeRE nunca pede sua senha por telefone ou e-mail.</p>
       </section>
 
-      <!-- ETAPA 2 — Proteja seu acesso -->
+      <!-- ETAPA 2 — Configure sua equipe -->
       <section class="step-sec" data-step="2" hidden>
-        <div class="topic"><span class="topic__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg></span></div>
-        <h2 class="ob__h" tabindex="-1">Proteja seu acesso</h2>
-        <p class="ob__lead">Proteja seus próximos acessos à a-DeRE.</p>
-
-        <div class="twofa">
-          <div class="twofa__hd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="20" x="5" y="2" rx="2"/><path d="M12 18h.01"/></svg>Verificação por SMS</div>
-          <p class="twofa__note">Enviamos um código por mensagem para o seu celular a cada novo acesso. Você também pode configurar depois, em Configurações.</p>
-          <div class="field" style="margin-bottom:0">
-            <label class="field__label" for="tel">Celular</label>
-            <input id="tel" class="input input--lg" type="tel" inputmode="tel" placeholder="Ex.: (11) 91234-5678" autocomplete="tel">
-          </div>
-        </div>
-
-        <div class="ob__foot"><button type="button" class="btn btn--ghost" onclick="go(1)">Voltar</button><button type="button" class="btn btn--primary" onclick="go(3)">Continuar</button></div>
-        <div class="twofa__skip"><button type="button" class="linkbtn" onclick="go(3)">Pular por enquanto</button></div>
-      </section>
-
-      <!-- ETAPA 3 — Configure sua equipe -->
-      <section class="step-sec" data-step="3" hidden>
         <div class="topic"><span class="topic__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 21a8 8 0 0 0-16 0"/><circle cx="10" cy="8" r="5"/><path d="M22 20c0-3.37-2-6.5-4-8a5 5 0 0 0-.45-8.3"/></svg></span></div>
         <h2 class="ob__h" tabindex="-1">Configure sua equipe</h2>
-        <p class="ob__lead">Adicione as pessoas que participarão das atividades da a-DeRE e defina os perfis de acesso de cada uma.</p>
+        <p class="ob__lead">Adicione as pessoas que participarão das atividades da a-DeRE e defina seus perfis de acesso.</p>
 
-        <div class="rule"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg><span>A conta precisa ter pelo menos um <b>Preparador</b> para continuar.</span></div>
+        <p class="orient"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg><span>Para concluir a configuração, a equipe precisa ter pelo menos um <b>Preparador</b> e um <b>Revisor</b>.</span></p>
+        <p class="orient-sub">Uma mesma pessoa pode acumular mais de um perfil.</p>
 
         <div class="people" id="people">
           <div class="person">
             <span class="person__av">RA</span>
             <div class="person__b"><p class="person__name">Ricardo Almeida</p><p class="person__mail">ricardo.almeida@mercadopago.com.br</p></div>
-            <span class="person__roles"><span class="tagr">Administrador</span></span>
+            <span class="person__roles" id="adminRoles"><span class="tagr">Administrador</span></span>
+            <button type="button" class="person__edit" onclick="toggleAdminEdit()">Adicionar perfil</button>
           </div>
         </div>
-        <p class="person__note">O perfil de Administrador foi definido no cadastro da conta e não pode ser removido neste momento.</p>
+        <p class="person__note">O perfil Administrador foi atribuído no cadastro da conta e não pode ser removido nesta etapa. Ricardo pode acumular outros perfis.</p>
 
-        <button type="button" class="btn btn--outline addbtn" id="addbtn" onclick="showAdd()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg>Adicionar pessoa</button>
+        <div class="editbox" id="adminEdit" hidden>
+          <div class="pcards">
+            <div class="pcard pcard--locked is-on"><span class="pcard__chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><p class="pcard__t">Administrador</p><p class="pcard__d">Gerencia usuários, perfis, permissões e configurações da conta.</p></div>
+            <button type="button" class="pcard" data-role="Preparador" onclick="togglePcard(this)"><span class="pcard__chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><p class="pcard__t">Preparador</p><p class="pcard__d">Preenche e atualiza as informações do contribuinte, o plano de contas e os dados das declarações.</p></button>
+            <button type="button" class="pcard" data-role="Revisor" onclick="togglePcard(this)"><span class="pcard__chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><p class="pcard__t">Revisor</p><p class="pcard__d">Revisa as informações preparadas e realiza a transmissão quando estiverem prontas.</p></button>
+          </div>
+          <p class="field__hint">Uma pessoa pode ter mais de um perfil. Selecione todos os que se aplicam.</p>
+          <div class="addbox__foot"><button type="button" class="btn btn--ghost btn--sm" onclick="cancelAdminEdit()">Cancelar</button><button type="button" class="btn btn--primary btn--sm" onclick="saveAdminRoles()">Salvar perfis</button></div>
+        </div>
+
+        <button type="button" class="btn btn--outline addbtn" id="addbtn" onclick="showAdd()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg>Adicionar membro da equipe</button>
 
         <div class="addbox" id="addbox" hidden>
           <div class="field"><label class="field__label" for="ap-nome">Nome completo</label><input id="ap-nome" class="input input--lg" type="text" placeholder="Ex.: Marina Souza" autocomplete="off"></div>
@@ -1039,19 +1028,21 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
             <label class="field__label">Perfis de acesso</label>
             <div class="pcards">
               <button type="button" class="pcard" data-role="Preparador" onclick="togglePcard(this)"><span class="pcard__chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><p class="pcard__t">Preparador</p><p class="pcard__d">Preenche e atualiza as informações do contribuinte, o plano de contas e os dados das declarações.</p></button>
-              <button type="button" class="pcard" data-role="Revisor" onclick="togglePcard(this)"><span class="pcard__chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><p class="pcard__t">Revisor</p><p class="pcard__d">Revisa as informações preparadas e realiza a transmissão quando estiver tudo correto.</p></button>
+              <button type="button" class="pcard" data-role="Revisor" onclick="togglePcard(this)"><span class="pcard__chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><p class="pcard__t">Revisor</p><p class="pcard__d">Revisa as informações preparadas e realiza a transmissão quando estiverem prontas.</p></button>
               <button type="button" class="pcard" data-role="Administrador" onclick="togglePcard(this)"><span class="pcard__chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><p class="pcard__t">Administrador</p><p class="pcard__d">Gerencia usuários, perfis, permissões e configurações da conta.</p></button>
             </div>
             <p class="field__hint">Uma pessoa pode ter mais de um perfil. Selecione todos os que se aplicam.</p>
           </div>
-          <div class="addbox__foot"><button type="button" class="btn btn--ghost btn--sm" onclick="cancelAdd()">Cancelar</button><button type="button" class="btn btn--primary btn--sm" onclick="addPerson()">Adicionar à equipe</button></div>
+          <div class="addbox__foot"><button type="button" class="btn btn--ghost btn--sm" onclick="cancelAdd()">Cancelar</button><button type="button" class="btn btn--primary btn--sm" onclick="addMember()">Adicionar membro</button></div>
         </div>
 
-        <div class="ob__foot"><button type="button" class="btn btn--ghost" onclick="go(2)">Voltar</button><button type="button" class="btn btn--primary" onclick="go(4)">Concluir configuração</button></div>
+        <p class="teammsg" id="teamMsg" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg><span></span></p>
+
+        <div class="ob__foot ob__foot--far"><button type="button" class="btn btn--secondary" onclick="go(1)">Voltar</button><button type="button" class="btn btn--primary" onclick="finishTeam()">Concluir configuração</button></div>
       </section>
 
       <!-- CONCLUSÃO -->
-      <section class="step-sec done" data-step="4" hidden>
+      <section class="step-sec done" data-step="3" hidden>
         <div class="done__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></div>
         <h2 class="ob__h" tabindex="-1">Seu acesso está pronto</h2>
         <p class="ob__lead">Já pode acessar e preparar as informações.</p>
@@ -1092,12 +1083,14 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
     go(2);
   }
 
-  /* Equipe */
+  /* ==== Equipe ==== */
+  function togglePcard(b){ if(b.classList.contains('pcard--locked'))return; b.classList.toggle('is-on'); }
+  function setChips(el,roles){ var order=['Administrador','Preparador','Revisor']; roles.sort(function(a,b){return order.indexOf(a)-order.indexOf(b);}); el.innerHTML=''; roles.forEach(function(r){var t=document.createElement('span');t.className='tagr';t.textContent=r;el.appendChild(t);}); }
+  // adicionar membro
   function showAdd(){document.getElementById('addbtn').hidden=true;document.getElementById('addbox').hidden=false;document.getElementById('ap-nome').focus();}
   function resetAdd(){var b=document.getElementById('addbox');b.hidden=true;document.getElementById('addbtn').hidden=false;document.getElementById('ap-nome').value='';document.getElementById('ap-mail').value='';b.querySelectorAll('.pcard.is-on').forEach(function(c){c.classList.remove('is-on');});}
   function cancelAdd(){resetAdd();}
-  function togglePcard(b){b.classList.toggle('is-on');}
-  function addPerson(){
+  function addMember(){
     var n=document.getElementById('ap-nome'), m=document.getElementById('ap-mail');
     var nome=n.value.trim(), mail=m.value.trim();
     var roles=[].slice.call(document.querySelectorAll('#addbox .pcard.is-on')).map(function(c){return c.getAttribute('data-role');});
@@ -1105,15 +1098,37 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
     if(!roles.length){return;}
     var ini=nome.split(/\s+/).map(function(w){return w[0]||'';}).slice(0,2).join('').toUpperCase();
     var row=document.createElement('div'); row.className='person';
-    row.innerHTML='<span class="person__av"></span><div class="person__b"><p class="person__name"></p><p class="person__mail"></p></div><span class="person__roles"></span>';
+    row.innerHTML='<span class="person__av"></span><div class="person__b"><p class="person__name"></p><p class="person__mail"></p></div><span class="person__roles"></span><button type="button" class="person__edit" onclick="rmPerson(this)">Remover</button>';
     row.querySelector('.person__av').textContent=ini;
     row.querySelector('.person__name').textContent=nome;
     row.querySelector('.person__mail').textContent=mail||'—';
-    var rr=row.querySelector('.person__roles');
-    roles.forEach(function(r){var t=document.createElement('span');t.className='tagr';t.textContent=r;rr.appendChild(t);});
+    setChips(row.querySelector('.person__roles'),roles);
     document.getElementById('people').appendChild(row);
-    resetAdd();
+    resetAdd(); refreshTeamMsg(false);
   }
+  function rmPerson(btn){ btn.closest('.person').remove(); refreshTeamMsg(false); }
+  // admin acumula perfis
+  function toggleAdminEdit(){
+    var e=document.getElementById('adminEdit');
+    if(e.hidden){ var have={}; document.querySelectorAll('#adminRoles .tagr').forEach(function(t){have[t.textContent.trim()]=true;});
+      document.querySelectorAll('#adminEdit .pcard[data-role]').forEach(function(c){c.classList.toggle('is-on',!!have[c.getAttribute('data-role')]);}); }
+    e.hidden=!e.hidden;
+  }
+  function cancelAdminEdit(){document.getElementById('adminEdit').hidden=true;}
+  function saveAdminRoles(){
+    var roles=[].slice.call(document.querySelectorAll('#adminEdit .pcard.is-on')).map(function(c){return c.getAttribute('data-role')||'Administrador';});
+    setChips(document.getElementById('adminRoles'),roles);
+    document.getElementById('adminEdit').hidden=true; refreshTeamMsg(false);
+  }
+  // validação da composição
+  function missingRoles(){ var have={}; document.querySelectorAll('#people .tagr').forEach(function(t){have[t.textContent.trim()]=true;}); var miss=[]; if(!have['Preparador'])miss.push('Preparador'); if(!have['Revisor'])miss.push('Revisor'); return miss; }
+  function refreshTeamMsg(force){
+    var el=document.getElementById('teamMsg'), miss=missingRoles();
+    if(!miss.length){ el.hidden=true; return true; }
+    if(force||!el.hidden){ el.querySelector('span').textContent = (miss.length===2 ? 'Faltam um Preparador e um Revisor para concluir a configuração.' : ('Falta adicionar um '+miss[0]+' para concluir a configuração.')); el.hidden=false; }
+    return false;
+  }
+  function finishTeam(){ if(refreshTeamMsg(true)) go(3); }
 
   var panel=document.getElementById('panel');
   var stepsRow=document.querySelector('.ob__steps');
@@ -1127,14 +1142,14 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   }
   function go(n){
     document.querySelectorAll('.step-sec').forEach(function(sec){ sec.hidden = (+sec.getAttribute('data-step')!==n); });
-    setStepper(n>3?4:n);
-    stepsRow.style.display = (n>3) ? 'none' : '';
+    setStepper(n>2?3:n);
+    stepsRow.style.display = (n>2) ? 'none' : '';
     panel.classList.remove('enter'); void panel.offsetWidth; panel.classList.add('enter');
     var sec=document.querySelector('.step-sec[data-step="'+n+'"]');
     var h=sec&&sec.querySelector('.ob__h'); if(h){try{h.focus();}catch(e){}}
     window.scrollTo(0,0);
     if(history&&history.replaceState) history.replaceState(null,'', n>1?('#s'+n):location.pathname);
   }
-  (function(){var m=(location.hash||'').match(/^#s([1-4])$/);if(m)go(+m[1]);})();
+  (function(){var m=(location.hash||'').match(/^#s([1-3])$/);if(m)go(+m[1]);})();
 </script>
 </body></html>
