@@ -438,7 +438,13 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
     radial-gradient(circle at 92% 88%, rgba(255,255,255,.04) 0 1px, transparent 2px),
     linear-gradient(160deg, #0c326f 0%, #071d41 58%, #05152e 100%);
 }
-.sidenav--navy .sidenav__item.is-active{background:rgba(255,255,255,.12)}
+/* navy: hover e ativo calibrados p/ o fundo escuro (branco translúcido; ativo bem > hover).
+   Sem isto o hover herda --color-primary-subtle (.10, colado no ativo) e, colapsado,
+   o color-mix com --color-surface (branco) vira um chip quase branco fora do tema. */
+.sidenav--navy .sidenav__item:hover{background:rgba(255,255,255,.08)}
+.sidenav--navy .sidenav__item.is-active{background:rgba(255,255,255,.15)}
+.sidenav--navy.is-collapsed .sidenav__item:hover{background:rgba(255,255,255,.13)}
+.sidenav--navy .orgswitch:hover,.sidenav--navy.is-collapsed .orgswitch:hover{background:rgba(255,255,255,.10)}
 .sidenav--navy .badge--muted{background:rgba(255,255,255,.16);color:#eaf1fb}
 
 /* Drawer (casca lateral) */

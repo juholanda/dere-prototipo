@@ -438,7 +438,13 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
     radial-gradient(circle at 92% 88%, rgba(255,255,255,.04) 0 1px, transparent 2px),
     linear-gradient(160deg, #0c326f 0%, #071d41 58%, #05152e 100%);
 }
-.sidenav--navy .sidenav__item.is-active{background:rgba(255,255,255,.12)}
+/* navy: hover e ativo calibrados p/ o fundo escuro (branco translúcido; ativo bem > hover).
+   Sem isto o hover herda --color-primary-subtle (.10, colado no ativo) e, colapsado,
+   o color-mix com --color-surface (branco) vira um chip quase branco fora do tema. */
+.sidenav--navy .sidenav__item:hover{background:rgba(255,255,255,.08)}
+.sidenav--navy .sidenav__item.is-active{background:rgba(255,255,255,.15)}
+.sidenav--navy.is-collapsed .sidenav__item:hover{background:rgba(255,255,255,.13)}
+.sidenav--navy .orgswitch:hover,.sidenav--navy.is-collapsed .orgswitch:hover{background:rgba(255,255,255,.10)}
 .sidenav--navy .badge--muted{background:rgba(255,255,255,.16);color:#eaf1fb}
 
 /* Drawer (casca lateral) */
@@ -959,6 +965,31 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   .ck--locked{opacity:.55}
   .ck__note{display:inline-flex;align-items:center;gap:6px;margin:8px 0 0;font-size:var(--text-xs);color:var(--color-text-muted);line-height:1.4}
   .ck__note svg{width:13px;height:13px;flex:0 0 auto}
+  .orgswitch__logo--brand{background:#00B1EA}
+  .orgswitch__logo--brand svg{width:22px;height:22px;fill:#fff}
+
+  .jrn{display:flex;flex-direction:column}
+  .jrn__step{display:flex;gap:18px}
+  .jrn__rail{display:flex;flex-direction:column;align-items:center;flex:0 0 auto}
+  .jrn__node{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;flex:0 0 auto;background:var(--color-surface-2);color:var(--color-text-muted);border:1px solid var(--color-border)}
+  .jrn__node svg{width:20px;height:20px}
+  .jrn__conn{width:2px;flex:1;background:var(--color-border);margin:6px 0;min-height:26px}
+  .jrn__step:last-child .jrn__conn{display:none}
+  .jrn__card{flex:1;min-width:0;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:18px 20px;margin-bottom:20px}
+  .jrn__step:last-child .jrn__card{margin-bottom:0}
+  .jrn__hd{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 6px}
+  .jrn__t{font-size:var(--text-base)!important;font-weight:600;color:var(--color-heading);margin:0}
+  .jrn__desc{font-size:var(--text-sm);color:var(--color-text-muted);margin:0 0 14px;line-height:1.55;max-width:66ch}
+  .jrn__actions{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .jrn__note{display:inline-flex;align-items:center;gap:6px;font-size:var(--text-xs);color:var(--color-text-muted)}
+  .jrn__note svg{width:13px;height:13px;flex:0 0 auto}
+  /* estados: azul=ação atual, azul-claro=disponível, âmbar=em análise, verde=aprovado, cinza=travado */
+  .jrn__step.is-active .jrn__node{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+  .jrn__step.is-active .jrn__card{border-left:3px solid var(--color-primary)}
+  .jrn__step.is-available .jrn__node{background:var(--color-primary-subtle);color:var(--color-primary);border-color:transparent}
+  .jrn__step.is-analysis .jrn__node{background:var(--color-warning-bg);color:var(--color-warning-fg);border-color:transparent}
+  .jrn__step.is-done .jrn__node{background:var(--color-success-bg);color:var(--color-success-fg);border-color:transparent}
+  .jrn__step.is-locked{opacity:.55}
 </style>
 </head><body>
 <div id="dere-gate-app" style="position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;padding:24px;font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;background:radial-gradient(120% 120% at 20% 8%,#0c326f 0%,#071d41 55%,#05152e 100%)">
@@ -990,7 +1021,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
     <div class="brandrow"><span class="wm sidenav__label">a-DeRE</span></div>
     <div class="menu" data-menu style="padding:12px 12px 0;flex:0 0 auto">
       <button class="orgswitch" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Contribuinte atual: Mercado Pago. Trocar contribuinte">
-        <span class="orgswitch__logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4M10 10h4M10 14h4M10 18h4"/></svg></span>
+        <span class="orgswitch__logo orgswitch__logo--brand"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11.115 16.479a.93.927 0 0 1-.939-.886c-.002-.042-.006-.155-.103-.155-.04 0-.074.023-.113.059-.112.103-.254.206-.46.206a.816.814 0 0 1-.305-.066c-.535-.214-.542-.578-.521-.725.006-.038.007-.08-.02-.11l-.032-.03h-.034c-.027 0-.055.012-.093.039a.788.786 0 0 1-.454.16.7.699 0 0 1-.253-.05c-.708-.27-.65-.928-.617-1.126.005-.041-.005-.072-.03-.092l-.05-.04-.047.043a.728.726 0 0 1-.505.203.73.728 0 0 1-.732-.725c0-.4.328-.722.732-.722.364 0 .675.27.721.63l.026.195.11-.165c.01-.018.307-.46.852-.46.102 0 .21.016.316.05.434.13.508.52.519.68.008.094.075.1.09.1.037 0 .064-.024.083-.045a.746.744 0 0 1 .54-.225c.128 0 .263.03.402.09.69.293.379 1.158.374 1.167-.058.144-.061.207-.005.244l.027.013h.02c.03 0 .07-.014.134-.035.093-.032.235-.08.367-.08a.944.942 0 0 1 .94.93.936.934 0 0 1-.94.928zm7.302-4.171c-1.138-.98-3.768-3.24-4.481-3.77-.406-.302-.685-.462-.928-.533a1.559 1.554 0 0 0-.456-.07c-.182 0-.376.032-.58.095-.46.145-.918.505-1.362.854l-.023.018c-.414.324-.84.66-1.164.73a1.986 1.98 0 0 1-.43.049c-.362 0-.687-.104-.81-.258-.02-.025-.007-.066.04-.125l.008-.008 1-1.067c.783-.774 1.525-1.506 3.23-1.545h.085c1.062 0 2.12.469 2.24.524a7.03 7.03 0 0 0 3.056.724c1.076 0 2.188-.263 3.354-.795a9.135 9.11 0 0 0-.405-.317c-1.025.44-2.003.66-2.946.66-.962 0-1.925-.229-2.858-.68-.05-.022-1.22-.567-2.44-.57-.032 0-.065 0-.096.002-1.434.033-2.24.536-2.782.976-.528.013-.982.138-1.388.25-.361.1-.673.186-.979.185-.125 0-.35-.01-.37-.012-.35-.01-2.115-.437-3.518-.962-.143.1-.28.203-.415.31 1.466.593 3.25 1.053 3.812 1.089.157.01.323.027.491.027.372 0 .744-.103 1.104-.203.213-.059.446-.123.692-.17l-.196.194-1.017 1.087c-.08.08-.254.294-.14.557a.705.703 0 0 0 .268.292c.243.162.677.27 1.08.271.152 0 .297-.015.43-.044.427-.095.874-.448 1.349-.82.377-.296.913-.672 1.323-.782a1.494 1.49 0 0 1 .37-.05.611.61 0 0 1 .095.005c.27.034.533.125 1.003.472.835.62 4.531 3.815 4.566 3.846.002.002.238.203.22.537-.007.186-.11.352-.294.466a.902.9 0 0 1-.484.15.804.802 0 0 1-.428-.124c-.014-.01-1.28-1.157-1.746-1.543-.074-.06-.146-.115-.22-.115a.122.122 0 0 0-.096.045c-.073.09.01.212.105.294l1.48 1.47c.002 0 .184.17.204.395.012.244-.106.447-.35.606a.957.955 0 0 1-.526.171.766.764 0 0 1-.42-.127l-.214-.206a21.035 20.978 0 0 0-1.08-1.009c-.072-.058-.148-.112-.221-.112a.127.127 0 0 0-.094.038c-.033.037-.056.103.028.212a.698.696 0 0 0 .075.083l1.078 1.198c.01.01.222.26.024.511l-.038.048a1.18 1.178 0 0 1-.1.096c-.184.15-.43.164-.527.164a.8.798 0 0 1-.147-.012c-.106-.018-.178-.048-.212-.089l-.013-.013c-.06-.06-.602-.609-1.054-.98-.059-.05-.133-.11-.21-.11a.128.128 0 0 0-.096.042c-.09.096.044.24.1.293l.92 1.003a.204.204 0 0 1-.033.062c-.033.044-.144.155-.479.196a.91.907 0 0 1-.122.007c-.345 0-.712-.164-.902-.264a1.343 1.34 0 0 0 .13-.576 1.368 1.365 0 0 0-1.42-1.357c.024-.342-.025-.99-.697-1.274a1.455 1.452 0 0 0-.575-.125c-.146 0-.287.025-.42.075a1.153 1.15 0 0 0-.671-.564 1.52 1.515 0 0 0-.494-.085c-.28 0-.537.08-.767.242a1.168 1.165 0 0 0-.903-.43 1.173 1.17 0 0 0-.82.335c-.287-.217-1.425-.93-4.467-1.613a17.39 17.344 0 0 1-.692-.189 4.822 4.82 0 0 0-.077.494l.67.157c3.108.682 4.136 1.391 4.309 1.525a1.145 1.142 0 0 0-.09.442 1.16 1.158 0 0 0 1.378 1.132c.096.467.406.821.879 1.003a1.165 1.162 0 0 0 .415.08c.09 0 .179-.012.266-.034.086.22.282.493.722.668a1.233 1.23 0 0 0 .457.094c.122 0 .241-.022.355-.063a1.373 1.37 0 0 0 1.269.841c.37.002.726-.147.985-.41.221.121.688.341 1.163.341.06 0 .118-.002.175-.01.47-.059.689-.24.789-.382a.571.57 0 0 0 .048-.078c.11.032.234.058.373.058.255 0 .501-.086.75-.265.244-.174.418-.424.444-.637v-.01c.083.017.167.026.251.026.265 0 .527-.082.773-.242.48-.31.562-.715.554-.98a1.28 1.279 0 0 0 .978-.194 1.04 1.04 0 0 0 .502-.808 1.088 1.085 0 0 0-.16-.653c.804-.342 2.636-1.003 4.795-1.483a4.734 4.721 0 0 0-.067-.492 27.742 27.667 0 0 0-5.049 1.62zm5.123-.763c0 4.027-5.166 7.293-11.537 7.293-6.372 0-11.538-3.266-11.538-7.293 0-4.028 5.165-7.293 11.539-7.293 6.371 0 11.537 3.265 11.537 7.293zm.46.004c0-4.272-5.374-7.755-12-7.755S.002 7.277.002 11.55L0 12.004c0 4.533 4.695 8.203 11.999 8.203 7.347 0 12-3.67 12-8.204z"/></svg></span>
         <span class="orgswitch__info"><span class="orgswitch__name">Mercado Pago</span><span class="orgswitch__cnpj">10.573.521/0001-91</span></span>
         <svg class="orgswitch__chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg>
       </button>
@@ -1040,34 +1071,34 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 
     <main id="conteudo" tabindex="-1" class="content">
       <div class="wrap">
-        <div class="page-h"><h1>Olá, Ricardo</h1><p>Veja o que falta para a Mercado Pago começar a declarar na a-DeRE.</p></div>
-        <div class="next">
-          <span class="next__ic"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg></span>
-          <div class="next__b">
-            <p class="next__eyebrow">Próxima ação · Configuração da conta</p>
-            <h2 class="next__title">Cadastre o certificado digital</h2>
-            <p class="next__desc">Última etapa para concluir a configuração da conta.</p>
-            <div class="next__prog"><span class="next__bar"><span></span></span><span class="next__ptxt">1 de 3 etapas concluídas</span></div>
-            <div class="next__actions"><a class="btn btn--primary" href="#">Cadastrar certificado</a><a class="btn btn--ghost" href="#">Ver configuração da conta</a></div>
-          </div>
-        </div>
-
-        <section class="sec">
-          <div class="sec__h"><h2>Configuração da conta</h2><span class="sec__meta">1 de 3 concluídas</span></div>
-          <div class="checklist">
-            <div class="ck ck--done"><span class="ck__ic"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><div class="ck__b"><p class="ck__t">Dados da conta</p><p class="ck__m">Revise as informações e preferências da conta.</p></div><div class="ck__side"><span class="status status--success"><span class="status__dot"></span>Concluído</span></div></div>
-            <div class="ck"><span class="ck__ic"></span><div class="ck__b"><p class="ck__t">Perfis e acessos</p><p class="ck__m">Adicione usuários e defina suas permissões.</p></div><div class="ck__side"><span class="status"><span class="status__dot"></span>Opcional</span><a class="btn btn--ghost btn--sm" href="#">Configurar</a></div></div>
-            <div class="ck"><span class="ck__ic"></span><div class="ck__b"><p class="ck__t">Certificado digital</p><p class="ck__m">Cadastre o certificado necessário para operar na plataforma.</p></div><div class="ck__side"><span class="status"><span class="status__dot"></span>Não iniciado</span><a class="btn btn--primary btn--sm" href="#">Cadastrar certificado</a></div></div>
-          </div>
-        </section>
-
+        <div class="page-h"><h1>Olá, Ricardo</h1><p>Acompanhe o que falta para a Mercado Pago começar a declarar na a-DeRE.</p></div>
         <section class="sec">
           <div class="sec__h"><h2>Prepare-se para declarar</h2></div>
-          <p class="sec__sub">Complete as próximas etapas para preparar a empresa para declarar na a-DeRE.</p>
-          <div class="checklist">
-            <div class="ck"><span class="ck__ic"></span><div class="ck__b"><p class="ck__t">Informações do contribuinte</p><p class="ck__m">Cadastre e envie as informações do contribuinte para a Receita Federal.</p></div><div class="ck__side"><span class="status"><span class="status__dot"></span>Não iniciado</span><a class="btn btn--ghost btn--sm" href="#">Preencher informações</a></div></div>
-            <div class="ck"><span class="ck__ic"></span><div class="ck__b"><p class="ck__t">Plano de contas</p><p class="ck__m">Você já pode preencher enquanto prepara a conta.</p><p class="ck__note"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Envio disponível após a aprovação das informações do contribuinte.</p></div><div class="ck__side"><span class="status status--info"><span class="status__dot"></span>Preenchimento disponível</span><a class="btn btn--primary btn--sm" href="#">Preencher plano de contas</a></div></div>
-            <div class="ck ck--locked"><span class="ck__ic"></span><div class="ck__b"><p class="ck__t">Declaração mensal</p><p class="ck__m">Disponível após a conclusão das etapas anteriores.</p></div><div class="ck__side"><span class="status"><span class="status__dot"></span>Indisponível</span></div></div>
+          <p class="sec__sub">Conclua as etapas para habilitar a declaração mensal. Você pode adiantar o que não depende da Receita Federal.</p>
+          <div class="jrn">
+            <div class="jrn__step is-active">
+              <div class="jrn__rail"><span class="jrn__node"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg></span><span class="jrn__conn"></span></div>
+              <div class="jrn__card">
+                <div class="jrn__hd"><p class="jrn__t">Informações do contribuinte</p><span class="status"><span class="status__dot"></span>Não iniciado</span></div>
+                <p class="jrn__desc">Complete as informações do contribuinte e envie para análise da Receita Federal.</p>
+                <div class="jrn__actions"><a class="btn btn--primary btn--sm" href="#">Preencher informações</a></div>
+              </div>
+            </div>
+            <div class="jrn__step is-available">
+              <div class="jrn__rail"><span class="jrn__node"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12h-8"/><path d="M21 6H8"/><path d="M21 18h-8"/><path d="M3 6v4c0 1.1.9 2 2 2h3"/><path d="M3 10v6c0 1.1.9 2 2 2h3"/></svg></span><span class="jrn__conn"></span></div>
+              <div class="jrn__card">
+                <div class="jrn__hd"><p class="jrn__t">Plano de contas</p><span class="status status--info"><span class="status__dot"></span>Preenchimento disponível</span></div>
+                <p class="jrn__desc">Você já pode preencher e revisar o plano de contas. O envio será liberado após a aprovação das informações do contribuinte.</p>
+                <div class="jrn__actions"><a class="btn btn--outline btn--sm" href="#">Preencher plano de contas</a><span class="jrn__note"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Envio disponível após aprovação</span></div>
+              </div>
+            </div>
+            <div class="jrn__step is-locked">
+              <div class="jrn__rail"><span class="jrn__node"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 2v4"/><path d="M16 2v4"/></svg></span><span class="jrn__conn"></span></div>
+              <div class="jrn__card">
+                <div class="jrn__hd"><p class="jrn__t">Declaração mensal</p><span class="status"><span class="status__dot"></span>Indisponível</span></div>
+                <p class="jrn__desc">Disponível após a conclusão das etapas necessárias.</p>
+              </div>
+            </div>
           </div>
         </section>
       </div>
