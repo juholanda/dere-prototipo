@@ -835,7 +835,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   .topbar{height:64px;flex:0 0 auto;background:var(--color-surface);border-bottom:1px solid var(--color-border);display:flex;align-items:center;gap:16px;padding:0 24px}
   .content{flex:1;overflow:auto;min-height:0}
   .wrap{padding:28px 32px 48px;max-width:1120px;width:100%;margin:0 auto;box-sizing:border-box}
-  .page-h{background:var(--color-surface-2);border-radius:var(--radius-lg);padding:var(--space-6) var(--space-8);margin-bottom:var(--space-8)}
+  .page-h{background:var(--color-surface-2);padding:var(--space-6) var(--space-8);margin:-28px -32px var(--space-8)}
   .page-h h1{margin:0;font-size:var(--text-2xl)}
   .page-h p{color:var(--color-text-muted);font-size:var(--text-base);margin:4px 0 0}
 
@@ -996,7 +996,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   .jrn__node svg{width:20px;height:20px}
   .jrn__conn{width:2px;flex:1;background:var(--color-border);margin:6px 0;min-height:26px}
   .jrn__step:last-child .jrn__conn{display:none}
-  .jrn__card{flex:1;min-width:0;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:18px 20px;margin-bottom:20px}
+  .jrn__card{flex:1;min-width:0;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:18px 20px;margin-bottom:24px}
   .jrn__step:last-child .jrn__card{margin-bottom:0}
   .jrn__hd{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 6px}
   .jrn__thd{display:inline-flex;align-items:center;gap:6px;min-width:0}
@@ -1007,7 +1007,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   .jrn__note svg{width:13px;height:13px;flex:0 0 auto}
   /* estados: azul=ação atual, azul-claro=disponível, âmbar=em análise, verde=aprovado, cinza=travado */
   .jrn__step.is-active .jrn__node{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
-  .jrn__step.is-active .jrn__card{border-left:3px solid var(--color-primary);background:color-mix(in srgb, var(--color-primary) 7%, var(--color-surface))}
+  .jrn__step.is-active .jrn__card{border-left:3px solid var(--color-primary);background:color-mix(in srgb, var(--color-primary) 4%, var(--color-surface))}
   .jrn__step.is-available .jrn__node{background:var(--color-primary-subtle);color:var(--color-primary);border-color:transparent}
   .jrn__step.is-analysis .jrn__node{background:var(--color-warning-bg);color:var(--color-warning-fg);border-color:transparent}
   .jrn__step.is-done .jrn__node{background:var(--color-success-bg);color:var(--color-success-fg);border-color:transparent}
@@ -1022,7 +1022,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   /* Resultado da jornada (NÃO é etapa): destino visualmente distinto — sem número, card levemente tingido, nó tracejado */
   .jrn__step.jrn__step--result .jrn__eyebrow{color:var(--color-primary)}
   .jrn__step--result .jrn__node{background:var(--color-primary-subtle);color:var(--color-primary);border-color:transparent;opacity:1}
-  .jrn__step.is-available .jrn__card,.jrn__step.jrn__step--result .jrn__card{border-left:3px solid var(--blue-300)}
+  .jrn__step.is-available .jrn__card,.jrn__step.jrn__step--result .jrn__card{border-left:3px solid var(--blue-200)}
   .jrn__hint{font-size:var(--text-xs);color:var(--color-text-muted);margin:6px 0 0;line-height:1.5;max-width:66ch}
 </style>
 </head><body>
