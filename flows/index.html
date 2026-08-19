@@ -393,7 +393,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 .sidenav.is-collapsed .sidenav__item{gap:0}
 .sidenav.is-collapsed .sidenav__toggle{gap:0}
 .sidenav.is-collapsed > div:first-child{padding-left:0 !important;padding-right:0 !important;justify-content:center;gap:0}
-.sidenav.is-collapsed > div:last-child{overflow:visible !important}
+.sidenav.is-collapsed > div{overflow:visible !important}
 .sidenav.is-collapsed .sidenav__item{overflow:visible}
 /* Colapsado: tooltip lateral (rótulo à direita) do DS em CADA item (e no toggle), no hover/foco.
    Ao colapsar, o container da lista vira overflow:visible, então o ::after não corta.
@@ -805,8 +805,9 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 .menu__item--danger{color:var(--color-danger)}
 .menu__sep{height:1px;background:var(--color-divider);margin:var(--space-1-5) var(--space-1)}
 .menu__head{padding:var(--space-2) var(--space-3)}
-.menu__head-name{margin:0;font-size:var(--text-sm);font-weight:600;color:var(--color-heading)}
+.menu__head-name{margin:0;font-size:var(--text-base);font-weight:600;color:var(--color-heading)}
 .menu__head-mail{margin:0;font-size:var(--text-xs);color:var(--color-text-muted)}
+.menu__head-roles{margin:3px 0 0;font-size:var(--text-xs);color:var(--color-text-muted);font-style:italic}
 
 /* Progress */
 .progress{height:8px;border-radius:var(--radius-pill);background:var(--color-border);overflow:hidden}
