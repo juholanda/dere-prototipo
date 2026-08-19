@@ -810,10 +810,10 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   html,body{height:100%}
   body{margin:0;background:var(--color-bg)}
   .ob{min-height:100vh;display:flex;flex-direction:column}
-  .ob__bar{height:64px;flex:0 0 auto;display:flex;align-items:center;gap:16px;padding:0 32px;background:var(--color-surface);border-bottom:1px solid var(--color-border);position:sticky;top:0;z-index:20}
-  .ob__logo{font-weight:800;font-size:18px;color:var(--color-heading);letter-spacing:-.01em}
-  .ob__steps{flex:0 0 auto;background:var(--color-surface);border-bottom:1px solid var(--color-border);padding:18px 32px;position:sticky;top:64px;z-index:19}
-  .ob__steps .stepper{max-width:420px;margin:0 auto}
+  .ob__bar{height:66px;flex:0 0 auto;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px;padding:0 32px;background:var(--color-surface);border-bottom:1px solid var(--color-border);position:sticky;top:0;z-index:20}
+  .ob__logo{justify-self:start;font-weight:800;font-size:18px;color:var(--color-heading);letter-spacing:-.01em}
+  .ob__steps{width:min(360px,100%)}
+  .ob__steps .stepper{max-width:100%;margin:0}
   .ob__body{flex:1;display:flex;justify-content:center;padding:48px 24px 72px}
   .ob__panel{width:100%;max-width:452px}
   .step-sec[hidden]{display:none}
@@ -949,15 +949,16 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 
 <div style="position:fixed;top:12px;right:12px;z-index:2147483000;background:#f59e0b;color:#fff;font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:5px 11px;border-radius:999px;box-shadow:0 4px 12px rgba(0,0,0,.18);font-family:system-ui,sans-serif">Em progresso</div>
 <div class="ob">
-  <header class="ob__bar"><span class="ob__logo">a-DeRE</span></header>
-
-  <div class="ob__steps">
-    <ol class="stepper" id="stepper">
-      <li class="step is-active" data-s="1"><span class="step__dot">1</span><span class="step__label">Senha</span></li>
-      <span class="step__bar"></span>
-      <li class="step" data-s="2"><span class="step__dot">2</span><span class="step__label">Equipe</span></li>
-    </ol>
-  </div>
+  <header class="ob__bar">
+    <span class="ob__logo">a-DeRE</span>
+    <div class="ob__steps">
+      <ol class="stepper" id="stepper">
+        <li class="step is-active" data-s="1"><span class="step__dot">1</span><span class="step__label">Senha</span></li>
+        <span class="step__bar"></span>
+        <li class="step" data-s="2"><span class="step__dot">2</span><span class="step__label">Equipe</span></li>
+      </ol>
+    </div>
+  </header>
 
   <main class="ob__body">
     <div class="ob__panel" id="panel">
