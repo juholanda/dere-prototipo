@@ -806,8 +806,9 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 .menu__sep{height:1px;background:var(--color-divider);margin:var(--space-1-5) var(--space-1)}
 .menu__head{padding:var(--space-2) var(--space-3)}
 .menu__head-name{margin:0;font-size:var(--text-base);font-weight:600;color:var(--color-heading)}
-.menu__head-mail{margin:0;font-size:var(--text-xs);color:var(--color-text-muted)}
-.menu__head-roles{margin:3px 0 0;font-size:var(--text-xs);color:var(--color-text-muted);font-style:italic}
+.menu__head-mail{margin:0;font-size:var(--text-xs);color:var(--color-text-muted);display:flex;align-items:center;gap:5px}
+.menu__head-roles{margin:3px 0 0;font-size:var(--text-xs);color:var(--color-text-muted);font-style:italic;display:flex;align-items:center;gap:5px}
+.menu__head-mail svg,.menu__head-roles svg{width:14px;height:14px;flex:0 0 auto;stroke-width:2}
 
 /* Progress */
 .progress{height:8px;border-radius:var(--radius-pill);background:var(--color-border);overflow:hidden}
