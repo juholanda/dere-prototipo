@@ -615,6 +615,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 .step{display:flex;align-items:center;gap:var(--space-2);flex:0 0 auto}
 .step__dot{flex:0 0 auto;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:var(--text-sm);font-weight:700;
   background:var(--color-surface-2);color:var(--color-text-muted);border:1px solid var(--color-border-strong)}
+.step__dot svg{width:15px;height:15px} /* etapa concluída mostra check no lugar do número; limita o tamanho do ícone dentro do dot */
 .step__label{font-size:var(--text-sm);color:var(--color-text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .step__bar{flex:1 1 auto;height:2px;background:var(--color-border);margin:0 var(--space-3);min-width:24px}
 .step.is-active .step__dot{background:var(--color-primary);color:var(--color-primary-contrast);border-color:var(--color-primary);box-shadow:0 0 0 4px var(--color-primary-subtle)}

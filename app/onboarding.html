@@ -615,6 +615,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 .step{display:flex;align-items:center;gap:var(--space-2);flex:0 0 auto}
 .step__dot{flex:0 0 auto;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:var(--text-sm);font-weight:700;
   background:var(--color-surface-2);color:var(--color-text-muted);border:1px solid var(--color-border-strong)}
+.step__dot svg{width:15px;height:15px} /* etapa concluída mostra check no lugar do número; limita o tamanho do ícone dentro do dot */
 .step__label{font-size:var(--text-sm);color:var(--color-text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .step__bar{flex:1 1 auto;height:2px;background:var(--color-border);margin:0 var(--space-3);min-width:24px}
 .step.is-active .step__dot{background:var(--color-primary);color:var(--color-primary-contrast);border-color:var(--color-primary);box-shadow:0 0 0 4px var(--color-primary-subtle)}
@@ -827,7 +828,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   .topic__ic svg{width:26px;height:26px}
   .ob__h{font-size:var(--text-2xl);text-align:center;margin:0 0 6px;color:var(--color-heading)}
   .ob__h:focus{outline:none;box-shadow:none} /* foco só programático (troca de etapa) p/ leitor de tela; sem caixa visível */
-  .ob__lead{text-align:center;color:var(--color-text-muted);font-size:var(--text-base);line-height:1.5;margin:0 auto 24px;max-width:40ch}
+  .ob__lead{text-align:center;color:var(--color-text-muted);font-size:var(--text-base);line-height:1.5;margin:0 auto 24px;max-width:none}
 
   /* e-mail do convite (somente leitura) */
   .acct{display:flex;align-items:center;gap:10px;margin:22px 0;padding:12px 14px;border:1px solid var(--color-border);border-radius:var(--radius-base);background:var(--color-surface-2)}
@@ -942,7 +943,6 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 <div class="ob">
   <header class="ob__bar">
     <span class="ob__logo">a-DeRE</span>
-    <a class="ob__exit" href="login.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>Sair</a>
   </header>
 
   <div class="ob__steps">
@@ -964,7 +964,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
       <section class="step-sec" data-step="1">
         <div class="topic"><span class="topic__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"/><circle cx="16.5" cy="7.5" r=".5" fill="currentColor"/></svg></span></div>
         <h2 class="ob__h" tabindex="-1">Crie sua senha</h2>
-        <p class="ob__lead">Crie uma senha para usar nos seus próximos acessos à plataforma.</p>
+        <p class="ob__lead">Crie a senha dos seus próximos acessos.</p>
         <div class="acct"><span class="acct__av"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><span class="acct__col"><span class="acct__label">E-mail cadastrado</span><span class="acct__mail">ricardo.almeida@mercadopago.com.br</span></span></div>
 
         <div class="field" id="f-pw">
@@ -1003,12 +1003,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
       <section class="step-sec" data-step="2" hidden>
         <div class="topic"><span class="topic__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 21a8 8 0 0 0-16 0"/><circle cx="10" cy="8" r="5"/><path d="M22 20c0-3.37-2-6.5-4-8a5 5 0 0 0-.45-8.3"/></svg></span></div>
         <h2 class="ob__h" tabindex="-1">Confirme seus dados</h2>
-        <p class="ob__lead">Confira os dados do seu acesso. Você pode ajustar o que for necessário.</p>
-
-        <div class="photo">
-          <span class="photo__av"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
-          <span class="photo__meta"><button type="button" class="btn btn--outline btn--sm">Adicionar foto</button><p class="photo__cap">Opcional. Ajuda seus colegas a reconhecerem você.</p></span>
-        </div>
+        <p class="ob__lead">Confira e ajuste os dados do seu acesso.</p>
 
         <div class="field">
           <label class="field__label" for="nome">Nome completo</label>
@@ -1027,7 +1022,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
       <section class="step-sec" data-step="3" hidden>
         <div class="topic"><span class="topic__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4M10 10h4M10 14h4M10 18h4"/></svg></span></div>
         <h2 class="ob__h" tabindex="-1">Confirme a conta</h2>
-        <p class="ob__lead">Esta é a conta à qual o seu acesso está sendo vinculado.</p>
+        <p class="ob__lead">A conta à qual seu acesso será vinculado.</p>
 
         <div class="ctx">
           <span class="ctx__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4M10 10h4M10 14h4M10 18h4"/></svg></span>
@@ -1042,7 +1037,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
       <section class="step-sec" data-step="4" hidden>
         <div class="topic"><span class="topic__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg></span></div>
         <h2 class="ob__h" tabindex="-1">Proteja seu acesso</h2>
-        <p class="ob__lead">Ative a verificação em duas etapas. Ela será pedida nos seus próximos acessos à a-DeRE.</p>
+        <p class="ob__lead">Proteja seus próximos acessos à a-DeRE.</p>
 
         <div class="twofa">
           <div class="twofa__hd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="20" x="5" y="2" rx="2"/><path d="M12 18h.01"/></svg>Verificação por SMS</div>
@@ -1061,7 +1056,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
       <section class="step-sec done" data-step="5" hidden>
         <div class="done__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></div>
         <h2 class="ob__h" tabindex="-1">Seu acesso está pronto</h2>
-        <p class="ob__lead">Agora você já pode acessar a a-DeRE e começar a preparar as informações da empresa.</p>
+        <p class="ob__lead">Já pode acessar e preparar as informações.</p>
         <a class="btn btn--primary btn--lg btn--block" href="painel.html">Acessar a a-DeRE</a>
       </section>
 
