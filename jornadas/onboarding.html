@@ -893,7 +893,8 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   .jalt__d{width:8px;height:8px;border-radius:50%;background:var(--color-danger);flex:0 0 auto;margin-top:7px}
   .jalt__b{flex:1;min-width:0}
   .jalt__b h4{margin:0 0 2px;font-size:var(--text-sm);color:var(--color-heading);font-weight:600}
-  .jalt__b p{margin:0 0 10px;font-size:var(--text-xs);color:var(--slate-600);line-height:1.5}
+  .jalt__b p{margin:0;font-size:var(--text-xs);color:var(--slate-600);line-height:1.5}
+  .jalt__go{flex:0 0 auto;align-self:center;white-space:nowrap}
 </style>
 </head><body>
 <div id="dere-gate" style="position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;padding:24px;font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;background:radial-gradient(120% 120% at 20% 8%,#0c326f 0%,#071d41 55%,#05152e 100%)">
@@ -969,8 +970,8 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
       <div class="jmeta"><div><p class="jmeta__k">Atores</p><p class="jmeta__v">Administrador da empresa</p></div><div><p class="jmeta__k">Ambiente</p><p class="jmeta__v">Front office</p></div></div>
       <div class="jstep__alt">
         <p class="jstep__alt-k"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>Caminhos alternativos</p>
-        <div class="jalt"><span class="jalt__d"></span><div class="jalt__b"><h4>Link expirado</h4><p>Se o link de ativação expira por segurança, o administrador solicita um novo link.</p><a class="btn btn--primary btn--sm" href="#">Iniciar fluxo<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a></div></div>
-        <div class="jalt"><span class="jalt__d"></span><div class="jalt__b"><h4>Convite inválido ou já utilizado</h4><p>Informa que o link não pode mais ser utilizado e orienta o administrador sobre como prosseguir.</p><a class="btn btn--primary btn--sm" href="#">Iniciar fluxo<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a></div></div>
+        <div class="jalt"><span class="jalt__d"></span><div class="jalt__b"><h4>Link expirado</h4><p>Se o link de ativação expira por segurança, o administrador solicita um novo link.</p></div><a class="btn btn--primary btn--sm jalt__go" href="../flows/link-expirado.html" target="_blank" rel="noopener noreferrer">Iniciar fluxo<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a></div>
+        <div class="jalt"><span class="jalt__d"></span><div class="jalt__b"><h4>Convite inválido ou já utilizado</h4><p>Informa que o link não pode mais ser utilizado e orienta o administrador sobre como prosseguir.</p></div><a class="btn btn--primary btn--sm jalt__go" href="../flows/link-expirado.html" target="_blank" rel="noopener noreferrer">Iniciar fluxo<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a></div>
       </div>
     </div>
 
