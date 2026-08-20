@@ -940,10 +940,11 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 </div>
 <script>if(localStorage.getItem('dere_ok')==='1'){var _g=document.getElementById('dere-gate');if(_g)_g.remove();}function dereGate(f){var i=f.querySelector('input'),e=document.getElementById('dere-err');if(i.value==='dere123'){localStorage.setItem('dere_ok','1');document.getElementById('dere-gate').remove();}else{e.innerHTML='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 auto"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>Senha incorreta. Tente novamente.';i.select();}return false;}</script>
 
+<a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
 <div class="split">
-  <aside class="pane-img"><div class="pane-img__lead"><h2 class="pane-img__title">Prepare sua DeRE de forma<br>simples e estruturada</h2><p class="pane-img__desc">Organize, valide e transmita as informações da Declaração de Regimes Específicos em um só ambiente.</p></div><div class="pane-img__foot">Desenvolvido por Axians</div></aside>
+  <aside class="pane-img"><div class="pane-img__lead"><p class="pane-img__title">Prepare sua DeRE de forma<br>simples e estruturada</p><p class="pane-img__desc">Organize, valide e transmita as informações da Declaração de Regimes Específicos em um só ambiente.</p></div><div class="pane-img__foot">Desenvolvido por Axians</div></aside>
 
-  <section class="pane-form">
+  <section class="pane-form" id="conteudo" role="main" tabindex="-1">
     
     <div class="pane-form__logo"><span class="wm">a-DeRE</span></div>
     <div class="pane-form__center">
