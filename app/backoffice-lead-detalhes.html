@@ -1,4 +1,4 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Empresas · a-DeRE Backoffice</title>
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Detalhes do lead · a-DeRE Backoffice</title>
 <style>/* =============================================================================
    Design System — DeRE (Plataforma de Gestão Tributária Especial)
    Tokens + componentes. CSS puro por variável: portável (funciona sem build) e
@@ -824,7 +824,6 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 .dropzone__hint{font-size:var(--text-xs)}
 </style>
 <style>
-  /* ---- wireframe: força tema claro em tons de cinza ---- */
   :root{
     --color-bg:var(--slate-100);--color-surface:#ffffff;--color-surface-2:var(--slate-100);
     --color-border:var(--slate-200);--color-divider:var(--slate-200);
@@ -835,8 +834,6 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--slate-100);color:var(--slate-700);font-family:var(--font-sans)}
-
-  /* ---- shell ---- */
   .bo{display:grid;grid-template-columns:248px 1fr;min-height:100vh}
   .bo__side{background:#fff;border-right:1px solid var(--slate-200);display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
   .bo__brand{display:flex;align-items:center;gap:10px;padding:20px 20px;border-bottom:1px solid var(--slate-200);min-height:65px}
@@ -845,21 +842,16 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   .bo__brand-tx b{font-size:14px;color:var(--slate-900);font-weight:700}
   .bo__brand-tx span{font-size:11px;color:var(--slate-500);letter-spacing:.04em;text-transform:uppercase;font-weight:600}
   .bo__nav{padding:16px 12px;display:flex;flex-direction:column;gap:2px}
-  .bo__navlbl{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--slate-400);padding:8px 12px 6px}
   .bo__navitem{display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:8px;color:var(--slate-600);font-size:14px;font-weight:500;text-decoration:none;cursor:pointer}
   .bo__navitem svg{width:18px;height:18px;flex:0 0 auto;color:var(--slate-400)}
   .bo__navitem:hover{background:var(--slate-100);color:var(--slate-900)}
   .bo__navitem.is-active{background:var(--slate-100);color:var(--slate-900);font-weight:600}
   .bo__navitem.is-active svg{color:var(--slate-700)}
-  .bo__navitem.is-disabled{color:var(--slate-400);cursor:default}
-  .bo__navitem.is-disabled:hover{background:transparent;color:var(--slate-400)}
-  .bo__soon{margin-left:auto;font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--slate-400);background:var(--slate-100);border:1px solid var(--slate-200);padding:2px 6px;border-radius:999px}
   .bo__sidefoot{margin-top:auto;padding:14px 16px;border-top:1px solid var(--slate-200);font-size:11px;color:var(--slate-400)}
-
   .bo__main{display:flex;flex-direction:column;min-width:0}
-  .bo__top{height:65px;background:#fff;border-bottom:1px solid var(--slate-200);display:flex;align-items:center;justify-content:flex-end;gap:8px;padding:0 32px;position:sticky;top:0;z-index:20}
-  .bo__envtag{margin-right:auto;display:inline-flex;align-items:center;gap:7px;font-size:12px;color:var(--slate-500);font-weight:600}
-  .bo__envtag svg{width:15px;height:15px}
+  .bo__top{height:65px;background:#fff;border-bottom:1px solid var(--slate-200);display:flex;align-items:center;justify-content:space-between;gap:16px;padding:0 32px;position:sticky;top:0;z-index:20}
+  .bo__topnav{display:flex;align-items:center;gap:16px;min-width:0}
+  .bo__topright{display:flex;align-items:center;gap:8px}
   .bo__user{display:flex;align-items:center;gap:10px}
   .bo__avatar{width:36px;height:36px;border-radius:50%;background:var(--slate-200);color:var(--slate-700);display:grid;place-items:center;font-weight:700;font-size:13px}
   .bo__userinfo{display:flex;flex-direction:column;line-height:1.2}
@@ -868,96 +860,59 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   .bo__iconbtn{width:34px;height:34px;border-radius:8px;border:1px solid var(--slate-200);background:#fff;color:var(--slate-500);display:grid;place-items:center;cursor:pointer;margin-left:6px}
   .bo__iconbtn:hover{background:var(--slate-100);color:var(--slate-800)}
   .bo__iconbtn svg{width:17px;height:17px}
+  .bo__content{padding:32px;width:100%;max-width:1120px}
 
-  .bo__content{padding:32px;width:100%;max-width:1400px}
+  .det__head{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;margin-bottom:26px}
+  .det__title{font-size:24px;font-weight:700;color:var(--slate-900);margin:0}
+  .det__meta{display:flex;align-items:center;gap:12px;margin-top:12px;flex-wrap:wrap;font-size:13px;color:var(--slate-500)}
+  .det__meta .sep{color:var(--slate-300)}
+  .det__id{font-variant-numeric:tabular-nums;font-weight:600;color:var(--slate-600)}
+  .det__when{display:inline-flex;align-items:center;gap:6px}
+  .det__when svg{width:14px;height:14px;color:var(--slate-400)}
 
-  /* ---- page head ---- */
-  .bo__head{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;margin-bottom:28px}
-  .bo__title{font-size:24px;font-weight:700;color:var(--slate-900);margin:0 0 6px}
-  .bo__sub{font-size:14px;color:var(--slate-500);margin:0;line-height:1.5}
-  .btn.btn--primary svg{width:17px;height:17px}
+  .det__grid{display:grid;grid-template-columns:1.6fr 1fr;gap:20px;align-items:start}
+  .det-card{background:#fff;border:1px solid var(--slate-200);border-radius:10px;padding:22px 24px;margin-bottom:20px}
+  .det-card:last-child{margin-bottom:0}
+  .det-card__hd{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+  .det-card__t{font-size:15px!important;font-weight:700;color:var(--slate-900);margin:0}
+  .det-card__src{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:var(--slate-500);background:var(--slate-100);border:1px solid var(--slate-200);padding:4px 9px;border-radius:999px;white-space:nowrap}
+  .det-card__src svg{width:13px;height:13px}
 
-  /* ---- KPIs ---- */
-  .bo-kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-bottom:24px}
-  .bo-kpi{background:#fff;border:1px solid var(--slate-200);border-radius:10px;padding:16px 18px;text-align:left;cursor:pointer;transition:box-shadow .15s ease,border-color .15s ease;font:inherit}
-  .bo-kpi:hover{border-color:var(--slate-300);box-shadow:0 1px 2px rgba(15,23,42,.04),0 8px 20px -12px rgba(15,23,42,.15)}
-  .bo-kpi__top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-  .bo-kpi__lbl{font-size:12px;font-weight:600;color:var(--slate-500)}
-  .bo-kpi__ico{width:30px;height:30px;border-radius:8px;background:var(--slate-100);color:var(--slate-500);display:grid;place-items:center;flex:0 0 auto}
-  .bo-kpi__ico svg{width:16px;height:16px}
-  .bo-kpi__num{font-size:26px;font-weight:700;color:var(--slate-900);font-variant-numeric:tabular-nums;line-height:1}
-  .bo-kpi--alert .bo-kpi__ico{background:var(--slate-800);color:#fff}
+  .dl{display:flex;flex-direction:column}
+  .dl__row{display:grid;grid-template-columns:132px 1fr;gap:16px;padding:13px 0;border-bottom:1px solid var(--slate-100)}
+  .dl__row:first-child{padding-top:0}
+  .dl__row:last-child{border-bottom:0;padding-bottom:0}
+  .dl__k{font-size:13px;color:var(--slate-500);font-weight:600}
+  .dl__v{font-size:14px;color:var(--slate-800);line-height:1.55;word-break:break-word}
+  .dl__v a{color:var(--slate-800);text-decoration:none;border-bottom:1px solid var(--slate-300)}
+  .dl__v--msg{color:var(--slate-700)}
+  .dl__na{color:var(--slate-400)}
 
-  /* ---- filtros ---- */
-  .bo-filters{background:#fff;border:1px solid var(--slate-200);border-radius:10px;padding:16px;margin-bottom:20px;display:flex;flex-wrap:wrap;align-items:flex-end;gap:14px}
-  .bo-f{display:flex;flex-direction:column;gap:6px}
-  .bo-f--grow{flex:1 1 260px;min-width:220px}
-  .bo-f--sel{flex:0 1 190px;min-width:160px}
-  .bo-f__lbl{font-size:12px;font-weight:600;color:var(--slate-600)}
-  .bo-f__actions{display:flex;gap:8px;margin-left:auto;align-self:flex-end}
-  .bo-search{position:relative;display:flex;align-items:center}
-  .bo-search__ico{position:absolute;left:12px;width:17px;height:17px;color:var(--slate-400);pointer-events:none}
-  .bo-search__inp{width:100%;height:40px;padding:0 12px 0 38px;border:1px solid var(--slate-300);border-radius:8px;background:#fff;font:inherit;font-size:14px;color:var(--slate-800)}
-  .bo-filters .select{border-color:var(--slate-300)}
-  .bo-search__inp::placeholder{color:var(--slate-400)}
-  .bo-search__inp:focus{outline:none;border-color:var(--slate-400);box-shadow:0 0 0 3px rgba(100,116,139,.15)}
+  .stat-now{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+  .stat-now__lbl{font-size:12px;color:var(--slate-500);font-weight:600}
+  .follow-desc{font-size:13px;color:var(--slate-600);line-height:1.55;margin:0 0 16px}
+  .follow-act{display:flex;flex-direction:column;gap:10px}
+  .follow-act .btn{width:100%;justify-content:center}
+  .meta-list{display:flex;flex-direction:column;gap:0}
+  .meta-list__row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid var(--slate-100);font-size:13px}
+  .meta-list__row:first-child{padding-top:0}
+  .meta-list__row:last-child{border-bottom:0;padding-bottom:0}
+  .meta-list__k{color:var(--slate-500);font-weight:600}
+  .meta-list__v{color:var(--slate-800);font-weight:600;display:inline-flex;align-items:center;gap:7px}
+  .meta-list__v svg{width:14px;height:14px;color:var(--slate-400)}
 
-  /* ---- tabela ---- */
-  .bo-tablewrap{background:#fff;border:1px solid var(--slate-200);border-radius:10px;overflow:hidden}
-  .bo-tablescroll{overflow-x:auto}
-  table.bo-table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:960px}
-  .bo-table thead th{text-align:left;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--slate-500);padding:12px 16px;border-bottom:1px solid var(--slate-200);background:var(--slate-50);white-space:nowrap}
-  .bo-th{display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--slate-500);background:none;border:0;cursor:pointer;padding:0}
-  .bo-th:hover{color:var(--slate-700)}
-  .bo-th__sort{width:13px;height:13px;color:var(--slate-300);flex:0 0 auto}
-  .bo-th.is-sorted{color:var(--slate-900)}
-  .bo-th.is-sorted .bo-th__sort{color:var(--slate-700)}
-  .bo-table tbody td{padding:14px 16px;border-bottom:1px solid var(--slate-100);vertical-align:middle}
-  .bo-table tbody tr:last-child td{border-bottom:0}
-  .bo-table tbody tr:hover{background:var(--slate-50)}
-  .cell-2l{display:flex;flex-direction:column;line-height:1.35}
-  .cell-2l b{font-weight:600;color:var(--slate-900);font-size:14px}
-  .cell-2l span{color:var(--slate-500);font-size:12.5px}
-  .cell-cnpj{font-variant-numeric:tabular-nums;color:var(--slate-700);white-space:nowrap;font-size:13px}
-  .cell-na{color:var(--slate-400);font-size:15px;font-weight:600}
-  .col-act{width:56px;text-align:right}
-
-  /* ---- wireframe chips (status em cinza, diferenciados por preenchimento) ---- */
   .wchip{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;white-space:nowrap;border:1px solid var(--slate-200);background:var(--slate-100);color:var(--slate-700)}
+  .wchip--lg{font-size:13px;padding:6px 13px}
   .wchip__dot{width:7px;height:7px;border-radius:50%;background:var(--slate-400);flex:0 0 auto}
   .wchip--on{background:var(--slate-100);color:var(--slate-800);border-color:var(--slate-300)}
   .wchip--on .wchip__dot{background:var(--slate-700)}
   .wchip--wait .wchip__dot{background:var(--slate-400)}
+  .wchip--done{background:var(--slate-800);color:#fff;border-color:var(--slate-800)}
+  .wchip--done .wchip__dot{background:#fff}
   .wchip--off{background:#fff;color:var(--slate-500);border-style:dashed;border-color:var(--slate-300)}
   .wchip--off .wchip__dot{background:transparent;border:1.5px solid var(--slate-400);width:8px;height:8px}
 
-  /* ---- menu de ações ---- */
-  .rowmenu{position:relative;display:inline-block}
-  .bo__more{width:30px;height:30px;border-radius:7px;border:1px solid transparent;background:transparent;color:var(--slate-500);display:grid;place-items:center;cursor:pointer}
-  .bo__more:hover{background:var(--slate-100);border-color:var(--slate-200);color:var(--slate-800)}
-  .bo__more svg{width:18px;height:18px}
-  .rowmenu__panel{position:absolute;right:0;top:calc(100% + 4px);z-index:30;background:#fff;border:1px solid var(--slate-200);border-radius:9px;box-shadow:0 10px 30px -10px rgba(15,23,42,.25);padding:6px;min-width:186px}
-  .rowmenu__item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:6px;font-size:13px;color:var(--slate-700);cursor:pointer;white-space:nowrap}
-  .rowmenu__item svg{width:15px;height:15px;color:var(--slate-400)}
-  .rowmenu__item:hover{background:var(--slate-100);color:var(--slate-900)}
-  .rowmenu__sep{height:1px;background:var(--slate-100);margin:5px 2px}
-
-  /* ---- paginação ---- */
-  .bo-pag{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 16px;border-top:1px solid var(--slate-200);flex-wrap:wrap}
-  .bo-pag__info{font-size:13px;color:var(--slate-500)}
-  .bo-pag__info b{color:var(--slate-800);font-weight:700}
-  .bo-pag__right{display:flex;align-items:center;gap:16px}
-  .bo-pag__per{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--slate-500)}
-  .bo-pag__per select{font:inherit;font-size:13px;padding:5px 26px 5px 10px;border:1px solid var(--slate-200);border-radius:7px;background:#fff;color:var(--slate-700)}
-  .bo-pagenav{display:flex;align-items:center;gap:3px}
-  .bo-pagenav button{min-width:32px;height:32px;padding:0 8px;border:1px solid var(--slate-200);background:#fff;border-radius:7px;color:var(--slate-600);font-size:13px;font-weight:600;cursor:pointer;display:grid;place-items:center}
-  .bo-pagenav button:hover:not(:disabled){background:var(--slate-100)}
-  .bo-pagenav button.is-current{background:var(--slate-800);border-color:var(--slate-800);color:#fff}
-  .bo-pagenav button:disabled{color:var(--slate-300);cursor:default}
-  .bo-pagenav .dots{color:var(--slate-400);padding:0 2px}
-  .bo-pagenav svg{width:16px;height:16px}
-
-  /* ---- drawer: nova empresa ---- */
+  /* drawer */
   .bo-drawer[hidden]{display:none}
   .bo-drawer{position:fixed;inset:0;z-index:100}
   .bo-drawer__ovl{position:absolute;inset:0;background:rgba(15,23,42,.42);opacity:0;transition:opacity .2s ease}
@@ -965,14 +920,15 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   .bo-drawer__panel{position:absolute;top:0;right:0;height:100%;width:min(540px,94vw);background:#fff;border-left:1px solid var(--slate-200);box-shadow:-24px 0 60px -24px rgba(15,23,42,.35);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .22s ease}
   .bo-drawer.is-open .bo-drawer__panel{transform:translateX(0)}
   .bo-drawer__head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:22px 24px;border-bottom:1px solid var(--slate-200)}
-  .bo-drawer__title{font-size:18px;font-weight:700;color:var(--slate-900);margin:0 0 4px}
-  .bo-drawer__sub{font-size:13px;color:var(--slate-500);margin:0;line-height:1.5}
+  .bo-drawer__title{font-size:18px;font-weight:700;color:var(--slate-900);margin:0}
   .bo-drawer__close{width:34px;height:34px;border-radius:8px;border:1px solid var(--slate-200);background:#fff;color:var(--slate-500);display:grid;place-items:center;cursor:pointer;flex:0 0 auto}
   .bo-drawer__close:hover{background:var(--slate-100);color:var(--slate-800)}
   .bo-drawer__close svg{width:17px;height:17px}
   .bo-drawer__body{flex:1;overflow-y:auto;padding:24px}
   .bo-drawer__foot{display:flex;justify-content:flex-end;gap:12px;padding:16px 24px;border-top:1px solid var(--slate-200)}
-  .dsec{margin-bottom:36px}
+  .fromlead{display:flex;align-items:flex-start;gap:9px;background:var(--slate-50);border:1px solid var(--slate-200);border-radius:9px;padding:12px 14px;margin-bottom:24px;font-size:12.5px;color:var(--slate-600);line-height:1.5}
+  .fromlead svg{width:16px;height:16px;color:var(--slate-500);flex:0 0 auto;margin-top:1px}
+  .dsec{margin-bottom:32px}
   .dsec:last-child{margin-bottom:0}
   .dsec__t{font-size:14px;font-weight:700;color:var(--slate-900);margin:0 0 3px}
   .dsec__d{font-size:14px;color:var(--slate-500);margin:0 0 18px;line-height:1.5}
@@ -986,16 +942,8 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   .dfld--key input{border-color:var(--slate-400)}
   .dhint{font-size:12px;color:var(--slate-500);display:flex;gap:6px;line-height:1.45}
   .dhint svg{width:14px;height:14px;color:var(--slate-400);flex:0 0 auto;margin-top:1px}
-  .ddone{display:none;text-align:center;padding:20px 8px}
-  .ddone.is-on{display:block}
-  .ddone__ico{width:52px;height:52px;border-radius:50%;background:var(--slate-800);color:#fff;display:grid;place-items:center;margin:8px auto 18px}
-  .ddone__ico svg{width:26px;height:26px}
-  .ddone__t{font-size:18px;font-weight:700;color:var(--slate-900);margin:0 0 8px}
-  .ddone__d{font-size:13.5px;color:var(--slate-600);margin:0 auto 22px;line-height:1.6;max-width:40ch}
-  .ddone__d b{color:var(--slate-900);font-weight:600}
-  .ddone__actions{display:flex;flex-direction:column;gap:10px;max-width:290px;margin:0 auto}
 
-  /* ---- toast ---- */
+  /* toast */
   .toast{position:fixed;right:24px;bottom:24px;z-index:200;background:var(--slate-900);color:#fff;border-radius:11px;padding:14px 12px 14px 16px;display:flex;align-items:flex-start;gap:12px;box-shadow:0 16px 44px -14px rgba(15,23,42,.55);max-width:400px;transform:translateY(16px);opacity:0;transition:transform .25s ease,opacity .25s ease;pointer-events:none}
   .toast.is-on{transform:translateY(0);opacity:1;pointer-events:auto}
   .toast__ico{width:22px;height:22px;border-radius:50%;background:#fff;color:var(--slate-900);display:grid;place-items:center;flex:0 0 auto;margin-top:1px}
@@ -1006,12 +954,8 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   .toast__close{width:26px;height:26px;border-radius:6px;border:0;background:transparent;color:var(--slate-400);display:grid;place-items:center;cursor:pointer;flex:0 0 auto;margin-left:2px}
   .toast__close:hover{background:rgba(255,255,255,.12);color:#fff}
   .toast__close svg{width:15px;height:15px}
-  /* ---- linha recém-adicionada ---- */
-  .bo-table tbody tr{transition:background .8s ease}
-  .bo-table tbody tr.is-new{background:var(--slate-100)}
-
-  @media (max-width:1180px){.bo-kpis{grid-template-columns:repeat(3,1fr)}}
-  @media (max-width:860px){.bo{grid-template-columns:1fr}.bo__side{display:none}.bo-kpis{grid-template-columns:repeat(2,1fr)}}
+  @media (max-width:980px){.det__grid{grid-template-columns:1fr}}
+  @media (max-width:860px){.bo{grid-template-columns:1fr}.bo__side{display:none}}
 </style>
 </head><body>
 <div id="dere-gate" style="position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;padding:24px;font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;background:radial-gradient(120% 120% at 20% 8%,#0c326f 0%,#071d41 55%,#05152e 100%)">
@@ -1038,258 +982,148 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 <script>if(localStorage.getItem('dere_ok')==='1'){var _g=document.getElementById('dere-gate');if(_g)_g.remove();}function dereGate(f){var i=f.querySelector('input'),e=document.getElementById('dere-err');if(i.value==='dere123'){localStorage.setItem('dere_ok','1');document.getElementById('dere-gate').remove();}else{e.innerHTML='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 auto"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>Senha incorreta. Tente novamente.';i.select();}return false;}</script>
 
 <div class="bo">
-  <!-- ============ SIDEBAR ============ -->
   <aside class="bo__side">
-    <div class="bo__brand">
-      <span class="bo__brand-mark">a</span>
-      <span class="bo__brand-tx"><b>a-DeRE</b><span>Backoffice</span></span>
-    </div>
+    <div class="bo__brand"><span class="bo__brand-mark">a</span><span class="bo__brand-tx"><b>a-DeRE</b><span>Backoffice</span></span></div>
     <nav class="bo__nav" aria-label="Navegação principal">
       <a class="bo__navitem" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>Dashboard</a>
-      <a class="bo__navitem" href="./backoffice-leads.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 6.1H3M21 12.1H3M15.1 18H3"/></svg>Leads</a>
-      <a class="bo__navitem is-active" href="#" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4M10 10h4M10 14h4"/></svg>Empresas</a>
+      <a class="bo__navitem is-active" href="./backoffice-leads.html" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 6.1H3M21 12.1H3M15.1 18H3"/></svg>Leads</a>
+      <a class="bo__navitem" href="./backoffice-empresas.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4M10 10h4M10 14h4"/></svg>Empresas</a>
     </nav>
     <div class="bo__sidefoot">a-DeRE Backoffice · v0 (wireframe)</div>
   </aside>
 
-  <!-- ============ MAIN ============ -->
   <div class="bo__main">
-    <header class="bo__top">      <div class="bo__user">
-        <span class="bo__avatar">JS</span>
-        <span class="bo__userinfo"><span class="bo__username">João Silva</span><span class="bo__userrole">Time de vendas</span></span>
+    <header class="bo__top">
+      <div class="bo__topnav">
+        <a class="btn btn--outline btn--sm" href="./backoffice-leads.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>Voltar para leads</a>
+        <nav class="breadcrumb" aria-label="Trilha"><a href="./backoffice-leads.html">Leads</a><span class="breadcrumb__sep">/</span><span class="breadcrumb__current">Saúde Integral</span></nav>
       </div>
-      <button class="bo__iconbtn" aria-label="Sair"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg></button>
+      <div class="bo__topright">
+        <div class="bo__user"><span class="bo__avatar">JS</span><span class="bo__userinfo"><span class="bo__username">João Silva</span><span class="bo__userrole">Time de vendas</span></span></div>
+        <button class="bo__iconbtn" aria-label="Sair"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg></button>
+      </div>
     </header>
 
     <main class="bo__content">
-      <div class="bo__head">
+      <div class="det__head">
         <div>
-          <h1 class="bo__title">Lista de empresas</h1>
-          <p class="bo__sub">Consulte, filtre e gerencie as empresas disponíveis no a-DeRE Backoffice.</p>
-        </div>
-        <button class="btn btn--primary" type="button" onclick="openDrawer()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>Nova empresa</button>
-      </div>
-
-      <!-- KPIs -->
-      <div class="bo-kpis">
-        <button class="bo-kpi"><div class="bo-kpi__top"><span class="bo-kpi__lbl">Total de empresas</span><span class="bo-kpi__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M10 6h4M10 10h4M10 14h4"/></svg></span></div><div class="bo-kpi__num">128</div></button>
-        <button class="bo-kpi"><div class="bo-kpi__top"><span class="bo-kpi__lbl">Contas ativas</span><span class="bo-kpi__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg></span></div><div class="bo-kpi__num">84</div></button>
-        <button class="bo-kpi"><div class="bo-kpi__top"><span class="bo-kpi__lbl">Convites enviados</span><span class="bo-kpi__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span></div><div class="bo-kpi__num">29</div></button>
-        <button class="bo-kpi"><div class="bo-kpi__top"><span class="bo-kpi__lbl">Convites expirados</span><span class="bo-kpi__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></svg></span></div><div class="bo-kpi__num">11</div></button>
-        <button class="bo-kpi"><div class="bo-kpi__top"><span class="bo-kpi__lbl">Cadastros com pendências</span><span class="bo-kpi__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4M12 16h4M8 11h.01M8 16h.01"/></svg></span></div><div class="bo-kpi__num">42</div></button>
-      </div>
-
-      <!-- FILTROS -->
-      <form class="bo-filters" onsubmit="return false">
-        <div class="bo-f bo-f--grow">
-          <label class="bo-f__lbl" for="f-busca">Buscar empresa</label>
-          <div class="bo-search"><svg class="bo-search__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><input id="f-busca" class="bo-search__inp" type="text" placeholder="Razão social, nome fantasia ou CNPJ"></div>
-        </div>
-        <div class="bo-f bo-f--sel">
-          <label class="bo-f__lbl" for="f-status">Status da conta</label>
-          <select id="f-status" class="select"><option>Todos</option><option>Ativa</option><option>Convite enviado</option><option>Convite expirado</option></select>
-        </div>
-        <div class="bo-f bo-f--sel">
-          <label class="bo-f__lbl" for="f-contrib">Informações do contribuinte</label>
-          <select id="f-contrib" class="select"><option>Todos</option><option>Pendente</option><option>Enviado</option><option>Aprovado</option></select>
-        </div>
-        <div class="bo-f bo-f--sel">
-          <label class="bo-f__lbl" for="f-plano">Plano de contas</label>
-          <select id="f-plano" class="select"><option>Todos</option><option>Pendente</option><option>Enviado</option><option>Aprovado</option></select>
-        </div>
-        <div class="bo-f__actions">
-          <button class="btn btn--ghost btn--sm" type="reset">Limpar</button>
-          <button class="btn btn--primary btn--sm" type="submit">Filtrar</button>
-        </div>
-      </form>
-
-      <!-- TABELA -->
-      <div class="bo-tablewrap">
-        <div class="bo-tablescroll">
-        <table class="bo-table">
-          <thead><tr>
-            <th><button class="bo-th is-sorted"><span>Empresa</span><svg class="bo-th__sort" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg></button></th>
-            <th><button class="bo-th"><span>CNPJ</span><svg class="bo-th__sort" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></button></th>
-            <th><button class="bo-th"><span>Administrador</span><svg class="bo-th__sort" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></button></th>
-            <th><button class="bo-th"><span>Contribuinte</span><svg class="bo-th__sort" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></button></th>
-            <th><button class="bo-th"><span>Plano de contas</span><svg class="bo-th__sort" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></button></th>
-            <th><button class="bo-th"><span>Status da conta</span><svg class="bo-th__sort" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></button></th>
-            <th class="col-act">Ações</th>
-          </tr></thead>
-          <tbody>
-            <tr>
-              <td><span class="cell-2l"><b>Banco Meridiano</b><span>Banco Meridiano S.A.</span></span></td>
-              <td class="cell-cnpj">12.345.678/0001-90</td>
-              <td><span class="cell-2l"><b>Ana Souza</b><span>ana@meridiano.com.br</span></span></td>
-              <td><span class="wchip wchip--on"><span class="wchip__dot"></span>Aprovado</span></td>
-              <td><span class="wchip wchip--on"><span class="wchip__dot"></span>Aprovado</span></td>
-              <td><span class="wchip wchip--on"><span class="wchip__dot"></span>Ativa</span></td>
-              <td class="col-act"><div class="rowmenu"><button class="bo__more" aria-label="Ações"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button></div></td>
-            </tr>
-            <tr>
-              <td><span class="cell-2l"><b>Saúde Integral</b><span>Integral Operadora de Saúde S.A.</span></span></td>
-              <td class="cell-cnpj">23.456.789/0001-01</td>
-              <td><span class="cell-2l"><b>Carlos Menezes</b><span>carlos@saudeintegral.com.br</span></span></td>
-              <td><span class="cell-na">–</span></td>
-              <td><span class="cell-na">–</span></td>
-              <td><span class="wchip wchip--wait"><span class="wchip__dot"></span>Convite enviado</span></td>
-              <td class="col-act"><div class="rowmenu"><button class="bo__more" aria-label="Ações"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button></div></td>
-            </tr>
-            <tr>
-              <td><span class="cell-2l"><b>Prisma Contábil</b><span>Prisma Consultoria Contábil Ltda</span></span></td>
-              <td class="cell-cnpj">34.567.890/0001-12</td>
-              <td><span class="cell-2l"><b>Marina Lopes</b><span>marina@prismacontabil.com.br</span></span></td>
-              <td><span class="cell-na">–</span></td>
-              <td><span class="cell-na">–</span></td>
-              <td><span class="wchip wchip--off"><span class="wchip__dot"></span>Convite expirado</span></td>
-              <td class="col-act"><div class="rowmenu"><button class="bo__more" aria-label="Ações"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button></div></td>
-            </tr>
-            <tr>
-              <td><span class="cell-2l"><b>Vida Plena Saúde</b><span>Vida Plena Operadora de Saúde S.A.</span></span></td>
-              <td class="cell-cnpj">45.678.901/0001-23</td>
-              <td><span class="cell-2l"><b>Roberto Alves</b><span>roberto@vidaplena.com.br</span></span></td>
-              <td><span class="wchip wchip--on"><span class="wchip__dot"></span>Aprovado</span></td>
-              <td><span class="wchip wchip--wait"><span class="wchip__dot"></span>Enviado</span></td>
-              <td><span class="wchip wchip--on"><span class="wchip__dot"></span>Ativa</span></td>
-              <td class="col-act"><div class="rowmenu"><button class="bo__more" aria-label="Ações"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button></div></td>
-            </tr>
-            <tr>
-              <td><span class="cell-2l"><b>Banco Litoral</b><span>Litoral Crédito e Financiamento S.A.</span></span></td>
-              <td class="cell-cnpj">56.789.012/0001-34</td>
-              <td><span class="cell-2l"><b>Juliana Castro</b><span>juliana@bancolitoral.com.br</span></span></td>
-              <td><span class="wchip wchip--off"><span class="wchip__dot"></span>Pendente</span></td>
-              <td><span class="wchip wchip--off"><span class="wchip__dot"></span>Pendente</span></td>
-              <td><span class="wchip wchip--on"><span class="wchip__dot"></span>Ativa</span></td>
-              <td class="col-act"><div class="rowmenu"><button class="bo__more" aria-label="Ações"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button></div></td>
-            </tr>
-            <tr>
-              <td><span class="cell-2l"><b>Nexus Contabilidade</b><span>Nexus Assessoria Contábil Ltda</span></span></td>
-              <td class="cell-cnpj">67.890.123/0001-45</td>
-              <td><span class="cell-2l"><b>Felipe Ramos</b><span>felipe@nexuscontabil.com.br</span></span></td>
-              <td><span class="wchip wchip--on"><span class="wchip__dot"></span>Aprovado</span></td>
-              <td><span class="wchip wchip--off"><span class="wchip__dot"></span>Pendente</span></td>
-              <td><span class="wchip wchip--on"><span class="wchip__dot"></span>Ativa</span></td>
-              <td class="col-act"><div class="rowmenu"><button class="bo__more" aria-label="Ações"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button></div></td>
-            </tr>
-            <tr>
-              <td><span class="cell-2l"><b>Banco Aurora</b><span>Aurora Instituição de Pagamento S.A.</span></span></td>
-              <td class="cell-cnpj">78.901.234/0001-56</td>
-              <td><span class="cell-2l"><b>Patrícia Nunes</b><span>patricia@bancoaurora.com.br</span></span></td>
-              <td><span class="wchip wchip--wait"><span class="wchip__dot"></span>Enviado</span></td>
-              <td><span class="wchip wchip--off"><span class="wchip__dot"></span>Pendente</span></td>
-              <td><span class="wchip wchip--on"><span class="wchip__dot"></span>Ativa</span></td>
-              <td class="col-act"><div class="rowmenu"><button class="bo__more" aria-label="Ações"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button></div></td>
-            </tr>
-            <tr>
-              <td><span class="cell-2l"><b>Bem-Estar Saúde</b><span>Bem-Estar Planos de Saúde Ltda</span></span></td>
-              <td class="cell-cnpj">89.012.345/0001-67</td>
-              <td><span class="cell-2l"><b>Gustavo Pinto</b><span>gustavo@bemestarsaude.com.br</span></span></td>
-              <td><span class="wchip wchip--on"><span class="wchip__dot"></span>Aprovado</span></td>
-              <td><span class="wchip wchip--on"><span class="wchip__dot"></span>Aprovado</span></td>
-              <td><span class="wchip wchip--on"><span class="wchip__dot"></span>Ativa</span></td>
-              <td class="col-act"><div class="rowmenu"><button class="bo__more" aria-label="Ações"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button></div></td>
-            </tr>
-          </tbody>
-        </table>
-        </div>
-        <!-- PAGINAÇÃO -->
-        <div class="bo-pag">
-          <div class="bo-pag__info"><b>128</b> empresas encontradas</div>
-          <div class="bo-pag__right">
-            <div class="bo-pag__per"><span>Itens por página</span><select><option>20</option><option>50</option><option>100</option></select></div>
-            <div class="bo-pagenav">
-              <button disabled aria-label="Página anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
-              <button class="is-current">1</button>
-              <button>2</button>
-              <button>3</button>
-              <span class="dots">…</span>
-              <button>13</button>
-              <button aria-label="Próxima página"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
-            </div>
+          <h1 class="det__title">Detalhes do lead</h1>
+          <div class="det__meta">
+            <span class="det__id">#1041</span>
+            <span class="sep">·</span>
+            <span class="wchip wchip--on" id="statusChip"><span class="wchip__dot"></span>Em atendimento</span>
+            <span class="sep">·</span>
+            <span class="det__when"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4M16 2v4M3 10h18"/><rect width="18" height="18" x="3" y="4" rx="2"/></svg>Recebido em 18/08/2026 14:32</span>
           </div>
         </div>
       </div>
 
+      <div class="det__grid">
+        <!-- Coluna principal: dados do formulário -->
+        <div class="det-main">
+          <section class="det-card">
+            <div class="det-card__hd">
+              <h2 class="det-card__t">Dados enviados pelo formulário</h2>
+              <span class="det-card__src"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="m22 6-10 7L2 6"/></svg>Enviado pelo interessado</span>
+            </div>
+            <dl class="dl">
+              <div class="dl__row"><dt class="dl__k">Nome</dt><dd class="dl__v">Carlos Menezes</dd></div>
+              <div class="dl__row"><dt class="dl__k">Instituição</dt><dd class="dl__v">Saúde Integral</dd></div>
+              <div class="dl__row"><dt class="dl__k">E-mail</dt><dd class="dl__v"><a href="#">carlos@saudeintegral.com.br</a></dd></div>
+              <div class="dl__row"><dt class="dl__k">Telefone</dt><dd class="dl__v">(21) 99876-5432</dd></div>
+              <div class="dl__row"><dt class="dl__k">Mensagem</dt><dd class="dl__v dl__v--msg">Somos uma operadora de saúde e queremos entender como a a-DeRE apura os regimes específicos. Podemos agendar uma demonstração para o time fiscal?</dd></div>
+            </dl>
+          </section>
+        </div>
+
+        <!-- Coluna lateral: acompanhamento + resumo -->
+        <div class="det-side">
+          <section class="det-card">
+            <div class="det-card__hd"><h2 class="det-card__t">Acompanhamento</h2></div>
+            <div class="stat-now"><span class="stat-now__lbl">Status atual</span><span class="wchip wchip--on wchip--lg" id="statusChip2"><span class="wchip__dot"></span>Em atendimento</span></div>
+            <p class="follow-desc" id="followDesc">Contato comercial em andamento. Conclua convertendo em empresa ou marcando como não convertido.</p>
+            <div class="follow-act" id="followAct">
+              <button class="btn btn--primary" onclick="openDrawer()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M10 6h4M10 10h4M10 14h4"/><path d="M18 22v-4"/></svg>Converter em empresa</button>
+              <button class="btn btn--outline" onclick="markNotConverted()">Marcar como não convertido</button>
+            </div>
+          </section>
+
+          <section class="det-card">
+            <div class="det-card__hd"><h2 class="det-card__t">Resumo</h2></div>
+            <div class="meta-list">
+              <div class="meta-list__row"><span class="meta-list__k">Origem</span><span class="meta-list__v"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 12 4-4 4 4 5-5"/></svg>Landing page</span></div>
+              <div class="meta-list__row"><span class="meta-list__k">Responsável</span><span class="meta-list__v"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Marcos Tavares</span></div>
+              <div class="meta-list__row"><span class="meta-list__k">Identificador</span><span class="meta-list__v">#1041</span></div>
+            </div>
+          </section>
+        </div>
+      </div>
     </main>
   </div>
 </div>
 
-<!-- ============ DRAWER: NOVA EMPRESA ============ -->
+<!-- DRAWER: converter lead em empresa (dados pré-preenchidos) -->
 <div class="bo-drawer" id="drawer" hidden>
   <div class="bo-drawer__ovl" onclick="closeDrawer()"></div>
   <aside class="bo-drawer__panel" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
     <header class="bo-drawer__head">
-      <div>
-        <h2 class="bo-drawer__title" id="drawerTitle">Cadastrar empresa</h2>
-      </div>
+      <h2 class="bo-drawer__title" id="drawerTitle">Converter lead em empresa</h2>
       <button class="bo-drawer__close" onclick="closeDrawer()" aria-label="Fechar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
     </header>
     <div class="bo-drawer__body">
-      <form id="drawerForm" onsubmit="event.preventDefault();submitEmpresa();">
+      <div class="fromlead"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1Z"/></svg><span>Nome, Instituição, E-mail e Telefone vieram do formulário da landing page. O CNPJ e os demais dados cadastrais são completados aqui antes de criar a empresa.</span></div>
+      <form id="drawerForm" onsubmit="event.preventDefault();submitConvert();">
         <section class="dsec">
           <h3 class="dsec__t">Dados da empresa</h3>
           <p class="dsec__d">Dados cadastrais da empresa que será gerida na a-DeRE.</p>
-          <div class="dfld"><label for="d-cnpj">CNPJ</label><input id="d-cnpj" inputmode="numeric" placeholder="00.000.000/0000-00"></div>
-          <div class="dfld"><label for="d-razao">Razão social</label><input id="d-razao" placeholder="Ex.: Horizonte Participações S.A."></div>
-          <div class="dfld"><label for="d-fant">Nome fantasia <span class="opt">(opcional)</span></label><input id="d-fant" placeholder="Ex.: Grupo Horizonte"></div>
+          <div class="dfld dfld--key"><label for="d-cnpj">CNPJ</label><input id="d-cnpj" inputmode="numeric" placeholder="00.000.000/0000-00"><span class="dhint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>Não vem no formulário da landing. Informe para criar a empresa.</span></div>
+          <div class="dfld"><label for="d-razao">Razão social</label><input id="d-razao" value="Saúde Integral"></div>
+          <div class="dfld"><label for="d-fant">Nome fantasia <span class="opt">(opcional)</span></label><input id="d-fant" placeholder="Ex.: Grupo Saúde Integral"></div>
         </section>
         <section class="dsec">
           <h3 class="dsec__t">Administrador da conta</h3>
           <p class="dsec__d">Este usuário receberá o convite para ativar o acesso e realizar a configuração inicial da conta.</p>
-          <div class="dfld"><label for="d-adm">Nome do administrador</label><input id="d-adm" placeholder="Ex.: Ana Souza"></div>
-          <div class="dfld dfld--key"><label for="d-email">E-mail</label><input id="d-email" type="email" placeholder="Ex.: ana@horizonte.com.br"><span class="dhint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>Endereço usado para enviar o convite de ativação. Confira antes de cadastrar.</span></div>
+          <div class="dfld"><label for="d-adm">Nome do administrador</label><input id="d-adm" value="Carlos Menezes"></div>
+          <div class="dfld dfld--key"><label for="d-email">E-mail</label><input id="d-email" type="email" value="carlos@saudeintegral.com.br"><span class="dhint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>Endereço usado para enviar o convite de ativação. Confira antes de criar.</span></div>
         </section>
       </form>
     </div>
-    <footer class="bo-drawer__foot" id="drawerFoot">
+    <footer class="bo-drawer__foot">
       <button class="btn btn--ghost" type="button" onclick="closeDrawer()">Cancelar</button>
-      <button class="btn btn--primary" type="submit" form="drawerForm" id="drawerSubmit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>Criar empresa e enviar convite</button>
+      <button class="btn btn--primary" type="submit" form="drawerForm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>Criar empresa e enviar convite</button>
     </footer>
   </aside>
 </div>
 
-<!-- toast de sucesso -->
 <div class="toast" id="toast" role="status" aria-live="polite">
   <span class="toast__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
-  <div class="toast__body"><b id="toastTitle">Empresa cadastrada</b><p id="toastMsg">Convite de ativação enviado para ana@horizonte.com.br.</p></div>
+  <div class="toast__body"><b id="toastTitle">Pronto</b><p id="toastMsg"></p></div>
   <button class="toast__close" onclick="hideToast()" aria-label="Fechar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
 </div>
 
 <script>
-  var _drawer=document.getElementById('drawer'), _toastT=null, _mode='new';
-  function val(id){var el=document.getElementById(id);return el?el.value.trim():'';}
-  function esc(s){return (s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
-  function chip(cls,txt){return '<span class="wchip '+cls+'"><span class="wchip__dot"></span>'+txt+'</span>';}
-  var IS='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>';
-  var IV='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M20 6 9 17l-5-5"/></svg>';
-  function openDrawer(mode,data){_mode=mode||'new';data=data||{};
-    var t=document.getElementById('drawerTitle'),s=document.getElementById('drawerSubmit'),f=document.getElementById('drawerForm');
-    if(_mode==='edit'){t.textContent='Editar empresa';s.innerHTML=IV+'Salvar alterações';
-      document.getElementById('d-cnpj').value=data.cnpj||'';document.getElementById('d-razao').value=data.razao||'';document.getElementById('d-fant').value=data.fant||'';document.getElementById('d-adm').value=data.adm||'';document.getElementById('d-email').value=data.email||'';
-    }else{t.textContent='Cadastrar empresa';s.innerHTML=IS+'Criar empresa e enviar convite';f.reset();}
-    _drawer.hidden=false;requestAnimationFrame(function(){_drawer.classList.add('is-open');});document.body.style.overflow='hidden';}
-  function closeDrawer(){_drawer.classList.remove('is-open');document.body.style.overflow='';setTimeout(function(){_drawer.hidden=true;document.getElementById('drawerForm').reset();},220);}
-  function addRow(d){var tb=document.querySelector('.bo-table tbody');var tr=document.createElement('tr');tr.className='is-new';
-    tr.innerHTML='<td><span class="cell-2l"><b>'+esc(d.fant)+'</b><span>'+esc(d.razao)+'</span></span></td>'+'<td class="cell-cnpj">'+esc(d.cnpj)+'</td>'+'<td><span class="cell-2l"><b>'+esc(d.adm)+'</b><span>'+esc(d.email)+'</span></span></td>'+'<td><span class="cell-na">–</span></td><td><span class="cell-na">–</span></td>'+'<td>'+chip('wchip--wait','Convite enviado')+'</td>'+'<td class="col-act"><div class="rowmenu"><button class="bo__more" aria-label="Ações"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button></div></td>';
-    tb.insertBefore(tr,tb.firstChild);setTimeout(function(){tr.classList.remove('is-new');},1800);}
-  function showToast(title,msg){var t=document.getElementById('toast');document.getElementById('toastTitle').textContent=title;document.getElementById('toastMsg').textContent=msg;t.classList.add('is-on');if(_toastT)clearTimeout(_toastT);_toastT=setTimeout(hideToast,6000);}
+  var _drawer=document.getElementById('drawer'), _toastT=null;
+  function showToast(title,msg){document.getElementById('toastTitle').textContent=title;document.getElementById('toastMsg').textContent=msg;var t=document.getElementById('toast');t.classList.add('is-on');if(_toastT)clearTimeout(_toastT);_toastT=setTimeout(hideToast,6000);}
   function hideToast(){document.getElementById('toast').classList.remove('is-on');}
-  function submitEmpresa(){var d={fant:val('d-fant')||'Nova empresa',razao:val('d-razao')||'Razão social não informada',cnpj:val('d-cnpj')||'—',adm:val('d-adm')||'Administrador',email:val('d-email')||'administrador@empresa.com.br'};
-    if(_mode==='edit'){showToast('Alterações salvas','Os dados de '+d.fant+' foram atualizados.');}else{addRow(d);showToast('Empresa cadastrada','Convite de ativação enviado para '+d.email+'.');}closeDrawer();}
-  function closeMenus(){document.querySelectorAll('.rowmenu__panel').forEach(function(p){p.remove();});document.querySelectorAll('.bo__more[aria-expanded="true"]').forEach(function(b){b.setAttribute('aria-expanded','false');});}
-  function rowData(tr){var n=tr.querySelectorAll('.cell-2l'),st=tr.querySelectorAll('td')[5];
-    return {fant:n[0]&&n[0].querySelector('b')?n[0].querySelector('b').textContent:'',razao:n[0]&&n[0].querySelector('span')?n[0].querySelector('span').textContent:'',cnpj:tr.querySelector('.cell-cnpj')?tr.querySelector('.cell-cnpj').textContent:'',adm:n[1]&&n[1].querySelector('b')?n[1].querySelector('b').textContent:'',email:n[1]&&n[1].querySelector('span')?n[1].querySelector('span').textContent:'',status:st?st.textContent.trim():''};}
-  document.addEventListener('click',function(e){var more=e.target.closest('.bo__more');
-    if(more){e.stopPropagation();var wrap=more.parentNode;var op=wrap.querySelector('.rowmenu__panel');closeMenus();if(op)return;
-      var tr=more.closest('tr');var d=rowData(tr);var re=/Convite/.test(d.status);
-      var p=document.createElement('div');p.className='rowmenu__panel';
-      var h='<div class="rowmenu__item" data-act="edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>Editar cadastro</div>';
-      if(re)h+='<div class="rowmenu__sep"></div><div class="rowmenu__item" data-act="re"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>Reenviar convite</div>';
-      p.innerHTML=h;wrap.appendChild(p);more.setAttribute('aria-expanded','true');
-      p.querySelector('[data-act=\'edit\']').addEventListener('click',function(){closeMenus();openDrawer('edit',d);});
-      var r=p.querySelector('[data-act=\'re\']');if(r)r.addEventListener('click',function(){closeMenus();tr.querySelectorAll('td')[5].innerHTML=chip('wchip--wait','Convite enviado');showToast('Convite reenviado','Novo convite de ativação enviado para '+d.email+'.');});
-      return;}
-    if(!e.target.closest('.rowmenu__panel'))closeMenus();});
-  document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(!_drawer.hidden)closeDrawer();closeMenus();}});
+  function openDrawer(){_drawer.hidden=false;requestAnimationFrame(function(){_drawer.classList.add('is-open');});document.body.style.overflow='hidden';}
+  function closeDrawer(){_drawer.classList.remove('is-open');document.body.style.overflow='';setTimeout(function(){_drawer.hidden=true;},220);}
+  var CLS={'Novo':'wchip--wait','Em atendimento':'wchip--on','Convertido':'wchip--done','Não convertido':'wchip--off'};
+  var BLD='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M10 6h4M10 10h4M10 14h4"/><path d="M18 22v-4"/></svg>';
+  function setStatus(s){['statusChip','statusChip2'].forEach(function(id){var el=document.getElementById(id);el.className='wchip '+CLS[s]+(id==='statusChip2'?' wchip--lg':'');el.innerHTML='<span class="wchip__dot"></span>'+s;});renderFollow(s);}
+  function renderFollow(s){
+    var d=document.getElementById('followDesc'), a=document.getElementById('followAct');
+    if(s==='Novo'){d.textContent='Lead recebido. O atendimento comercial ainda não começou.';a.innerHTML='<button class="btn btn--primary" onclick="setStatus(\'Em atendimento\');showToast(\'Atendimento iniciado\',\'O lead está em atendimento.\')">Iniciar atendimento</button>';}
+    else if(s==='Em atendimento'){d.textContent='Contato comercial em andamento. Conclua convertendo em empresa ou marcando como não convertido.';a.innerHTML='<button class="btn btn--primary" onclick="openDrawer()">'+BLD+'Converter em empresa</button><button class="btn btn--outline" onclick="markNotConverted()">Marcar como não convertido</button>';}
+    else if(s==='Convertido'){d.textContent='Empresa criada a partir deste lead. O convite de ativação foi enviado ao administrador.';a.innerHTML='<a class="btn btn--outline" href="./backoffice-empresas.html">'+BLD+'Ver empresa</a>';}
+    else{d.textContent='Atendimento encerrado sem conversão.';a.innerHTML='<button class="btn btn--ghost" onclick="setStatus(\'Em atendimento\');showToast(\'Atendimento reaberto\',\'O lead voltou para em atendimento.\')">Reabrir atendimento</button>';}
+  }
+  function markNotConverted(){setStatus('Não convertido');showToast('Lead atualizado','Marcado como não convertido.');}
+  function submitConvert(){
+    var email=(document.getElementById('d-email').value||'administrador@empresa.com.br').trim();
+    closeDrawer();setStatus('Convertido');
+    showToast('Empresa criada','Convite enviado para '+email+'. O lead foi marcado como convertido e a empresa entrou na Lista de empresas.');
+  }
+  renderFollow('Em atendimento');
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!_drawer.hidden)closeDrawer();});
 </script>
 </body></html>

@@ -825,12 +825,15 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 </style>
 <style>
   html{scrollbar-gutter:stable}
-  body{background:var(--color-surface)}
-  .wrap{max-width:940px;margin:0 auto;padding:56px 48px}
+  body{background:var(--slate-50)}
+  .wrap{max-width:940px;margin:0 auto;padding:0 48px}
+  .jhead{background:var(--color-surface);border-bottom:1px solid var(--color-border)}
+  .jhead .wrap{padding-top:56px;padding-bottom:44px}
+  .jbody .wrap{padding-top:40px;padding-bottom:88px}
   .backrow{display:flex;align-items:center;gap:var(--space-6);margin-bottom:8px}
-  .hero{margin:36px 0 32px}
+  .hero{margin:36px 0 0}
   .hero h1{font-size:var(--text-3xl);margin:0;color:var(--color-heading)}
-  .hero .sub{color:var(--slate-600);font-size:var(--text-base);margin:10px 0 0;line-height:1.6}
+  .hero .sub{color:var(--slate-600);font-size:var(--text-base);margin:10px 0 0;line-height:1.6;max-width:70ch}
   .jlist{display:flex;flex-direction:column;gap:14px}
   .jcard{display:flex;align-items:center;gap:var(--space-6);background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:24px;text-decoration:none;transition:box-shadow .15s ease,border-color .15s ease}
   a.jcard:hover{box-shadow:var(--shadow-md);border-color:var(--color-primary)}
@@ -871,12 +874,15 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 </div>
 <script>if(localStorage.getItem('dere_ok')==='1'){var _g=document.getElementById('dere-gate');if(_g)_g.remove();}function dereGate(f){var i=f.querySelector('input'),e=document.getElementById('dere-err');if(i.value==='dere123'){localStorage.setItem('dere_ok','1');document.getElementById('dere-gate').remove();}else{e.innerHTML='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 auto"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>Senha incorreta. Tente novamente.';i.select();}return false;}</script>
 
-<div class="wrap">
+<header class="jhead"><div class="wrap">
   <div class="backrow"><a class="btn btn--outline btn--sm" href="../"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>Voltar</a><nav class="breadcrumb" aria-label="Trilha"><a href="../">Início</a><span class="breadcrumb__sep">/</span><span class="breadcrumb__current">Jornadas do usuário</span></nav></div>
   <div class="hero">
     <h1>Jornadas do usuário</h1>
     <p class="sub">Navegue pelas jornadas da a-DeRE para entender cada etapa e acessar os respectivos fluxos da aplicação.</p>
   </div>
+</div></header>
+
+<main class="jbody"><div class="wrap">
   <div class="jlist">
     <a class="jcard" href="onboarding.html">
       <span class="jcard__n">01</span>
@@ -923,5 +929,5 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
       </div>
     </div>
   </div>
-</div>
+</div></main>
 </body></html>
