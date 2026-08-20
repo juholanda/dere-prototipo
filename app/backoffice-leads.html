@@ -1245,7 +1245,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   }
   function submitConvert(){
     var lead=(_drawer._tr?_drawer._tr.querySelector('.cell-id').textContent.trim():'');
-    var q='?empresa='+encodeURIComponent(val('d-razao'))+'&cnpj='+encodeURIComponent(val('d-cnpj'))+'&adm='+encodeURIComponent(val('d-adm'))+'&email='+encodeURIComponent(val('d-email'))+'&lead='+encodeURIComponent(lead);
+    var q='?empresa='+encodeURIComponent(val('d-razao'))+'&cnpj='+encodeURIComponent(val('d-cnpj'))+'&adm='+encodeURIComponent(val('d-adm'))+'&email='+encodeURIComponent(val('d-email'))+'&lead='+encodeURIComponent(lead)+'&created=1';
     window.location.href='./backoffice-empresa-detalhes.html'+q;
   }
   function dzAdd(files){

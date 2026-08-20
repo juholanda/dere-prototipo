@@ -1135,7 +1135,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   function submitConvert(){
     var g=function(id){var e=document.getElementById(id);return e?e.value.trim():'';};
     var lead=(document.getElementById('t-id')||{textContent:''}).textContent;
-    window.location.href=empHref({empresa:g('d-razao'),cnpj:g('d-cnpj'),adm:g('d-adm'),email:g('d-email'),lead:lead});
+    window.location.href=empHref({empresa:g('d-razao'),cnpj:g('d-cnpj'),adm:g('d-adm'),email:g('d-email'),lead:lead})+'&created=1';
   }
   function dzAdd(files){
     var box=document.getElementById('dz-files');
