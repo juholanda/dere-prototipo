@@ -920,7 +920,11 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   .cell-2l span{color:var(--slate-500);font-size:12.5px}
   .cell-cnpj{font-variant-numeric:tabular-nums;color:var(--slate-700);white-space:nowrap;font-size:13px}
   .cell-na{color:var(--slate-400);font-size:15px;font-weight:600}
-  .col-act{width:56px;text-align:right}
+  .col-act{width:118px}
+  .act-cell{display:flex;align-items:center;justify-content:flex-end;gap:4px}
+  .bo-ver{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--slate-600);text-decoration:none;padding:6px 11px;border-radius:7px;border:1px solid var(--slate-200);background:#fff;white-space:nowrap}
+  .bo-ver svg{width:14px;height:14px;color:var(--slate-400)}
+  .bo-ver:hover{background:var(--slate-100);color:var(--slate-900)}
 
   /* ---- wireframe chips (status em cinza, diferenciados por preenchimento) ---- */
   .wchip{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;white-space:nowrap;border:1px solid var(--slate-200);background:var(--slate-100);color:var(--slate-700)}
@@ -1296,5 +1300,15 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
       return;}
     if(!e.target.closest('.rowmenu__panel'))closeMenus();});
   document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(!_drawer.hidden)closeDrawer();closeMenus();}});
+  // botão "Ver" em cada linha da lista de empresas (abre o detalhe da empresa)
+  document.querySelectorAll('.bo-table tbody tr').forEach(function(tr){
+    var cell=tr.querySelector('.col-act'); if(!cell)return;
+    var d=rowData(tr);
+    var eh='./backoffice-empresa-detalhes.html?empresa='+encodeURIComponent(d.fant||d.razao)+'&razao='+encodeURIComponent(d.razao)+'&cnpj='+encodeURIComponent(d.cnpj)+'&adm='+encodeURIComponent(d.adm)+'&email='+encodeURIComponent(d.email);
+    cell.classList.add('act-cell');
+    var a=document.createElement('a');a.className='bo-ver';a.href=eh;
+    a.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>Ver';
+    cell.insertBefore(a,cell.firstChild);
+  });
 </script>
 </body></html>
