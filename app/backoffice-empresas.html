@@ -1018,9 +1018,11 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   .wchip--ok{background:var(--green-50);border-color:color-mix(in srgb,var(--green-600) 34%,#fff);color:var(--green-700)}
   .wchip--warn{background:var(--amber-50);border-color:color-mix(in srgb,var(--amber-600) 38%,#fff);color:var(--amber-700)}
   .wchip--info{background:var(--blue-50);border-color:var(--blue-300);color:var(--blue-700)}
-  .wchip--new{background:var(--sky-50);border-color:color-mix(in srgb,var(--sky-600) 34%,#fff);color:var(--sky-700)}
+  .wchip--new{background:#faf5ff;border-color:color-mix(in srgb,#9333ea 32%,#fff);color:#7e22ce}
   .wchip--bad{background:var(--red-50);border-color:color-mix(in srgb,var(--red-600) 32%,#fff);color:var(--red-700)}
   .wchip--ok .wchip__dot,.wchip--warn .wchip__dot,.wchip--info .wchip__dot,.wchip--new .wchip__dot,.wchip--bad .wchip__dot{background:currentColor;border:0;width:7px;height:7px}
+
+  .rowmenu__panel--up{top:auto;bottom:calc(100% + 4px)}
 </style>
 </head><body>
 <div id="dere-gate" style="position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;padding:24px;font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;background:radial-gradient(120% 120% at 20% 8%,#0c326f 0%,#071d41 55%,#05152e 100%)">
@@ -1298,7 +1300,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
       h+='<div class="rowmenu__item" data-act="edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>Editar empresa</div>';
       if(re)h+='<div class="rowmenu__item" data-act="re"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>Reenviar convite</div>';
       if(!inativa)h+='<div class="rowmenu__sep"></div><div class="rowmenu__item" data-act="inativar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.36 6.64A9 9 0 1 1 5.64 6.64"/><path d="M12 2v10"/></svg>Inativar empresa</div>';
-      p.innerHTML=h;wrap.appendChild(p);more.setAttribute('aria-expanded','true');
+      p.innerHTML=h;wrap.appendChild(p);more.setAttribute('aria-expanded','true');if(more.getBoundingClientRect().bottom+p.offsetHeight+12>window.innerHeight)p.classList.add('rowmenu__panel--up');
       p.querySelector('[data-act=\'edit\']').addEventListener('click',function(){closeMenus();openDrawer('edit',d);});
       var r=p.querySelector('[data-act=\'re\']');if(r)r.addEventListener('click',function(){closeMenus();tr.querySelectorAll('td')[5].innerHTML=chip('wchip--wait','Convite enviado');showToast('Convite reenviado','Novo convite de ativação enviado para '+d.email+'.');});
       var iv=p.querySelector('[data-act=\'inativar\']');if(iv)iv.addEventListener('click',function(){closeMenus();tr.querySelectorAll('td')[5].innerHTML=chip('wchip--off','Inativa');showToast('Empresa inativada','A empresa '+(d.fant||d.razao)+' foi inativada.');});
@@ -1307,5 +1309,5 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(!_drawer.hidden)closeDrawer();closeMenus();}});
 </script>
 
-<script>(function(){var W={"Ativa":"ok","Convertido":"ok","Convite enviado":"warn","Novo":"warn","Em atendimento":"info","Convite expirado":"bad","Não convertido":"bad","Inativa":"bad"};function col(r){(r||document).querySelectorAll(".wchip").forEach(function(c){var t=(c.textContent||"").trim(),k=W[t];["ok","warn","info","bad","new"].forEach(function(x){c.classList.remove("wchip--"+x);});if(k)c.classList.add("wchip--"+k);});}col();try{new MutationObserver(function(){col();}).observe(document.body,{childList:true,subtree:true});}catch(e){}})();</script>
+<script>(function(){var W={"Ativa":"ok","Convertido":"ok","Convite enviado":"warn","Novo":"new","Em atendimento":"info","Convite expirado":"bad","Não convertido":"bad","Inativa":"bad"};function col(r){(r||document).querySelectorAll(".wchip").forEach(function(c){var t=(c.textContent||"").trim(),k=W[t];["ok","warn","info","bad","new"].forEach(function(x){c.classList.remove("wchip--"+x);});if(k)c.classList.add("wchip--"+k);});}col();try{new MutationObserver(function(){col();}).observe(document.body,{childList:true,subtree:true});}catch(e){}})();</script>
 </body></html>
