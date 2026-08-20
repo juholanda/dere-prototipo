@@ -470,7 +470,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 @keyframes ds-fade-in{from{opacity:0}to{opacity:1}}
 @media (prefers-reduced-motion:reduce){.drawer,.drawer-backdrop{animation:none}}
 .drawer__header{display:flex;align-items:center;justify-content:space-between;padding:var(--space-4) var(--space-8);border-bottom:1px solid var(--color-border)}
-.drawer__header h2,.drawer__title{font-size:var(--text-lg) !important;font-weight:600;margin:0;color:var(--color-heading)} /* título do drawer: 18px semibold (o !important vence o h2 global de 24px) */
+.drawer__header h2,.drawer__title{font-size:var(--text-xl) !important;font-weight:600;margin:0;color:var(--color-heading)} /* título do drawer: 20px semibold (o !important vence o h2 global de 24px) */
 .drawer__body{padding:var(--space-8);overflow:auto;flex:1}
 .drawer__footer{display:flex;justify-content:flex-end;gap:var(--space-2);padding:var(--space-4) var(--space-8);border-top:1px solid var(--color-border)}
 .drawer__footer > .btn:first-child:not(:last-child){margin-right:auto}
@@ -940,7 +940,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   .bo-drawer__panel{position:absolute;top:0;right:0;height:100%;width:min(520px,94vw);background:#fff;border-left:1px solid var(--slate-200);box-shadow:-24px 0 60px -24px rgba(15,23,42,.35);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .22s ease}
   .bo-drawer.is-open .bo-drawer__panel{transform:translateX(0)}
   .bo-drawer__head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:22px 24px;border-bottom:1px solid var(--slate-200)}
-  .bo-drawer__title{font-size:18px;font-weight:700;color:var(--slate-900);margin:0}
+  .bo-drawer__title{font-size:20px;font-weight:700;color:var(--slate-900);margin:0}
   .bo-drawer__close{width:34px;height:34px;border-radius:8px;border:1px solid var(--slate-200);background:#fff;color:var(--slate-500);display:grid;place-items:center;cursor:pointer;flex:0 0 auto}
   .bo-drawer__close:hover{background:var(--slate-100);color:var(--slate-800)}
   .bo-drawer__close svg{width:17px;height:17px}
