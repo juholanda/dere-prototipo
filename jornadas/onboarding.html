@@ -824,6 +824,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 .dropzone__hint{font-size:var(--text-xs)}
 </style>
 <style>
+  html{scrollbar-gutter:stable}
   body{background:var(--slate-100);overflow-anchor:none}
   .jhead{background:var(--color-surface);border-bottom:1px solid var(--color-border)}
   .jhead .wrap{padding:56px 48px 0}
@@ -854,7 +855,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   .seq__a svg{width:15px;height:15px}
   /* etapas */
   .jstep{display:flex;flex-direction:column;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:var(--space-6);margin-bottom:16px;transition:box-shadow .15s ease;cursor:pointer}
-  .jstep:hover{box-shadow:var(--shadow-md)}
+  .jstep:hover{box-shadow:var(--shadow-md);border-color:var(--color-primary)}
   .jstep__hd{order:1;display:flex;align-items:center;margin-bottom:16px;cursor:pointer}
   .jstep__num{width:34px;height:34px;border-radius:50%;background:var(--blue-50);color:var(--color-primary);font-weight:700;display:grid;place-items:center;flex:0 0 auto;font-variant-numeric:tabular-nums;border:1px solid var(--blue-200);margin-right:14px}
   .jstep__ttl{margin:0 var(--space-6) 0 0;font-size:var(--text-lg)!important;color:var(--color-heading)}
