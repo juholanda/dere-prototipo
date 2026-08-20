@@ -843,6 +843,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   .ob__h{font-size:var(--text-2xl);text-align:center;margin:0 0 8px;color:var(--color-heading)}
   .ob__h:focus{outline:none;box-shadow:none}
   .ob__lead{text-align:center;color:var(--color-text-muted);font-size:var(--text-base);line-height:1.5;margin:0 auto 24px;max-width:46ch}
+  .ph-block{height:220px;background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-lg)}
   .ob__lead b{color:var(--color-heading);font-weight:600}
   .ob__lead--tight{margin-bottom:6px}
   .ob__leadsub{text-align:center;font-size:var(--text-xs);color:var(--color-text-muted);margin:0 auto 28px;max-width:46ch;line-height:1.5}
@@ -981,6 +982,8 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
         <li class="step is-active" data-s="1"><span class="step__dot">1</span><span class="step__label">Senha</span></li>
         <span class="step__bar"></span>
         <li class="step" data-s="2"><span class="step__dot">2</span><span class="step__label">Equipe</span></li>
+        <span class="step__bar"></span>
+        <li class="step" data-s="3"><span class="step__dot">3</span><span class="step__label">Empresa</span></li>
       </ol>
     </div>
   </header>
@@ -1048,8 +1051,16 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
         <div class="ob__foot ob__foot--far"><button type="button" class="btn btn--primary btn--block" onclick="finishTeam()">Concluir</button><button type="button" class="btn btn--ghost btn--block" onclick="go(1)">Voltar</button></div>
       </section>
 
+      <!-- EMPRESA (conteúdo em progresso) -->
+      <section class="step-sec" data-step="3" hidden>
+        <div class="topic"><span class="topic__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4M10 10h4M10 14h4"/></svg></span></div>
+        <h2 class="ob__h" tabindex="-1">Cadastro da empresa</h2>
+        <div class="ph-block" aria-hidden="true"></div>
+        <div class="ob__foot ob__foot--far"><button type="button" class="btn btn--primary btn--block" onclick="go(4)">Concluir ativação</button><button type="button" class="btn btn--ghost btn--block" onclick="go(2)">Voltar</button></div>
+      </section>
+
       <!-- CONCLUSÃO -->
-      <section class="step-sec done" data-step="3" hidden>
+      <section class="step-sec done" data-step="4" hidden>
         <div class="topic topic--done"><span class="topic__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></div>
         <h2 class="ob__h" tabindex="-1">Seu acesso está pronto</h2>
         <p class="ob__lead">Sua conta foi configurada e você já pode começar a usar a a-DeRE.</p>
@@ -1193,8 +1204,8 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   }
   function go(n){
     document.querySelectorAll('.step-sec').forEach(function(sec){ sec.hidden = (+sec.getAttribute('data-step')!==n); });
-    setStepper(n>2?3:n);
-    stepsRow.style.display = (n>2) ? 'none' : '';
+    setStepper(n);
+    stepsRow.style.display = (n>3) ? 'none' : '';
     panel.classList.remove('enter'); void panel.offsetWidth; panel.classList.add('enter');
     var sec=document.querySelector('.step-sec[data-step="'+n+'"]');
     var h=sec&&sec.querySelector('.ob__h'); if(h){try{h.focus();}catch(e){}}
@@ -1203,6 +1214,6 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   }
   document.addEventListener('keydown',function(ev){ if(ev.key==='Escape'){ if(!document.getElementById('teamDrawer').hidden)closeDrawer(); else closeKebabs(); } });
   updateCount();
-  (function(){var m=(location.hash||'').match(/^#s([1-3])$/);if(m)go(+m[1]);})();
+  (function(){var m=(location.hash||'').match(/^#s([1-4])$/);if(m)go(+m[1]);})();
 </script>
 </body></html>
