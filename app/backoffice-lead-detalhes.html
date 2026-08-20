@@ -946,9 +946,8 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   .dz-file{display:flex;align-items:center;gap:10px;padding:9px 10px 9px 12px;border:1px solid var(--slate-200);border-radius:8px;background:#fff}
   .dz-file__ico{width:28px;height:28px;border-radius:6px;background:var(--slate-100);color:var(--slate-500);display:grid;place-items:center;flex:0 0 auto}
   .dz-file__ico svg{width:15px;height:15px}
-  .dz-file__meta{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
-  .dz-file__nm{font-size:13px;color:var(--slate-800);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .dz-file__tipo{font:inherit;font-size:12px;padding:3px 24px 3px 8px;border:1px solid var(--slate-300);border-radius:6px;background:#fff;color:var(--slate-700);align-self:flex-start}
+  .dz-file__nm{flex:1;min-width:0;font-size:13px;color:var(--slate-800);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .dz-file__tipo{flex:0 0 auto;width:148px;font:inherit;font-size:12px;padding:5px 24px 5px 9px;border:1px solid var(--slate-300);border-radius:6px;background:#fff;color:var(--slate-700)}
   .dz-file__rm{width:26px;height:26px;border-radius:6px;border:0;background:transparent;color:var(--slate-400);cursor:pointer;display:grid;place-items:center;flex:0 0 auto}
   .dz-file__rm:hover{background:var(--slate-100);color:var(--slate-700)}
   .dz-file__rm svg{width:15px;height:15px}
@@ -1092,9 +1091,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
             <span class="dz__tx"><b>Clique para enviar</b> ou arraste os arquivos<span class="dz__hint">PDF, DOC, JPG ou PNG até 10 MB</span></span>
             <input id="dz-input" type="file" multiple hidden onchange="dzAdd(this.files);this.value='';">
           </label>
-          <div class="dz-files" id="dz-files">
-            <div class="dz-file"><span class="dz-file__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v6h6"/></svg></span><div class="dz-file__meta"><span class="dz-file__nm">Contrato assinado.pdf</span><select class="dz-file__tipo"><option>Contrato</option><option>Proposta comercial</option><option>Documento de identificação</option><option>Outro</option></select></div><button type="button" class="dz-file__rm" aria-label="Remover" onclick="this.closest('.dz-file').remove()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div>
-          </div>
+          <div class="dz-files" id="dz-files"></div>
         </section>
       </form>
     </div>
@@ -1143,7 +1140,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
     var FI='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v6h6"/></svg>';
     var XI='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>';
     var TP='<option>Contrato</option><option>Proposta comercial</option><option>Documento de identificação</option><option>Outro</option>';
-    for(var i=0;i<files.length;i++){var f=files[i];var row=document.createElement('div');row.className='dz-file';row.innerHTML='<span class="dz-file__ico">'+FI+'</span><div class="dz-file__meta"><span class="dz-file__nm">'+f.name+'</span><select class="dz-file__tipo">'+TP+'</select></div><button type="button" class="dz-file__rm" aria-label="Remover">'+XI+'</button>';row.querySelector('.dz-file__rm').addEventListener('click',function(){this.closest('.dz-file').remove();});box.appendChild(row);}
+    for(var i=0;i<files.length;i++){var f=files[i];var row=document.createElement('div');row.className='dz-file';row.innerHTML='<span class="dz-file__ico">'+FI+'</span><span class="dz-file__nm">'+f.name+'</span><select class="dz-file__tipo">'+TP+'</select><button type="button" class="dz-file__rm" aria-label="Remover">'+XI+'</button>';row.querySelector('.dz-file__rm').addEventListener('click',function(){this.closest('.dz-file').remove();});box.appendChild(row);}
   }
   // popula o detalhe com os dados do lead vindo da lista (querystring); sem querystring, mantém o exemplo
   (function(){
