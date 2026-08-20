@@ -1,4 +1,4 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Jornadas do usuário · a-DeRE</title>
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Autenticação · Jornadas do usuário · DeRE</title>
 <style>/* =============================================================================
    Design System — DeRE (Plataforma de Gestão Tributária Especial)
    Tokens + componentes. CSS puro por variável: portável (funciona sem build) e
@@ -825,30 +825,42 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 </style>
 <style>
   html{scrollbar-gutter:stable}
-  body{background:var(--slate-50)}
-  .wrap{max-width:940px;margin:0 auto;padding:0 48px}
+  body{background:var(--slate-50);overflow-anchor:none}
   .jhead{background:var(--color-surface);border-bottom:1px solid var(--color-border)}
-  .jhead .wrap{padding-top:56px;padding-bottom:44px}
-  .jbody .wrap{padding-top:40px;padding-bottom:88px}
+  .jhead .wrap{padding:56px 48px 44px}
+  .jbody .wrap{padding:40px 48px 88px}
+  .wrap{max-width:940px;margin:0 auto;padding:0 48px}
   .backrow{display:flex;align-items:center;gap:var(--space-6);margin-bottom:8px}
   .hero{margin:36px 0 0}
-  .hero h1{font-size:var(--text-3xl);margin:0;color:var(--color-heading)}
-  .hero .sub{color:var(--slate-600);font-size:var(--text-base);margin:10px 0 0;line-height:1.6;max-width:70ch}
-  .jlist{display:flex;flex-direction:column;gap:14px}
-  .jcard{display:flex;align-items:center;gap:var(--space-6);background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:24px;text-decoration:none;transition:box-shadow .15s ease,border-color .15s ease}
-  a.jcard:hover{box-shadow:var(--shadow-md);border-color:var(--color-primary)}
-  .jcard__n{width:40px;height:40px;flex:0 0 auto;border-radius:50%;background:var(--blue-50);border:1px solid var(--blue-200);color:var(--color-primary);font-weight:700;display:grid;place-items:center;font-variant-numeric:tabular-nums}
-  .jcard__b{flex:1;min-width:0}
-  .jcard__hd{display:flex;align-items:center;gap:var(--space-3);margin-bottom:5px;flex-wrap:wrap}
-  .jcard__hd h2{margin:0;font-size:var(--text-lg)!important;color:var(--color-heading)}
-  .jcard__b p{margin:0;font-size:var(--text-sm);color:var(--slate-600);line-height:1.5}
-  .jcard__flux{display:inline-flex;align-items:center;gap:5px;margin-top:10px;font-size:var(--text-xs);font-weight:600;color:var(--color-text-muted)}
-  .jcard__flux svg{width:13px;height:13px}
-  .jcard__go{color:var(--color-primary);flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;font-size:var(--text-sm);font-weight:700;white-space:nowrap;align-self:flex-start;margin-top:4px}
-  .jcard__go svg{width:16px;height:16px}
-  .jcard.is-soon{cursor:default}
-  .jcard.is-soon .jcard__n{background:var(--color-surface-2);border-color:var(--color-border);color:var(--color-text-muted)}
-  .jcard.is-soon .jcard__hd h2{color:var(--color-text-muted)}
+  .hero h1{font-size:var(--text-3xl);margin:0}
+  .hero .sub{color:var(--slate-600);font-size:var(--text-base);margin:10px 0 0;line-height:1.65;max-width:70ch}
+  .pctx{margin:0 0 var(--space-8);font-size:var(--text-base);color:var(--slate-600);line-height:1.6}
+  .jstep{display:flex;flex-direction:column;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:var(--space-6);margin-bottom:16px;transition:box-shadow .15s ease;cursor:pointer}
+  .jstep:hover{box-shadow:var(--shadow-md);border-color:var(--color-primary)}
+  .jstep__hd{order:1;display:flex;align-items:center;margin-bottom:16px;cursor:pointer}
+  .jstep__num{width:34px;height:34px;border-radius:50%;background:var(--blue-50);color:var(--color-primary);font-weight:700;display:grid;place-items:center;flex:0 0 auto;font-variant-numeric:tabular-nums;border:1px solid var(--blue-200);margin-right:14px}
+  .jstep__ttl{margin:0 var(--space-6) 0 0;font-size:var(--text-lg)!important;color:var(--color-heading)}
+  .jstep__hd-r{margin-left:auto;display:flex;align-items:center;gap:14px;flex:0 0 auto}
+  .jstep__note{margin-left:var(--space-3);font-size:var(--text-xs);font-weight:600;color:var(--color-text-muted)}
+  .jstep__chev{display:grid;place-items:center;width:32px;height:32px;padding:0;border-radius:var(--radius-base);border:1px solid var(--color-border);background:var(--color-surface);color:var(--color-text-muted);cursor:pointer;flex:0 0 auto;transition:transform .15s ease}
+  .jstep__chev:focus-visible{outline:2px solid var(--color-primary);outline-offset:2px}
+  .jstep__chev svg{width:18px;height:18px}
+  .jstep:not(.is-collapsed) .jstep__chev{transform:rotate(180deg)}
+  .jstep.is-collapsed .jstep__hd{margin-bottom:0}
+  .jstep.is-collapsed > *:not(.jstep__hd){display:none}
+  .jstep__desc{order:2;font-size:var(--text-sm);color:var(--slate-600);line-height:1.65;margin:0 0 var(--space-6)}
+  .jstep .jmeta{order:3}
+  .jstep .jblock{order:4}
+  .jblock{margin:0 0 16px}
+  .jblock__k{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--color-text-muted);margin:0 0 7px}
+  .jseq{display:flex;flex-wrap:wrap;align-items:center;gap:5px}
+  .jseq__i{background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-base);padding:4px 10px;font-size:var(--text-xs);font-weight:600;color:var(--color-text);white-space:nowrap}
+  .jseq__a{color:var(--color-text-muted);flex:0 0 auto;display:grid;place-items:center}
+  .jseq__a svg{width:13px;height:13px}
+  .jmeta{display:flex;gap:40px;flex-wrap:wrap;margin:0 0 4px}
+  .jmeta__k{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--color-text-muted);margin:0 0 1px;line-height:1.2}
+  .jmeta__v{font-size:var(--text-sm);color:var(--color-heading);font-weight:500}
+  .jstep__go svg{width:16px;height:16px}
 </style>
 </head><body>
 <div id="dere-gate" style="position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;padding:24px;font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;background:radial-gradient(120% 120% at 20% 8%,#0c326f 0%,#071d41 55%,#05152e 100%)">
@@ -875,61 +887,44 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 <script>if(localStorage.getItem('dere_ok')==='1'){var _g=document.getElementById('dere-gate');if(_g)_g.remove();}function dereGate(f){var i=f.querySelector('input'),e=document.getElementById('dere-err');if(i.value==='dere123'){localStorage.setItem('dere_ok','1');document.getElementById('dere-gate').remove();}else{e.innerHTML='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 auto"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>Senha incorreta. Tente novamente.';i.select();}return false;}</script>
 
 <header class="jhead"><div class="wrap">
-  <div class="backrow"><a class="btn btn--outline btn--sm" href="../"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>Voltar</a><nav class="breadcrumb" aria-label="Trilha"><a href="../">Início</a><span class="breadcrumb__sep">/</span><span class="breadcrumb__current">Jornadas do usuário</span></nav></div>
+  <div class="backrow"><a class="btn btn--outline btn--sm" href="./"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>Voltar</a><nav class="breadcrumb" aria-label="Trilha"><a href="../">Início</a><span class="breadcrumb__sep">/</span><a href="./">Jornadas do usuário</a><span class="breadcrumb__sep">/</span><span class="breadcrumb__current">Autenticação</span></nav></div>
   <div class="hero">
-    <h1>Jornadas do usuário</h1>
-    <p class="sub">Navegue pelas jornadas da a-DeRE para entender cada etapa e acessar os respectivos fluxos da aplicação.</p>
+    <h1>Autenticação</h1>
+    <p class="sub">Como qualquer usuário já cadastrado acessa a a-DeRE: login, recuperação de senha e recuperação de acesso quando a sessão ou o link expira.</p>
   </div>
 </div></header>
 
 <main class="jbody"><div class="wrap">
-  <div class="jlist">
-    <a class="jcard" href="onboarding.html">
-      <span class="jcard__n">01</span>
-      <div class="jcard__b">
-        <div class="jcard__hd"><h2>Onboarding</h2><span class="status status--success"><span class="status__dot"></span>Disponível</span></div>
-        <p>Do primeiro contato com a landing page até o acesso ao ambiente da plataforma. Inclui o backoffice na etapa de preparação da conta.</p>
-        <span class="jcard__flux"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/></svg>5 fluxos</span>
-      </div>
-      <span class="jcard__go">Explorar jornada<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>
-    </a>
-    <div class="jcard is-soon">
-      <span class="jcard__n">02</span>
-      <div class="jcard__b">
-        <div class="jcard__hd"><h2>Informações do contribuinte</h2><span class="status"><span class="status__dot"></span>Em breve</span></div>
-        <p>Registro do contribuinte e seus regimes específicos (evento D-1001).</p>
-      </div>
-    </div>
-    <div class="jcard is-soon">
-      <span class="jcard__n">03</span>
-      <div class="jcard__b">
-        <div class="jcard__hd"><h2>Plano de contas</h2><span class="status"><span class="status__dot"></span>Em breve</span></div>
-        <p>Envio e aprovação do plano de contas do contribuinte.</p>
-      </div>
-    </div>
-    <div class="jcard is-soon">
-      <span class="jcard__n">04</span>
-      <div class="jcard__b">
-        <div class="jcard__hd"><h2>Declaração mensal</h2><span class="status"><span class="status__dot"></span>Em breve</span></div>
-        <p>Ciclo mensal de apuração, revisão e envio da declaração.</p>
-      </div>
-    </div>
-    <a class="jcard" href="autenticacao.html">
-      <span class="jcard__n">05</span>
-      <div class="jcard__b">
-        <div class="jcard__hd"><h2>Autenticação</h2><span class="status status--success"><span class="status__dot"></span>Disponível</span></div>
-        <p>Acesso à plataforma: login, recuperação de senha e sessão ou link expirado.</p>
-        <span class="jcard__flux"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/></svg>3 fluxos</span>
-      </div>
-      <span class="jcard__go">Explorar jornada<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>
-    </a>
-    <div class="jcard is-soon">
-      <span class="jcard__n">06</span>
-      <div class="jcard__b">
-        <div class="jcard__hd"><h2>Consultoria</h2><span class="status"><span class="status__dot"></span>Em breve</span></div>
-        <p>Consultor da Axians que acessa o backoffice e assume o acesso de um contribuinte (impersonate) para auxiliar na plataforma.</p>
-      </div>
-    </div>
+  <p class="pctx">Contexto de acesso de um usuário que já tem conta ativa na plataforma.</p>
+
+  <!-- 01 Login -->
+  <div class="jstep is-collapsed">
+    <div class="jstep__hd"><span class="jstep__num">01</span><h3 class="jstep__ttl">Login</h3><span class="status status--success"><span class="status__dot"></span>Disponível</span><span class="jstep__note">Frontoffice</span><div class="jstep__hd-r"><a class="btn btn--primary btn--sm jstep__go" href="../flows/login.html" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Iniciar fluxo<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a><button type="button" class="jstep__chev" aria-expanded="false" aria-label="Expandir etapa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button></div></div>
+    <p class="jstep__desc">O usuário informa e-mail e senha para entrar na plataforma. Após a autenticação, é levado ao painel do contribuinte selecionado.</p>
+    <div class="jblock"><p class="jblock__k">Fluxo</p><div class="jseq"><span class="jseq__i">E-mail e senha</span><span class="jseq__a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span><span class="jseq__i">Autenticação</span><span class="jseq__a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span><span class="jseq__i">Painel</span></div></div>
+    <div class="jmeta"><div><p class="jmeta__k">Atores</p><p class="jmeta__v">Qualquer usuário cadastrado</p></div><div><p class="jmeta__k">Ambiente</p><p class="jmeta__v">Front office</p></div></div>
+  </div>
+
+  <!-- 02 Recuperação de senha -->
+  <div class="jstep is-collapsed">
+    <div class="jstep__hd"><span class="jstep__num">02</span><h3 class="jstep__ttl">Recuperação de senha</h3><span class="status status--success"><span class="status__dot"></span>Disponível</span><span class="jstep__note">Frontoffice</span><div class="jstep__hd-r"><a class="btn btn--primary btn--sm jstep__go" href="../flows/senha.html" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Iniciar fluxo<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a><button type="button" class="jstep__chev" aria-expanded="false" aria-label="Expandir etapa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button></div></div>
+    <p class="jstep__desc">Quando o usuário esquece a senha, solicita a recuperação, recebe um link por e-mail e define uma nova senha para voltar a acessar a plataforma.</p>
+    <div class="jblock"><p class="jblock__k">Fluxo</p><div class="jseq"><span class="jseq__i">Esqueci minha senha</span><span class="jseq__a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span><span class="jseq__i">E-mail de recuperação</span><span class="jseq__a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span><span class="jseq__i">Criar nova senha</span><span class="jseq__a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span><span class="jseq__i">Painel</span></div></div>
+    <div class="jmeta"><div><p class="jmeta__k">Atores</p><p class="jmeta__v">Usuário cadastrado</p></div><div><p class="jmeta__k">Ambiente</p><p class="jmeta__v">E-mail + front office</p></div></div>
+  </div>
+
+  <!-- 03 Sessão ou link expirado -->
+  <div class="jstep is-collapsed">
+    <div class="jstep__hd"><span class="jstep__num">03</span><h3 class="jstep__ttl">Sessão ou link expirado</h3><span class="status status--success"><span class="status__dot"></span>Disponível</span><span class="jstep__note">Frontoffice</span><div class="jstep__hd-r"><a class="btn btn--primary btn--sm jstep__go" href="../flows/link-expirado.html" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Iniciar fluxo<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a><button type="button" class="jstep__chev" aria-expanded="false" aria-label="Expandir etapa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button></div></div>
+    <p class="jstep__desc">Quando o link de recuperação expira por segurança, o usuário é avisado e pode solicitar um novo link para retomar o acesso.</p>
+    <div class="jblock"><p class="jblock__k">Fluxo</p><div class="jseq"><span class="jseq__i">Link expirado</span><span class="jseq__a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span><span class="jseq__i">Solicitar novo link</span><span class="jseq__a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span><span class="jseq__i">E-mail de recuperação</span></div></div>
+    <div class="jmeta"><div><p class="jmeta__k">Atores</p><p class="jmeta__v">Usuário cadastrado</p></div><div><p class="jmeta__k">Ambiente</p><p class="jmeta__v">Front office</p></div></div>
   </div>
 </div></main>
+
+<script>
+  document.querySelectorAll('.jstep').forEach(function(step){
+    step.addEventListener('click',function(e){ if(e.target.closest('a'))return; step.classList.toggle('is-collapsed'); var c=step.querySelector('.jstep__chev'); if(c)c.setAttribute('aria-expanded', step.classList.contains('is-collapsed')?'false':'true'); });
+  });
+</script>
 </body></html>
