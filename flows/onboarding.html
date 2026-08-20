@@ -848,8 +848,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   .ob__lead--tight{margin-bottom:6px}
   .ob__leadsub{text-align:center;font-size:var(--text-xs);color:var(--color-text-muted);margin:0 auto 28px;max-width:46ch;line-height:1.5}
 
-  .ob__div{width:48px;height:2px;border-radius:2px;background:color-mix(in srgb, var(--blue-300) 55%, var(--slate-200));margin:12px auto}
-  .step-sec[data-step="1"] .ob__lead{margin-bottom:12px}
+  .ob__div{width:64px;height:1px;border-radius:1px;background:color-mix(in srgb, var(--blue-200) 50%, var(--slate-200));margin:24px auto}
   .acct{display:flex;align-items:center;gap:10px;margin:0 0 22px;padding:0}
   .acct__av{width:36px;height:36px;border-radius:50%;background:var(--color-primary-subtle);color:var(--color-primary);display:grid;place-items:center;flex:0 0 auto;font-size:var(--text-xs);font-weight:700}
   .acct__col{display:flex;flex-direction:column;min-width:0}
@@ -1037,6 +1036,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
         <div class="topic"><span class="topic__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 21a8 8 0 0 0-16 0"/><circle cx="10" cy="8" r="5"/><path d="M22 20c0-3.37-2-6.5-4-8a5 5 0 0 0-.45-8.3"/></svg></span></div>
         <h2 class="ob__h" tabindex="-1">Configure sua equipe</h2>
         <p class="ob__lead">Para concluir a configuração, a equipe precisa ter pelo menos um <b>Preparador</b> e um <b>Aprovador</b>.</p>
+        <div class="ob__div" aria-hidden="true"></div>
 
         <p class="teamcount" id="teamCount">1 membro na equipe</p>
         <div class="people" id="people">
@@ -1058,7 +1058,8 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
       <section class="step-sec" data-step="3" hidden>
         <div class="topic"><span class="topic__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4M10 10h4M10 14h4"/></svg></span></div>
         <h2 class="ob__h" tabindex="-1">Complete as informações da empresa</h2>
-        <p class="ob__lead">Adicione os dados que faltam para a empresa começar a declarar na a-DeRE.</p>
+        <p class="ob__lead">Adicione os dados que faltam para a conta da empresa.</p>
+        <div class="ob__div" aria-hidden="true"></div>
         <div class="ph-block" aria-hidden="true"></div>
         <div class="ob__foot ob__foot--far"><button type="button" class="btn btn--primary btn--lg btn--block" onclick="go(4)">Concluir ativação</button><button type="button" class="btn btn--ghost btn--lg btn--block" onclick="go(2)">Voltar</button></div>
       </section>
