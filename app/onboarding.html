@@ -954,18 +954,17 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   /* ==== Empresa (etapa 3) ==== */
   .esec{margin-top:26px}
   .esec--first{margin-top:0}
-  .esec__hd{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
-  .esec__t{font-size:var(--text-base);font-weight:600;color:var(--color-heading);margin:0}
+  .esec__hd{display:flex;align-items:baseline;gap:8px;margin-bottom:6px}
+  .esec__t{font-size:var(--text-lg);font-weight:600;color:var(--color-heading);margin:0}
+  .esec__opt{font-style:italic;font-weight:400;font-size:var(--text-xs);color:var(--color-text-muted)}
   .esec__d{font-size:var(--text-sm);color:var(--color-text-muted);margin:0 0 12px;line-height:1.5}
-  .opt-tag{flex:0 0 auto;font-size:var(--text-xs);font-weight:600;color:var(--color-text-muted);background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-pill);padding:2px 9px}
-  /* identificação (read-only) */
-  .ident{border:1px solid var(--color-border);border-radius:var(--radius-base);background:var(--color-surface-2);overflow:hidden}
-  .ident__row{display:flex;gap:14px;padding:11px 14px;border-top:1px solid var(--color-border)}
-  .ident__row:first-child{border-top:0}
-  .ident__k{flex:0 0 104px;font-size:var(--text-sm);color:var(--color-text-muted)}
-  .ident__v{flex:1;min-width:0;font-size:var(--text-sm);font-weight:500;color:var(--color-heading)}
-  .ident__note{display:flex;align-items:center;gap:6px;font-size:var(--text-xs);color:var(--color-text-muted);margin:8px 2px 0}
-  .ident__note svg{width:13px;height:13px;flex:0 0 auto}
+  /* identificação (card no estilo do e-mail) */
+  .co-card{display:flex;align-items:center;gap:12px;background:color-mix(in srgb, var(--color-primary) 4%, var(--color-surface));border:1px solid color-mix(in srgb, var(--color-primary) 10%, var(--color-border));border-radius:var(--radius-base);padding:14px}
+  .co-card__ic{width:44px;height:44px;flex:0 0 auto;border-radius:var(--radius-base);background:color-mix(in srgb, var(--color-primary) 12%, var(--color-surface-2));color:var(--color-primary);display:grid;place-items:center}
+  .co-card__ic svg{width:24px;height:24px}
+  .co-card__t{min-width:0}
+  .co-card__name{color:var(--color-heading);font-weight:600;font-size:var(--text-base);margin:0}
+  .co-card__cnpj{color:var(--color-text-muted);font-size:var(--text-sm);margin:2px 0 0}
   /* uploader (logo + certificado) */
   .up{display:flex;align-items:center;gap:14px;border:1px solid var(--color-border);border-radius:var(--radius-base);background:var(--color-surface);padding:14px}
   .up__box{width:72px;height:72px;flex:0 0 auto;border-radius:var(--radius-base);display:grid;place-items:center}
@@ -1100,20 +1099,17 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
         <p class="ob__lead" style="max-width:none">Adicione os dados que faltam para a conta da empresa.</p>
         <div class="ob__div" aria-hidden="true"></div>
 
-        <!-- 1. Identificação (read-only, vem do backoffice) -->
+        <!-- 1. Empresa (read-only, vem do backoffice) -->
         <section class="esec esec--first">
-          <div class="esec__hd"><h3 class="esec__t">Identificação da empresa</h3></div>
-          <p class="esec__d">Dados do cadastro feito pela nossa equipe. Não podem ser alterados aqui.</p>
-          <div class="ident">
-            <div class="ident__row"><span class="ident__k">Nome</span><span class="ident__v">Mercado Pago</span></div>
-            <div class="ident__row"><span class="ident__k">CNPJ</span><span class="ident__v">10.573.521/0001-91</span></div>
-            <div class="ident__row"><span class="ident__k">Razão social</span><span class="ident__v">Mercado Pago Instituição de Pagamento Ltda.</span></div>
+          <div class="co-card">
+            <div class="co-card__ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4M10 10h4M10 14h4"/></svg></div>
+            <div class="co-card__t"><p class="co-card__name">Mercado Pago</p><p class="co-card__cnpj">CNPJ 10.573.521/0001-91</p></div>
           </div>
         </section>
 
         <!-- 2. Logo (opcional) -->
         <section class="esec">
-          <div class="esec__hd"><h3 class="esec__t">Logo da empresa</h3><span class="opt-tag">Opcional</span></div>
+          <div class="esec__hd"><h3 class="esec__t">Logo da empresa</h3><span class="esec__opt">Opcional</span></div>
           <p class="esec__d">Aparece no topo da conta e nos documentos gerados. Você pode adicionar depois.</p>
           <!-- estado: sem logo -->
           <div class="up" id="logo-empty">
