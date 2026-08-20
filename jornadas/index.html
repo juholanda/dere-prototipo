@@ -1,4 +1,4 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DeRE</title>
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Jornadas do usuário · a-DeRE</title>
 <style>/* =============================================================================
    Design System — DeRE (Plataforma de Gestão Tributária Especial)
    Tokens + componentes. CSS puro por variável: portável (funciona sem build) e
@@ -824,24 +824,24 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 .dropzone__hint{font-size:var(--text-xs)}
 </style>
 <style>
-  body{background:var(--color-bg)}
-  .wrap{max-width:900px;margin:0 auto;padding:72px 24px}
-  .hero{margin-bottom:44px}
-  .hero .logo{display:inline-flex;align-items:center;gap:14px;margin-bottom:16px}
-  .hero .logo .m{width:48px;height:48px;border-radius:8px;background:var(--color-primary-darker);display:grid;place-items:center;color:#fff;font-weight:800;font-size:22px;letter-spacing:-.02em}
-  .hero h1{font-size:var(--text-3xl);margin:0}
-  .hero p{color:var(--color-text-muted);font-size:var(--text-lg);margin:6px 0 0}
-  .cards{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-  @media(max-width:680px){.cards{grid-template-columns:1fr}}
-  .lk{display:block;text-decoration:none;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:28px;box-shadow:var(--shadow-sm);transition:box-shadow .15s,border-color .15s}
-  .lk:hover{box-shadow:var(--shadow-md);border-color:var(--color-primary)}
-  .lk .ic{width:46px;height:46px;border-radius:8px;background:var(--color-primary-subtle);color:var(--color-primary);display:grid;place-items:center;margin-bottom:16px}
-  .lk .ic svg{width:24px;height:24px}
-  .lk h2{color:var(--color-heading);font-size:var(--text-xl);margin:0 0 6px}
-  .lk p{color:var(--color-text-muted);font-size:var(--text-sm);margin:0;line-height:1.5}
-  .lk .go{color:var(--color-primary);font-weight:700;font-size:var(--text-sm);margin-top:16px;display:inline-flex;align-items:center;gap:6px}
-  .lk .go svg{width:15px;height:15px}
-  .foot{margin-top:44px;color:var(--color-text-muted);font-size:var(--text-xs)}
+  body{background:var(--slate-100)}
+  .wrap{max-width:860px;margin:0 auto;padding:56px 48px 80px}
+  .backrow{display:flex;align-items:center;gap:var(--space-6);margin-bottom:8px}
+  .hero{margin:36px 0 32px}
+  .hero h1{font-size:var(--text-3xl);margin:0;color:var(--color-heading)}
+  .hero .sub{color:var(--slate-600);font-size:var(--text-base);margin:10px 0 0;line-height:1.6}
+  .jlist{display:flex;flex-direction:column;gap:14px}
+  .jcard{display:flex;align-items:center;gap:18px;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:20px 22px;text-decoration:none;transition:box-shadow .15s ease,border-color .15s ease}
+  a.jcard:hover{box-shadow:var(--shadow-md);border-color:var(--blue-200)}
+  .jcard__n{width:40px;height:40px;flex:0 0 auto;border-radius:50%;background:var(--blue-50);border:1px solid var(--blue-200);color:var(--color-primary);font-weight:700;display:grid;place-items:center;font-variant-numeric:tabular-nums}
+  .jcard__b{flex:1;min-width:0}
+  .jcard__b h2{margin:0 0 3px;font-size:var(--text-lg);color:var(--color-heading)}
+  .jcard__b p{margin:0;font-size:var(--text-sm);color:var(--slate-600);line-height:1.5}
+  .jcard__go{color:var(--color-primary);flex:0 0 auto;display:grid;place-items:center}
+  .jcard__go svg{width:20px;height:20px}
+  .jcard.is-soon{cursor:default}
+  .jcard.is-soon .jcard__n{background:var(--color-surface-2);border-color:var(--color-border);color:var(--color-text-muted)}
+  .jcard.is-soon h2{color:var(--color-text-muted)}
 </style>
 </head><body>
 <div id="dere-gate" style="position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;padding:24px;font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;background:radial-gradient(120% 120% at 20% 8%,#0c326f 0%,#071d41 55%,#05152e 100%)">
@@ -868,24 +868,43 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 <script>if(localStorage.getItem('dere_ok')==='1'){var _g=document.getElementById('dere-gate');if(_g)_g.remove();}function dereGate(f){var i=f.querySelector('input'),e=document.getElementById('dere-err');if(i.value==='dere123'){localStorage.setItem('dere_ok','1');document.getElementById('dere-gate').remove();}else{e.innerHTML='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 auto"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>Senha incorreta. Tente novamente.';i.select();}return false;}</script>
 
 <div class="wrap">
+  <div class="backrow"><a class="btn btn--outline btn--sm" href="../"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>Início</a></div>
   <div class="hero">
-    <h1>Plataforma a-DeRE</h1>
-    <p>Design System e Jornadas — Protótipo Funcional Axians</p>
+    <h1>Jornadas do usuário</h1>
+    <p class="sub">As jornadas da a-DeRE. Abra uma para ver os passos e, em cada passo, o "Iniciar fluxo" abre a tela real de front ou backoffice.</p>
   </div>
-  <div class="cards">
-    <a class="lk" href="design-system/">
-      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg></div>
-      <h2>Design System</h2>
-      <p>Tokens, componentes, padrões e estados — a base visual e de interação, consumida pelos dois offices.</p>
-      <span class="go">Explorar Design System<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>
+  <div class="jlist">
+    <a class="jcard" href="onboarding.html">
+      <span class="jcard__n">01</span>
+      <div class="jcard__b"><h2>Onboarding</h2><p>Do primeiro contato com a landing page até o acesso ao ambiente da plataforma. Inclui o backoffice na etapa de preparação da conta.</p></div>
+      <span class="status status--success"><span class="status__dot"></span>Disponível</span>
+      <span class="jcard__go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>
     </a>
-    <a class="lk" href="jornadas/">
-      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 12 4-4 4 4 5-5"/></svg></div>
-      <h2>Jornadas</h2>
-      <p>As jornadas do usuário, passo a passo. Cada passo abre a tela real de front ou backoffice pelo "Iniciar fluxo" — é a porta pro protótipo funcional.</p>
-      <span class="go">Explorar Jornadas<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>
-    </a>
+    <div class="jcard is-soon">
+      <span class="jcard__n">02</span>
+      <div class="jcard__b"><h2>Informações do contribuinte</h2><p>Registro do contribuinte e seus regimes específicos (evento D-1001).</p></div>
+      <span class="status"><span class="status__dot"></span>Em breve</span>
+    </div>
+    <div class="jcard is-soon">
+      <span class="jcard__n">03</span>
+      <div class="jcard__b"><h2>Plano de contas</h2><p>Envio e aprovação do plano de contas do contribuinte.</p></div>
+      <span class="status"><span class="status__dot"></span>Em breve</span>
+    </div>
+    <div class="jcard is-soon">
+      <span class="jcard__n">04</span>
+      <div class="jcard__b"><h2>Declaração mensal</h2><p>Ciclo mensal de apuração, revisão e envio da declaração.</p></div>
+      <span class="status"><span class="status__dot"></span>Em breve</span>
+    </div>
+    <div class="jcard is-soon">
+      <span class="jcard__n">05</span>
+      <div class="jcard__b"><h2>Autenticação</h2><p>Acesso à plataforma: login, senha e recuperação de acesso.</p></div>
+      <span class="status"><span class="status__dot"></span>Em breve</span>
+    </div>
+    <div class="jcard is-soon">
+      <span class="jcard__n">06</span>
+      <div class="jcard__b"><h2>Consultoria</h2><p>Operação do escritório/consultoria contábil que atende vários contribuintes.</p></div>
+      <span class="status"><span class="status__dot"></span>Em breve</span>
+    </div>
   </div>
-  <p class="foot">DeRE · uma solução Axians</p>
 </div>
 </body></html>
