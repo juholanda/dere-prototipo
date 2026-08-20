@@ -1222,9 +1222,9 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
     <div class="field field--sep">
       <label class="field__label">Perfis de acesso</label>
       <div class="pcards">
-        <button type="button" class="pcard" data-role="Preparador" onclick="togglePcard(this)"><span class="pcard__chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span class="pcard__ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.375 2.625a1 1 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z"/></svg></span><span class="pcard__b"><p class="pcard__t">Preparador</p><p class="pcard__d">Preenche e atualiza as informações do contribuinte, o plano de contas e os dados das declarações.</p></span></button>
-        <button type="button" class="pcard" data-role="Aprovador" onclick="togglePcard(this)"><span class="pcard__chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span class="pcard__ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg></span><span class="pcard__b"><p class="pcard__t">Aprovador</p><p class="pcard__d">Aprova as informações preparadas e realiza a transmissão quando estiverem prontas.</p></span></button>
-        <button type="button" class="pcard" data-role="Administrador" onclick="togglePcard(this)"><span class="pcard__chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span class="pcard__ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg></span><span class="pcard__b"><p class="pcard__t">Administrador</p><p class="pcard__d">Gerencia usuários, perfis, permissões e configurações da conta.</p></span></button>
+        <button type="button" class="pcard" aria-pressed="false" data-role="Preparador" onclick="togglePcard(this)"><span class="pcard__chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span class="pcard__ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.375 2.625a1 1 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z"/></svg></span><span class="pcard__b"><p class="pcard__t">Preparador</p><p class="pcard__d">Preenche e atualiza as informações do contribuinte, o plano de contas e os dados das declarações.</p></span></button>
+        <button type="button" class="pcard" aria-pressed="false" data-role="Aprovador" onclick="togglePcard(this)"><span class="pcard__chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span class="pcard__ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg></span><span class="pcard__b"><p class="pcard__t">Aprovador</p><p class="pcard__d">Aprova as informações preparadas e realiza a transmissão quando estiverem prontas.</p></span></button>
+        <button type="button" class="pcard" aria-pressed="false" data-role="Administrador" onclick="togglePcard(this)"><span class="pcard__chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span class="pcard__ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg></span><span class="pcard__b"><p class="pcard__t">Administrador</p><p class="pcard__d">Gerencia usuários, perfis, permissões e configurações da conta.</p></span></button>
       </div>
       <span id="ap-roles-e" class="field__msg field__msg--error" role="alert" hidden><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>Selecione pelo menos um perfil de acesso.</span>
     </div>
@@ -1292,16 +1292,30 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 
   /* ==== Equipe ==== */
   var editing=null, drawerMode='add';
-  function togglePcard(b){ if(b.classList.contains('pcard--locked'))return; b.classList.toggle('is-on'); var r=document.getElementById('ap-roles-e'); if(r&&dpcards().some(function(c){return c.classList.contains('is-on');}))r.hidden=true; }
+  function togglePcard(b){ if(b.classList.contains('pcard--locked'))return; b.classList.toggle('is-on'); b.setAttribute('aria-pressed', b.classList.contains('is-on')?'true':'false'); var r=document.getElementById('ap-roles-e'); if(r&&dpcards().some(function(c){return c.classList.contains('is-on');})){r.hidden=true;r.classList.remove('show');} }
   function setChips(el,roles){ var order=['Administrador','Preparador','Aprovador']; roles.sort(function(a,b){return order.indexOf(a)-order.indexOf(b);}); el.innerHTML=''; roles.forEach(function(r){var t=document.createElement('span');t.className='tagr';t.textContent=r;el.appendChild(t);}); }
   function personRoles(p){ return [].slice.call(p.querySelectorAll('.tagr')).map(function(t){return t.textContent.trim();}); }
   function toggleKebab(btn){ var m=btn.closest('.kebab').querySelector('.kebab__menu'), willOpen=m.hidden; closeKebabs(); m.hidden=!willOpen; btn.setAttribute('aria-expanded',String(willOpen)); }
   function closeKebabs(){ document.querySelectorAll('.kebab__menu').forEach(function(m){m.hidden=true;}); document.querySelectorAll('.kebab .icon-btn').forEach(function(b){b.setAttribute('aria-expanded','false');}); }
   document.addEventListener('click',function(e){ if(!e.target.closest('.kebab')) closeKebabs(); });
   function dpcards(){ return [].slice.call(document.querySelectorAll('#teamDrawer .pcard')); }
-  function resetDpcards(){ dpcards().forEach(function(c){c.classList.remove('is-on','pcard--locked');}); }
-  function openDrawer(){ document.getElementById('teamBackdrop').hidden=false; document.getElementById('teamDrawer').hidden=false; document.body.style.overflow='hidden'; }
-  function closeDrawer(){ document.getElementById('teamDrawer').hidden=true; document.getElementById('teamBackdrop').hidden=true; document.body.style.overflow=''; editing=null; }
+  function resetDpcards(){ dpcards().forEach(function(c){c.classList.remove('is-on','pcard--locked');c.setAttribute('aria-pressed','false');}); }
+  /* ==== foco em diálogos (drawer + modal): trap de Tab + retorno de foco ao disparador + fundo inerte ==== */
+  var _dlgReturn=null,_dlgTrap=null;
+  function _focusables(root){ return [].slice.call(root.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')).filter(function(el){return el.offsetParent!==null;}); }
+  function openDialog(dlg){
+    _dlgReturn=document.activeElement;
+    var shell=document.querySelector('.ob'); if(shell){shell.setAttribute('inert','');shell.setAttribute('aria-hidden','true');}
+    _dlgTrap=function(ev){ if(ev.key!=='Tab')return; var f=_focusables(dlg); if(!f.length)return; var first=f[0],last=f[f.length-1]; if(ev.shiftKey&&document.activeElement===first){ev.preventDefault();last.focus();} else if(!ev.shiftKey&&document.activeElement===last){ev.preventDefault();first.focus();} };
+    document.addEventListener('keydown',_dlgTrap,true);
+  }
+  function closeDialog(){
+    if(_dlgTrap){document.removeEventListener('keydown',_dlgTrap,true);_dlgTrap=null;}
+    var shell=document.querySelector('.ob'); if(shell){shell.removeAttribute('inert');shell.removeAttribute('aria-hidden');}
+    if(_dlgReturn&&_dlgReturn.focus){try{_dlgReturn.focus();}catch(e){}} _dlgReturn=null;
+  }
+  function openDrawer(){ document.getElementById('teamBackdrop').hidden=false; document.getElementById('teamDrawer').hidden=false; document.body.style.overflow='hidden'; openDialog(document.getElementById('teamDrawer')); }
+  function closeDrawer(){ document.getElementById('teamDrawer').hidden=true; document.getElementById('teamBackdrop').hidden=true; document.body.style.overflow=''; editing=null; closeDialog(); }
   function openAddMember(){
     drawerMode='add'; editing=null; closeKebabs();
     document.getElementById('teamDrawerTitle').textContent='Adicionar membro da equipe';
@@ -1323,7 +1337,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
     var m=document.getElementById('ap-mail'); m.value=mailTxt; m.disabled=isAdmin;
     clearDrawerErrors(); resetDpcards();
     var have={}; personRoles(p).forEach(function(r){have[r]=true;});
-    dpcards().forEach(function(c){ var r=c.getAttribute('data-role'); if(have[r])c.classList.add('is-on'); if(isAdmin&&r==='Administrador')c.classList.add('pcard--locked','is-on'); });
+    dpcards().forEach(function(c){ var r=c.getAttribute('data-role'); if(have[r])c.classList.add('is-on'); if(isAdmin&&r==='Administrador')c.classList.add('pcard--locked','is-on'); c.setAttribute('aria-pressed', c.classList.contains('is-on')?'true':'false'); });
     document.getElementById('td-save').textContent='Salvar alterações';
     openDrawer(); document.getElementById('ap-nome').focus();
   }
@@ -1335,7 +1349,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
     setFieldErr('ap-nome', !nome); if(!nome){ok=false;firstBad=firstBad||n;}
     var checkMail=(drawerMode==='add')||!m.disabled;
     if(checkMail){ var mailBad=!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(mail); setFieldErr('ap-mail', mailBad); if(mailBad){ok=false;firstBad=firstBad||m;} }
-    var rEl=document.getElementById('ap-roles-e'); if(rEl)rEl.hidden=roles.length>0; if(!roles.length)ok=false;
+    var rEl=document.getElementById('ap-roles-e'); if(rEl){rEl.hidden=roles.length>0;rEl.classList.toggle('show',!roles.length);} if(!roles.length)ok=false;
     if(!ok){ if(firstBad)firstBad.focus(); return; }
     if(drawerMode==='add'){ addPersonRow(nome,mail,roles); }
     else if(editing){ updatePersonRow(editing,nome,mail,roles,m.disabled); }
@@ -1347,9 +1361,9 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
     if(!keepMail)p.querySelector('.person__mail').textContent=mail||'—';
     setChips(p.querySelector('.person__roles'),roles);
   }
-  function setFieldErr(id,bad){var inp=document.getElementById(id),e=document.getElementById(id+'-e');if(inp)inp.setAttribute('aria-invalid',bad?'true':'false');if(e)e.hidden=!bad;}
+  function setFieldErr(id,bad){var inp=document.getElementById(id),e=document.getElementById(id+'-e');if(inp)inp.setAttribute('aria-invalid',bad?'true':'false');if(e){e.hidden=!bad;e.classList.toggle('show',bad);}}
   function clearFieldErr(id){setFieldErr(id,false);}
-  function clearDrawerErrors(){setFieldErr('ap-nome',false);setFieldErr('ap-mail',false);var r=document.getElementById('ap-roles-e');if(r)r.hidden=true;}
+  function clearDrawerErrors(){setFieldErr('ap-nome',false);setFieldErr('ap-mail',false);var r=document.getElementById('ap-roles-e');if(r){r.hidden=true;r.classList.remove('show');}}
   function kebabHTML(){ return '<div class="kebab"><span class="tooltip tooltip--end"><button type="button" class="icon-btn icon-btn--sm" aria-label="Ações" aria-haspopup="true" aria-expanded="false" onclick="toggleKebab(this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button><span class="tooltip__bubble" role="tooltip">Ações</span></span><div class="kebab__menu" hidden><button type="button" onclick="manageRoles(this)">Editar membro</button><button type="button" onclick="removeMember(this)">Remover da equipe</button></div></div>'; }
   function addPersonRow(nome,mail,roles){
     var ini=nome.split(/\s+/).map(function(w){return w[0]||'';}).slice(0,2).join('').toUpperCase();
@@ -1398,8 +1412,8 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   function addCert(){ closeKebabs(); document.getElementById('cert-empty').hidden=true; document.getElementById('cert-filled').hidden=false; }
   function removeCert(){ closeKebabs(); document.getElementById('cert-filled').hidden=true; document.getElementById('cert-empty').hidden=false; }
   /* modal: adicionar / substituir certificado (protótipo: simula a leitura do certificado) */
-  function openCertModal(){ closeKebabs(); resetCertModal(); document.getElementById('certModalBackdrop').hidden=false; document.body.style.overflow='hidden'; setTimeout(function(){document.getElementById('cm-drop').focus();},0); }
-  function closeCertModal(){ document.getElementById('certModalBackdrop').hidden=true; document.body.style.overflow=''; }
+  function openCertModal(){ closeKebabs(); resetCertModal(); document.getElementById('certModalBackdrop').hidden=false; document.body.style.overflow='hidden'; openDialog(document.getElementById('certModal')); setTimeout(function(){document.getElementById('cm-drop').focus();},0); }
+  function closeCertModal(){ document.getElementById('certModalBackdrop').hidden=true; document.body.style.overflow=''; closeDialog(); }
   function resetCertModal(){
     var f=document.getElementById('cm-file'); f.value='';
     document.getElementById('cm-fname').textContent='Escolher arquivo (.pfx ou .p12)';
