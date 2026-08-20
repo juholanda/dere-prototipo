@@ -1049,7 +1049,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
         <div>
           <div class="det__titlerow">
             <h1 class="det__title" id="e-nome">Saúde Integral</h1>
-            <span class="wchip wchip--wait wchip--lg" id="e-status1"><span class="wchip__dot"></span>Convite enviado</span>
+            <span class="wchip wchip--wait" id="e-status1"><span class="wchip__dot"></span>Convite enviado</span>
           </div>
           <p class="det__sub" id="e-sub">CNPJ 23.456.789/0001-01 · criada a partir do lead #1041</p>
         </div>
@@ -1206,7 +1206,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   function openConfirm(){document.getElementById('confirmModal').hidden=false;document.body.style.overflow='hidden';}
   function closeConfirm(){document.getElementById('confirmModal').hidden=true;document.body.style.overflow='';}
   function doInativar(){
-    ['e-status1','e-status2'].forEach(function(id){var el=document.getElementById(id);if(el)el.innerHTML='<span class="wchip__dot"></span>Inativa';el.className='wchip wchip--off'+(id==='e-status1'?' wchip--lg':'');});
+    ['e-status1','e-status2'].forEach(function(id){var el=document.getElementById(id);if(el)el.innerHTML='<span class="wchip__dot"></span>Inativa';el.className='wchip wchip--off';});
     var b=document.getElementById('btnInativar');if(b)b.style.display='none';
     closeConfirm();showToast('Empresa inativada','A empresa foi inativada e o acesso do administrador suspenso.');
   }

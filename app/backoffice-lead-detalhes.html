@@ -1054,7 +1054,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
         <div class="det-side">
           <section class="det-card">
             <div class="det-card__hd"><h2 class="det-card__t">Acompanhamento</h2></div>
-            <div class="stat-now"><span class="stat-now__lbl">Status atual</span><span class="wchip wchip--on wchip--lg" id="statusChip2"><span class="wchip__dot"></span>Em atendimento</span></div>
+            <div class="stat-now"><span class="stat-now__lbl">Status atual</span><span class="wchip wchip--on" id="statusChip2"><span class="wchip__dot"></span>Em atendimento</span></div>
             <p class="follow-when" id="followWhen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Iniciado em 18/08/2026 15:10</p>
             <p class="follow-desc" id="followDesc">Contato comercial em andamento. Conclua convertendo em empresa ou marcando como não convertido.</p>
             <div class="follow-act" id="followAct">
@@ -1129,7 +1129,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   function nowStr(){var d=new Date();function p(n){return(n<10?'0':'')+n;}return p(d.getDate())+'/'+p(d.getMonth()+1)+'/'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes());}
   function startAtend(){var w=document.getElementById('followWhen');if(w)w.innerHTML=CLK+'Iniciado em '+nowStr();setStatus('Em atendimento');showToast('Atendimento iniciado','O lead está em atendimento.');}
   function reopenAtend(){var w=document.getElementById('followWhen');if(w)w.innerHTML=CLK+'Reaberto em '+nowStr();setStatus('Em atendimento');showToast('Atendimento reaberto','O lead voltou para em atendimento.');}
-  function setStatus(s){['statusChip','statusChip2'].forEach(function(id){var el=document.getElementById(id);el.className='wchip '+CLS[s]+(id==='statusChip2'?' wchip--lg':'');el.innerHTML='<span class="wchip__dot"></span>'+s;});renderFollow(s);}
+  function setStatus(s){['statusChip','statusChip2'].forEach(function(id){var el=document.getElementById(id);el.className='wchip '+CLS[s];el.innerHTML='<span class="wchip__dot"></span>'+s;});renderFollow(s);}
   function renderFollow(s){
     var d=document.getElementById('followDesc'), a=document.getElementById('followAct'), w=document.getElementById('followWhen');
     if(w)w.style.display=(s==='Novo')?'none':'';
