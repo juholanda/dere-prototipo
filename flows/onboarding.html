@@ -954,19 +954,20 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   /* ==== Empresa (etapa 3) ==== */
   .esec{margin-top:26px}
   .esec--first{margin-top:0}
+  .esec--sep{margin-top:16px;border-top:1px solid var(--color-border);padding-top:16px}
   .esec__hd{display:flex;align-items:baseline;gap:8px;margin-bottom:6px}
-  .esec__t{font-size:var(--text-lg);font-weight:600;color:var(--color-heading);margin:0}
-  .esec__opt{font-style:italic;font-weight:400;font-size:var(--text-xs);color:var(--color-text-muted)}
+  .esec__t{font-size:var(--text-lg);font-weight:500;color:var(--color-heading);margin:0}
+  .esec__opt{font-style:italic;font-weight:400;font-size:var(--text-base);color:var(--color-text-muted)}
   .esec__d{font-size:var(--text-sm);color:var(--color-text-muted);margin:0 0 12px;line-height:1.5}
   /* identificação (card no estilo do e-mail) */
-  .co-card{display:flex;align-items:center;gap:12px;background:color-mix(in srgb, var(--color-primary) 4%, var(--color-surface));border:1px solid color-mix(in srgb, var(--color-primary) 10%, var(--color-border));border-radius:var(--radius-base);padding:14px}
+  .co-card{display:flex;align-items:center;gap:12px;background:color-mix(in srgb, var(--color-primary) 4%, var(--color-surface));border-radius:var(--radius-base);padding:14px}
   .co-card__ic{width:44px;height:44px;flex:0 0 auto;border-radius:var(--radius-base);background:color-mix(in srgb, var(--color-primary) 12%, var(--color-surface-2));color:var(--color-primary);display:grid;place-items:center}
   .co-card__ic svg{width:24px;height:24px}
   .co-card__t{min-width:0}
-  .co-card__name{color:var(--color-heading);font-weight:600;font-size:var(--text-base);margin:0}
-  .co-card__cnpj{color:var(--color-text-muted);font-size:var(--text-sm);margin:2px 0 0}
+  .co-card__name{color:var(--color-heading);font-weight:600;font-size:var(--text-lg);margin:0}
+  .co-card__cnpj{color:var(--color-text-onmuted);font-size:var(--text-base);margin:0}
   /* uploader (logo + certificado) */
-  .up{display:flex;align-items:center;gap:14px;border:1px solid var(--color-border);border-radius:var(--radius-base);background:var(--color-surface);padding:14px}
+  .up{display:flex;align-items:center;gap:14px}
   .up__box{width:72px;height:72px;flex:0 0 auto;border-radius:var(--radius-base);display:grid;place-items:center}
   .up__box--empty{border:1.5px dashed var(--color-border-strong);background:var(--color-surface-2);color:var(--color-text-muted)}
   .up__box--empty svg{width:24px;height:24px}
@@ -982,8 +983,13 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   .up__err{display:flex;align-items:center;gap:6px;font-size:var(--text-xs);color:var(--color-danger);margin:8px 0 0}
   .up__err svg{width:13px;height:13px;flex:0 0 auto}
   .up .kebab{margin-left:auto;align-self:flex-start}
+  .up__links{display:flex;align-items:center;gap:8px;margin-top:9px}
+  .up__links button{background:none;border:0;padding:0;cursor:pointer;font:inherit;font-size:var(--text-sm);font-weight:600;color:var(--color-primary)}
+  .up__links button:hover{text-decoration:underline}
+  .up__links .up__link--danger{color:var(--color-danger)}
+  .up__sep{color:var(--color-border-strong)}
   /* aviso de segurança */
-  .sec-note{display:flex;gap:11px;align-items:flex-start;background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-base);padding:12px 14px;margin-top:12px}
+  .sec-note{display:flex;gap:11px;align-items:flex-start;background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-base);padding:12px 14px;margin-top:20px}
   .sec-note__ic{color:var(--color-primary);flex:0 0 auto;margin-top:1px}
   .sec-note__ic svg{width:18px;height:18px}
   .sec-note__t{font-size:var(--text-sm);font-weight:600;color:var(--color-heading);margin:0}
@@ -1136,12 +1142,12 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
         </section>
 
         <!-- 3. Certificado digital -->
-        <section class="esec">
+        <section class="esec esec--sep">
           <div class="esec__hd"><h3 class="esec__t">Certificado digital para assinatura</h3></div>
           <p class="esec__d">Adicione o certificado digital que será usado para assinar os arquivos enviados à DeRE.</p>
           <!-- estado: sem certificado -->
           <div class="up" id="cert-empty">
-            <div class="up__box up__box--cert"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/></svg></div>
+            <div class="up__box up__box--empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg></div>
             <div class="up__main">
               <div class="up__acts"><button type="button" class="btn btn--secondary btn--sm" onclick="addCert()">Adicionar certificado</button></div>
               <p class="up__hint">Arquivo .pfx ou .p12</p>
@@ -1151,17 +1157,14 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
           <div class="up" id="cert-filled" hidden>
             <div class="up__box up__box--cert"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/></svg></div>
             <div class="up__main">
-              <p class="up__name">Certificado e-CNPJ (A1)</p>
-              <p class="up__meta"><span class="status status--success"><span class="status__dot"></span> Válido</span><span>Válido até 14/03/2027</span></p>
-            </div>
-            <div class="kebab">
-              <button type="button" class="icon-btn icon-btn--sm" aria-label="Ações do certificado" aria-haspopup="true" aria-expanded="false" onclick="toggleKebab(this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button>
-              <div class="kebab__menu" hidden><button type="button" onclick="addCert()">Alterar certificado</button><button type="button" onclick="removeCert()">Remover certificado</button></div>
+              <p class="up__name">Certificado_empresa.pfx</p>
+              <p class="up__meta"><span class="status status--success"><span class="status__dot"></span> Válido</span><span>até 15/08/2027</span></p>
+              <div class="up__links"><button type="button" onclick="addCert()">Alterar</button><span class="up__sep" aria-hidden="true">·</span><button type="button" class="up__link--danger" onclick="removeCert()">Remover</button></div>
             </div>
           </div>
           <div class="sec-note">
-            <span class="sec-note__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg></span>
-            <div><p class="sec-note__t">Certificado protegido</p><p class="sec-note__d">O certificado é utilizado somente para as operações de assinatura autorizadas na a-DeRE.</p></div>
+            <span class="sec-note__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+            <div><p class="sec-note__t">Uso seguro do certificado</p><p class="sec-note__d">O certificado será utilizado somente para as operações de assinatura autorizadas na a-DeRE.</p></div>
           </div>
         </section>
         <div class="ob__foot ob__foot--far"><button type="button" class="btn btn--primary btn--lg btn--block" onclick="go(4)">Concluir ativação</button><button type="button" class="btn btn--ghost btn--lg btn--block" onclick="go(2)">Voltar</button></div>
