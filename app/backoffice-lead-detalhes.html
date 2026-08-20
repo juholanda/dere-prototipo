@@ -1126,14 +1126,16 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
     if(w)w.style.display=(s==='Novo')?'none':'';
     if(s==='Novo'){d.textContent='Lead recebido. O atendimento comercial ainda não começou.';a.innerHTML='<button class="btn btn--primary" onclick="startAtend()">Iniciar atendimento</button>';}
     else if(s==='Em atendimento'){d.textContent='Contato comercial em andamento. Conclua convertendo em empresa ou marcando como não convertido.';a.innerHTML='<button class="btn btn--primary" onclick="openDrawer()">'+BLD+'Converter em empresa</button><button class="btn btn--outline" onclick="markNotConverted()">Marcar como não convertido</button>';}
-    else if(s==='Convertido'){d.textContent='Empresa criada a partir deste lead. O convite de ativação foi enviado ao administrador.';a.innerHTML='<a class="btn btn--outline" href="./backoffice-empresas.html">'+BLD+'Ver empresa</a>';}
+    else if(s==='Convertido'){d.textContent='Empresa criada a partir deste lead. O convite de ativação foi enviado ao administrador.';a.innerHTML='<a class="btn btn--outline" href="'+empHrefFromPage()+'">'+BLD+'Ver empresa</a>';}
     else{d.textContent='Atendimento encerrado sem conversão.';a.innerHTML='<button class="btn btn--ghost" onclick="reopenAtend()">Reabrir atendimento</button>';}
   }
   function markNotConverted(){setStatus('Não convertido');showToast('Lead atualizado','Marcado como não convertido.');}
+  function empHref(v){return './backoffice-empresa-detalhes.html?empresa='+encodeURIComponent(v.empresa||'')+'&cnpj='+encodeURIComponent(v.cnpj||'')+'&adm='+encodeURIComponent(v.adm||'')+'&email='+encodeURIComponent(v.email||'')+'&lead='+encodeURIComponent(v.lead||'');}
+  function empHrefFromPage(){var g=function(id){var e=document.getElementById(id);return e?e.textContent.trim():'';};return empHref({empresa:g('t-emp'),cnpj:g('v-cnpj'),adm:g('v-nome'),email:g('v-email'),lead:g('t-id')});}
   function submitConvert(){
-    var email=(document.getElementById('d-email').value||'administrador@empresa.com.br').trim();
-    closeDrawer();setStatus('Convertido');
-    showToast('Empresa criada','Convite enviado para '+email+'. O lead foi marcado como convertido e a empresa entrou na Lista de empresas.');
+    var g=function(id){var e=document.getElementById(id);return e?e.value.trim():'';};
+    var lead=(document.getElementById('t-id')||{textContent:''}).textContent;
+    window.location.href=empHref({empresa:g('d-razao'),cnpj:g('d-cnpj'),adm:g('d-adm'),email:g('d-email'),lead:lead});
   }
   function dzAdd(files){
     var box=document.getElementById('dz-files');

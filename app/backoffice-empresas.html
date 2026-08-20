@@ -1283,11 +1283,16 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
     if(more){e.stopPropagation();var wrap=more.parentNode;var op=wrap.querySelector('.rowmenu__panel');closeMenus();if(op)return;
       var tr=more.closest('tr');var d=rowData(tr);var re=/Convite/.test(d.status);
       var p=document.createElement('div');p.className='rowmenu__panel';
-      var h='<div class="rowmenu__item" data-act="edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>Editar cadastro</div>';
-      if(re)h+='<div class="rowmenu__sep"></div><div class="rowmenu__item" data-act="re"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>Reenviar convite</div>';
+      var eh='./backoffice-empresa-detalhes.html?empresa='+encodeURIComponent(d.fant||d.razao)+'&razao='+encodeURIComponent(d.razao)+'&cnpj='+encodeURIComponent(d.cnpj)+'&adm='+encodeURIComponent(d.adm)+'&email='+encodeURIComponent(d.email);
+      var inativa=/Inativa/.test(d.status);
+      var h='<a class="rowmenu__item" href="'+eh+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>Ver empresa</a>';
+      h+='<div class="rowmenu__item" data-act="edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>Editar cadastro</div>';
+      if(re)h+='<div class="rowmenu__item" data-act="re"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>Reenviar convite</div>';
+      if(!inativa)h+='<div class="rowmenu__sep"></div><div class="rowmenu__item" data-act="inativar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.36 6.64A9 9 0 1 1 5.64 6.64"/><path d="M12 2v10"/></svg>Inativar empresa</div>';
       p.innerHTML=h;wrap.appendChild(p);more.setAttribute('aria-expanded','true');
       p.querySelector('[data-act=\'edit\']').addEventListener('click',function(){closeMenus();openDrawer('edit',d);});
       var r=p.querySelector('[data-act=\'re\']');if(r)r.addEventListener('click',function(){closeMenus();tr.querySelectorAll('td')[5].innerHTML=chip('wchip--wait','Convite enviado');showToast('Convite reenviado','Novo convite de ativação enviado para '+d.email+'.');});
+      var iv=p.querySelector('[data-act=\'inativar\']');if(iv)iv.addEventListener('click',function(){closeMenus();tr.querySelectorAll('td')[5].innerHTML=chip('wchip--off','Inativa');showToast('Empresa inativada','A empresa '+(d.fant||d.razao)+' foi inativada.');});
       return;}
     if(!e.target.closest('.rowmenu__panel'))closeMenus();});
   document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(!_drawer.hidden)closeDrawer();closeMenus();}});

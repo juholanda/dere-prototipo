@@ -1244,11 +1244,9 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
     _drawer._tr=tr;
   }
   function submitConvert(){
-    var email=val('d-email')||'administrador@empresa.com.br';
-    var tr=_drawer._tr;
-    if(tr){tr.setAttribute('data-status','Convertido');tr.querySelectorAll('td')[4].innerHTML=chip('wchip--done','Convertido');}
-    closeDrawer();
-    showToast('Empresa criada','Convite enviado para '+email+'. O lead foi marcado como convertido e a empresa entrou na Lista de empresas.');
+    var lead=(_drawer._tr?_drawer._tr.querySelector('.cell-id').textContent.trim():'');
+    var q='?empresa='+encodeURIComponent(val('d-razao'))+'&cnpj='+encodeURIComponent(val('d-cnpj'))+'&adm='+encodeURIComponent(val('d-adm'))+'&email='+encodeURIComponent(val('d-email'))+'&lead='+encodeURIComponent(lead);
+    window.location.href='./backoffice-empresa-detalhes.html'+q;
   }
   function dzAdd(files){
     var box=document.getElementById('dz-files');
