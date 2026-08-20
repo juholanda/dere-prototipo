@@ -1000,6 +1000,24 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   .sec-note__ic svg{width:18px;height:18px}
   .sec-note__t{font-size:var(--text-sm);font-weight:600;color:var(--color-heading);margin:0}
   .sec-note__d{font-size:var(--text-xs);color:var(--color-text-muted);margin:3px 0 0;line-height:1.5}
+  /* ícone de info nos títulos de seção */
+  .esec__hd .tooltip{align-self:center}
+  .esec__info{display:inline-flex;align-items:center;color:var(--color-text-muted);cursor:help;border-radius:50%}
+  .esec__info:hover,.esec__info:focus-visible{color:var(--color-text)}
+  .esec__info:focus-visible{outline:none;box-shadow:var(--ring)}
+  .esec__info svg{width:15px;height:15px}
+  .tooltip__bubble--info{white-space:normal;width:220px;line-height:1.45;text-align:left;font-weight:400}
+  /* modal adicionar certificado */
+  .cmdrop{display:flex;align-items:center;gap:10px;width:100%;border:1.5px dashed var(--color-border-strong);border-radius:var(--radius-base);background:var(--color-surface-2);padding:14px;cursor:pointer;color:var(--color-text-muted);font-size:var(--text-sm);transition:border-color .12s,background-color .12s}
+  .cmdrop:hover{border-color:var(--color-primary);background:color-mix(in srgb,var(--color-primary) 4%,var(--color-surface))}
+  .cmdrop:focus-visible{outline:none;box-shadow:var(--ring)}
+  .cmdrop svg{width:20px;height:20px;flex:0 0 auto}
+  .cmdrop.is-filled{border-style:solid;border-color:var(--color-border);color:var(--color-heading);background:var(--color-surface);font-weight:500}
+  .cmnote{display:flex;gap:8px;align-items:flex-start;font-size:var(--text-xs);color:var(--color-text-muted);line-height:1.45;margin:2px 0 0}
+  .cmnote svg{width:15px;height:15px;flex:0 0 auto;margin-top:1px;color:var(--color-primary)}
+  .cmerr{display:flex;align-items:center;gap:6px;font-size:var(--text-xs);color:var(--color-danger);margin:6px 0 0}
+  .cmerr svg{width:14px;height:14px;flex:0 0 auto}
+  .cmdrop.is-invalid{border-color:var(--color-danger);color:var(--color-danger)}
 </style>
 </head><body>
 <div id="dere-gate" style="position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;padding:24px;font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;background:radial-gradient(120% 120% at 20% 8%,#0c326f 0%,#071d41 55%,#05152e 100%)">
@@ -1121,7 +1139,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 
         <!-- 2. Logo (opcional) -->
         <section class="esec">
-          <div class="esec__hd"><h3 class="esec__t">Logo da empresa</h3><span class="esec__opt">Opcional</span></div>
+          <div class="esec__hd"><h3 class="esec__t">Logo da empresa</h3><span class="esec__opt">Opcional</span><span class="tooltip tooltip--end"><span class="esec__info" tabindex="0" role="button" aria-label="Mais informações sobre a logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span><span class="tooltip__bubble tooltip__bubble--info" role="tooltip">Aparece no topo da conta e nos documentos gerados. É opcional.</span></span></div>
           <!-- estado: sem logo -->
           <div class="up" id="logo-empty">
             <div class="up__box up__box--empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg></div>
@@ -1149,12 +1167,12 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 
         <!-- 3. Certificado digital -->
         <section class="esec esec--sep">
-          <div class="esec__hd"><h3 class="esec__t">Certificado digital para assinatura</h3></div>
+          <div class="esec__hd"><h3 class="esec__t">Certificado digital para assinatura</h3><span class="tooltip tooltip--end"><span class="esec__info" tabindex="0" role="button" aria-label="Mais informações sobre o certificado"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span><span class="tooltip__bubble tooltip__bubble--info" role="tooltip">Certificado digital A1 da empresa, usado para assinar digitalmente os arquivos enviados à DeRE e garantir a autenticidade das transmissões.</span></span></div>
           <!-- estado: sem certificado -->
           <div class="up" id="cert-empty">
             <div class="up__box up__box--empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg></div>
             <div class="up__main">
-              <div class="up__acts"><button type="button" class="btn btn--secondary btn--sm" onclick="addCert()">Adicionar certificado</button></div>
+              <div class="up__acts"><button type="button" class="btn btn--secondary btn--sm" onclick="openCertModal()">Adicionar certificado</button></div>
               <p class="up__hint">Arquivo .pfx ou .p12</p>
             </div>
           </div>
@@ -1162,18 +1180,18 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
           <div class="up up--card" id="cert-filled" hidden>
             <div class="up__box up__box--cert"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg></div>
             <div class="up__main">
-              <p class="up__name">Certificado_empresa.pfx</p>
+              <p class="up__name" id="cert-name">Certificado_empresa.pfx</p>
               <p class="up__meta">Válido até 15/08/2027</p>
             </div>
             <div class="up__icons">
               <span class="tooltip"><button type="button" class="icon-btn icon-btn--sm" aria-label="Baixar certificado" onclick="return false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg></button><span class="tooltip__bubble" role="tooltip">Baixar</span></span>
-              <span class="tooltip"><button type="button" class="icon-btn icon-btn--sm" aria-label="Substituir certificado" onclick="addCert()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M3 21v-5h5"/></svg></button><span class="tooltip__bubble" role="tooltip">Substituir</span></span>
+              <span class="tooltip"><button type="button" class="icon-btn icon-btn--sm" aria-label="Substituir certificado" onclick="openCertModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M3 21v-5h5"/></svg></button><span class="tooltip__bubble" role="tooltip">Substituir</span></span>
               <span class="tooltip tooltip--end"><button type="button" class="icon-btn icon-btn--sm icon-btn--danger" aria-label="Remover certificado" onclick="removeCert()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg></button><span class="tooltip__bubble" role="tooltip">Remover</span></span>
             </div>
           </div>
           <div class="sec-note">
             <span class="sec-note__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
-            <div><p class="sec-note__t">Uso seguro do certificado</p><p class="sec-note__d">O certificado será utilizado somente para as operações de assinatura autorizadas na a-DeRE.</p></div>
+            <div><p class="sec-note__t">Uso seguro do certificado</p><p class="sec-note__d">Seu certificado é armazenado de forma criptografada e utilizado somente para as operações de assinatura autorizadas na a-DeRE.</p></div>
           </div>
         </section>
         <div class="ob__foot ob__foot--far"><button type="button" class="btn btn--primary btn--lg btn--block" onclick="go(4)">Concluir ativação</button><button type="button" class="btn btn--ghost btn--lg btn--block" onclick="go(2)">Voltar</button></div>
@@ -1213,6 +1231,34 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   </div>
   <div class="drawer__footer"><button type="button" class="btn btn--ghost btn--lg" onclick="closeDrawer()">Cancelar</button><button type="button" class="btn btn--primary btn--lg" id="td-save" onclick="saveDrawer()">Adicionar membro</button></div>
 </aside>
+
+<!-- MODAL: adicionar / substituir certificado -->
+<div class="modal-backdrop" id="certModalBackdrop" hidden onclick="if(event.target===this)closeCertModal()">
+  <div class="modal" id="certModal" role="dialog" aria-modal="true" aria-labelledby="certModalTitle">
+    <div class="modal__header">
+      <p class="modal__title" id="certModalTitle">Adicionar certificado digital</p>
+      <span class="tooltip tooltip--end"><button type="button" class="icon-btn" aria-label="Fechar" onclick="closeCertModal()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button><span class="tooltip__bubble" role="tooltip">Fechar</span></span>
+    </div>
+    <div class="modal__body">
+      <div class="field">
+        <label class="field__label">Arquivo do certificado <span class="field__req">*</span></label>
+        <div id="cm-drop" class="cmdrop" role="button" tabindex="0" aria-label="Escolher arquivo do certificado (.pfx ou .p12)" aria-describedby="cm-file-e" onclick="cmPick()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();cmPick();}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg><span id="cm-fname">Escolher arquivo (.pfx ou .p12)</span></div>
+        <input type="file" id="cm-file" hidden onchange="cmOnFile(this)">
+        <span id="cm-file-e" class="cmerr" role="alert" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>Selecione o arquivo do certificado.</span>
+      </div>
+      <div class="field">
+        <label class="field__label" for="cm-pw">Senha do certificado <span class="field__req">*</span></label>
+        <div class="pw"><input id="cm-pw" class="input input--lg" type="password" placeholder="Senha do arquivo do certificado" autocomplete="off" aria-describedby="cm-pw-e" oninput="cmClearErr('cm-pw')"><button type="button" class="pw__toggle" aria-label="Mostrar senha" aria-pressed="false" onclick="toggle('cm-pw',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+        <span id="cm-pw-e" class="cmerr" role="alert" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>Informe a senha do certificado.</span>
+      </div>
+      <p class="cmnote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>O titular e a validade são lidos do certificado automaticamente.</p>
+    </div>
+    <div class="modal__footer">
+      <button type="button" class="btn btn--ghost btn--lg" onclick="closeCertModal()">Cancelar</button>
+      <button type="button" class="btn btn--primary btn--lg" id="cm-submit" onclick="cmSubmit()">Adicionar certificado</button>
+    </div>
+  </div>
+</div>
 
 <script>
   var CHK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
@@ -1351,6 +1397,36 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   /* certificado — protótipo: simula o certificado já cadastrado */
   function addCert(){ closeKebabs(); document.getElementById('cert-empty').hidden=true; document.getElementById('cert-filled').hidden=false; }
   function removeCert(){ closeKebabs(); document.getElementById('cert-filled').hidden=true; document.getElementById('cert-empty').hidden=false; }
+  /* modal: adicionar / substituir certificado (protótipo: simula a leitura do certificado) */
+  function openCertModal(){ closeKebabs(); resetCertModal(); document.getElementById('certModalBackdrop').hidden=false; document.body.style.overflow='hidden'; setTimeout(function(){document.getElementById('cm-drop').focus();},0); }
+  function closeCertModal(){ document.getElementById('certModalBackdrop').hidden=true; document.body.style.overflow=''; }
+  function resetCertModal(){
+    var f=document.getElementById('cm-file'); f.value='';
+    document.getElementById('cm-fname').textContent='Escolher arquivo (.pfx ou .p12)';
+    var drop=document.getElementById('cm-drop'); drop.classList.remove('is-filled','is-invalid');
+    var pw=document.getElementById('cm-pw'); pw.value=''; pw.type='password'; pw.setAttribute('aria-invalid','false');
+    document.getElementById('cm-file-e').hidden=true; document.getElementById('cm-pw-e').hidden=true;
+    var s=document.getElementById('cm-submit'); s.disabled=false; s.textContent='Adicionar certificado';
+  }
+  function cmPick(){ document.getElementById('cm-file').click(); }
+  function cmOnFile(input){ var f=input.files&&input.files[0]; if(!f)return; document.getElementById('cm-fname').textContent=f.name; var d=document.getElementById('cm-drop'); d.classList.add('is-filled'); d.classList.remove('is-invalid'); document.getElementById('cm-file-e').hidden=true; }
+  function cmClearErr(id){ document.getElementById(id+'-e').hidden=true; var el=document.getElementById(id); if(el)el.setAttribute('aria-invalid','false'); }
+  function cmSubmit(){
+    var hasFile=document.getElementById('cm-file').files.length>0;
+    var pw=document.getElementById('cm-pw'), hasPw=pw.value.trim().length>0, firstBad=null;
+    var drop=document.getElementById('cm-drop');
+    document.getElementById('cm-file-e').hidden=hasFile; drop.classList.toggle('is-invalid',!hasFile); if(!hasFile)firstBad=drop;
+    document.getElementById('cm-pw-e').hidden=hasPw; pw.setAttribute('aria-invalid',hasPw?'false':'true'); if(!hasPw)firstBad=firstBad||pw;
+    if(!hasFile||!hasPw){ if(firstBad)firstBad.focus(); return; }
+    var files=document.getElementById('cm-file').files;
+    var name=files.length?files[0].name:'Certificado_empresa.pfx';
+    var btn=document.getElementById('cm-submit'); btn.disabled=true; btn.innerHTML='<span class="btn-spin"></span>Lendo certificado…';
+    setTimeout(function(){
+      var nm=document.getElementById('cert-name'); if(nm)nm.textContent=name;
+      document.getElementById('cert-empty').hidden=true; document.getElementById('cert-filled').hidden=false;
+      closeCertModal();
+    },900);
+  }
 
   var panel=document.getElementById('panel');
   var stepsRow=document.querySelector('.ob__steps');
@@ -1372,7 +1448,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
     window.scrollTo(0,0);
     if(history&&history.replaceState) history.replaceState(null,'', n>1?('#s'+n):location.pathname);
   }
-  document.addEventListener('keydown',function(ev){ if(ev.key==='Escape'){ if(!document.getElementById('teamDrawer').hidden)closeDrawer(); else closeKebabs(); } });
+  document.addEventListener('keydown',function(ev){ if(ev.key==='Escape'){ if(!document.getElementById('certModalBackdrop').hidden)closeCertModal(); else if(!document.getElementById('teamDrawer').hidden)closeDrawer(); else closeKebabs(); } });
   updateCount();
   (function(){var m=(location.hash||'').match(/^#s([1-4])$/);if(m)go(+m[1]);})();
 </script>
