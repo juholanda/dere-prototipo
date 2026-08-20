@@ -887,7 +887,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 
   .bo-tablewrap{background:#fff;border:1px solid var(--slate-200);border-radius:10px;overflow:hidden}
   .bo-tablescroll{overflow-x:auto}
-  table.bo-table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:900px}
+  table.bo-table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:1000px}
   .bo-table thead th{text-align:left;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--slate-500);padding:12px 16px;border-bottom:1px solid var(--slate-200);background:var(--slate-50);white-space:nowrap}
   .bo-th{display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--slate-500);background:none;border:0;cursor:pointer;padding:0}
   .bo-th:hover{color:var(--slate-700)}
@@ -898,6 +898,8 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   .bo-table tbody tr:last-child td{border-bottom:0}
   .bo-table tbody tr:hover{background:var(--slate-50)}
   .cell-id{font-variant-numeric:tabular-nums;color:var(--slate-500);font-weight:600;font-size:13px;white-space:nowrap}
+  .cell-emp{display:flex;flex-direction:column;line-height:1.4;gap:1px;font-weight:600;color:var(--slate-900);font-size:14px}
+  .cell-emp .cnpj{font-weight:400;color:var(--slate-500);font-size:12.5px;font-variant-numeric:tabular-nums}
   .cell-lead{display:flex;flex-direction:column;line-height:1.45;gap:1px}
   .cell-lead b{font-weight:600;color:var(--slate-900);font-size:14px}
   .cell-lead span{color:var(--slate-500);font-size:12.5px}
@@ -1050,11 +1052,11 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
       <form class="bo-filters" onsubmit="return false">
         <div class="bo-f bo-f--grow">
           <label class="bo-f__lbl" for="f-busca">Buscar lead</label>
-          <div class="bo-search"><svg class="bo-search__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><input id="f-busca" class="bo-search__inp" type="text" placeholder="Nome, empresa, CNPJ ou e-mail"></div>
+          <div class="bo-search"><svg class="bo-search__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><input id="f-busca" class="bo-search__inp" type="text" placeholder="Nome, empresa ou e-mail"></div>
         </div>
         <div class="bo-f bo-f--sel">
-          <label class="bo-f__lbl" for="f-resp">Responsável</label>
-          <select id="f-resp" class="select"><option>Todos</option><option>Marcos Tavares</option><option>Juliana Prado</option><option>Sem responsável</option></select>
+          <label class="bo-f__lbl" for="f-status">Status</label>
+          <select id="f-status" class="select"><option>Todos</option><option>Novo</option><option>Em atendimento</option><option>Convertido</option><option>Não convertido</option></select>
         </div>
         <div class="bo-f bo-f--sel">
           <label class="bo-f__lbl" for="f-per">Período</label>
@@ -1071,50 +1073,57 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
         <table class="bo-table">
           <thead><tr>
             <th><button class="bo-th"><span>ID</span><svg class="bo-th__sort" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></button></th>
-            <th><button class="bo-th"><span>Empresa / interessado</span><svg class="bo-th__sort" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></button></th>
+            <th><button class="bo-th"><span>Empresa</span><svg class="bo-th__sort" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></button></th>
+            <th><button class="bo-th"><span>Interessado</span><svg class="bo-th__sort" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></button></th>
             <th><button class="bo-th is-sorted"><span>Recebido em</span><svg class="bo-th__sort" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button></th>
             <th><button class="bo-th"><span>Status</span><svg class="bo-th__sort" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></button></th>
             <th class="col-act">Ações</th>
           </tr></thead>
           <tbody>
-            <tr data-status="Em atendimento">
+            <tr data-status="Em atendimento" data-msg="Somos uma operadora de saúde e queremos entender como a a-DeRE apura os regimes específicos. Podemos agendar uma demonstração para o time fiscal?">
               <td class="cell-id">#1041</td>
-              <td><span class="cell-lead"><b>Saúde Integral</b><span>Carlos Menezes · carlos@saudeintegral.com.br</span><span>(21) 99876-5432</span></span></td>
+              <td><span class="cell-emp"><b>Saúde Integral</b><span class="cnpj">23.456.789/0001-01</span></span></td>
+              <td><span class="cell-lead"><b>Carlos Menezes</b><span>carlos@saudeintegral.com.br</span><span>(21) 99876-5432</span></span></td>
               <td class="cell-when">18/08/2026 14:32</td>
               <td><span class="wchip wchip--on"><span class="wchip__dot"></span>Em atendimento</span></td>
               <td class="col-act"><div class="rowmenu"><button class="bo__more" aria-label="Ações"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button></div></td>
             </tr>
-            <tr data-status="Novo">
+            <tr data-status="Novo" data-msg="Gostaríamos de saber se a a-DeRE atende clínicas e como funciona a contratação.">
               <td class="cell-id">#1040</td>
-              <td><span class="cell-lead"><b>Clínica Bem Viver</b><span>Marina Lopes · marina.lopes@bemviver.com.br</span><span>(31) 98123-4567</span></span></td>
+              <td><span class="cell-emp"><b>Clínica Bem Viver</b><span class="cnpj">34.567.890/0001-12</span></span></td>
+              <td><span class="cell-lead"><b>Marina Lopes</b><span>marina.lopes@bemviver.com.br</span><span>(31) 98123-4567</span></span></td>
               <td class="cell-when">17/08/2026 16:48</td>
               <td><span class="wchip wchip--wait"><span class="wchip__dot"></span>Novo</span></td>
               <td class="col-act"><div class="rowmenu"><button class="bo__more" aria-label="Ações"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button></div></td>
             </tr>
-            <tr data-status="Em atendimento">
+            <tr data-status="Em atendimento" data-msg="Somos um escritório contábil e queremos avaliar a a-DeRE para atender nossos clientes.">
               <td class="cell-id">#1039</td>
-              <td><span class="cell-lead"><b>Prisma Contábil</b><span>Roberto Alves · roberto@prismacontabil.com.br</span><span>(41) 3322-1100</span></span></td>
+              <td><span class="cell-emp"><b>Prisma Contábil</b><span class="cnpj">45.678.901/0001-23</span></span></td>
+              <td><span class="cell-lead"><b>Roberto Alves</b><span>roberto@prismacontabil.com.br</span><span>(41) 3322-1100</span></span></td>
               <td class="cell-when">17/08/2026 09:20</td>
               <td><span class="wchip wchip--on"><span class="wchip__dot"></span>Em atendimento</span></td>
               <td class="col-act"><div class="rowmenu"><button class="bo__more" aria-label="Ações"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button></div></td>
             </tr>
-            <tr data-status="Novo">
+            <tr data-status="Novo" data-msg="Temos interesse em conhecer a plataforma para a nossa operadora de saúde.">
               <td class="cell-id">#1038</td>
-              <td><span class="cell-lead"><b>Vida Plena Saúde</b><span>Juliana Castro · juliana@vidaplena.com.br</span><span>(51) 99988-7766</span></span></td>
+              <td><span class="cell-emp"><b>Vida Plena Saúde</b><span class="cnpj">56.789.012/0001-34</span></span></td>
+              <td><span class="cell-lead"><b>Juliana Castro</b><span>juliana@vidaplena.com.br</span><span>(51) 99988-7766</span></span></td>
               <td class="cell-when">16/08/2026 15:10</td>
               <td><span class="wchip wchip--wait"><span class="wchip__dot"></span>Novo</span></td>
               <td class="col-act"><div class="rowmenu"><button class="bo__more" aria-label="Ações"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button></div></td>
             </tr>
-            <tr data-status="Convertido">
+            <tr data-status="Convertido" data-msg="Precisamos tratar os regimes específicos do banco na reforma tributária.">
               <td class="cell-id">#1037</td>
-              <td><span class="cell-lead"><b>Banco Litoral</b><span>Felipe Ramos · felipe@bancolitoral.com.br</span><span>(11) 3123-4567</span></span></td>
+              <td><span class="cell-emp"><b>Banco Litoral</b><span class="cnpj">67.890.123/0001-45</span></span></td>
+              <td><span class="cell-lead"><b>Felipe Ramos</b><span>felipe@bancolitoral.com.br</span><span>(11) 3123-4567</span></span></td>
               <td class="cell-when">15/08/2026 10:02</td>
               <td><span class="wchip wchip--done"><span class="wchip__dot"></span>Convertido</span></td>
               <td class="col-act"><div class="rowmenu"><button class="bo__more" aria-label="Ações"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button></div></td>
             </tr>
-            <tr data-status="Não convertido">
+            <tr data-status="Não convertido" data-msg="Buscando uma solução para a apuração dos regimes específicos.">
               <td class="cell-id">#1036</td>
-              <td><span class="cell-lead"><b>Nexus Contabilidade</b><span>Patrícia Nunes · patricia@nexuscontabil.com.br</span></span></td>
+              <td><span class="cell-emp"><b>Nexus Contabilidade</b><span class="cnpj">78.901.234/0001-56</span></span></td>
+              <td><span class="cell-lead"><b>Patrícia Nunes</b><span>patricia@nexuscontabil.com.br</span></span></td>
               <td class="cell-when">14/08/2026 17:33</td>
               <td><span class="wchip wchip--off"><span class="wchip__dot"></span>Não convertido</span></td>
               <td class="col-act"><div class="rowmenu"><button class="bo__more" aria-label="Ações"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button></div></td>
@@ -1147,12 +1156,12 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
       <button class="bo-drawer__close" onclick="closeDrawer()" aria-label="Fechar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
     </header>
     <div class="bo-drawer__body">
-      <div class="fromlead"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1Z"/></svg><span>Nome, Instituição, E-mail e Telefone vieram do formulário da landing page. O CNPJ e os demais dados cadastrais são completados aqui antes de criar a empresa.</span></div>
+      <div class="fromlead"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1Z"/></svg><span>Dados recebidos do formulário da landing page. Revise e confira o CNPJ antes de criar a empresa.</span></div>
       <form id="drawerForm" onsubmit="event.preventDefault();submitConvert();">
         <section class="dsec">
           <h3 class="dsec__t">Dados da empresa</h3>
           <p class="dsec__d">Dados cadastrais da empresa que será gerida na a-DeRE.</p>
-          <div class="dfld dfld--key"><label for="d-cnpj">CNPJ</label><input id="d-cnpj" inputmode="numeric" placeholder="00.000.000/0000-00"><span class="dhint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>Não vem no formulário da landing. Informe para criar a empresa.</span></div>
+          <div class="dfld"><label for="d-cnpj">CNPJ</label><input id="d-cnpj" inputmode="numeric" placeholder="00.000.000/0000-00"><span class="dhint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>Confira o CNPJ informado antes de criar a empresa.</span></div>
           <div class="dfld"><label for="d-razao">Razão social</label><input id="d-razao" placeholder="Ex.: Horizonte Participações S.A."></div>
           <div class="dfld"><label for="d-fant">Nome fantasia <span class="opt">(opcional)</span></label><input id="d-fant" placeholder="Ex.: Grupo Horizonte"></div>
         </section>
@@ -1187,17 +1196,20 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   function closeDrawer(){_drawer.classList.remove('is-open');document.body.style.overflow='';setTimeout(function(){_drawer.hidden=true;},220);}
   // prefill do drawer a partir dos dados do lead
   function parseLead(tr){
-    var inst=tr.querySelector('.cell-lead b').textContent.trim();
-    var lines=tr.querySelectorAll('.cell-lead span');
-    var l1=lines[0]?lines[0].textContent.trim():'';
-    var nome='', email='';
-    // l1 = "Nome · e-mail"
-    if(l1.indexOf('·')>-1){var p=l1.split('·');nome=p[0].trim();email=p[1].trim();}else{email=l1;}
-    return {inst:inst,nome:nome,email:email};
+    var g=function(s){var el=tr.querySelector(s);return el?el.textContent.trim():'';};
+    var sp=tr.querySelectorAll('.cell-lead span');
+    return {inst:g('.cell-emp b'),cnpj:g('.cell-emp .cnpj'),nome:g('.cell-lead b'),email:(sp[0]?sp[0].textContent.trim():'')};
+  }
+  // monta o link do detalhe com os dados do lead clicado (para o detalhe refletir o lead certo)
+  function detHref(tr){
+    var g=function(sel){var el=tr.querySelector(sel);return el?el.textContent.trim():'';};
+    var sp=tr.querySelectorAll('.cell-lead span');
+    var q={id:g('.cell-id'),empresa:g('.cell-emp b'),cnpj:g('.cell-emp .cnpj'),nome:g('.cell-lead b'),email:(sp[0]?sp[0].textContent.trim():''),tel:(sp[1]?sp[1].textContent.trim():''),status:tr.getAttribute('data-status'),recebido:g('.cell-when'),msg:tr.getAttribute('data-msg')||''};
+    return './backoffice-lead-detalhes.html?'+Object.keys(q).map(function(k){return k+'='+encodeURIComponent(q[k]);}).join('&');
   }
   function convertLead(tr){
     var d=parseLead(tr);
-    document.getElementById('d-cnpj').value='';      // o formulário da landing não coleta CNPJ
+    document.getElementById('d-cnpj').value=d.cnpj||'';
     document.getElementById('d-razao').value=d.inst; // Instituição informada vira a razão social
     document.getElementById('d-fant').value='';
     document.getElementById('d-adm').value=d.nome;
@@ -1208,7 +1220,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   function submitConvert(){
     var email=val('d-email')||'administrador@empresa.com.br';
     var tr=_drawer._tr;
-    if(tr){tr.setAttribute('data-status','Convertido');tr.querySelectorAll('td')[3].innerHTML=chip('wchip--done','Convertido');}
+    if(tr){tr.setAttribute('data-status','Convertido');tr.querySelectorAll('td')[4].innerHTML=chip('wchip--done','Convertido');}
     closeDrawer();
     showToast('Empresa criada','Convite enviado para '+email+'. O lead foi marcado como convertido e a empresa entrou na Lista de empresas.');
   }
@@ -1226,14 +1238,17 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
     var more=e.target.closest('.bo__more');
     if(more){e.stopPropagation();var wrap=more.parentNode;var open=wrap.querySelector('.rowmenu__panel');closeMenus();if(open)return;
       var tr=more.closest('tr');var st=tr.getAttribute('data-status');
-      var h='<a class="rowmenu__item" href="./backoffice-lead-detalhes.html">'+IC.ver+'Ver detalhes</a>';
-      if(st==='Novo'||st==='Em atendimento') h+=item('status',IC.status,'Atualizar status');
+      var h='<a class="rowmenu__item" href="'+detHref(tr)+'">'+IC.ver+'Ver detalhes</a>';
+      if(st==='Novo') h+=item('toatend',IC.status,'Atualizar para em atendimento');
       if(st==='Em atendimento'){h+='<div class="rowmenu__sep"></div>'+item('conv',IC.conv,'Converter em empresa')+item('no',IC.no,'Marcar como não convertido');}
       if(st==='Convertido') h+=item('emp',IC.emp,'Ver empresa');
+      if(st==='Não convertido') h+=item('reopen',IC.status,'Reabrir atendimento');
       var p=document.createElement('div');p.className='rowmenu__panel';p.innerHTML=h;wrap.appendChild(p);more.setAttribute('aria-expanded','true');
+      var stc=function(){return tr.querySelectorAll('td')[4];};
       var cv=p.querySelector('[data-act="conv"]'); if(cv)cv.addEventListener('click',function(){closeMenus();convertLead(tr);});
-      var nc=p.querySelector('[data-act="no"]'); if(nc)nc.addEventListener('click',function(){closeMenus();tr.setAttribute('data-status','Não convertido');tr.querySelectorAll('td')[3].innerHTML=chip('wchip--off','Não convertido');showToast('Lead atualizado','Marcado como não convertido.');});
-      var us=p.querySelector('[data-act="status"]'); if(us)us.addEventListener('click',function(){closeMenus();var ns=st==='Novo'?'Em atendimento':'Novo';tr.setAttribute('data-status',ns);tr.querySelectorAll('td')[3].innerHTML=chip(ns==='Em atendimento'?'wchip--on':'wchip--wait',ns);showToast('Status atualizado','Lead movido para "'+ns+'".');});
+      var nc=p.querySelector('[data-act="no"]'); if(nc)nc.addEventListener('click',function(){closeMenus();tr.setAttribute('data-status','Não convertido');stc().innerHTML=chip('wchip--off','Não convertido');showToast('Lead atualizado','Marcado como não convertido.');});
+      var ta=p.querySelector('[data-act="toatend"]'); if(ta)ta.addEventListener('click',function(){closeMenus();tr.setAttribute('data-status','Em atendimento');stc().innerHTML=chip('wchip--on','Em atendimento');showToast('Status atualizado','Lead movido para em atendimento.');});
+      var ro=p.querySelector('[data-act="reopen"]'); if(ro)ro.addEventListener('click',function(){closeMenus();tr.setAttribute('data-status','Em atendimento');stc().innerHTML=chip('wchip--on','Em atendimento');showToast('Atendimento reaberto','Lead voltou para em atendimento.');});
       return;}
     if(!e.target.closest('.rowmenu__panel'))closeMenus();
   });
