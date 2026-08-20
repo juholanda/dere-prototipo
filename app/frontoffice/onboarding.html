@@ -822,6 +822,51 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 .dropzone__icon{color:var(--color-primary)}
 .dropzone__title{font-weight:600;color:var(--color-heading)}
 .dropzone__hint{font-size:var(--text-xs)}
+
+/* =============================================================================
+   Context switcher (dropdown) — troca entre Escritório e Contribuintes.
+   Reusa o .orgswitch como gatilho; adiciona chevron + painel .ctxmenu.
+   ============================================================================= */
+.ctxsw{position:relative}
+.ctxsw__chev{flex:0 0 auto;width:16px;height:16px;color:var(--color-text-muted);transition:transform .15s ease}
+.ctxsw > .orgswitch[aria-expanded="true"] .ctxsw__chev{transform:rotate(180deg)}
+.ctxmenu{position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:60;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-base);box-shadow:var(--shadow-md);padding:var(--space-2);max-height:min(70vh,440px);overflow:auto}
+.ctxmenu__group{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--color-text-muted);margin:var(--space-3) var(--space-2) var(--space-1)}
+.ctxmenu__group:first-child{margin-top:var(--space-1)}
+.ctxmenu__item,.ctxmenu__current,.ctxmenu__add{display:flex;align-items:center;gap:var(--space-2);width:100%;text-align:left;padding:var(--space-2);border-radius:var(--radius-sm);font-size:var(--text-sm);color:var(--color-text);text-decoration:none;border:0;background:none;cursor:pointer;font:inherit}
+.ctxmenu__item:hover,.ctxmenu__add:hover{background:var(--color-surface-2)}
+.ctxmenu__item:focus-visible,.ctxmenu__add:focus-visible{outline:none;box-shadow:var(--ring)}
+.ctxmenu__current{gap:var(--space-2);color:var(--color-heading);font-weight:600}
+.ctxmenu__current svg{width:16px;height:16px;color:var(--color-primary);flex:0 0 auto}
+.ctxmenu__ic{flex:0 0 auto;width:30px;height:30px;border-radius:var(--radius-sm);display:grid;place-items:center;background:color-mix(in srgb, var(--slate-200) 72%, var(--blue-200));color:var(--color-text-muted)}
+.ctxmenu__ic svg{width:16px;height:16px}
+.ctxmenu__t{min-width:0;display:flex;flex-direction:column;line-height:1.35}
+.ctxmenu__t b{font-weight:600;color:var(--color-heading);font-size:var(--text-sm);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ctxmenu__t span{font-size:var(--text-xs);color:var(--color-text-muted);font-variant-numeric:tabular-nums}
+.ctxmenu__sep{height:1px;background:var(--color-border);margin:var(--space-2) calc(-1 * var(--space-2))}
+.ctxmenu__add{color:var(--color-primary);font-weight:600}
+.ctxmenu__add svg{width:16px;height:16px;flex:0 0 auto}
+/* context switcher: comportamento na sidebar colapsada (alinha ao orgswitch do DS) */
+.sidenav.is-collapsed .ctxsw__chev{display:none}
+.sidenav.is-collapsed .ctxsw{position:static}
+.sidenav.is-collapsed .ctxmenu{left:100%;right:auto;top:0;width:260px;margin-left:var(--space-2)}
+/* context switcher — dropdown flutua sobre fundo claro: usar cores do tema claro
+   (o .sidenav--navy remapeia --color-heading/text/muted, então usamos primitivos). */
+.ctxmenu{color:var(--slate-700)}
+.ctxmenu__item{color:var(--slate-700)}
+.ctxmenu__current,.ctxmenu__t b{color:var(--slate-900)}
+.ctxmenu__t span,.ctxmenu__group{color:var(--slate-500)}
+.ctxmenu__ic{color:var(--slate-500);background:var(--slate-100)}
+.ctxmenu__add,.ctxmenu__current svg{color:var(--blue-600)}
+.ctxmenu__item:hover,.ctxmenu__add:hover{background:var(--slate-100)}
+/* logo do switcher: ícone com contraste (primário sobre fundo bem claro) */
+.ctxsw .orgswitch__logo{background:color-mix(in srgb, var(--blue-500) 15%, #fff);color:var(--blue-600)}
+/* switcher: largura simétrica. O .menu é inline-flex e fazia o .orgswitch (width:100%)
+   vazar à direita (chevron colado na borda). Trava a largura e alinha o conteúdo aos
+   itens de menu (recuo do fundo = 12px; ícone/logo = 28px, igual aos itens). */
+.sidenav .menu:has(> .ctxsw){display:block}
+.ctxsw{width:100%}
+.ctxsw > .orgswitch{padding-left:var(--space-4);padding-right:var(--space-4)}
 </style>
 <style>
   html,body{height:100%}
@@ -1043,6 +1088,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 </div>
 <script>if(localStorage.getItem('dere_ok')==='1'){var _g=document.getElementById('dere-gate');if(_g)_g.remove();}function dereGate(f){var i=f.querySelector('input'),e=document.getElementById('dere-err');if(i.value==='dere123'){localStorage.setItem('dere_ok','1');document.getElementById('dere-gate').remove();}else{e.innerHTML='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 auto"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>Senha incorreta. Tente novamente.';i.select();}return false;}</script>
 
+<a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
 <div class="ob">
   <header class="ob__bar">
     <span class="ob__logo">a-DeRE</span>
@@ -1057,7 +1103,8 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
     </div>
   </header>
 
-  <main class="ob__body">
+  <main class="ob__body" id="conteudo" tabindex="-1">
+      <h1 class="sr-only">Primeiro acesso na a-DeRE</h1>
     <div class="ob__panel" id="panel">
 
       <!-- ETAPA 1 — Crie sua senha -->

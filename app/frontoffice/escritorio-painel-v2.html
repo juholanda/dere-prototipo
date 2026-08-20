@@ -1,4 +1,4 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Entrar · a-DeRE</title>
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Escritório · Painel · a-DeRE</title>
 <style>/* =============================================================================
    Design System — DeRE (Plataforma de Gestão Tributária Especial)
    Tokens + componentes. CSS puro por variável: portável (funciona sem build) e
@@ -869,98 +869,289 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 .ctxsw > .orgswitch{padding-left:var(--space-4);padding-right:var(--space-4)}
 </style>
 <style>
-  html,body{height:100%}
-  body{background:var(--color-surface)}
-  .split{display:flex;min-height:100vh}
+  body{margin:0;background:var(--color-bg)}
+  .shell{display:flex;height:100vh;overflow:hidden}
+  /* sidenav ocupa altura cheia, cantos retos (igual ao _template) */
+  .shell > .sidenav{border:0;border-right:1px solid var(--color-border);border-radius:0;padding:0}
+  .brandrow{height:64px;flex:0 0 auto;display:flex;align-items:center;gap:12px;padding:0 16px 0 20px;border-bottom:1px solid var(--color-border)}
+  .brandrow .wm{font-weight:800;font-size:18px;letter-spacing:-.01em;color:var(--color-heading)}
+  .navlist{flex:1;overflow:auto;min-height:0;padding:12px 12px 0;display:flex;flex-direction:column;gap:2px}
+  .col{flex:1;display:flex;flex-direction:column;min-width:0;min-height:0}
+  .topbar{height:64px;flex:0 0 auto;background:var(--color-surface);border-bottom:1px solid var(--color-border);display:flex;align-items:center;gap:16px;padding:0 24px}
+  .content{flex:1;overflow:auto;min-height:0}
+  .wrap{padding:28px 32px 48px;max-width:1120px;width:100%;margin:0 auto;box-sizing:border-box}
+  .page-h{background:var(--slate-50);border-bottom:1px solid var(--slate-100)}
+  .page-h .wrap{padding-top:var(--space-6);padding-bottom:var(--space-6)}
+  .page-h h1{margin:0;font-size:var(--text-2xl)}
+  .page-h p{color:var(--color-text-onmuted);font-size:var(--text-base);margin:4px 0 0}
 
-  /* ---- metade esquerda: imagem com filtro ---- */
-  .pane-img{position:relative;flex:1 1 40%;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-start;padding:48px;color:#fff;isolation:isolate}
-  .pane-img::before{content:"";position:absolute;inset:0;z-index:-2;background:linear-gradient(160deg,#1351b4 0%,#0c326f 55%,#071d41 100%)}
-  .pane-img::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background-image:radial-gradient(120% 80% at 80% 0%,rgba(255,255,255,.14),transparent 60%),radial-gradient(2px 2px at 14% 30%,rgba(255,255,255,.06),transparent),radial-gradient(2px 2px at 78% 18%,rgba(255,255,255,.05),transparent),radial-gradient(1.5px 1.5px at 62% 62%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 28% 78%,rgba(255,255,255,.045),transparent),radial-gradient(1.5px 1.5px at 88% 82%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 42% 40%,rgba(255,255,255,.04),transparent),radial-gradient(1.5px 1.5px at 10% 58%,rgba(255,255,255,.05),transparent)}
-  .pane-img__brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px;letter-spacing:-.01em}
-  .pane-img__brand .sym{width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.14);display:grid;place-items:center;backdrop-filter:blur(2px)}
-  .pane-img__brand .sym svg{width:19px;height:19px}
-  .pane-img__hl{max-width:440px}
-  .pane-img__lead{margin-top:20vh}
-  .pane-img__title{font-size:28px!important;line-height:1.3;font-weight:800;letter-spacing:-.015em;color:#fff;margin:0 0 16px}
-  .pane-img__desc{font-size:16px;line-height:1.6;color:rgba(255,255,255,.82);margin:0;max-width:38ch}
-  .pane-img__hl p{margin:14px 0 0;font-size:16px;line-height:1.6;color:rgba(255,255,255,.82)}
-  .pane-img__foot{position:absolute;left:48px;bottom:48px;font-size:14px;color:rgba(255,255,255,.72);letter-spacing:.01em}
+  /* banner de configuração em progresso */
+  .setup{display:flex;align-items:center;gap:20px;background:var(--color-surface);border:1px solid var(--color-border);border-left:3px solid var(--color-primary);border-radius:var(--radius-lg);padding:20px 22px;box-shadow:var(--shadow-sm);margin-bottom:24px}
+  .setup__ic{width:44px;height:44px;border-radius:var(--radius-base);background:var(--color-primary-subtle);color:var(--color-primary);display:grid;place-items:center;flex:0 0 auto}
+  .setup__ic svg{width:22px;height:22px}
+  .setup__b{flex:1;min-width:0}
+  .setup__b h2{font-size:var(--text-base)!important;margin:0 0 3px}
+  .setup__b p{font-size:var(--text-sm);color:var(--color-text-muted);margin:0 0 12px;line-height:1.5}
+  .bar{height:8px;border-radius:var(--radius-pill);background:var(--color-surface-2);overflow:hidden;max-width:340px}
+  .bar__fill{height:100%;width:33%;background:var(--color-primary)}
+  .setup__pct{font-size:var(--text-xs);font-weight:600;color:var(--color-text-muted);margin-top:6px}
 
-  /* ---- metade direita: formulario ---- */
-  .pane-form{flex:1 1 60%;position:relative;display:flex;flex-direction:column}
-  .pane-form__logo{position:absolute;top:32px;left:40px;display:flex;align-items:center;gap:9px;z-index:1}
-  .pane-form__logo .sym{width:34px;height:34px;border-radius:9px;background:linear-gradient(160deg,#2f7bf0,#0b3d91);display:grid;place-items:center;box-shadow:0 4px 12px rgba(3,17,42,.22)}
-  .pane-form__logo .sym svg{width:19px;height:19px;color:#fff}
-  .pane-form__logo .wm{font-weight:800;font-size:18px;color:var(--color-heading);letter-spacing:-.01em}
-  .pane-form__center{flex:1;display:grid;place-items:center;padding:96px 40px 48px}
-  .box{width:100%;max-width:440px}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
+  .stat{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:18px 20px;box-shadow:var(--shadow-sm)}
+  .stat__lbl{display:flex;align-items:center;gap:8px;font-size:var(--text-xs);font-weight:600;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:10px}
+  .stat__lbl svg{width:15px;height:15px}
+  .stat__val{font-size:var(--text-2xl);font-weight:700;color:var(--color-heading);line-height:1.1}
+  .stat__meta{font-size:var(--text-xs);color:var(--color-text-muted);margin-top:4px}
 
-  .topic{width:52px;height:52px;border-radius:50%;background:var(--color-primary-subtle);color:var(--color-primary);display:grid;place-items:center;margin:0 auto 16px}
-  .topic svg{width:26px;height:26px}
-  .acct{display:flex;align-items:center;justify-content:flex-start;gap:10px;margin:24px 0 24px}
-  .acct__av{width:34px;height:34px;border-radius:50%;background:var(--slate-200);color:var(--color-text-onmuted);display:grid;place-items:center;flex:0 0 auto}
-  .acct__av svg{width:18px;height:18px}
-  .acct__col{display:flex;flex-direction:column;min-width:0}
-  .acct__label{font-size:var(--text-xs);color:var(--color-text-muted);font-weight:600}
-  .acct__mail{color:var(--color-heading);font-size:var(--text-sm)}
-  h1{font-size:var(--text-2xl);text-align:center;margin:0 0 6px;color:var(--color-heading)}
-  .lead{text-align:center;color:var(--color-text-muted);font-size:var(--text-base);line-height:1.5;margin:0 0 8px}
-  .field{margin-bottom:18px}
-  .pw{position:relative}
-  .pw .input{padding-right:44px}
-  .pw__toggle{position:absolute;top:0;right:0;height:100%;width:42px;display:grid;place-items:center;background:none;border:0;cursor:pointer;color:var(--color-text-muted)}
-  .pw__toggle:hover{color:var(--color-text)}
-  .pw__toggle svg{width:18px;height:18px}
-  .reqs{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:5px}
-  .reqs li{display:flex;align-items:center;gap:7px;font-size:var(--text-xs);color:var(--color-text-onmuted);transition:color .12s}
-  .reqs li svg{width:14px;height:14px;flex:0 0 auto}
-  .reqs li.ok{color:var(--color-success-fg);font-weight:600}
-  /* microinteração sutil de reforço no aceite (reforço visual, nunca substitui a mensagem); respeita prefers-reduced-motion */
-  @media (prefers-reduced-motion:no-preference){.terms .check.nudge{animation:dere-nudge .22s ease}}
-  @keyframes dere-nudge{0%,100%{transform:translateX(0)}45%{transform:translateX(4px)}}
-  /* ===== microinterações (sutis, 120–200ms; o decorativo só roda fora de prefers-reduced-motion) ===== */
-  /* mensagens de erro: presença animada — fade + leve deslize + colapso, sem "saltar" o form */
-  .field__msg--error{opacity:0;max-height:0;overflow:hidden;transform:translateY(-4px);margin-top:calc(-1 * var(--space-1-5))}
-  .field__msg--error.show{opacity:1;max-height:5em;transform:none;margin-top:0}
-  .terms .field__msg--error{margin-top:0}
-  .terms .field__msg--error.show{margin-top:8px}
-  .input{transition:border-color .15s ease,box-shadow .15s ease}
-  .check input{transition:transform .14s ease}
-  .btn--block{transition:transform .16s ease,background-color .16s ease,filter .16s ease}
-  .btn-spin{width:15px;height:15px;border:2px solid rgba(255,255,255,.45);border-top-color:#fff;border-radius:50%;display:inline-block;margin-right:8px;vertical-align:-2px}
-  @media (prefers-reduced-motion:no-preference){
-    .field__msg--error{transition:opacity .16s ease,transform .16s ease,max-height .18s ease,margin-top .18s ease}
-    .reqs li svg{transition:transform .18s ease}
-    .reqs li.ok svg{animation:req-pop .18s ease}
-    @keyframes req-pop{from{transform:scale(.9);opacity:.55}to{transform:scale(1);opacity:1}}
-    .check input:active{transform:scale(.9)}
-    .btn--block:active{transform:scale(.985)}
-    .btn-spin{animation:btn-spin .7s linear infinite}
-  }
-  @keyframes btn-spin{to{transform:rotate(360deg)}}
-  .twofa{border:1px solid var(--color-border);border-radius:var(--radius-base);padding:14px;margin-bottom:18px;background:var(--color-surface-2)}
-  .twofa__hd{display:flex;align-items:center;gap:8px;margin-bottom:4px;color:var(--color-heading);font-weight:600;font-size:var(--text-sm)}
-  .twofa__hd svg{width:16px;height:16px;color:var(--color-primary)}
-  .twofa__note{color:var(--color-text-muted);font-size:var(--text-xs);line-height:1.5;margin:0 0 12px}
-  .terms{margin-bottom:20px}
-  .terms .check{font-size:var(--text-sm)}
-  .terms a{color:var(--color-primary);font-weight:600;text-decoration:none}
-  .terms a:hover{text-decoration:underline}
+  .panel{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm)}
+  .panel__hd{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--color-border)}
+  .panel__hd h2{font-size:var(--text-base)!important;margin:0}
+  .panel__hd a{font-size:var(--text-sm);font-weight:600;color:var(--color-primary);text-decoration:none}
+  .row{display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid var(--color-border)}
+  .row:last-child{border-bottom:0}
+  .row__ic{width:38px;height:38px;border-radius:var(--radius-base);background:var(--color-primary-subtle);color:var(--color-primary);display:grid;place-items:center;flex:0 0 auto}
+  .row__ic svg{width:19px;height:19px}
+  .row__b{flex:1;min-width:0}
+  .row__b .t{font-size:var(--text-sm);font-weight:600;color:var(--color-heading);margin:0}
+  .row__b .m{font-size:var(--text-xs);color:var(--color-text-muted);margin:2px 0 0}
+  .row__due{font-size:var(--text-xs);font-weight:600;color:var(--color-text-muted);flex:0 0 auto}
+  @media(max-width:820px){.stats{grid-template-columns:1fr}}
+
+  /* ==== painel: blocos ==== */
+  .pblock{margin-bottom:32px}
+  .pblock__h{display:flex;align-items:flex-start;gap:14px;margin:0 0 18px}
+  .pblock__ic{width:42px;height:42px;border-radius:var(--radius-base);background:var(--color-primary-subtle);color:var(--color-primary);display:grid;place-items:center;flex:0 0 auto}
+  .pblock__titles{flex:1;min-width:0}
+  .pblock__titles h2{font-size:var(--text-lg)!important;margin:0 0 3px}
+  .pblock__prog{font-size:var(--text-xs);font-weight:700;color:var(--color-text-muted);white-space:nowrap;flex:0 0 auto;padding-top:8px}
+  .pblock__sub{color:var(--color-text-muted);font-size:var(--text-sm);margin:0;line-height:1.5;max-width:70ch}
+  .progbar{height:6px;border-radius:var(--radius-pill);background:var(--color-surface-2);overflow:hidden;margin:0 0 16px}
+  .progbar__fill{height:100%;background:var(--color-primary)}
+  /* tarefas de configuração */
+  .tasks{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);overflow:hidden}
+  .task{display:flex;align-items:center;gap:16px;padding:16px 20px;border-top:1px solid var(--color-border)}
+  .task:first-child{border-top:0}
+  .task__ic{width:40px;height:40px;border-radius:var(--radius-base);background:var(--color-primary-subtle);color:var(--color-primary);display:grid;place-items:center;flex:0 0 auto}
+  .task.is-done .task__ic{background:var(--color-success-bg);color:var(--color-success-fg)}
+  .task__b{flex:1;min-width:0}
+  .task__b .t{font-size:var(--text-sm);font-weight:600;color:var(--color-heading);margin:0}
+  .task__b .m{font-size:var(--text-xs);color:var(--color-text-muted);margin:2px 0 0;line-height:1.5}
+  .task__side{display:flex;align-items:center;gap:14px;flex:0 0 auto}
+  /* timeline dos próximos passos */
+  .tl__step{display:flex;gap:18px}
+  .tl__rail{display:flex;flex-direction:column;align-items:center;flex:0 0 auto}
+  .tl__node{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--color-surface-2);color:var(--color-text-muted);border:1px solid var(--color-border);flex:0 0 auto}
+  .tl__step.is-available .tl__node{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+  .tl__step.is-analysis .tl__node{background:var(--color-warning);color:#fff;border-color:var(--color-warning)}
+  .tl__step.is-analysis .tl__card{border-left:3px solid var(--color-warning)}
+  .tl__note{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:var(--text-xs);color:var(--color-text-muted)}
+  .tl__note svg{width:13px;height:13px;flex:0 0 auto}
+  .tl__conn{width:2px;flex:1;background:var(--color-border);margin:4px 0;min-height:22px}
+  .tl__step:last-child .tl__conn{display:none}
+  .tl__card{flex:1;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:16px 20px;margin-bottom:12px;min-width:0}
+  .tl__step.is-available .tl__card{border-left:3px solid var(--color-primary)}
+  .tl__step.is-locked .tl__card{opacity:.72}
+  .tl__hd{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:3px}
+  .tl__hd .t{font-size:var(--text-sm);font-weight:700;color:var(--color-heading);margin:0}
+  .tl__card > p{font-size:var(--text-xs);color:var(--color-text-muted);margin:0;line-height:1.5}
+  .tl__card .btn{margin-top:12px}
+  .pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:3px 9px;border-radius:var(--radius-pill);white-space:nowrap;flex:0 0 auto}
+  .pill svg{width:12px;height:12px}
+  .pill--go{background:var(--color-primary-subtle);color:var(--color-primary)}
+  .pill--muted{background:var(--color-surface-2);color:var(--color-text-onmuted)}
+
+  .page-meta{display:inline-flex;align-items:center;gap:10px;font-size:var(--text-xs);font-weight:600;color:var(--color-text-muted);margin:12px 0 0}
+  .page-meta .mini{width:96px;height:5px;border-radius:var(--radius-pill);background:var(--color-surface-2);overflow:hidden}
+  .page-meta .mini span{display:block;height:100%;width:33%;background:var(--color-primary)}
+  .next{background:var(--color-primary-subtle);border:1px solid color-mix(in srgb,var(--color-primary) 20%,transparent);border-radius:var(--radius-lg);padding:22px 26px;margin:22px 0 36px}
+  .next__eyebrow{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--color-primary);margin:0 0 7px}
+  .next__title{font-size:var(--text-xl)!important;margin:0 0 4px;color:var(--color-heading)}
+  .next__desc{font-size:var(--text-sm);color:var(--color-text-onmuted);margin:0 0 16px;line-height:1.5}
+  .next__actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .sec{margin-top:var(--space-6);margin-bottom:34px}
+  .sec__h{display:flex;align-items:baseline;gap:12px;margin:0 0 4px}
+  .sec__h h2{font-size:var(--text-xl)!important;margin:0}
+  .sec__meta{font-size:var(--text-xs);font-weight:700;color:var(--color-text-muted)}
+  .sec__sub{font-size:var(--text-sm);color:var(--color-text-muted);margin:0 0 24px;line-height:1.5;max-width:72ch}
+  /* timeline: nós neutros; verde = concluído, azul = acionável; futuro apagado; cor só no status */
+  .tl__node{background:var(--color-surface-2);color:var(--color-text-muted);border:1px solid var(--color-border)}
+  .tl__step.is-done .tl__node{background:var(--color-success-bg);color:var(--color-success-fg);border-color:transparent}
+  .tl__step.is-available .tl__node{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+  .tl__step.is-available .tl__card{border-left:3px solid var(--color-primary)}
+  .tl__step.is-locked .tl__card{opacity:.6}
+  .tl__note{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:var(--text-xs);color:var(--color-text-muted)}
+  .tl__note svg{width:13px;height:13px;flex:0 0 auto}
+  .tl__step.is-analysis .tl__node{background:var(--color-surface-2)!important;color:var(--color-text-muted)!important;border-color:var(--color-border)!important}
+  .tl__step.is-analysis .tl__card{border-left:0!important}
+  .next__prog{display:flex;align-items:center;gap:12px;margin:0 0 18px}
+  .next__bar{width:190px;height:6px;border-radius:var(--radius-pill);background:var(--color-surface);overflow:hidden;flex:0 0 auto}
+  .next__bar span{display:block;height:100%;width:33%;background:var(--color-primary)}
+  .next__ptxt{font-size:var(--text-xs);font-weight:700;color:var(--color-primary)}
+  .page-prog{display:flex;align-items:center;gap:12px;margin:14px 0 0}
+  .page-prog__bar{width:170px;height:6px;border-radius:var(--radius-pill);background:var(--color-surface-2);overflow:hidden;flex:0 0 auto}
+  .page-prog__bar span{display:block;height:100%;width:33%;background:var(--color-primary)}
+  .page-prog__txt{font-size:var(--text-sm);color:var(--color-text-muted)}
+  .page-prog__txt strong{color:var(--color-heading);font-weight:700}
+
+  /* hero: presença forte (ícone + borda esquerda + título grande + progresso dentro) */
+  .next{display:flex;gap:18px;align-items:flex-start;background:color-mix(in srgb,var(--color-primary) 9%,var(--color-surface));border:1px solid color-mix(in srgb,var(--color-primary) 26%,transparent);border-left:4px solid var(--color-primary);border-radius:var(--radius-lg);padding:24px 26px;margin:24px 0 40px;box-shadow:var(--shadow-sm)}
+  .next__ic{width:46px;height:46px;border-radius:var(--radius-base);background:var(--color-primary);color:#fff;display:grid;place-items:center;flex:0 0 auto}
+  .next__ic svg{width:23px;height:23px}
+  .next__b{flex:1;min-width:0}
+  .next__eyebrow{font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--color-primary);margin:0 0 8px;opacity:.9}
+  .next__title{font-size:var(--text-2xl)!important;margin:0 0 5px;color:var(--color-heading);letter-spacing:-.012em}
+  .next__desc{font-size:var(--text-sm);color:var(--color-text-onmuted);margin:0 0 16px;line-height:1.5}
+  .next__prog{display:flex;align-items:center;gap:12px;margin:0 0 18px}
+  .next__bar{width:210px;height:6px;border-radius:var(--radius-pill);background:var(--color-surface);overflow:hidden;flex:0 0 auto}
+  .next__bar span{display:block;height:100%;width:33%;background:var(--color-primary)}
+  .next__ptxt{font-size:var(--text-xs);font-weight:700;color:var(--color-primary)}
+  .next__actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  /* checklist leve: 1 card, divisores, sem type-icons, CTA à direita */
+  .checklist{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);overflow:hidden}
+  .ck{display:flex;align-items:center;gap:14px;padding:14px 20px;border-top:1px solid var(--color-border)}
+  .ck:first-child{border-top:0}
+  .ck__ic{width:24px;height:24px;border-radius:50%;border:1.6px solid var(--color-border);display:grid;place-items:center;color:var(--color-text-muted);background:var(--color-surface);flex:0 0 auto}
+  .ck--done .ck__ic{background:var(--color-success-bg);border-color:transparent;color:var(--color-success-fg)}
+  .ck__ic svg{width:13px;height:13px}
+  .ck__b{flex:1;min-width:0}
+  .ck__t{font-size:var(--text-sm);font-weight:600;color:var(--color-heading);margin:0}
+  .ck__m{font-size:var(--text-xs);color:var(--color-text-muted);margin:1px 0 0;line-height:1.45}
+  .ck__side{display:flex;align-items:center;gap:16px;flex:0 0 auto}
+  /* timeline: item acionável com mais ênfase (fundo azul bem claro) */
+  .tl__node{background:var(--color-surface-2);color:var(--color-text-muted);border:1px solid var(--color-border)}
+  .tl__step.is-available .tl__node{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+  .tl__step.is-available .tl__card{border-left:3px solid var(--color-primary);background:color-mix(in srgb,var(--color-primary) 6%,var(--color-surface))}
+  .tl__step.is-next .tl__node{background:var(--color-surface-2);color:var(--color-text);border-color:var(--color-border)}
+  .tl__step.is-locked .tl__card{opacity:.58}
+  .tl__note{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:var(--text-xs);color:var(--color-text-muted)}
+  .tl__note svg{width:13px;height:13px;flex:0 0 auto}
+
+  .sec__h + .checklist{margin-top:18px}
+  .ck--locked{opacity:.55}
+  .ck__note{display:inline-flex;align-items:center;gap:6px;margin:8px 0 0;font-size:var(--text-xs);color:var(--color-text-muted);line-height:1.4}
+  .ck__note svg{width:13px;height:13px;flex:0 0 auto}
+  .orgswitch__logo--brand{background:#fff;overflow:hidden}
+  .orgswitch__logo--brand img{width:100%;height:100%;object-fit:cover;display:block}
+  .orgswitch--static{cursor:default}
+  .sidenav--navy .orgswitch--static:hover{background:transparent}
+
+  .jrn{display:flex;flex-direction:column}
+  .jrn__step{display:flex;gap:18px}
+  .jrn__rail{display:flex;flex-direction:column;align-items:center;flex:0 0 auto}
+  .jrn__node{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;flex:0 0 auto;background:var(--color-surface-2);color:var(--color-text-muted);border:1px solid var(--color-border)}
+  .jrn__node svg{width:20px;height:20px}
+  .jrn__conn{width:2px;flex:1;background:var(--color-border);margin:6px 0;min-height:26px}
+  .jrn__step:last-child .jrn__conn{display:none}
+  .jrn__card{flex:1;min-width:0;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:var(--space-6);margin-bottom:var(--space-6)}
+  .jrn__step:last-child .jrn__card{margin-bottom:0}
+  .jrn__hd{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 6px}
+  .jrn__thd{display:inline-flex;align-items:center;gap:6px;min-width:0}
+  .jrn__t{font-size:var(--text-base)!important;font-weight:600;color:var(--color-heading);margin:0}
+  .jrn__desc{font-size:var(--text-sm);color:var(--slate-600);margin:0 0 14px;line-height:1.55;max-width:84ch}
+  .jrn__actions{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .jrn__note{display:inline-flex;align-items:center;gap:6px;font-size:var(--text-xs);color:var(--color-text-muted)}
+  .jrn__note svg{width:13px;height:13px;flex:0 0 auto}
+  /* estados: azul=ação atual, azul-claro=disponível, âmbar=em análise, verde=aprovado, cinza=travado */
+  .jrn__step.is-active .jrn__node{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+  .jrn__step.is-active .jrn__card{border-left:3px solid var(--color-primary);background:var(--blue-50)}
+  .jrn__step.is-available .jrn__node{background:var(--color-primary-subtle);color:var(--color-primary);border-color:transparent}
+  .jrn__step.is-analysis .jrn__node{background:var(--color-warning-bg);color:var(--color-warning-fg);border-color:transparent}
+  .jrn__step.is-done .jrn__node{background:var(--color-success-bg);color:var(--color-success-fg);border-color:transparent}
+  .jrn__step.is-locked .jrn__t{color:var(--color-text)}
+  .jrn__step.is-locked .jrn__desc{color:var(--color-text-onmuted)}
+  .jrn__step.is-locked .jrn__node{opacity:.85}
+
+  .jrn__eyebrow{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin:0 0 5px;color:var(--color-primary)}
+  .jrn__step.is-locked .jrn__eyebrow{color:var(--color-text-muted)}
+  .jrn__step.is-analysis .jrn__eyebrow{color:var(--color-warning-fg)}
+  .jrn__step.is-done .jrn__eyebrow{color:var(--color-success-fg)}
+  /* Resultado da jornada (NÃO é etapa): destino visualmente distinto — sem número, card levemente tingido, nó tracejado */
+  .jrn__step.jrn__step--result .jrn__eyebrow{color:var(--color-primary)}
+  .jrn__step--result .jrn__node{background:var(--color-primary-subtle);color:var(--color-primary);border-color:transparent;opacity:1}
+  .jrn__step.is-available .jrn__card,.jrn__step.jrn__step--result .jrn__card{border-left:3px solid var(--blue-200)}
+  .jrn__hint{font-size:var(--text-xs);color:var(--color-text-muted);margin:6px 0 0;line-height:1.5;max-width:66ch}
+</style>
+<style id="v2">
+  .mono{flex:0 0 auto;display:grid;place-items:center;color:#fff;font-weight:700;border-radius:var(--radius-base);letter-spacing:.01em}
+  .ctxmenu__mono{width:30px;height:30px;font-size:11px;border-radius:var(--radius-sm)}
+  .ctxsw .orgswitch__logo--mono{color:#fff;font-weight:700;font-size:13px}
+  .ctxmenu__item--current{cursor:default}.ctxmenu__item--current:hover{background:none}
+  .ctxmenu__check{margin-left:auto;color:var(--blue-600);flex:0 0 auto}
+  .esc-ph{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .v2wrap{padding-bottom:56px}
+  .v2grid{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(300px,1fr);gap:28px;align-items:start}
+  .v2main{display:flex;flex-direction:column;gap:32px;min-width:0}
+  .v2rail{display:flex;flex-direction:column;gap:20px;position:sticky;top:24px}
+  .v2sec__h{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .v2sec__ttl{display:flex;align-items:center;gap:10px}
+  .v2sec__ttl h2{margin:0}
+  .v2sec__sub{color:var(--color-text-muted);font-size:var(--text-sm);margin:4px 0 14px}
+  .v2count{min-width:24px;height:24px;padding:0 8px;border-radius:var(--radius-pill);display:inline-grid;place-items:center;background:var(--color-warning-bg);color:var(--color-warning-fg);font-weight:700;font-size:var(--text-xs)}
+  .v2link{color:var(--color-primary);font-weight:600;font-size:var(--text-sm);text-decoration:none;display:inline-flex;align-items:center;gap:5px}
+  .v2link:hover{text-decoration:underline}
+  .v2link--foot{margin-top:14px}
+  /* atenção */
+  .attn{padding:4px 18px}
+  .attn-row{display:grid;grid-template-columns:auto 1fr auto;gap:14px;padding:16px 0;align-items:start;text-decoration:none;border-radius:var(--radius-sm)}
+  .attn-row+.attn-row{border-top:1px solid var(--color-border)}
+  .attn-row:hover .attn-row__name{color:var(--color-primary)}
+  .attn-row__logo{width:40px;height:40px;font-size:14px}
+  .attn-row__b{min-width:0;display:flex;flex-direction:column;gap:3px}
+  .attn-row__top{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+  .attn-row__name{font-weight:600;color:var(--color-heading);font-size:var(--text-base)}
+  .attn-row__cnpj{font-size:var(--text-xs);color:var(--color-text-muted);font-variant-numeric:tabular-nums}
+  .attn-row__task{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:2px}
+  .attn-row__tag{display:inline-flex;align-items:center;gap:5px;font-size:var(--text-xs);font-weight:600;padding:3px 9px;border-radius:var(--radius-pill)}
+  .attn-row__tag--config{background:var(--slate-100);color:var(--slate-600)}
+  .attn-row__tag--ciclo{background:var(--color-primary-subtle);color:var(--color-primary)}
+  .attn-row__tag svg{flex:0 0 auto}
+  .attn-row__sub{font-size:var(--text-xs);color:var(--color-text-muted)}
+  .attn-row__desc{font-size:var(--text-sm);color:var(--color-text-muted);line-height:1.4}
+  .attn-row__right{display:flex;flex-direction:column;align-items:flex-end;gap:10px;flex:0 0 auto;text-align:right}
+  .attn-row__prazo{font-size:var(--text-sm);font-weight:600;color:var(--color-heading);font-variant-numeric:tabular-nums;display:inline-flex;flex-direction:column;align-items:flex-end;line-height:1.25}
+  .attn-row__prazo-k{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--color-text-muted);font-weight:600}
+  .attn-row__go{white-space:nowrap}
+  /* ciclo */
+  .v2comp{display:inline-flex;align-items:center;gap:8px;color:var(--color-text-muted);flex:0 0 auto}
+  .select--sm{height:var(--control-h-sm);font-size:var(--text-sm)}
+  .v2tablewrap{border:1px solid var(--color-border);border-radius:var(--radius-lg);overflow:hidden;background:var(--color-surface)}
+  .v2rmono{width:32px;height:32px;font-size:11px}
+  .cell-media__b{display:flex;flex-direction:column;min-width:0;line-height:1.3}
+  .cell-media__b b{color:var(--color-heading);font-weight:600}
+  .cell-media__b span{font-size:var(--text-xs);color:var(--color-text-muted);font-variant-numeric:tabular-nums}
+  .v2etapa{color:var(--color-text)}
+  .v2num{font-variant-numeric:tabular-nums;text-align:right;color:var(--color-text-muted)}
+  .v2trow{cursor:pointer}.v2trow:hover{background:var(--color-surface-2)}.v2trow:focus-visible{outline:none;box-shadow:inset var(--ring)}
+  /* rail cards */
+  .railcard{padding:18px 20px}
+  .railcard__k{font-size:var(--text-xs);font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--color-text-muted);margin:0 0 14px}
+  .railcard__sub{font-size:var(--text-xs);font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--color-text-muted);margin:18px 0 10px}
+  .railstats{display:flex;flex-direction:column;gap:2px}
+  .railstat{display:grid;grid-template-columns:auto auto 1fr;align-items:center;gap:12px;padding:10px 8px;border-radius:var(--radius-base);text-decoration:none;transition:background .12s}
+  .railstat:hover{background:var(--color-surface-2)}
+  .railstat:focus-visible{outline:none;box-shadow:var(--ring)}
+  .railstat__ic{width:34px;height:34px;border-radius:var(--radius-base);display:grid;place-items:center;background:var(--color-surface-2);color:var(--color-text-muted)}
+  .railstat--success .railstat__ic{background:var(--color-success-bg);color:var(--color-success-fg)}
+  .railstat--danger .railstat__ic{background:var(--color-danger-bg);color:var(--color-danger-fg)}
+  .railstat--info .railstat__ic{background:var(--color-info-bg);color:var(--color-info-fg)}
+  .railstat__v{font-size:var(--text-xl);font-weight:700;color:var(--color-heading);font-variant-numeric:tabular-nums;min-width:26px}
+  .railstat__l{font-size:var(--text-sm);color:var(--color-text)}
+  .segbar__track{display:flex;height:12px;border-radius:var(--radius-pill);overflow:hidden;background:var(--color-surface-2)}
+  .segbar__track span{display:block;height:100%}.segbar__track span+span{box-shadow:inset 1px 0 0 var(--color-surface)}
+  .seglegend{list-style:none;margin:14px 0 0;padding:0;display:flex;flex-direction:column;gap:9px}
+  .seglegend li{display:flex;align-items:center;gap:9px;font-size:var(--text-sm);color:var(--color-text-muted)}
+  .seglegend i{width:10px;height:10px;border-radius:3px;flex:0 0 auto}
+  .seglegend b{color:var(--color-heading);font-variant-numeric:tabular-nums;min-width:18px}
   .btn--block{width:100%;justify-content:center}
-  .btn[disabled]{opacity:.55;cursor:not-allowed}
-  .secnote{display:flex;align-items:center;gap:7px;justify-content:center;margin-top:16px;font-size:var(--text-xs);color:var(--color-text-muted);line-height:1.4;text-align:center}
-  .secnote svg{width:14px;height:14px;flex:0 0 auto}
-  .ok-panel{text-align:center}
-  .ok-panel .ok-ic{width:56px;height:56px;border-radius:50%;background:var(--color-success-bg);color:var(--color-success-fg);display:grid;place-items:center;margin:0 auto 16px}
-  .ok-panel .ok-ic svg{width:30px;height:30px}
-  .ok-panel .btn{margin-top:24px}
-  .hide{display:none!important}
-
-  @media(max-width:880px){
-    .pane-img{display:none}
-    .pane-form__center{padding:96px 24px 40px}
-  }
+  .v2recent{display:flex;flex-direction:column;gap:6px}
+  .v2rec{display:flex;align-items:center;gap:11px;padding:8px;border-radius:var(--radius-base);text-decoration:none;transition:background .12s}
+  .v2rec:hover{background:var(--color-surface-2)}
+  .v2rec__mono{width:30px;height:30px;font-size:11px}
+  .v2rec__t{display:flex;flex-direction:column;line-height:1.3;min-width:0}
+  .v2rec__t b{color:var(--color-heading);font-weight:600;font-size:var(--text-sm)}
+  .v2rec__t span{color:var(--color-text-muted);font-size:var(--text-xs);font-variant-numeric:tabular-nums}
+  @media(max-width:1080px){.v2grid{grid-template-columns:1fr}.v2rail{position:static;flex-direction:row;flex-wrap:wrap}.v2rail>.card{flex:1 1 260px}}
+  @media(max-width:620px){.attn-row{grid-template-columns:auto 1fr}.attn-row__right{grid-column:1/3;flex-direction:row;align-items:center;justify-content:space-between;text-align:left}}
 </style>
 </head><body>
 <div id="dere-gate" style="position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;padding:24px;font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;background:radial-gradient(120% 120% at 20% 8%,#0c326f 0%,#071d41 55%,#05152e 100%)">
@@ -986,42 +1177,193 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 </div>
 <script>if(localStorage.getItem('dere_ok')==='1'){var _g=document.getElementById('dere-gate');if(_g)_g.remove();}function dereGate(f){var i=f.querySelector('input'),e=document.getElementById('dere-err');if(i.value==='dere123'){localStorage.setItem('dere_ok','1');document.getElementById('dere-gate').remove();}else{e.innerHTML='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 auto"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>Senha incorreta. Tente novamente.';i.select();}return false;}</script>
 
-<a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
-<div class="split">
-  <aside class="pane-img"><div class="pane-img__lead"><p class="pane-img__title">Prepare sua DeRE de forma<br>simples e estruturada</p><p class="pane-img__desc">Organize, valide e transmita as informações da Declaração de Regimes Específicos em um só ambiente.</p></div><div class="pane-img__foot">Desenvolvido por Axians</div></aside>
-
-  <section class="pane-form" id="conteudo" role="main" tabindex="-1">
-    
-    
-    <div class="pane-form__center">
-      <div class="box">
-        <form id="login">
-          <div style="text-align:center;margin:0 0 24px;font-weight:800;font-size:26px;letter-spacing:-.01em;color:var(--color-heading)">a-DeRE</div>
-          <h1 style="margin-bottom:14px">Bem-vindo(a) de volta</h1>
-          <p class="lead" style="margin-bottom:32px">Use suas credenciais corporativas para acessar a plataforma.</p>
-          <div class="field">
-            <label class="field__label" for="email">E-mail</label>
-            <input id="email" class="input input--lg" type="email" placeholder="Ex.: nome@empresa.com.br" autocomplete="username">
-          </div>
-          <div class="field">
-            <label class="field__label" for="pw">Senha</label>
-            <div class="pw">
-              <input id="pw" class="input input--lg" type="password" placeholder="Digite sua senha" autocomplete="current-password">
-              <button type="button" class="pw__toggle" aria-label="Mostrar senha" aria-pressed="false" onclick="toggle(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>
-            </div>
-            <div style="text-align:right;margin-top:8px"><a href="#" style="color:var(--color-primary);font-weight:600;font-size:var(--text-sm);text-decoration:none">Esqueci minha senha</a></div>
-          </div>
-          <button type="submit" class="btn btn--primary btn--lg btn--block" style="margin-top:4px">Entrar</button>
-          <p class="secnote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Conexão segura. A a-DeRE nunca pede sua senha por telefone ou e-mail.</p>
-        </form>
-      </div>
+<div class="shell">
+  <nav class="sidenav sidenav--navy" data-sidenav aria-label="Navegação principal">
+    <div class="brandrow"><span class="wm sidenav__label">a-DeRE</span></div>
+    <div class="menu" data-ctx style="padding:12px 12px 0;flex:0 0 auto">
+      <div class="ctxsw">
+        <button class="orgswitch" type="button" aria-haspopup="true" aria-expanded="false" data-ctx-btn><span class="orgswitch__logo orgswitch__logo--mono" style="background:#0c326f">EA</span><span class="orgswitch__info"><span class="orgswitch__name">Escritório Andrade</span><span class="orgswitch__cnpj">Escritório &middot; 34.128.907/0001-52</span></span><span class="ctxsw__chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span></button>
+        <div class="ctxmenu" hidden><p class="ctxmenu__group">Contexto atual</p>
+          <div class="ctxmenu__item ctxmenu__item--current"><span class="mono ctxmenu__mono" style="background:#0c326f" aria-hidden="true">EA</span><span class="ctxmenu__t"><b>Escritório Andrade</b><span>Escritório &middot; 34.128.907/0001-52</span></span><span class="ctxmenu__check"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></div>
+          <p class="ctxmenu__group">Contribuintes</p>
+          <a class="ctxmenu__item" href="contribuinte-painel.html"><span class="mono ctxmenu__mono" style="background:#00a3e0" aria-hidden="true">MP</span><span class="ctxmenu__t"><b>Mercado Pago</b><span>10.573.521/0001-91</span></span></a>
+          <a class="ctxmenu__item" href="contribuinte-painel.html?c=abc"><span class="mono ctxmenu__mono" style="background:#0f9d8c" aria-hidden="true">AB</span><span class="ctxmenu__t"><b>Empresa ABC Comércio</b><span>34.128.907/0002-00</span></span></a>
+          <a class="ctxmenu__item" href="contribuinte-painel.html?c=xyz"><span class="mono ctxmenu__mono" style="background:#7c3aed" aria-hidden="true">XY</span><span class="ctxmenu__t"><b>Empresa XYZ Serviços</b><span>34.128.907/0003-00</span></span></a>
+          <a class="ctxmenu__item" href="contribuinte-painel.html?c=gh"><span class="mono ctxmenu__mono" style="background:#dc2626" aria-hidden="true">GH</span><span class="ctxmenu__t"><b>Grupo Horizonte</b><span>34.128.907/0005-00</span></span></a>
+          <a class="ctxmenu__item" href="contribuinte-painel.html?c=ap"><span class="mono ctxmenu__mono" style="background:#4f46e5" aria-hidden="true">AP</span><span class="ctxmenu__t"><b>Alfa Participações</b><span>34.128.907/0007-00</span></span></a>
+          <a class="ctxmenu__item" href="contribuinte-painel.html?c=123"><span class="mono ctxmenu__mono" style="background:#d97706" aria-hidden="true">C1</span><span class="ctxmenu__t"><b>Comercial 123</b><span>34.128.907/0004-00</span></span></a>
+          <a class="ctxmenu__item" href="contribuinte-painel.html?c=ns"><span class="mono ctxmenu__mono" style="background:#0ea5e9" aria-hidden="true">NS</span><span class="ctxmenu__t"><b>Nova Saúde S.A.</b><span>34.128.907/0006-00</span></span></a>
+          <a class="ctxmenu__item" href="contribuinte-painel.html?c=bf"><span class="mono ctxmenu__mono" style="background:#059669" aria-hidden="true">BF</span><span class="ctxmenu__t"><b>Beta Financeira</b><span>34.128.907/0008-00</span></span></a>
+          <div class="ctxmenu__sep"></div>
+          <a class="ctxmenu__add" href="escritorio-contribuintes.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg> Adicionar contribuinte</a>
+        </div></div></div>
+    <div class="navlist">
+      <p class="sidenav__group">Principal</p>
+      <a class="sidenav__item is-active" href="escritorio-painel-v2.html" aria-current="page"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg><span class="sidenav__label">Painel</span></a>
+      <a class="sidenav__item" href="escritorio-contribuintes.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4M10 10h4M10 14h4"/></svg><span class="sidenav__label">Contribuintes</span></a>
+      <p class="sidenav__group">Administração</p>
+      <a class="sidenav__item" href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span class="sidenav__label">Equipe e acessos</span></a>
+      <p class="sidenav__group">Sistema</p>
+      <a class="sidenav__item" href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg><span class="sidenav__label">Configurações</span></a>
     </div>
-  </section>
+    <div class="sidenav__foot">
+      <button class="sidenav__item sidenav__toggle" type="button" aria-label="Colapsar menu" aria-expanded="true" data-sidenav-toggle><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m11 17-5-5 5-5"/><path d="m18 17-5-5 5-5"/></svg><span class="sidenav__label">Colapsar</span></button>
+    </div>
+  </nav>
+
+  <div class="col">
+    <header class="topbar">
+      <button class="icon-btn hamburger" type="button" aria-label="Abrir menu" data-drawer-open><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" x2="21" y1="6" y2="6"/><line x1="3" x2="21" y1="12" y2="12"/><line x1="3" x2="21" y1="18" y2="18"/></svg></button>
+      <nav class="breadcrumb" aria-label="Trilha"><a href="escritorio-painel-v2.html">Escritório Andrade</a><span class="breadcrumb__sep">/</span><span class="breadcrumb__current">Painel</span></nav>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:4px">
+        <span class="tooltip"><button class="icon-btn" type="button" aria-label="Buscar"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></button><span class="tooltip__bubble" role="tooltip">Buscar</span></span>
+        <span class="tooltip"><button class="icon-btn" type="button" aria-label="Notificações, 3 não lidas" style="position:relative"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="badge badge--danger" style="position:absolute;top:3px;right:3px">3</span></button><span class="tooltip__bubble" role="tooltip">Notificações</span></span>
+      </div>
+      <span aria-hidden="true" style="width:1px;height:22px;background:var(--color-divider);flex:0 0 auto"></span>
+      <div class="menu" data-menu>
+        <span class="tooltip tooltip--end"><button class="avatar" aria-haspopup="true" aria-expanded="false" aria-label="Ricardo Almeida, abrir menu do usuário">RA</button><span class="tooltip__bubble tooltip__bubble--stack" role="tooltip"><strong>Ricardo Almeida</strong>ricardo.almeida@mercadopago.com.br</span></span>
+        <div class="menu__panel" hidden>
+          <div class="menu__head"><p class="menu__head-name">Ricardo Almeida</p><p class="menu__head-mail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>ricardo.almeida@mercadopago.com.br</p><p class="menu__head-roles"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>Administrador</p></div>
+          <div class="menu__sep"></div>
+          <button class="menu__item">Meu perfil</button>
+          <button class="menu__item">Configurações</button>
+          <button class="menu__item menu__item--danger">Sair</button>
+        </div>
+      </div>
+    </header>
+
+    <main id="conteudo" tabindex="-1" class="content">
+      <div class="page-h"><div class="wrap"><div class="esc-ph"><div><h1>Visão geral</h1><p>Acompanhe a configuração e as declarações dos contribuintes da sua carteira.</p></div><a class="btn btn--primary" href="escritorio-contribuintes.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg>Adicionar contribuinte</a></div></div></div>
+      <div class="wrap v2wrap">
+        <div class="v2grid">
+          <div class="v2main">
+            <section class="v2sec">
+          <div class="v2sec__h"><div class="v2sec__ttl"><h2>Precisa da sua atenção</h2><span class="v2count">5</span></div><a class="v2link" href="escritorio-contribuintes.html?f=atencao">Ver todos</a></div>
+          <p class="v2sec__sub">Contribuintes com tarefas pendentes ou prazos próximos.</p>
+          <div class="card attn">
+            <a class="attn-row" href="contribuinte-painel.html">
+            <span class="mono attn-row__logo" style="background:#00a3e0" aria-hidden="true">MP</span>
+            <span class="attn-row__b">
+              <span class="attn-row__top"><b class="attn-row__name">Mercado Pago</b><span class="attn-row__cnpj">10.573.521/0001-91</span></span>
+              <span class="attn-row__task"><span class="attn-row__tag attn-row__tag--ciclo"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 2v4"/><path d="M16 2v4"/></svg>Balancete mensal</span><span class="attn-row__sub">Setembro/2026</span></span>
+              <span class="attn-row__desc">Balancete mensal ainda não enviado.</span>
+            </span>
+            <span class="attn-row__right"><span class="attn-row__prazo"><span class="attn-row__prazo-k">Prazo</span>15/10/2026</span><span class="btn btn--primary btn--sm attn-row__go">Continuar<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span></span>
+          </a>
+            <a class="attn-row" href="contribuinte-painel.html?c=abc">
+            <span class="mono attn-row__logo" style="background:#0f9d8c" aria-hidden="true">AB</span>
+            <span class="attn-row__b">
+              <span class="attn-row__top"><b class="attn-row__name">Empresa ABC Comércio</b><span class="attn-row__cnpj">34.128.907/0002-00</span></span>
+              <span class="attn-row__task"><span class="attn-row__tag attn-row__tag--config"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 12h4M10 16h4"/></svg>Informações do contribuinte</span><span class="attn-row__sub">Configuração inicial</span></span>
+              <span class="attn-row__desc">Complete os dados para habilitar a declaração.</span>
+            </span>
+            <span class="attn-row__right"><span class="status status--warning"><span class="status__dot"></span> Pendente</span><span class="btn btn--primary btn--sm attn-row__go">Continuar<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span></span>
+          </a>
+            <a class="attn-row" href="contribuinte-painel.html?c=xyz">
+            <span class="mono attn-row__logo" style="background:#7c3aed" aria-hidden="true">XY</span>
+            <span class="attn-row__b">
+              <span class="attn-row__top"><b class="attn-row__name">Empresa XYZ Serviços</b><span class="attn-row__cnpj">34.128.907/0003-00</span></span>
+              <span class="attn-row__task"><span class="attn-row__tag attn-row__tag--ciclo"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 2v4"/><path d="M16 2v4"/></svg>Fechamento mensal</span><span class="attn-row__sub">Setembro/2026</span></span>
+              <span class="attn-row__desc">Balancete e eventos enviados. Falta o fechamento.</span>
+            </span>
+            <span class="attn-row__right"><span class="attn-row__prazo"><span class="attn-row__prazo-k">Prazo</span>15/10/2026</span><span class="btn btn--primary btn--sm attn-row__go">Continuar<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span></span>
+          </a>
+            <a class="attn-row" href="contribuinte-painel.html?c=gh">
+            <span class="mono attn-row__logo" style="background:#dc2626" aria-hidden="true">GH</span>
+            <span class="attn-row__b">
+              <span class="attn-row__top"><b class="attn-row__name">Grupo Horizonte</b><span class="attn-row__cnpj">34.128.907/0005-00</span></span>
+              <span class="attn-row__task"><span class="attn-row__tag attn-row__tag--config"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12h-8"/><path d="M21 6H8"/><path d="M21 18h-8"/><path d="M3 6v4c0 1.1.9 2 2 2h3"/><path d="M3 10v6c0 1.1.9 2 2 2h3"/></svg>Plano de contas</span><span class="attn-row__sub">Configuração inicial</span></span>
+              <span class="attn-row__desc">Plano de contas pendente para concluir a configuração.</span>
+            </span>
+            <span class="attn-row__right"><span class="status status--warning"><span class="status__dot"></span> Pendente</span><span class="btn btn--primary btn--sm attn-row__go">Continuar<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span></span>
+          </a>
+          </div>
+        </section>
+            <section class="v2sec">
+          <div class="v2sec__h"><div class="v2sec__ttl"><h2>Ciclo mensal</h2></div><label class="v2comp"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 2v4"/><path d="M16 2v4"/></svg><select class="select select--sm" aria-label="Competência"><option>Setembro de 2026</option><option>Agosto de 2026</option><option>Julho de 2026</option></select></label></div>
+          <p class="v2sec__sub">Andamento das declarações da carteira na competência.</p>
+          <div class="v2tablewrap">
+            <table class="table"><thead><tr><th>Contribuinte</th><th>Etapa atual</th><th>Situação</th><th class="v2num">Prazo</th></tr></thead>
+              <tbody><tr class="v2trow" onclick="location.href='contribuinte-painel.html'" tabindex="0">
+              <td><div class="cell-media"><span class="mono v2rmono" style="background:#00a3e0" aria-hidden="true">MP</span><div class="cell-media__b"><b>Mercado Pago</b><span>10.573.521/0001-91</span></div></div></td>
+              <td class="v2etapa">Balancete mensal</td>
+              <td><span class="status status--info"><span class="status__dot"></span> Em andamento</span></td>
+              <td class="v2num">15/10/2026</td>
+            </tr>
+              <tr class="v2trow" onclick="location.href='contribuinte-painel.html?c=abc'" tabindex="0">
+              <td><div class="cell-media"><span class="mono v2rmono" style="background:#0f9d8c" aria-hidden="true">AB</span><div class="cell-media__b"><b>Empresa ABC Comércio</b><span>34.128.907/0002-00</span></div></div></td>
+              <td class="v2etapa">Aguardando configuração</td>
+              <td><span class="status "><span class="status__dot"></span> Aguardando config.</span></td>
+              <td class="v2num">—</td>
+            </tr>
+              <tr class="v2trow" onclick="location.href='contribuinte-painel.html?c=xyz'" tabindex="0">
+              <td><div class="cell-media"><span class="mono v2rmono" style="background:#7c3aed" aria-hidden="true">XY</span><div class="cell-media__b"><b>Empresa XYZ Serviços</b><span>34.128.907/0003-00</span></div></div></td>
+              <td class="v2etapa">Fechamento mensal</td>
+              <td><span class="status status--warning"><span class="status__dot"></span> Pendente</span></td>
+              <td class="v2num">15/10/2026</td>
+            </tr>
+              <tr class="v2trow" onclick="location.href='contribuinte-painel.html?c=gh'" tabindex="0">
+              <td><div class="cell-media"><span class="mono v2rmono" style="background:#dc2626" aria-hidden="true">GH</span><div class="cell-media__b"><b>Grupo Horizonte</b><span>34.128.907/0005-00</span></div></div></td>
+              <td class="v2etapa">Aguardando configuração</td>
+              <td><span class="status "><span class="status__dot"></span> Aguardando config.</span></td>
+              <td class="v2num">—</td>
+            </tr>
+              <tr class="v2trow" onclick="location.href='contribuinte-painel.html?c=ap'" tabindex="0">
+              <td><div class="cell-media"><span class="mono v2rmono" style="background:#4f46e5" aria-hidden="true">AP</span><div class="cell-media__b"><b>Alfa Participações</b><span>34.128.907/0007-00</span></div></div></td>
+              <td class="v2etapa">Balancete mensal</td>
+              <td><span class="status status--warning"><span class="status__dot"></span> Pendente</span></td>
+              <td class="v2num">15/10/2026</td>
+            </tr>
+              <tr class="v2trow" onclick="location.href='contribuinte-painel.html?c=123'" tabindex="0">
+              <td><div class="cell-media"><span class="mono v2rmono" style="background:#d97706" aria-hidden="true">C1</span><div class="cell-media__b"><b>Comercial 123</b><span>34.128.907/0004-00</span></div></div></td>
+              <td class="v2etapa">Aguardando configuração</td>
+              <td><span class="status "><span class="status__dot"></span> Aguardando config.</span></td>
+              <td class="v2num">—</td>
+            </tr></tbody></table>
+          </div>
+          <a class="v2link v2link--foot" href="escritorio-contribuintes.html">Ver todos os contribuintes<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+        </section>
+          </div>
+          <aside class="v2rail" aria-label="Resumo">
+            <div class="card railcard">
+            <p class="railcard__k">Resumo da carteira</p>
+            <div class="railstats">
+              <a class="railstat railstat--neutral" href="escritorio-contribuintes.html"><span class="railstat__ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span class="railstat__v">24</span><span class="railstat__l">Total</span></a>
+              <a class="railstat railstat--success" href="escritorio-contribuintes.html?f=emdia"><span class="railstat__ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></svg></span><span class="railstat__v">12</span><span class="railstat__l">Em dia</span></a>
+              <a class="railstat railstat--danger" href="escritorio-contribuintes.html?f=atencao"><span class="railstat__ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></span><span class="railstat__v">7</span><span class="railstat__l">Precisam de atenção</span></a>
+              <a class="railstat railstat--info" href="escritorio-contribuintes.html?f=config"><span class="railstat__ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/></svg></span><span class="railstat__v">5</span><span class="railstat__l">Em configuração</span></a>
+            </div>
+          </div>
+            <div class="card railcard">
+            <p class="railcard__k">Ciclo de Setembro/2026</p>
+            <div class="segbar"><div class="segbar__track"><span style="width:50%;background:var(--green-500)"></span><span style="width:29.2%;background:var(--sky-500)"></span><span style="width:12.5%;background:var(--amber-500)"></span><span style="width:8.3%;background:var(--slate-300)"></span></div></div>
+            <ul class="seglegend"><li><i style="background:var(--green-500)"></i><b>12</b> concluídos</li><li><i style="background:var(--sky-500)"></i><b>7</b> em andamento</li><li><i style="background:var(--amber-500)"></i><b>3</b> pendentes</li><li><i style="background:var(--slate-300)"></i><b>2</b> aguardando configuração</li></ul>
+          </div>
+            <div class="card railcard">
+            <p class="railcard__k">Acesso rápido</p>
+            <a class="btn btn--secondary btn--block" href="escritorio-contribuintes.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4M10 10h4M10 14h4"/></svg>Ver todos os contribuintes</a>
+            <p class="railcard__sub">Recentemente acessados</p>
+            <div class="v2recent"><a class="v2rec" href="contribuinte-painel.html"><span class="mono v2rec__mono" style="background:#00a3e0" aria-hidden="true">MP</span><span class="v2rec__t"><b>Mercado Pago</b><span>10.573.521/0001-91</span></span></a><a class="v2rec" href="contribuinte-painel.html?c=abc"><span class="mono v2rec__mono" style="background:#0f9d8c" aria-hidden="true">AB</span><span class="v2rec__t"><b>Empresa ABC Comércio</b><span>34.128.907/0002-00</span></span></a><a class="v2rec" href="contribuinte-painel.html?c=xyz"><span class="mono v2rec__mono" style="background:#7c3aed" aria-hidden="true">XY</span><span class="v2rec__t"><b>Empresa XYZ Serviços</b><span>34.128.907/0003-00</span></span></a></div>
+          </div>
+          </aside>
+        </div>
+      </div>
+    </main>
+  </div>
 </div>
+<div class="sidenav-backdrop" data-drawer-backdrop></div>
 <script>
-var EYE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>';
-var EYEOFF='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><line x1="2" x2="22" y1="2" y2="22"/></svg>';
-function toggle(btn){var i=document.getElementById("pw");var show=i.type==="password";i.type=show?"text":"password";btn.setAttribute("aria-pressed",show);btn.setAttribute("aria-label",show?"Ocultar senha":"Mostrar senha");btn.innerHTML=show?EYEOFF:EYE;}
-document.getElementById("login").addEventListener("submit",function(ev){ev.preventDefault();var b=this.querySelector("button[type=submit]");b.disabled=true;b.innerHTML='<span class="btn-spin"></span>Entrando…';setTimeout(function(){location.href="../app/frontoffice/painel.html";},700);});
+  document.querySelectorAll('[data-sidenav-toggle]').forEach(function(btn){var nav=btn.closest('[data-sidenav]');btn.addEventListener('click',function(){var c=nav.classList.toggle('is-collapsed');btn.setAttribute('aria-expanded',String(!c));btn.setAttribute('aria-label',c?'Expandir menu':'Colapsar menu');btn.setAttribute('data-tip',c?'Expandir menu':'Colapsar menu');});});
+  document.querySelectorAll('[data-menu]').forEach(function(menu){var b=menu.querySelector('button'),p=menu.querySelector('.menu__panel');b.addEventListener('click',function(){var o=p.hidden;p.hidden=!o;b.setAttribute('aria-expanded',String(o));});document.addEventListener('click',function(e){if(!menu.contains(e.target)){p.hidden=true;b.setAttribute('aria-expanded','false');}});});
+  document.querySelectorAll('.sidenav__item').forEach(function(it){var l=it.querySelector('.sidenav__label');if(l)it.setAttribute('data-tip',l.textContent.trim());});
+  (function(){var nav=document.querySelector('[data-sidenav]'),opener=document.querySelector('[data-drawer-open]'),backdrop=document.querySelector('[data-drawer-backdrop]');function openD(){nav.classList.add('is-open');if(backdrop)backdrop.classList.add('is-open');}function closeD(){nav.classList.remove('is-open');if(backdrop)backdrop.classList.remove('is-open');}if(opener)opener.addEventListener('click',openD);if(backdrop)backdrop.addEventListener('click',closeD);document.addEventListener('keydown',function(e){if(e.key==='Escape'&&nav.classList.contains('is-open'))closeD();});var mq=window.matchMedia('(min-width:768px) and (max-width:1024px)');function tablet(e){if(e.matches)nav.classList.add('is-collapsed');}if(mq.addEventListener)mq.addEventListener('change',tablet);tablet(mq);})();
 </script>
+<script>(function(){
+  function closeCtx(){var m=document.querySelector('.ctxmenu');if(m&&!m.hidden){m.hidden=true;var b=document.querySelector('[data-ctx-btn]');if(b)b.setAttribute('aria-expanded','false');}}
+  var btn=document.querySelector('[data-ctx-btn]');
+  if(btn)btn.addEventListener('click',function(e){e.stopPropagation();var m=document.querySelector('.ctxmenu');var w=!m.hidden;closeCtx();if(!w){m.hidden=false;btn.setAttribute('aria-expanded','true');}});
+  document.addEventListener('click',function(e){if(!e.target.closest('.ctxsw'))closeCtx();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeCtx();});
+  document.querySelectorAll('.v2trow').forEach(function(r){r.addEventListener('keydown',function(e){if(e.key==='Enter')r.click();});});
+})();</script>
 </body></html>
