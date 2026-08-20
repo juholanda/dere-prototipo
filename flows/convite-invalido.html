@@ -1,4 +1,4 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Onboarding · Jornadas do usuário · DeRE</title>
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Convite inválido · a-DeRE</title>
 <style>/* =============================================================================
    Design System — DeRE (Plataforma de Gestão Tributária Especial)
    Tokens + componentes. CSS puro por variável: portável (funciona sem build) e
@@ -824,77 +824,97 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 .dropzone__hint{font-size:var(--text-xs)}
 </style>
 <style>
-  html{scrollbar-gutter:stable}
-  body{background:var(--slate-50);overflow-anchor:none}
-  .jhead{background:var(--color-surface);border-bottom:1px solid var(--color-border)}
-  .jhead .wrap{padding:56px 48px 0}
-  .jhead .tabs{border-bottom:0;margin-top:var(--space-8)}
-  .jhead .tab{font-size:var(--text-sm);padding-bottom:var(--space-3)}
-  .jhead .tab svg{width:18px;height:18px;flex:0 0 auto}
-  .jbody .wrap{padding:var(--space-8) 48px 88px}
-  .oblock{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:var(--space-6);margin-bottom:var(--space-8)}
-  .oblock .ctx{margin:0 0 var(--space-6)}
-  .oblock .ov{margin-bottom:0}
-  .wrap{max-width:940px;margin:0 auto;padding:56px 48px 88px}
-  .backrow{display:flex;align-items:center;gap:var(--space-6);margin-bottom:8px}
-  .hero{margin:36px 0 20px}
-  .hero .k{font-size:var(--text-xs);font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--color-primary);margin:0 0 6px}
-  .hero h1{font-size:var(--text-3xl);margin:0}
-  .hero .sub{color:var(--slate-600);font-size:var(--text-base);margin:10px 0 0;line-height:1.65}
-  .tabs{margin-top:6px}
-  /* contexto */
-  .ctx{margin:var(--space-6) 0 var(--space-12)}
-  .ctx p{margin:0;font-size:var(--text-base);color:var(--slate-600);line-height:1.65}
-  /* visão geral */
-  .lbl{font-size:var(--text-xs);font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--color-text-muted);margin:0 0 12px}
-  .ov{margin-bottom:var(--space-10)}
-  .seq{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
-  .seq__i{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-pill);padding:6px 14px;font-size:var(--text-sm);font-weight:400;color:var(--color-heading);white-space:nowrap;box-shadow:var(--shadow-sm)}
-  .seq__n{color:var(--color-primary);font-weight:700;margin-right:6px;font-variant-numeric:tabular-nums}
-  .seq__a{color:var(--color-text-muted);flex:0 0 auto;display:grid;place-items:center}
-  .seq__a svg{width:15px;height:15px}
-  /* etapas */
-  .jstep{display:flex;flex-direction:column;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:var(--space-6);margin-bottom:16px;transition:box-shadow .15s ease;cursor:pointer}
-  .jstep:hover{box-shadow:var(--shadow-md);border-color:var(--color-primary)}
-  .jstep__hd{order:1;display:flex;align-items:center;margin-bottom:16px;cursor:pointer}
-  .jstep__num{width:34px;height:34px;border-radius:50%;background:var(--blue-50);color:var(--color-primary);font-weight:700;display:grid;place-items:center;flex:0 0 auto;font-variant-numeric:tabular-nums;border:1px solid var(--blue-200);margin-right:14px}
-  .jstep__ttl{margin:0 var(--space-6) 0 0;font-size:var(--text-lg)!important;color:var(--color-heading)}
-  .jstep__hd-r{margin-left:auto;display:flex;align-items:center;gap:14px;flex:0 0 auto}
-  .jstep__note{margin-left:var(--space-3);font-size:var(--text-xs);font-weight:600;color:var(--color-text-muted)}
-  .pctx{margin:0 0 var(--space-8);font-size:var(--text-base);color:var(--slate-600);line-height:1.6}
-  .jstep__soon{order:2;display:flex;align-items:center;gap:10px;color:var(--color-text-muted);font-size:var(--text-sm)}
-  .jstep__soon svg{width:18px;height:18px;flex:0 0 auto}
-  .jstep__chev{display:grid;place-items:center;width:32px;height:32px;padding:0;border-radius:var(--radius-base);border:1px solid var(--color-border);background:var(--color-surface);color:var(--color-text-muted);cursor:pointer;flex:0 0 auto;transition:transform .15s ease}
-  .jstep__chev:focus-visible{outline:2px solid var(--color-primary);outline-offset:2px}
-  .jstep__chev svg{width:18px;height:18px}
-  .jstep:not(.is-collapsed) .jstep__chev{transform:rotate(180deg)}
-  .jstep.is-collapsed .jstep__hd{margin-bottom:0}
-  .jstep.is-collapsed > *:not(.jstep__hd){display:none}
-  .jstep__desc{order:2;font-size:var(--text-sm);color:var(--slate-600);line-height:1.65;margin:0 0 var(--space-6)}
-  .jstep .jmeta{order:3}
-  .jstep .jblock{order:4}
-  .jstep .jctas{order:5}
-  .jstep__alt{order:6}
-  .jblock{margin:0 0 16px}
-  .jblock__k{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--color-text-muted);margin:0 0 7px}
-  .jseq{display:flex;flex-wrap:wrap;align-items:center;gap:5px}
-  .jseq__i{background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-base);padding:4px 10px;font-size:var(--text-xs);font-weight:600;color:var(--color-text);white-space:nowrap}
-  .jseq__a{color:var(--color-text-muted);flex:0 0 auto;display:grid;place-items:center}
-  .jseq__a svg{width:13px;height:13px}
-  .jmeta{display:flex;gap:40px;flex-wrap:wrap;margin:0 0 18px}
-  .jmeta__k{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--color-text-muted);margin:0 0 1px;line-height:1.2}
-  .jmeta__v{font-size:var(--text-sm);color:var(--color-heading);font-weight:500}
-  .jctas{display:flex;gap:10px;flex-wrap:wrap}
-  .jstep__alt{margin-top:18px;padding-top:18px;border-top:1px solid var(--color-divider)}
-  .jstep__alt-k{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--color-text-muted);margin:0 0 12px;display:flex;align-items:center;gap:6px}
-  .jstep__alt-k svg{width:14px;height:14px;color:var(--color-danger)}
-  .jalt{display:flex;gap:12px;align-items:flex-start;padding:14px;background:var(--color-surface-2);border-radius:var(--radius-base);margin-bottom:10px}
-  .jalt:last-child{margin-bottom:0}
-  .jalt__d{width:8px;height:8px;border-radius:50%;background:var(--color-danger);flex:0 0 auto;margin-top:7px}
-  .jalt__b{flex:1;min-width:0}
-  .jalt__b h4{margin:0 0 2px;font-size:var(--text-sm);color:var(--color-heading);font-weight:600}
-  .jalt__b p{margin:0;font-size:var(--text-xs);color:var(--slate-600);line-height:1.5}
-  .jalt__go{flex:0 0 auto;align-self:center;white-space:nowrap}
+  html,body{height:100%}
+  body{background:var(--color-surface)}
+  .split{display:flex;min-height:100vh}
+
+  /* ---- metade esquerda: imagem com filtro ---- */
+  .pane-img{position:relative;flex:1 1 40%;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-start;padding:48px;color:#fff;isolation:isolate}
+  .pane-img::before{content:"";position:absolute;inset:0;z-index:-2;background:linear-gradient(160deg,#1351b4 0%,#0c326f 55%,#071d41 100%)}
+  .pane-img::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background-image:radial-gradient(120% 80% at 80% 0%,rgba(255,255,255,.14),transparent 60%),radial-gradient(2px 2px at 14% 30%,rgba(255,255,255,.06),transparent),radial-gradient(2px 2px at 78% 18%,rgba(255,255,255,.05),transparent),radial-gradient(1.5px 1.5px at 62% 62%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 28% 78%,rgba(255,255,255,.045),transparent),radial-gradient(1.5px 1.5px at 88% 82%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 42% 40%,rgba(255,255,255,.04),transparent),radial-gradient(1.5px 1.5px at 10% 58%,rgba(255,255,255,.05),transparent)}
+  .pane-img__brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px;letter-spacing:-.01em}
+  .pane-img__brand .sym{width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.14);display:grid;place-items:center;backdrop-filter:blur(2px)}
+  .pane-img__brand .sym svg{width:19px;height:19px}
+  .pane-img__hl{max-width:440px}
+  .pane-img__lead{margin-top:20vh}
+  .pane-img__title{font-size:28px!important;line-height:1.3;font-weight:800;letter-spacing:-.015em;color:#fff;margin:0 0 16px}
+  .pane-img__desc{font-size:16px;line-height:1.6;color:rgba(255,255,255,.82);margin:0;max-width:38ch}
+  .pane-img__hl p{margin:14px 0 0;font-size:16px;line-height:1.6;color:rgba(255,255,255,.82)}
+  .pane-img__foot{position:absolute;left:48px;bottom:48px;font-size:14px;color:rgba(255,255,255,.72);letter-spacing:.01em}
+
+  /* ---- metade direita: formulario ---- */
+  .pane-form{flex:1 1 60%;position:relative;display:flex;flex-direction:column}
+  .pane-form__logo{position:absolute;top:32px;left:40px;display:flex;align-items:center;gap:9px;z-index:1}
+  .pane-form__logo .sym{width:34px;height:34px;border-radius:9px;background:linear-gradient(160deg,#2f7bf0,#0b3d91);display:grid;place-items:center;box-shadow:0 4px 12px rgba(3,17,42,.22)}
+  .pane-form__logo .sym svg{width:19px;height:19px;color:#fff}
+  .pane-form__logo .wm{font-weight:800;font-size:18px;color:var(--color-heading);letter-spacing:-.01em}
+  .pane-form__center{flex:1;display:grid;place-items:center;padding:96px 40px 48px}
+  .box{width:100%;max-width:440px}
+
+  .topic{width:52px;height:52px;border-radius:50%;background:var(--color-primary-subtle);color:var(--color-primary);display:grid;place-items:center;margin:0 auto 16px}
+  .topic svg{width:26px;height:26px}
+  .acct{display:flex;align-items:center;justify-content:flex-start;gap:10px;margin:24px 0 24px}
+  .acct__av{width:36px;height:36px;border-radius:50%;background:var(--color-primary-subtle);color:var(--color-primary);display:grid;place-items:center;flex:0 0 auto;font-size:var(--text-xs);font-weight:700}
+  .acct__col{display:flex;flex-direction:column;min-width:0}
+  .acct__label{font-size:var(--text-sm);color:var(--color-text-muted);font-weight:600}
+  .acct__mail{color:var(--color-heading);font-size:var(--text-base)}
+  h1{font-size:var(--text-2xl);text-align:center;margin:0 0 6px;color:var(--color-heading)}
+  .lead{text-align:center;color:var(--color-text-muted);font-size:var(--text-base);line-height:1.5;margin:0 0 8px}
+  .field{margin-bottom:18px}
+  .pw{position:relative}
+  .pw .input{padding-right:44px}
+  .pw__toggle{position:absolute;top:0;right:0;height:100%;width:42px;display:grid;place-items:center;background:none;border:0;cursor:pointer;color:var(--color-text-muted)}
+  .pw__toggle:hover{color:var(--color-text)}
+  .pw__toggle svg{width:18px;height:18px}
+  .reqs{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:5px}
+  .reqs li{display:flex;align-items:center;gap:7px;font-size:var(--text-xs);color:var(--color-text-onmuted);transition:color .12s}
+  .reqs li svg{width:14px;height:14px;flex:0 0 auto}
+  .reqs li.ok{color:var(--color-success-fg);font-weight:600}
+  /* microinteração sutil de reforço no aceite (reforço visual, nunca substitui a mensagem); respeita prefers-reduced-motion */
+  @media (prefers-reduced-motion:no-preference){.terms .check.nudge{animation:dere-nudge .22s ease}}
+  @keyframes dere-nudge{0%,100%{transform:translateX(0)}45%{transform:translateX(4px)}}
+  /* ===== microinterações (sutis, 120–200ms; o decorativo só roda fora de prefers-reduced-motion) ===== */
+  /* mensagens de erro: presença animada — fade + leve deslize + colapso, sem "saltar" o form */
+  .field__msg--error{opacity:0;max-height:0;overflow:hidden;transform:translateY(-4px);margin-top:calc(-1 * var(--space-1-5))}
+  .field__msg--error.show{opacity:1;max-height:5em;transform:none;margin-top:0}
+  .terms .field__msg--error{margin-top:0}
+  .terms .field__msg--error.show{margin-top:8px}
+  .input{transition:border-color .15s ease,box-shadow .15s ease}
+  .check input{transition:transform .14s ease}
+  .btn--block{transition:transform .16s ease,background-color .16s ease,filter .16s ease}
+  .btn-spin{width:15px;height:15px;border:2px solid rgba(255,255,255,.45);border-top-color:#fff;border-radius:50%;display:inline-block;margin-right:8px;vertical-align:-2px}
+  @media (prefers-reduced-motion:no-preference){
+    .field__msg--error{transition:opacity .16s ease,transform .16s ease,max-height .18s ease,margin-top .18s ease}
+    .reqs li svg{transition:transform .18s ease}
+    .reqs li.ok svg{animation:req-pop .18s ease}
+    @keyframes req-pop{from{transform:scale(.9);opacity:.55}to{transform:scale(1);opacity:1}}
+    .check input:active{transform:scale(.9)}
+    .btn--block:active{transform:scale(.985)}
+    .btn-spin{animation:btn-spin .7s linear infinite}
+  }
+  @keyframes btn-spin{to{transform:rotate(360deg)}}
+  .twofa{border:1px solid var(--color-border);border-radius:var(--radius-base);padding:14px;margin-bottom:18px;background:var(--color-surface-2)}
+  .twofa__hd{display:flex;align-items:center;gap:8px;margin-bottom:4px;color:var(--color-heading);font-weight:600;font-size:var(--text-sm)}
+  .twofa__hd svg{width:16px;height:16px;color:var(--color-primary)}
+  .twofa__note{color:var(--color-text-muted);font-size:var(--text-xs);line-height:1.5;margin:0 0 12px}
+  .terms{margin-bottom:20px}
+  .terms .check{font-size:var(--text-sm)}
+  .terms a{color:var(--color-primary);font-weight:600;text-decoration:none}
+  .terms a:hover{text-decoration:underline}
+  .btn--block{width:100%;justify-content:center}
+  .btn[disabled]{opacity:.55;cursor:not-allowed}
+  .secnote{display:flex;align-items:center;gap:7px;justify-content:center;margin-top:16px;font-size:var(--text-xs);color:var(--color-text-muted);line-height:1.4;text-align:center}
+  .secnote svg{width:14px;height:14px;flex:0 0 auto}
+  .ok-panel{text-align:center}
+  .ok-panel .ok-ic{width:56px;height:56px;border-radius:50%;background:var(--color-success-bg);color:var(--color-success-fg);display:grid;place-items:center;margin:0 auto 16px}
+  .ok-panel .ok-ic svg{width:30px;height:30px}
+  .ok-panel .btn{margin-top:24px}
+  .hide{display:none!important}
+
+  @media(max-width:880px){
+    .pane-img{display:none}
+    .pane-form__center{padding:96px 24px 40px}
+  }
 </style>
 </head><body>
 <div id="dere-gate" style="position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;padding:24px;font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;background:radial-gradient(120% 120% at 20% 8%,#0c326f 0%,#071d41 55%,#05152e 100%)">
@@ -920,122 +940,21 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 </div>
 <script>if(localStorage.getItem('dere_ok')==='1'){var _g=document.getElementById('dere-gate');if(_g)_g.remove();}function dereGate(f){var i=f.querySelector('input'),e=document.getElementById('dere-err');if(i.value==='dere123'){localStorage.setItem('dere_ok','1');document.getElementById('dere-gate').remove();}else{e.innerHTML='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 auto"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>Senha incorreta. Tente novamente.';i.select();}return false;}</script>
 
-<header class="jhead"><div class="wrap">
-  <div class="backrow"><a class="btn btn--outline btn--sm" href="./"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>Voltar</a><nav class="breadcrumb" aria-label="Trilha"><a href="../">Início</a><span class="breadcrumb__sep">/</span><a href="./">Jornadas do usuário</a><span class="breadcrumb__sep">/</span><span class="breadcrumb__current">Onboarding</span></nav></div>
-  <div class="hero">
-    <h1>Onboarding</h1>
-    <p class="sub">Do primeiro contato com a landing page da a-DeRE até o acesso ao ambiente da plataforma.</p>
-  </div>
+<div class="split">
+  <aside class="pane-img"><div class="pane-img__lead"><h2 class="pane-img__title">Prepare sua DeRE de forma<br>simples e estruturada</h2><p class="pane-img__desc">Organize, valide e transmita as informações da Declaração de Regimes Específicos em um só ambiente.</p></div><div class="pane-img__foot">Desenvolvido por Axians</div></aside>
 
-  <div class="tabs" role="tablist" aria-label="Contexto da organização">
-    <button class="tab is-active" role="tab" aria-selected="true" data-tab="unica"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4M10 10h4M10 14h4"/></svg>Empresa única</button>
-    <button class="tab" role="tab" aria-selected="false" data-tab="escritorio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 21a8 8 0 0 0-16 0"/><circle cx="10" cy="8" r="5"/><path d="M22 20c0-3.37-2-6.5-4-8a5 5 0 0 0-.45-8.3"/></svg>Escritório contábil / Grupo empresarial</button>
-  </div>
-  </div></header>
-
-  <main class="jbody"><div class="wrap">
-  <!-- ================= EMPRESA ÚNICA ================= -->
-  <div class="tabs__panel" id="p-unica" role="tabpanel">
-    <p class="pctx">Contexto de uma organização que gerencia as obrigações do próprio CNPJ.</p>
-
-    <!-- 01 -->
-    <div class="jstep is-collapsed">
-      <div class="jstep__hd"><span class="jstep__num">01</span><h3 class="jstep__ttl">Descoberta e interesse</h3><span class="status status--warning"><span class="status__dot"></span>Em progresso</span><span class="jstep__note">Mantido por marketing</span><div class="jstep__hd-r"><a class="btn btn--primary btn--sm jstep__go" href="https://splendid-kitten-3f4cef.netlify.app" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Iniciar fluxo<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a><button type="button" class="jstep__chev" aria-expanded="false" aria-label="Expandir etapa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button></div></div>
-      <p class="jstep__desc">O interessado conhece a a-DeRE pela landing page, entende a proposta e solicita contato com o time comercial. A landing page é mantida pelo time de Marketing e não faz parte das interfaces deste projeto; aparece aqui como o ponto de entrada externo da jornada. A partir dela, o interessado seleciona "Quero falar com um especialista" e acessa o formulário de contato.</p>
-      <div class="jblock"><p class="jblock__k">Fluxo</p><div class="jseq"><span class="jseq__i">Landing page externa</span><span class="jseq__a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span><span class="jseq__i">Quero falar com um especialista</span><span class="jseq__a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span><span class="jseq__i">Formulário de contato</span><span class="jseq__a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span><span class="jseq__i">Confirmação de envio</span></div></div>
-      <div class="jmeta"><div><p class="jmeta__k">Atores</p><p class="jmeta__v">Interessado / representante da empresa</p></div><div><p class="jmeta__k">Ambiente</p><p class="jmeta__v">Landing page externa + formulário</p></div></div>
-    </div>
-
-    <!-- 02 -->
-    <div class="jstep is-collapsed">
-      <div class="jstep__hd"><span class="jstep__num">02</span><h3 class="jstep__ttl">Demonstração e contratação</h3><span class="status status--warning"><span class="status__dot"></span>Em progresso</span><span class="jstep__note">Wireframe</span><div class="jstep__hd-r"><a class="btn btn--primary btn--sm jstep__go" href="../app/backoffice-leads.html" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Iniciar fluxo<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a><button type="button" class="jstep__chev" aria-expanded="false" aria-label="Expandir etapa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button></div></div>
-      <p class="jstep__desc">Após o envio do formulário, o time de vendas entra em contato com o responsável. O processo envolve contato comercial, conversa inicial, demonstração da plataforma e a formalização do contrato, se a contratação for aprovada. O acompanhamento comercial é registrado no backoffice, na área de Leads; as reuniões e a demonstração acontecem fora da plataforma.</p>
-      <div class="jblock"><p class="jblock__k">Fluxo</p><div class="jseq"><span class="jseq__i">Solicitação recebida</span><span class="jseq__a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span><span class="jseq__i">Contato comercial</span><span class="jseq__a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span><span class="jseq__i">Demonstração</span><span class="jseq__a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span><span class="jseq__i">Contrato</span></div></div>
-      <div class="jmeta"><div><p class="jmeta__k">Atores</p><p class="jmeta__v">Representante da empresa + Time de vendas</p></div><div><p class="jmeta__k">Ambiente</p><p class="jmeta__v">Backoffice e externo</p></div></div>
-    </div>
-
-    <!-- 03 -->
-    <div class="jstep is-collapsed">
-      <div class="jstep__hd"><span class="jstep__num">03</span><h3 class="jstep__ttl">Preparação da conta</h3><span class="status status--warning"><span class="status__dot"></span>Em progresso</span><span class="jstep__note">Wireframe</span><div class="jstep__hd-r"><a class="btn btn--primary btn--sm jstep__go" href="../app/backoffice-lead-detalhes.html" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Iniciar fluxo<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a><button type="button" class="jstep__chev" aria-expanded="false" aria-label="Expandir etapa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button></div></div>
-      <p class="jstep__desc">Após a contratação, o time de vendas faz o cadastro inicial da organização pelo backoffice. São registrados os dados da empresa e indicado o administrador responsável (nome e e-mail) pelo primeiro acesso e configuração da conta.</p>
-      <div class="jblock"><p class="jblock__k">Fluxo</p><div class="jseq"><span class="jseq__i">Cadastro da organização e do administrador</span><span class="jseq__a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span><span class="jseq__i">Conta criada</span><span class="jseq__a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span><span class="jseq__i">E-mail de ativação enviado</span></div></div>
-      <div class="jmeta"><div><p class="jmeta__k">Atores</p><p class="jmeta__v">Time de vendas + Sistema a-DeRE</p></div><div><p class="jmeta__k">Ambiente</p><p class="jmeta__v">Backoffice</p></div></div>
-    </div>
-
-    <!-- 04 -->
-    <div class="jstep is-ready is-collapsed">
-      <div class="jstep__hd"><span class="jstep__num">04</span><h3 class="jstep__ttl">Ativação e configuração da conta</h3><span class="status status--warning"><span class="status__dot"></span>Em progresso</span><span class="jstep__note">E-mail + frontoffice</span><div class="jstep__hd-r"><a class="btn btn--primary btn--sm jstep__go" href="../flows/email.html" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Iniciar fluxo<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a><button type="button" class="jstep__chev" aria-expanded="false" aria-label="Expandir etapa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button></div></div>
-      <p class="jstep__desc">A jornada do administrador começa no e-mail de ativação, o ponto de entrada deste fluxo. Ao acessar o link, ele ativa o acesso e faz a configuração inicial: cria a senha, configura a equipe e os perfis de acesso, associa as responsabilidades, envia a documentação necessária e conclui a configuração.</p>
-      <div class="jblock"><p class="jblock__k">Fluxo</p><div class="jseq"><span class="jseq__i">E-mail de ativação</span><span class="jseq__a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span><span class="jseq__i">Criar senha</span><span class="jseq__a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span><span class="jseq__i">Configurar equipe e acessos</span><span class="jseq__a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span><span class="jseq__i">Enviar documentação</span><span class="jseq__a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span><span class="jseq__i">Concluir configuração</span></div></div>
-      <div class="jmeta"><div><p class="jmeta__k">Atores</p><p class="jmeta__v">Administrador da empresa</p></div><div><p class="jmeta__k">Ambiente</p><p class="jmeta__v">Front office</p></div></div>
-      <div class="jstep__alt">
-        <p class="jstep__alt-k"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>Caminhos alternativos</p>
-        <div class="jalt"><span class="jalt__d"></span><div class="jalt__b"><h4>Link expirado</h4><p>Se o link de ativação expira por segurança, o administrador solicita um novo link.</p></div><a class="btn btn--primary btn--sm jalt__go" href="../flows/link-expirado.html" target="_blank" rel="noopener noreferrer">Iniciar fluxo<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a></div>
-        <div class="jalt"><span class="jalt__d"></span><div class="jalt__b"><h4>Convite inválido ou já utilizado</h4><p>Informa que o convite não é mais válido ou já foi utilizado e orienta o administrador sobre como prosseguir.</p></div><a class="btn btn--primary btn--sm jalt__go" href="../flows/convite-invalido.html" target="_blank" rel="noopener noreferrer">Iniciar fluxo<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a></div>
+  <section class="pane-form">
+    
+    <div class="pane-form__logo"><span class="wm">a-DeRE</span></div>
+    <div class="pane-form__center">
+      <div class="box">
+        <div class="topic" style="background:var(--color-danger-bg);color:var(--color-danger)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg></div>
+        <h1>Convite inválido</h1>
+        <p class="lead">Este convite não é mais válido ou já foi utilizado. Se você já ativou o acesso, é só entrar. Caso contrário, peça um novo convite ao administrador da conta.</p>
+        <a class="btn btn--primary btn--lg btn--block" href="login.html">Ir para o login</a>
+        <p class="secnote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>Precisa de um novo convite? Fale com o administrador da conta ou o suporte: <a href="mailto:suporte@dere.com.br" style="color:var(--color-primary);font-weight:600;text-decoration:none">suporte@dere.com.br</a></p>
       </div>
     </div>
-
-    <!-- 05 -->
-    <div class="jstep is-ready is-collapsed">
-      <div class="jstep__hd"><span class="jstep__num">05</span><h3 class="jstep__ttl">Ambiente configurado</h3><span class="status status--success"><span class="status__dot"></span>Concluído</span><span class="jstep__note">Front office</span><div class="jstep__hd-r"><button type="button" class="jstep__chev" aria-expanded="false" aria-label="Expandir etapa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button></div></div>
-      <p class="jstep__desc">Com os acessos e documentos configurados, o onboarding é concluído. O administrador acessa o ambiente da a-DeRE e, no primeiro acesso ao painel, vê um guia inicial que apresenta as principais ações para começar a usar a plataforma e orienta os próximos passos.</p>
-      <div class="jblock"><p class="jblock__k">Fluxo</p><div class="jseq"><span class="jseq__i">Login</span><span class="jseq__a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span><span class="jseq__i">Painel</span></div></div>
-      <div class="jmeta"><div><p class="jmeta__k">Atores</p><p class="jmeta__v">Administrador da empresa</p></div><div><p class="jmeta__k">Ambiente</p><p class="jmeta__v">Front office</p></div></div>
-    </div>
-  </div>
-
-  <!-- ================= ESCRITÓRIO / GRUPO ================= -->
-  <div class="tabs__panel" id="p-escritorio" role="tabpanel" hidden>
-    <p class="pctx">Contexto de um escritório ou grupo que gerencia as obrigações de múltiplos CNPJs de forma centralizada.</p>
-
-    <!-- 01 (compartilhada com empresa única) -->
-    <div class="jstep is-collapsed">
-      <div class="jstep__hd"><span class="jstep__num">01</span><h3 class="jstep__ttl">Descoberta e interesse</h3><span class="status status--warning"><span class="status__dot"></span>Em progresso</span><span class="jstep__note">Mantido por marketing</span><div class="jstep__hd-r"><a class="btn btn--primary btn--sm jstep__go" href="https://splendid-kitten-3f4cef.netlify.app" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Iniciar fluxo<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a><button type="button" class="jstep__chev" aria-expanded="false" aria-label="Expandir etapa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button></div></div>
-      <p class="jstep__desc">O interessado conhece a a-DeRE pela landing page, entende a proposta e solicita contato com o time comercial. A landing page é mantida pelo time de Marketing e não faz parte das interfaces deste projeto; aparece aqui como o ponto de entrada externo da jornada. A partir dela, o interessado seleciona "Quero falar com um especialista" e acessa o formulário de contato.</p>
-      <div class="jblock"><p class="jblock__k">Fluxo</p><div class="jseq"><span class="jseq__i">Landing page externa</span><span class="jseq__a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span><span class="jseq__i">Quero falar com um especialista</span><span class="jseq__a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span><span class="jseq__i">Formulário de contato</span><span class="jseq__a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span><span class="jseq__i">Confirmação de envio</span></div></div>
-      <div class="jmeta"><div><p class="jmeta__k">Atores</p><p class="jmeta__v">Interessado / representante da empresa</p></div><div><p class="jmeta__k">Ambiente</p><p class="jmeta__v">Landing page externa + formulário</p></div></div>
-    </div>
-
-    <!-- 02 (compartilhada com empresa única) -->
-    <div class="jstep is-collapsed">
-      <div class="jstep__hd"><span class="jstep__num">02</span><h3 class="jstep__ttl">Demonstração e contratação</h3><span class="status status--warning"><span class="status__dot"></span>Em progresso</span><span class="jstep__note">Wireframe</span><div class="jstep__hd-r"><a class="btn btn--primary btn--sm jstep__go" href="../app/backoffice-leads.html" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Iniciar fluxo<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a><button type="button" class="jstep__chev" aria-expanded="false" aria-label="Expandir etapa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button></div></div>
-      <p class="jstep__desc">Após o envio do formulário, o time de vendas entra em contato com o responsável. O processo envolve contato comercial, conversa inicial, demonstração da plataforma e a formalização do contrato, se a contratação for aprovada. O acompanhamento comercial é registrado no backoffice, na área de Leads; as reuniões e a demonstração acontecem fora da plataforma.</p>
-      <div class="jblock"><p class="jblock__k">Fluxo</p><div class="jseq"><span class="jseq__i">Solicitação recebida</span><span class="jseq__a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span><span class="jseq__i">Contato comercial</span><span class="jseq__a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span><span class="jseq__i">Demonstração</span><span class="jseq__a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span><span class="jseq__i">Contrato</span></div></div>
-      <div class="jmeta"><div><p class="jmeta__k">Atores</p><p class="jmeta__v">Representante da empresa + Time de vendas</p></div><div><p class="jmeta__k">Ambiente</p><p class="jmeta__v">Backoffice e externo</p></div></div>
-    </div>
-
-    <!-- 03 (em breve) -->
-    <div class="jstep is-collapsed">
-      <div class="jstep__hd"><span class="jstep__num">03</span><h3 class="jstep__ttl">Preparação da conta</h3><span class="status"><span class="status__dot"></span>Em breve</span><div class="jstep__hd-r"><button type="button" class="jstep__chev" aria-expanded="false" aria-label="Expandir etapa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button></div></div>
-      <div class="jstep__soon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span>Fluxo ainda não definido para o contexto de escritório.</span></div>
-    </div>
-    <!-- 04 (em breve) -->
-    <div class="jstep is-collapsed">
-      <div class="jstep__hd"><span class="jstep__num">04</span><h3 class="jstep__ttl">Ativação e configuração da conta</h3><span class="status"><span class="status__dot"></span>Em breve</span><div class="jstep__hd-r"><button type="button" class="jstep__chev" aria-expanded="false" aria-label="Expandir etapa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button></div></div>
-      <div class="jstep__soon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span>Fluxo ainda não definido para o contexto de escritório.</span></div>
-    </div>
-    <!-- 05 (em breve) -->
-    <div class="jstep is-collapsed">
-      <div class="jstep__hd"><span class="jstep__num">05</span><h3 class="jstep__ttl">Ambiente pronto</h3><span class="status"><span class="status__dot"></span>Em breve</span><div class="jstep__hd-r"><button type="button" class="jstep__chev" aria-expanded="false" aria-label="Expandir etapa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button></div></div>
-      <div class="jstep__soon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span>Fluxo ainda não definido para o contexto de escritório.</span></div>
-    </div>
-  </div>
-</div></main>
-<script>
-  document.querySelectorAll('.tab').forEach(function(t){t.addEventListener('click',function(){
-    document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('is-active');x.setAttribute('aria-selected','false');});
-    t.classList.add('is-active');t.setAttribute('aria-selected','true');
-    document.getElementById('p-unica').hidden = t.dataset.tab!=='unica';
-    document.getElementById('p-escritorio').hidden = t.dataset.tab!=='escritorio';
-  });});
-
-  // etapas colapsáveis — clique no card todo (menos em links de ação)
-  document.querySelectorAll('.jstep').forEach(function(step){step.addEventListener('click',function(e){
-    if(e.target.closest('a')) return;
-    var collapsed = step.classList.toggle('is-collapsed');
-    var chev = step.querySelector('.jstep__chev');
-    if(chev){chev.setAttribute('aria-expanded', String(!collapsed));
-      chev.setAttribute('aria-label', collapsed ? 'Expandir etapa' : 'Recolher etapa');}
-  });});
-</script>
+  </section>
+</div>
 </body></html>
