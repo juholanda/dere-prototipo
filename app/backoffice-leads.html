@@ -971,6 +971,23 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   .dfld--key input{border-color:var(--slate-400)}
   .dhint{font-size:12px;color:var(--slate-500);display:flex;gap:6px;line-height:1.45}
   .dhint svg{width:14px;height:14px;color:var(--slate-400);flex:0 0 auto;margin-top:1px}
+  .dz{display:flex;align-items:center;gap:12px;border:1.5px dashed var(--slate-300);border-radius:10px;padding:16px;background:var(--slate-50);cursor:pointer;transition:border-color .15s,background .15s;text-align:left}
+  .dz:hover{border-color:var(--slate-400);background:var(--slate-100)}
+  .dz__ico{width:38px;height:38px;border-radius:9px;background:#fff;border:1px solid var(--slate-200);color:var(--slate-500);display:grid;place-items:center;flex:0 0 auto}
+  .dz__ico svg{width:18px;height:18px}
+  .dz__tx{font-size:13px;color:var(--slate-600);line-height:1.5}
+  .dz__tx b{color:var(--slate-900);text-decoration:underline}
+  .dz__hint{display:block;font-size:11.5px;color:var(--slate-400)}
+  .dz-files{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+  .dz-file{display:flex;align-items:center;gap:10px;padding:9px 10px 9px 12px;border:1px solid var(--slate-200);border-radius:8px;background:#fff}
+  .dz-file__ico{width:28px;height:28px;border-radius:6px;background:var(--slate-100);color:var(--slate-500);display:grid;place-items:center;flex:0 0 auto}
+  .dz-file__ico svg{width:15px;height:15px}
+  .dz-file__meta{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
+  .dz-file__nm{font-size:13px;color:var(--slate-800);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .dz-file__tipo{font:inherit;font-size:12px;padding:3px 24px 3px 8px;border:1px solid var(--slate-300);border-radius:6px;background:#fff;color:var(--slate-700);align-self:flex-start}
+  .dz-file__rm{width:26px;height:26px;border-radius:6px;border:0;background:transparent;color:var(--slate-400);cursor:pointer;display:grid;place-items:center;flex:0 0 auto}
+  .dz-file__rm:hover{background:var(--slate-100);color:var(--slate-700)}
+  .dz-file__rm svg{width:15px;height:15px}
 
   /* empty states */
   .bo-empty{padding:64px 24px;text-align:center}
@@ -1080,7 +1097,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
             <th class="col-act">Ações</th>
           </tr></thead>
           <tbody>
-            <tr data-status="Em atendimento" data-msg="Somos uma operadora de saúde e queremos entender como a a-DeRE apura os regimes específicos. Podemos agendar uma demonstração para o time fiscal?">
+            <tr data-status="Em atendimento" data-msg="Somos uma operadora de saúde e queremos entender como a a-DeRE apura os regimes específicos. Podemos agendar uma demonstração para o time fiscal?" data-iniciado="18/08/2026 15:10">
               <td class="cell-id">#1041</td>
               <td><span class="cell-emp"><b>Saúde Integral</b><span class="cnpj">23.456.789/0001-01</span></span></td>
               <td><span class="cell-lead"><b>Carlos Menezes</b><span>carlos@saudeintegral.com.br</span><span>(21) 99876-5432</span></span></td>
@@ -1096,7 +1113,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
               <td><span class="wchip wchip--wait"><span class="wchip__dot"></span>Novo</span></td>
               <td class="col-act"><div class="rowmenu"><button class="bo__more" aria-label="Ações"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button></div></td>
             </tr>
-            <tr data-status="Em atendimento" data-msg="Somos um escritório contábil e queremos avaliar a a-DeRE para atender nossos clientes.">
+            <tr data-status="Em atendimento" data-msg="Somos um escritório contábil e queremos avaliar a a-DeRE para atender nossos clientes." data-iniciado="17/08/2026 10:05">
               <td class="cell-id">#1039</td>
               <td><span class="cell-emp"><b>Prisma Contábil</b><span class="cnpj">45.678.901/0001-23</span></span></td>
               <td><span class="cell-lead"><b>Roberto Alves</b><span>roberto@prismacontabil.com.br</span><span>(41) 3322-1100</span></span></td>
@@ -1112,7 +1129,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
               <td><span class="wchip wchip--wait"><span class="wchip__dot"></span>Novo</span></td>
               <td class="col-act"><div class="rowmenu"><button class="bo__more" aria-label="Ações"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button></div></td>
             </tr>
-            <tr data-status="Convertido" data-msg="Precisamos tratar os regimes específicos do banco na reforma tributária.">
+            <tr data-status="Convertido" data-msg="Precisamos tratar os regimes específicos do banco na reforma tributária." data-iniciado="15/08/2026 11:00">
               <td class="cell-id">#1037</td>
               <td><span class="cell-emp"><b>Banco Litoral</b><span class="cnpj">67.890.123/0001-45</span></span></td>
               <td><span class="cell-lead"><b>Felipe Ramos</b><span>felipe@bancolitoral.com.br</span><span>(11) 3123-4567</span></span></td>
@@ -1120,7 +1137,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
               <td><span class="wchip wchip--done"><span class="wchip__dot"></span>Convertido</span></td>
               <td class="col-act"><div class="rowmenu"><button class="bo__more" aria-label="Ações"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button></div></td>
             </tr>
-            <tr data-status="Não convertido" data-msg="Buscando uma solução para a apuração dos regimes específicos.">
+            <tr data-status="Não convertido" data-msg="Buscando uma solução para a apuração dos regimes específicos." data-iniciado="14/08/2026 18:00">
               <td class="cell-id">#1036</td>
               <td><span class="cell-emp"><b>Nexus Contabilidade</b><span class="cnpj">78.901.234/0001-56</span></span></td>
               <td><span class="cell-lead"><b>Patrícia Nunes</b><span>patricia@nexuscontabil.com.br</span></span></td>
@@ -1171,6 +1188,16 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
           <div class="dfld"><label for="d-adm">Nome do administrador</label><input id="d-adm" placeholder="Ex.: Ana Souza"></div>
           <div class="dfld dfld--key"><label for="d-email">E-mail</label><input id="d-email" type="email" placeholder="Ex.: ana@horizonte.com.br"><span class="dhint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>Endereço usado para enviar o convite de ativação. Confira antes de criar.</span></div>
         </section>
+        <section class="dsec">
+          <h3 class="dsec__t">Documentos</h3>
+          <p class="dsec__d">Anexe o contrato e outros documentos da contratação. Classifique cada arquivo pelo tipo.</p>
+          <label class="dz" for="dz-input">
+            <span class="dz__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m17 8-5-5-5 5"/><path d="M21 21H3"/></svg></span>
+            <span class="dz__tx"><b>Clique para enviar</b> ou arraste os arquivos<span class="dz__hint">PDF, DOC, JPG ou PNG até 10 MB</span></span>
+            <input id="dz-input" type="file" multiple hidden onchange="dzAdd(this.files);this.value='';">
+          </label>
+          <div class="dz-files" id="dz-files"></div>
+        </section>
       </form>
     </div>
     <footer class="bo-drawer__foot">
@@ -1204,7 +1231,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   function detHref(tr){
     var g=function(sel){var el=tr.querySelector(sel);return el?el.textContent.trim():'';};
     var sp=tr.querySelectorAll('.cell-lead span');
-    var q={id:g('.cell-id'),empresa:g('.cell-emp b'),cnpj:g('.cell-emp .cnpj'),nome:g('.cell-lead b'),email:(sp[0]?sp[0].textContent.trim():''),tel:(sp[1]?sp[1].textContent.trim():''),status:tr.getAttribute('data-status'),recebido:g('.cell-when'),msg:tr.getAttribute('data-msg')||''};
+    var q={id:g('.cell-id'),empresa:g('.cell-emp b'),cnpj:g('.cell-emp .cnpj'),nome:g('.cell-lead b'),email:(sp[0]?sp[0].textContent.trim():''),tel:(sp[1]?sp[1].textContent.trim():''),status:tr.getAttribute('data-status'),recebido:g('.cell-when'),iniciado:tr.getAttribute('data-iniciado')||'',msg:tr.getAttribute('data-msg')||''};
     return './backoffice-lead-detalhes.html?'+Object.keys(q).map(function(k){return k+'='+encodeURIComponent(q[k]);}).join('&');
   }
   function convertLead(tr){
@@ -1223,6 +1250,13 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
     if(tr){tr.setAttribute('data-status','Convertido');tr.querySelectorAll('td')[4].innerHTML=chip('wchip--done','Convertido');}
     closeDrawer();
     showToast('Empresa criada','Convite enviado para '+email+'. O lead foi marcado como convertido e a empresa entrou na Lista de empresas.');
+  }
+  function dzAdd(files){
+    var box=document.getElementById('dz-files');
+    var FI='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v6h6"/></svg>';
+    var XI='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>';
+    var TP='<option>Contrato</option><option>Proposta comercial</option><option>Documento de identificação</option><option>Outro</option>';
+    for(var i=0;i<files.length;i++){var f=files[i];var row=document.createElement('div');row.className='dz-file';row.innerHTML='<span class="dz-file__ico">'+FI+'</span><div class="dz-file__meta"><span class="dz-file__nm">'+f.name+'</span><select class="dz-file__tipo">'+TP+'</select></div><button type="button" class="dz-file__rm" aria-label="Remover">'+XI+'</button>';row.querySelector('.dz-file__rm').addEventListener('click',function(){this.closest('.dz-file').remove();});box.appendChild(row);}
   }
   // menu de ações por status
   function closeMenus(){document.querySelectorAll('.rowmenu__panel').forEach(function(p){p.remove();});document.querySelectorAll('.bo__more[aria-expanded="true"]').forEach(function(b){b.setAttribute('aria-expanded','false');});}
