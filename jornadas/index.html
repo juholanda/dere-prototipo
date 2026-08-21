@@ -181,6 +181,8 @@ a{color:var(--color-primary);text-decoration:none}
 .btn--ghost:active:not(:disabled){background:var(--color-border-strong)}
 /* Danger */
 .btn--danger{background:var(--color-danger);color:var(--color-danger-contrast)}
+.btn--danger-outline{background:var(--color-surface);color:var(--color-danger-fg);border-color:var(--color-danger)}
+.btn--danger-outline:hover{background:var(--color-danger-bg);color:var(--color-danger-fg)}
 .btn--danger:hover:not(:disabled){background:var(--color-danger-hover)}
 .btn--danger:active:not(:disabled){background:var(--red-800)}
 /* Outline: mesmo estilo do secundário (mantido por compatibilidade) */
@@ -1014,7 +1016,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
       <div class="jcard__b">
         <div class="jcard__hd"><h2>Informações do contribuinte</h2><span class="status status--success"><span class="status__dot"></span>Disponível</span></div>
         <p>Registro do contribuinte e seus regimes específicos (evento D-1001).</p>
-        <span class="jcard__flux"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/></svg>1 fluxo</span>
+        <span class="jcard__flux"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/></svg>2 fluxos</span>
       </div>
       <span class="jcard__go">Explorar jornada<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>
     </a>
