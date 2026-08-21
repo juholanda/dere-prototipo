@@ -236,6 +236,7 @@ textarea.input{height:auto;padding:var(--space-2) var(--space-3);min-height:84px
   background:color-mix(in srgb, var(--slate-700) 45%, var(--slate-800));color:var(--slate-500)}
 .field.is-invalid .input,.field.is-invalid .select{border-color:var(--color-danger)}
 .field.is-invalid .input:focus{box-shadow:0 0 0 3px color-mix(in srgb,var(--color-danger) 30%,transparent)}
+.field__msg[hidden]{display:none}
 .field__msg{display:flex;align-items:center;gap:var(--space-1);font-size:var(--text-xs);color:var(--color-text-muted)}
 .field__msg svg{flex:0 0 auto}
 .field__msg--error{color:var(--color-danger)}
@@ -1673,7 +1674,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'){var m=docum
     <div class="modal__header"><h3 class="modal__title" id="rj-title">Rejeitar as informações?</h3><span class="tooltip"><button class="icon-btn icon-btn--sm" aria-label="Fechar" onclick="closeReject()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button><span class="tooltip__bubble" role="tooltip">Fechar</span></span></div>
     <div class="modal__body">
       <p style="margin:0 0 var(--space-4)">Diga o motivo da rejeição. O preparador recebe essa informação para corrigir e reenviar.</p>
-      <div class="field"><label class="field__label" for="rj-reason">Motivo <span class="field__req" aria-hidden="true">*</span></label><textarea class="input" id="rj-reason" rows="4" placeholder="Ex.: A vigência informada não confere com o início das operações." aria-describedby="rj-err"></textarea><p class="field__msg field__msg--error" id="rj-err" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>Informe o motivo para rejeitar.</p></div>
+      <div class="field"><label class="field__label" for="rj-reason">Motivo <span class="field__req" aria-hidden="true">*</span></label><textarea class="input" id="rj-reason" rows="4" placeholder="Ex.: A vigência informada não confere com o início das operações." aria-describedby="rj-err"></textarea><p class="field__msg field__msg--error" id="rj-err" hidden><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>Informe o motivo para rejeitar.</p></div>
     </div>
     <div class="modal__footer"><button type="button" class="btn btn--ghost" onclick="closeReject()">Cancelar</button><button type="button" class="btn btn--danger" onclick="confirmReject()">Confirmar rejeição</button></div>
   </div>
@@ -1690,7 +1691,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'){var m=docum
   </div>
 </div>
 <script>
-  function openReject(){document.getElementById('reject-modal').style.display='grid';var t=document.getElementById('rj-reason');if(t)setTimeout(function(){t.focus();},0);}
+  function openReject(){document.getElementById('reject-modal').style.display='grid';var t=document.getElementById('rj-reason'),e=document.getElementById('rj-err');if(e)e.hidden=true;if(t){t.removeAttribute('aria-invalid');setTimeout(function(){t.focus();},0);}}
   function closeReject(){document.getElementById('reject-modal').style.display='none';}
   function confirmReject(){var t=document.getElementById('rj-reason'),e=document.getElementById('rj-err');if(!t.value.trim()){t.setAttribute('aria-invalid','true');if(e)e.hidden=false;t.focus();return;}closeReject();if(window.doToast)doToast('Informações rejeitadas. O preparador foi notificado com o motivo.','');}
   function openApprove(){document.getElementById('approve-modal').style.display='grid';}
