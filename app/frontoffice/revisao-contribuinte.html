@@ -520,7 +520,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 
 /* Drawer (casca lateral) */
 .drawer-backdrop{position:fixed;inset:0;background:var(--color-scrim);backdrop-filter:blur(1px);animation:ds-fade-in .2s ease}
-.drawer{position:fixed;top:0;right:0;height:100%;width:min(560px,100%);background:var(--color-surface);
+.drawer{position:fixed;top:0;right:0;height:100%;width:min(var(--drawer-w,560px),100%);background:var(--color-surface);
   box-shadow:var(--shadow-md);display:flex;flex-direction:column;
   animation:ds-drawer-in .24s cubic-bezier(.4,0,.2,1)}
 @keyframes ds-drawer-in{from{transform:translateX(100%)}to{transform:translateX(0)}}
@@ -531,6 +531,10 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 .drawer__body{padding:var(--space-8);overflow:auto;flex:1}
 .drawer__footer{display:flex;justify-content:flex-end;gap:var(--space-2);padding:var(--space-4) var(--space-8);border-top:1px solid var(--color-border)}
 .drawer__footer > .btn:first-child:not(:last-child){margin-right:auto}
+/* tamanhos do drawer: pequeno · médio (padrão) · grande */
+.drawer--sm{--drawer-w:440px}
+.drawer--md{--drawer-w:560px}
+.drawer--lg{--drawer-w:760px}
 
 /* Campo com ícone (busca / afixo) — ícone dentro do controle, sem quebrar o layout */
 .field-icon{position:relative;display:flex;align-items:center}
@@ -1031,7 +1035,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   /* ===== Drawer de atividades (padrão reaproveitado de atividades-drawer.html) ===== */
   .dk-back{position:fixed;inset:0;background:var(--color-scrim);opacity:0;visibility:hidden;transition:.18s;z-index:60}
   .dk-back.is-open{opacity:1;visibility:visible}
-  .dk{position:fixed;top:0;right:0;bottom:0;width:min(460px,92vw);background:var(--color-surface);box-shadow:var(--shadow-lg);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .22s ease;z-index:61}
+  .dk{position:fixed;top:0;right:0;bottom:0;width:min(560px,94vw);background:var(--color-surface);box-shadow:var(--shadow-lg);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .22s ease;z-index:61}
   .dk.is-open{transform:none}
   .dk__head{flex:0 0 auto;padding:var(--space-4) var(--space-6);border-bottom:1px solid var(--color-border)}
   .dk__title{display:flex;align-items:center;justify-content:space-between;gap:var(--space-3)}
