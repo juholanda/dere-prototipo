@@ -1,4 +1,5 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Detalhes do lead · a-DeRE Backoffice</title>
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Preencher as informações do contribuinte · a-DeRE</title>
 <style>/* =============================================================================
    Design System — DeRE (Plataforma de Gestão Tributária Especial)
    Tokens + componentes. CSS puro por variável: portável (funciona sem build) e
@@ -940,158 +941,129 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 .ctxsw > .orgswitch{padding-left:var(--space-4);padding-right:var(--space-4)}
 </style>
 <style>
-  :root{
-    --color-bg:var(--slate-100);--color-surface:#ffffff;--color-surface-2:var(--slate-100);
-    --color-border:var(--slate-200);--color-divider:var(--slate-200);
-    --color-text:var(--slate-700);--color-heading:var(--slate-900);--color-text-muted:var(--slate-500);--color-text-onmuted:var(--slate-600);
-    --color-primary:var(--slate-800);--color-primary-hover:var(--slate-900);--color-primary-active:var(--slate-900);
-    --color-primary-subtle:var(--slate-100);--color-primary-contrast:#ffffff;--color-primary-darker:var(--slate-900);
-    --ring:0 0 0 3px rgba(100,116,139,.35);
+  /* ===== Layout de aplicação (page-local; só tokens do DS, zero cor/fonte crua) ===== */
+  html,body{height:100%}
+  body{margin:0;background:var(--color-bg);overflow:hidden}
+  .shell{display:flex;height:100vh;overflow:hidden}
+  .shell > .sidenav{border:0;border-right:1px solid var(--color-border);border-radius:0;padding:0}
+  /* sidenav navy: cabeçalho de marca + navlist rolável + rodapé (colapsar) */
+  .brandrow{height:var(--space-16);flex:0 0 auto;display:flex;align-items:center;gap:var(--space-3);padding:0 var(--space-4) 0 var(--space-6);border-bottom:1px solid var(--color-border)}
+  .brandrow .wm{font-weight:800;font-size:var(--text-lg);letter-spacing:-.01em;color:var(--color-heading)}
+  .orgswitch__logo--brand{background:var(--color-surface);overflow:hidden}
+  .orgswitch__logo--brand img{width:100%;height:100%;object-fit:contain;display:block}
+  .orgswitch--static{cursor:default}
+  .sidenav--navy .orgswitch--static:hover{background:transparent}
+  .navlist{flex:1 1 auto;min-height:0;overflow:auto;padding:var(--space-3) var(--space-3) var(--space-2);display:flex;flex-direction:column;gap:2px}
+  .col{flex:1;display:flex;flex-direction:column;min-width:0;min-height:0}
+  .topbar{height:var(--space-16);flex:0 0 auto;background:var(--color-surface);border-bottom:1px solid var(--color-border);display:flex;align-items:center;gap:var(--space-4);padding:0 var(--space-6)}
+
+  /* ===== Faixas de fundo: topbar+cabeçalho brancos -> conteúdo cinza -> rodapé branco ===== */
+  .scroll{flex:1;overflow:auto;min-height:0;scroll-behavior:smooth;background:var(--color-surface-2)}   /* cinza slate-50 atrás dos cards e do índice */
+  .headband{background:var(--color-surface);border-bottom:1px solid var(--color-border)}      /* cabeçalho branco */
+  .headband__in{max-width:1180px;margin:0 auto;padding:var(--space-8) var(--space-10)}
+  .headband h1{margin:0;font-size:var(--text-3xl);line-height:var(--leading-tight)}
+  .headband__sub{display:flex;align-items:center;gap:var(--space-4);margin-top:var(--space-2)}
+  .headband__sub .subtitle{margin:0;color:var(--color-text-onmuted)}
+  /* código do evento (D-1001): verde inline, não pílula */
+  .evtag{font-weight:700;letter-spacing:.01em;color:var(--color-success-fg);font-variant-numeric:tabular-nums}
+
+  /* Corpo: cards (esq.) + índice fixo (dir.) */
+  .body{max-width:1180px;margin:0 auto;padding:var(--space-10);display:grid;grid-template-columns:minmax(0,1fr) 208px;gap:0 var(--space-10);align-items:start}
+  .cards{display:flex;flex-direction:column;gap:var(--space-10);container-type:inline-size;--color-border:var(--slate-200);--color-divider:var(--slate-100)}
+
+  /* Card de seção */
+  .card.sec-card{padding:var(--space-8);scroll-margin-top:var(--space-6)}
+  .sec-card__head{display:flex;align-items:center;gap:var(--space-3);padding-bottom:var(--space-6);margin-bottom:0;border-bottom:1px solid var(--color-divider)}
+  .sec-card__ic{flex:0 0 auto;width:var(--space-8);height:var(--space-8);border-radius:var(--radius-base);display:grid;place-items:center;background:var(--color-primary-subtle);color:var(--color-primary)}
+  .sec-card__ic svg{width:19px;height:19px}
+  .sec-card__title{font-size:var(--text-xl)!important;font-weight:600;margin:0}
+  .sec-card__note{margin-left:auto;font-size:var(--text-xs);color:var(--color-text-muted);display:inline-flex;align-items:center;gap:var(--space-1-5)}
+  .sec-card__note svg{width:14px;height:14px}
+
+  /* Linha em 2 colunas: rótulo+descrição (~30%) | conteúdo (~70%) */
+  .rows{display:flex;flex-direction:column;padding-top:var(--space-6)}
+  .row{display:grid;grid-template-columns:272px minmax(0,1fr);gap:0 var(--space-8);padding:var(--space-6) 0}
+  .rows > .row:first-child{padding-top:0}
+  .rows > .row:last-child{padding-bottom:0}
+  .rows > .row + .row{border-top:1px solid var(--color-divider)}
+  .row__label{display:flex;flex-direction:column;gap:var(--space-1);min-width:0}
+  .lbl{font-size:var(--text-sm);font-weight:600;color:var(--color-heading)}
+  .hint{font-size:var(--text-xs);color:var(--color-text-onmuted);line-height:var(--leading-snug)}
+  .row__field{min-width:0}
+  .val{font-size:var(--text-base);color:var(--color-heading)}
+  .val--mono{font-variant-numeric:tabular-nums}
+  @container (max-width:640px){.row{grid-template-columns:1fr;gap:var(--space-2)}}
+
+  /* Índice à direita (sticky, scrollspy) */
+  .idx{position:sticky;top:var(--space-6);align-self:start;display:flex;flex-direction:column;gap:var(--space-1)}
+  .idx::before{content:"";position:absolute;left:0;top:0;bottom:0;width:1px;background:var(--color-border-strong);z-index:1}
+  .idx__item{display:flex;align-items:center;gap:var(--space-4);width:100%;height:var(--space-12);padding:0 var(--space-4);position:relative;
+    border:0;background:transparent;border-radius:var(--radius-base);cursor:pointer;text-align:left;
+    font-family:inherit;font-size:var(--text-base);font-weight:500;color:var(--color-text-muted);transition:background .12s,color .12s}
+  .idx__item:hover{background:var(--color-primary-subtle);color:var(--color-heading)}
+  .idx__item:focus-visible{outline:none;box-shadow:var(--ring)}
+  .idx__item.is-current{color:var(--color-primary);font-weight:600}
+  .idx__item.is-current::before{content:"";position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:27px;border-radius:0 var(--radius-pill) var(--radius-pill) 0;background:var(--color-primary);z-index:2}
+  .idx__ic{flex:0 0 auto;display:grid;place-items:center;color:currentColor}
+  .idx__ic svg{width:19px;height:19px}
+
+  /* Estado vazio de Atividades + chips */
+  .ativbox{display:flex;flex-direction:column;align-items:center;gap:var(--space-3);text-align:center;
+    padding:var(--space-8) var(--space-6);border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-surface-2)}
+  .ativbox__t{font-size:var(--text-sm);color:var(--color-text-muted)}
+  .selbar{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--space-4);flex-wrap:wrap}
+  .ativbox[hidden],.selbar[hidden]{display:none}   /* respeita o atributo hidden (author display:flex o venceria) */
+  .chips{display:flex;flex-wrap:wrap;gap:var(--space-2);min-width:0}
+  .chip__code{font-weight:700;font-variant-numeric:tabular-nums}
+
+  /* Revisão usa o mesmo .rows/.row das outras seções (resumo = label heading + valor) */
+
+  /* Rodapé fixo (branco) */
+  .foot{flex:0 0 auto;background:var(--color-surface);border-top:1px solid var(--color-border);box-shadow:var(--shadow-up)}
+  .foot__in{max-width:1180px;margin:0 auto;padding:var(--space-6) var(--space-10);display:flex;align-items:center;justify-content:space-between;gap:var(--space-4)}
+  .foot__right{display:flex;align-items:center;gap:var(--space-3)}
+
+  /* Toasts */
+  .toasts{position:fixed;right:var(--space-6);bottom:var(--space-6);z-index:80;display:flex;flex-direction:column;gap:var(--space-2);width:min(360px,90vw)}
+
+  /* ===== Drawer de atividades (padrão reaproveitado de atividades-drawer.html) ===== */
+  .dk-back{position:fixed;inset:0;background:var(--color-scrim);opacity:0;visibility:hidden;transition:.18s;z-index:60}
+  .dk-back.is-open{opacity:1;visibility:visible}
+  .dk{position:fixed;top:0;right:0;bottom:0;width:min(460px,92vw);background:var(--color-surface);box-shadow:var(--shadow-lg);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .22s ease;z-index:61}
+  .dk.is-open{transform:none}
+  .dk__head{flex:0 0 auto;padding:var(--space-4) var(--space-6);border-bottom:1px solid var(--color-border)}
+  .dk__title{display:flex;align-items:center;justify-content:space-between;gap:var(--space-3)}
+  .dk__title h2{font-size:var(--text-lg)!important;margin:0;color:var(--color-heading)}
+  .dk__sub{font-size:var(--text-sm);color:var(--color-text-muted);margin:var(--space-1) 0 var(--space-3);line-height:var(--leading-snug)}
+  .dk__body{flex:1;overflow:auto;padding:var(--space-2) var(--space-6) var(--space-4)}
+  .dk__group{margin-top:var(--space-4)}
+  .dk__group:first-child{margin-top:var(--space-2)}
+  .dk__gh{display:flex;align-items:center;gap:var(--space-2);margin:0 0 var(--space-2);font-size:var(--text-xs);font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--color-text-muted)}
+  .dk__gsug{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--color-primary);background:var(--color-primary-subtle);border-radius:var(--radius-pill);padding:2px 8px}
+  .dk__item{display:flex;align-items:flex-start;gap:var(--space-3);padding:var(--space-2);border-radius:var(--radius-base);cursor:pointer}
+  .dk__item:hover{background:var(--color-surface-2)}
+  .dk__item input{margin-top:2px;width:18px;height:18px;accent-color:var(--color-primary);flex:0 0 auto}
+  .dk__it{min-width:0}
+  .dk__it b{display:block;font-size:var(--text-sm);color:var(--color-heading);font-weight:500}
+  .dk__it .code{font-weight:700;color:var(--color-primary);font-variant-numeric:tabular-nums;margin-right:var(--space-1-5)}
+  .dk__foot{flex:0 0 auto;padding:var(--space-3) var(--space-6);border-top:1px solid var(--color-border);display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);background:var(--color-surface)}
+  .dk__count{font-size:var(--text-sm);color:var(--color-text-muted)}
+  .dk__count b{color:var(--color-heading);font-variant-numeric:tabular-nums}
+  .dk__acts{display:flex;gap:var(--space-2)}
+  .dk__none{color:var(--color-text-muted);font-size:var(--text-sm);padding:var(--space-6) var(--space-1);text-align:center}
+
+  /* Responsivo (desktop): índice vai pro topo quando estreita (janela dividida) */
+  @media (max-width:1000px){
+    .body{grid-template-columns:1fr}
+    .idx{position:static;order:-1;flex-direction:row;flex-wrap:wrap;gap:var(--space-1);margin-bottom:var(--space-2)}
+    .idx::before{display:none}
+    .idx__item{width:auto}
+    .idx__item.is-current::before{display:none}
   }
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--slate-100);color:var(--slate-700);font-family:var(--font-sans)}
-  .bo{display:grid;grid-template-columns:248px 1fr;min-height:100vh}
-  .bo__side{background:#fff;border-right:1px solid var(--slate-200);display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
-  .bo__brand{display:flex;align-items:center;gap:10px;padding:0 20px;border-bottom:1px solid var(--slate-200);height:65px}
-  .bo__brand-mark{width:30px;height:30px;border-radius:7px;background:var(--slate-800);color:#fff;display:grid;place-items:center;font-weight:800;font-size:14px;flex:0 0 auto}
-  .bo__brand-tx{display:flex;flex-direction:column;line-height:1.15}
-  .bo__brand-tx b{font-size:16px;color:var(--slate-900);font-weight:700}
-  .bo__brand-tx span{font-size:12px;color:var(--slate-500);letter-spacing:.04em;text-transform:uppercase;font-weight:600}
-  .bo__nav{padding:16px 12px;display:flex;flex-direction:column;gap:2px}
-  .bo__navitem{display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:8px;color:var(--slate-600);font-size:16px;font-weight:500;text-decoration:none;cursor:pointer}
-  .bo__navitem svg{width:18px;height:18px;flex:0 0 auto;color:var(--slate-400)}
-  .bo__navitem:hover{background:var(--slate-100);color:var(--slate-900)}
-  .bo__navitem.is-active{background:var(--slate-100);color:var(--slate-900);font-weight:600}
-  .bo__navitem.is-active svg{color:var(--slate-700)}
-  .bo__sidefoot{margin-top:auto;padding:14px 16px;border-top:1px solid var(--slate-200);font-size:12px;color:var(--slate-400)}
-  .bo__main{display:flex;flex-direction:column;min-width:0}
-  .bo__top{height:65px;background:#fff;border-bottom:1px solid var(--slate-200);display:flex;align-items:center;justify-content:space-between;gap:16px;padding:0 32px;position:sticky;top:0;z-index:20}
-  .bo__topnav{display:flex;align-items:center;gap:16px;min-width:0}
-  .bo__topright{display:flex;align-items:center;gap:8px}
-  .bo__user{display:flex;align-items:center;gap:10px}
-  .bo__avatar{width:36px;height:36px;border-radius:50%;background:var(--slate-200);color:var(--slate-700);display:grid;place-items:center;font-weight:700;font-size:14px}
-  .bo__userinfo{display:flex;flex-direction:column;line-height:1.2}
-  .bo__username{font-size:14px;font-weight:600;color:var(--slate-900)}
-  .bo__userrole{font-size:12px;color:var(--slate-500)}
-  .bo__iconbtn{width:34px;height:34px;border-radius:8px;border:1px solid var(--slate-200);background:#fff;color:var(--slate-500);display:grid;place-items:center;cursor:pointer;margin-left:6px}
-  .bo__iconbtn:hover{background:var(--slate-100);color:var(--slate-800)}
-  .bo__iconbtn svg{width:17px;height:17px}
-  .bo__content{padding:32px;width:100%;max-width:1120px;margin:0 auto}
-
-  .det__head{margin-bottom:26px}
-  .det__titlerow{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-  .det__title{font-size:var(--text-2xl)!important;font-weight:700;color:var(--slate-900);margin:0;display:inline-flex;align-items:baseline;gap:10px}
-  .det__title-id{font-size:var(--text-2xl);font-weight:600;color:var(--slate-400);font-variant-numeric:tabular-nums}
-  .backlink{display:inline-flex;align-items:center;gap:6px;font-size:16px;font-weight:600;color:var(--slate-600);text-decoration:none;white-space:nowrap}
-  .backlink svg{width:16px;height:16px}
-  .backlink:hover{color:var(--slate-900);text-decoration:underline}
-
-  .det__grid{display:grid;grid-template-columns:1.6fr 1fr;gap:20px;align-items:start}
-  .det-card{background:#fff;border:1px solid var(--slate-200);border-radius:10px;padding:22px 24px;margin-bottom:20px}
-  .det-card:last-child{margin-bottom:0}
-  .det-card__hd{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
-  .det-card__t{font-size:16px!important;font-weight:700;color:var(--slate-900);margin:0}
-
-  .dl{display:flex;flex-direction:column}
-  .dl__row{display:grid;grid-template-columns:132px 1fr;gap:16px;padding:13px 0;border-bottom:1px solid var(--slate-100)}
-  .dl__row:first-child{padding-top:0}
-  .dl__row:last-child{border-bottom:0;padding-bottom:0}
-  .dl__k{font-size:14px;color:var(--slate-500);font-weight:600}
-  .dl__v{font-size:16px;color:var(--slate-800);line-height:1.55;word-break:break-word}
-  .dl__v a{color:var(--slate-800);text-decoration:none;border-bottom:1px solid var(--slate-300)}
-  .dl__v--msg{color:var(--slate-700)}
-  .dl__na{color:var(--slate-400)}
-
-  .stat-now{display:flex;align-items:center;gap:10px;margin-bottom:18px}
-  .stat-now__lbl{font-size:14px;color:var(--slate-500);font-weight:600}
-  .follow-when{font-size:14px;color:var(--slate-500);margin:-6px 0 16px;display:flex;align-items:center;gap:6px}
-  .follow-when svg{width:13px;height:13px;color:var(--slate-400);flex:0 0 auto}
-  .follow-desc{font-size:14px;color:var(--slate-600);line-height:1.55;margin:0 0 16px}
-  .follow-act{display:flex;flex-direction:column;gap:10px}
-  .follow-act .btn{width:100%;justify-content:center}
-
-  .wchip{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;white-space:nowrap;border:1px solid var(--slate-200);background:var(--slate-100);color:var(--slate-700)}
-  .wchip--lg{font-size:14px;padding:6px 13px}
-  .wchip__dot{width:7px;height:7px;border-radius:50%;background:var(--slate-400);flex:0 0 auto}
-  .wchip--on{background:var(--slate-100);color:var(--slate-800);border-color:var(--slate-300)}
-  .wchip--on .wchip__dot{background:var(--slate-700)}
-  .wchip--wait .wchip__dot{background:var(--slate-400)}
-  .wchip--done{background:var(--slate-800);color:#fff;border-color:var(--slate-800)}
-  .wchip--done .wchip__dot{background:#fff}
-  .wchip--off{background:#fff;color:var(--slate-500);border-style:dashed;border-color:var(--slate-300)}
-  .wchip--off .wchip__dot{background:transparent;border:1.5px solid var(--slate-400);width:8px;height:8px}
-
-  /* drawer */
-  .bo-drawer[hidden]{display:none}
-  .bo-drawer{position:fixed;inset:0;z-index:100}
-  .bo-drawer__ovl{position:absolute;inset:0;background:rgba(15,23,42,.42);opacity:0;transition:opacity .2s ease}
-  .bo-drawer.is-open .bo-drawer__ovl{opacity:1}
-  .bo-drawer__panel{position:absolute;top:0;right:0;height:100%;width:min(540px,94vw);background:#fff;border-left:1px solid var(--slate-200);box-shadow:-24px 0 60px -24px rgba(15,23,42,.35);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .22s ease}
-  .bo-drawer.is-open .bo-drawer__panel{transform:translateX(0)}
-  .bo-drawer__head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:22px 24px;border-bottom:1px solid var(--slate-200)}
-  .bo-drawer__title{font-size:20px;font-weight:700;color:var(--slate-900);margin:0}
-  .bo-drawer__close{width:34px;height:34px;border-radius:8px;border:1px solid var(--slate-200);background:#fff;color:var(--slate-500);display:grid;place-items:center;cursor:pointer;flex:0 0 auto}
-  .bo-drawer__close:hover{background:var(--slate-100);color:var(--slate-800)}
-  .bo-drawer__close svg{width:17px;height:17px}
-  .bo-drawer__body{flex:1;overflow-y:auto;padding:24px}
-  .bo-drawer__foot{display:flex;justify-content:flex-end;gap:12px;padding:16px 24px;border-top:1px solid var(--slate-200)}
-  .fromlead{display:flex;align-items:flex-start;gap:9px;background:var(--slate-50);border:1px solid var(--slate-200);border-radius:9px;padding:12px 14px;margin-bottom:24px;font-size:14px;color:var(--slate-600);line-height:1.5}
-  .fromlead svg{width:16px;height:16px;color:var(--slate-500);flex:0 0 auto;margin-top:1px}
-  .dsec{margin-bottom:32px}
-  .dsec:last-child{margin-bottom:0}
-  .dsec__t{font-size:16px;font-weight:700;color:var(--slate-900);margin:0 0 3px}
-  .dsec__d{font-size:14px;color:var(--slate-500);margin:0 0 18px;line-height:1.5}
-  .dfld{display:flex;flex-direction:column;gap:7px;margin-bottom:16px}
-  .dfld:last-child{margin-bottom:0}
-  .dfld label{font-size:14px;font-weight:600;color:var(--slate-700)}
-  .dfld .opt{font-size:12px;color:var(--slate-400);font-weight:500}
-  .dfld input{height:42px;padding:0 13px;border:1px solid var(--slate-300);border-radius:8px;background:#fff;font:inherit;font-size:16px;color:var(--slate-800)}
-  .dfld input:focus{outline:none;border-color:var(--slate-500);box-shadow:0 0 0 3px rgba(100,116,139,.15)}
-  .dfld input::placeholder{color:var(--slate-400)}
-  .dfld--key input{border-color:var(--slate-400)}
-  .dhint{font-size:12px;color:var(--slate-500);display:flex;gap:6px;line-height:1.45}
-  .dhint svg{width:14px;height:14px;color:var(--slate-400);flex:0 0 auto;margin-top:1px}
-  .dz{display:flex;align-items:center;gap:12px;border:1.5px dashed var(--slate-300);border-radius:10px;padding:16px;background:var(--slate-50);cursor:pointer;transition:border-color .15s,background .15s;text-align:left}
-  .dz:hover{border-color:var(--slate-400);background:var(--slate-100)}
-  .dz__ico{width:38px;height:38px;border-radius:9px;background:#fff;border:1px solid var(--slate-200);color:var(--slate-500);display:grid;place-items:center;flex:0 0 auto}
-  .dz__ico svg{width:18px;height:18px}
-  .dz__tx{font-size:14px;color:var(--slate-600);line-height:1.5}
-  .dz__tx b{color:var(--slate-900);text-decoration:underline}
-  .dz__hint{display:block;font-size:11.5px;color:var(--slate-400)}
-  .dz-files{display:flex;flex-direction:column;gap:8px;margin-top:12px}
-  .dz-file{display:flex;align-items:center;gap:10px;padding:9px 10px 9px 12px;border:1px solid var(--slate-200);border-radius:8px;background:#fff}
-  .dz-file__ico{width:28px;height:28px;border-radius:6px;background:var(--slate-100);color:var(--slate-500);display:grid;place-items:center;flex:0 0 auto}
-  .dz-file__ico svg{width:15px;height:15px}
-  .dz-file__nm{flex:1;min-width:0;font-size:14px;color:var(--slate-800);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .dz-file__tipo{flex:0 0 auto;width:148px;font:inherit;font-size:12px;padding:5px 24px 5px 9px;border:1px solid var(--slate-300);border-radius:6px;background:#fff;color:var(--slate-700)}
-  .dz-file__rm{width:26px;height:26px;border-radius:6px;border:0;background:transparent;color:var(--slate-400);cursor:pointer;display:grid;place-items:center;flex:0 0 auto}
-  .dz-file__rm:hover{background:var(--slate-100);color:var(--slate-700)}
-  .dz-file__rm svg{width:15px;height:15px}
-
-  /* toast */
-  .toast{position:fixed;right:24px;bottom:24px;z-index:200;background:var(--slate-900);color:#fff;border-radius:11px;padding:14px 12px 14px 16px;display:flex;align-items:flex-start;gap:12px;box-shadow:0 16px 44px -14px rgba(15,23,42,.55);max-width:400px;transform:translateY(16px);opacity:0;transition:transform .25s ease,opacity .25s ease;pointer-events:none}
-  .toast.is-on{transform:translateY(0);opacity:1;pointer-events:auto}
-  .toast__ico{width:22px;height:22px;border-radius:50%;background:#fff;color:var(--slate-900);display:grid;place-items:center;flex:0 0 auto;margin-top:1px}
-  .toast__ico svg{width:13px;height:13px}
-  .toast__body{font-size:16px;line-height:1.4;padding-top:1px}
-  .toast__body b{font-weight:700;display:block;margin-bottom:2px}
-  .toast__body p{margin:0;color:var(--slate-300);font-size:14px}
-  .toast__close{width:26px;height:26px;border-radius:6px;border:0;background:transparent;color:var(--slate-400);display:grid;place-items:center;cursor:pointer;flex:0 0 auto;margin-left:2px}
-  .toast__close:hover{background:rgba(255,255,255,.12);color:#fff}
-  .toast__close svg{width:15px;height:15px}
-  @media (max-width:980px){.det__grid{grid-template-columns:1fr}}
-  @media (max-width:860px){.bo{grid-template-columns:1fr}.bo__side{display:none}}
-
-  /* status com cor (wireframe): versao light por significado */
-  .wchip--ok,.wchip--warn,.wchip--info,.wchip--new,.wchip--bad{border-style:solid}
-  .wchip--ok{background:var(--green-50);border-color:color-mix(in srgb,var(--green-600) 34%,#fff);color:var(--green-700)}
-  .wchip--warn{background:var(--amber-50);border-color:color-mix(in srgb,var(--amber-600) 38%,#fff);color:var(--amber-700)}
-  .wchip--info{background:var(--blue-50);border-color:var(--blue-300);color:var(--blue-700)}
-  .wchip--new{background:#faf5ff;border-color:color-mix(in srgb,#9333ea 32%,#fff);color:#7e22ce}
-  .wchip--bad{background:var(--red-50);border-color:color-mix(in srgb,var(--red-600) 32%,#fff);color:var(--red-700)}
-  .wchip--ok .wchip__dot,.wchip--warn .wchip__dot,.wchip--info .wchip__dot,.wchip--new .wchip__dot,.wchip--bad .wchip__dot{background:currentColor;border:0;width:7px;height:7px}
+  @media (prefers-reduced-motion:reduce){.dk,.dk-back{transition:none}}
 </style>
-</head><body>
+</head>
+<body>
 <div id="dere-gate" style="position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;padding:24px;font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;background:radial-gradient(120% 120% at 20% 8%,#0c326f 0%,#071d41 55%,#05152e 100%)">
   <style>
     #dere-gate .dots{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(2px 2px at 12% 22%,rgba(255,255,255,.06),transparent),radial-gradient(2px 2px at 82% 15%,rgba(255,255,255,.05),transparent),radial-gradient(1.5px 1.5px at 68% 62%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 27% 78%,rgba(255,255,255,.045),transparent),radial-gradient(1.5px 1.5px at 90% 82%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 45% 34%,rgba(255,255,255,.04),transparent),radial-gradient(1.5px 1.5px at 8% 55%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 58% 90%,rgba(255,255,255,.04),transparent)}
@@ -1115,185 +1087,562 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 </div>
 <script>if(localStorage.getItem('dere_ok')==='1'){var _g=document.getElementById('dere-gate');if(_g)_g.remove();}function dereGate(f){var i=f.querySelector('input'),e=document.getElementById('dere-err');if(i.value==='dere123'){localStorage.setItem('dere_ok','1');document.getElementById('dere-gate').remove();}else{e.innerHTML='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 auto"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>Senha incorreta. Tente novamente.';i.select();}return false;}</script>
 
-<div class="bo">
-  <aside class="bo__side">
-    <div class="bo__brand"><span class="bo__brand-mark">a</span><span class="bo__brand-tx"><b>a-DeRE</b><span>Backoffice</span></span></div>
-    <nav class="bo__nav" aria-label="Navegação principal">
-      <a class="bo__navitem" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>Dashboard</a>
-      <a class="bo__navitem is-active" href="./backoffice-leads.html" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 6.1H3M21 12.1H3M15.1 18H3"/></svg>Leads</a>
-      <a class="bo__navitem" href="./backoffice-empresas.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4M10 10h4M10 14h4"/></svg>Empresas</a>
-    </nav>
-    <div class="bo__sidefoot">a-DeRE Backoffice · v0 (wireframe)</div>
-  </aside>
+<a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+<div class="shell">
 
-  <div class="bo__main">
-    <header class="bo__top">
-      <div class="bo__topnav">
-        <a class="backlink" href="./backoffice-leads.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>Voltar</a>
-        <nav class="breadcrumb" aria-label="Trilha"><a href="./backoffice-leads.html">Leads</a><span class="breadcrumb__sep">/</span><span class="breadcrumb__current" id="bc-emp">Saúde Integral</span></nav>
+  <!-- ===================== SIDENAV (navy, reaproveitada do app-shell) ===================== -->
+  <nav class="sidenav sidenav--navy" data-sidenav aria-label="Navegação principal">
+    <div class="brandrow"><span class="wm sidenav__label">a-DeRE</span></div>
+    <div style="padding:var(--space-3) var(--space-3) 0;flex:0 0 auto">
+      <div class="orgswitch orgswitch--static">
+        <span class="orgswitch__logo orgswitch__logo--brand"><img src="data:image/png;base64,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" alt="Mercado Pago"></span>
+        <span class="orgswitch__info"><span class="orgswitch__name">Mercado Pago</span><span class="orgswitch__cnpj">10.573.521/0001-91</span></span>
       </div>
-      <div class="bo__topright">
-        <div class="bo__user"><span class="bo__avatar">JS</span><span class="bo__userinfo"><span class="bo__username">João Silva</span><span class="bo__userrole">Time de vendas</span></span></div>
-        <button class="bo__iconbtn" aria-label="Sair"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg></button>
+    </div>
+    <div class="navlist">
+      <p class="sidenav__group">Principal</p>
+      <a class="sidenav__item" href="painel.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg><span class="sidenav__label">Painel</span></a>
+      <p class="sidenav__group">Cadastro</p>
+      <a class="sidenav__item is-active" href="#" aria-current="page"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4M10 10h4M10 14h4"/></svg><span class="sidenav__label">Info. do Contribuinte</span></a>
+      <a class="sidenav__item" href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12h-8"/><path d="M21 6H8"/><path d="M21 18h-8"/><path d="M3 6v4c0 1.1.9 2 2 2h3"/><path d="M3 10v6c0 1.1.9 2 2 2h3"/></svg><span class="sidenav__label">Plano de contas</span></a>
+      <p class="sidenav__group">Declarações</p>
+      <a class="sidenav__item" href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 2v4"/><path d="M16 2v4"/></svg><span class="sidenav__label">Declaração mensal</span></a>
+      <a class="sidenav__item" href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 17.5v-11"/></svg><span class="sidenav__label">Recibos &amp; envios</span></a>
+      <p class="sidenav__group">Sistema</p>
+      <a class="sidenav__item" href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg><span class="sidenav__label">Configurações</span></a>
+    </div>
+    <div class="sidenav__foot">
+      <button class="sidenav__item sidenav__toggle" type="button" aria-label="Colapsar menu" aria-expanded="true" data-sidenav-toggle><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m11 17-5-5 5-5"/><path d="m18 17-5-5 5-5"/></svg><span class="sidenav__label">Colapsar</span></button>
+    </div>
+  </nav>
+
+  <div class="col">
+    <!-- ===================== TOPBAR ===================== -->
+    <header class="topbar">
+      <button class="icon-btn hamburger" type="button" aria-label="Abrir menu" data-drawer-open><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" x2="21" y1="6" y2="6"/><line x1="3" x2="21" y1="12" y2="12"/><line x1="3" x2="21" y1="18" y2="18"/></svg></button>
+      <nav class="breadcrumb" aria-label="Trilha"><a href="painel.html">Início</a><span class="breadcrumb__sep">/</span><a href="#">Informações do contribuinte</a><span class="breadcrumb__sep">/</span><span class="breadcrumb__current">Preencher as informações do contribuinte</span></nav>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:var(--space-1)">
+        <span class="tooltip"><button class="icon-btn" type="button" aria-label="Buscar"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></button><span class="tooltip__bubble" role="tooltip">Buscar</span></span>
+        <span class="tooltip"><button class="icon-btn" type="button" data-theme-toggle aria-label="Alternar para modo escuro"><svg data-theme-icon width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg></button><span class="tooltip__bubble" role="tooltip" data-theme-tip>Modo escuro</span></span>
+        <span class="tooltip"><button class="icon-btn" type="button" aria-label="Notificações, 3 não lidas" style="position:relative"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="badge badge--danger" style="position:absolute;top:3px;right:3px">3</span></button><span class="tooltip__bubble" role="tooltip">Notificações</span></span>
+      </div>
+      <span aria-hidden="true" style="width:1px;height:22px;background:var(--color-divider);flex:0 0 auto"></span>
+      <div class="menu" data-menu>
+        <span class="tooltip tooltip--end"><button class="avatar" aria-haspopup="true" aria-expanded="false" aria-label="Ricardo Almeida, abrir menu do usuário">RA</button><span class="tooltip__bubble tooltip__bubble--stack" role="tooltip"><strong>Ricardo Almeida</strong>ricardo.almeida@mercadopago.com.br</span></span>
+        <div class="menu__panel" hidden>
+          <div class="menu__head"><p class="menu__head-name">Ricardo Almeida</p><p class="menu__head-mail">ricardo.almeida@mercadopago.com.br</p><p class="menu__head-roles">Administrador</p></div>
+          <div class="menu__sep"></div>
+          <button class="menu__item">Meu perfil</button>
+          <button class="menu__item">Configurações</button>
+          <button class="menu__item menu__item--danger">Sair</button>
+        </div>
       </div>
     </header>
 
-    <main class="bo__content">
-      <div class="det__head">
-        <div class="det__titlerow">
-          <h1 class="det__title"><span class="det__title-id" id="t-id">#1041</span><span id="t-emp">Saúde Integral</span></h1>
-          <span class="wchip wchip--on wchip--lg" id="statusChip"><span class="wchip__dot"></span>Em atendimento</span>
+    <!-- ===================== SCROLL (cabeçalho branco + conteúdo cinza) ===================== -->
+    <main id="conteudo" tabindex="-1" class="scroll skip-target">
+      <!-- Cabeçalho branco -->
+      <div class="headband">
+        <div class="headband__in">
+          <h1>Preencher as informações do contribuinte</h1>
+          <div class="headband__sub">
+            <span class="evtag">D-1001</span>
+            <p class="subtitle">Enquadramento do contribuinte para a DeRE</p>
+          </div>
         </div>
       </div>
 
-      <div class="det__grid">
-        <!-- Coluna principal: dados do formulário -->
-        <div class="det-main">
-          <section class="det-card">
-            <div class="det-card__hd">
-              <h2 class="det-card__t">Dados do lead</h2>
+      <!-- Região de status (padrão assíncrono DeRE): anúncio p/ leitor de tela sem mover foco -->
+      <div class="sr-only" role="status" aria-live="polite" data-status></div>
+
+      <!-- Conteúdo cinza: cards + índice -->
+      <div class="body">
+        <div class="cards">
+
+          <!-- 1) IDENTIFICAÇÃO -->
+          <section class="card sec-card" id="sec-identificacao" data-spy aria-labelledby="t-ident">
+            <div class="sec-card__head">
+              <span class="sec-card__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4M10 10h4M10 14h4"/></svg></span>
+              <h2 class="sec-card__title" id="t-ident">Identificação</h2>
+              <span class="sec-card__note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Somente leitura · Cartão CNPJ</span>
             </div>
-            <dl class="dl">
-              <div class="dl__row"><dt class="dl__k">Recebido em</dt><dd class="dl__v" id="v-recebido">18/08/2026 14:32</dd></div>
-              <div class="dl__row"><dt class="dl__k">Origem</dt><dd class="dl__v">Landing page</dd></div>
-              <div class="dl__row"><dt class="dl__k">Nome</dt><dd class="dl__v" id="v-nome">Carlos Menezes</dd></div>
-              <div class="dl__row"><dt class="dl__k">Instituição</dt><dd class="dl__v" id="v-inst">Saúde Integral</dd></div>
-              <div class="dl__row"><dt class="dl__k">CNPJ</dt><dd class="dl__v" id="v-cnpj">23.456.789/0001-01</dd></div>
-              <div class="dl__row"><dt class="dl__k">E-mail</dt><dd class="dl__v"><a href="#" id="v-email">carlos@saudeintegral.com.br</a></dd></div>
-              <div class="dl__row" id="row-tel"><dt class="dl__k">Telefone</dt><dd class="dl__v" id="v-tel">(21) 99876-5432</dd></div>
-              <div class="dl__row" id="row-msg"><dt class="dl__k">Mensagem</dt><dd class="dl__v dl__v--msg" id="v-msg">Somos uma operadora de saúde e queremos entender como a a-DeRE apura os regimes específicos. Podemos agendar uma demonstração para o time fiscal?</dd></div>
-            </dl>
+            <div class="rows">
+              <div class="row">
+                <div class="row__label"><span class="lbl">Nome empresarial</span><span class="hint">Nome de registro do contribuinte na Receita Federal.</span></div>
+                <div class="row__field"><span class="val">Mercado Pago Instituição de Pagamento Ltda.</span></div>
+              </div>
+              <div class="row">
+                <div class="row__label"><span class="lbl">CNPJ (raiz)</span><span class="hint">Raiz de 8 dígitos. Consolida matriz e todas as filiais.</span></div>
+                <div class="row__field"><span class="val val--mono">10.573.521</span></div>
+              </div>
+              <div class="row">
+                <div class="row__label"><span class="lbl">Natureza jurídica</span><span class="hint">Tipo jurídico da empresa, conforme seu cadastro.</span></div>
+                <div class="row__field"><span class="val">Sociedade Empresária Limitada</span></div>
+              </div>
+            </div>
           </section>
+
+          <!-- 2) VIGÊNCIA -->
+          <section class="card sec-card" id="sec-vigencia" data-spy aria-labelledby="t-vig">
+            <div class="sec-card__head">
+              <span class="sec-card__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 2v4"/><path d="M16 2v4"/></svg></span>
+              <h2 class="sec-card__title" id="t-vig">Vigência</h2>
+            </div>
+            <div class="rows">
+              <div class="row">
+                <div class="row__label"><label class="lbl" for="vig-inicio">Início da vigência <span class="field__req" aria-hidden="true">*</span></label><span class="hint" id="h-vig-inicio">A partir de quando o enquadramento nos regimes informados passa a valer.</span></div>
+                <div class="row__field">
+                  <div class="field-icon field-icon--right" style="max-width:280px">
+                    <input class="input" id="vig-inicio" data-datepicker type="text" inputmode="numeric" value="01/01/2026" placeholder="Ex.: 01/01/2026" aria-required="true" aria-describedby="h-vig-inicio">
+                    <span class="field-icon__i" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 2v4"/><path d="M16 2v4"/></svg></span>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="row__label"><label class="lbl" for="vig-fim">Fim da vigência</label><span class="hint" id="h-vig-fim">Deixe em branco para vigência por prazo indeterminado.</span></div>
+                <div class="row__field">
+                  <div class="field-icon field-icon--right" style="max-width:280px">
+                    <input class="input" id="vig-fim" data-datepicker type="text" inputmode="numeric" placeholder="dd/mm/aaaa" aria-describedby="h-vig-fim" disabled>
+                    <span class="field-icon__i" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 2v4"/><path d="M16 2v4"/></svg></span>
+                  </div>
+                  <label class="check" style="margin-top:var(--space-3)"><input type="checkbox" id="vig-aberta" checked onchange="toggleVigencia(this.checked)"> Vigência em aberto (sem data de fim)</label>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 3) REGIME TRIBUTÁRIO (inclui Atividades como última linha) -->
+          <section class="card sec-card" id="sec-regime" data-spy aria-labelledby="t-reg">
+            <div class="sec-card__head">
+              <span class="sec-card__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" x2="21" y1="22" y2="22"/><line x1="6" x2="6" y1="18" y2="11"/><line x1="10" x2="10" y1="18" y2="11"/><line x1="14" x2="14" y1="18" y2="11"/><line x1="18" x2="18" y1="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg></span>
+              <h2 class="sec-card__title" id="t-reg">Regime tributário</h2>
+            </div>
+            <div class="rows">
+
+              <!-- CNAE principal (contexto, read-only) -->
+              <div class="row">
+                <div class="row__label"><span class="lbl">CNAE principal</span><span class="hint">Vem do Cartão CNPJ. É a base para sugerir o regime.</span></div>
+                <div class="row__field"><span class="val"><span class="val--mono">66.13-4/00</span> · Outras atividades auxiliares dos serviços financeiros</span></div>
+              </div>
+
+              <!-- Regime principal (radio) -->
+              <div class="row">
+                <div class="row__label"><span class="lbl" id="lbl-reg-p">Regime principal <span class="field__req" aria-hidden="true">*</span></span><span class="hint">Regime da atividade preponderante do contribuinte.</span></div>
+                <div class="row__field">
+                  <div class="selectcard-list" role="radiogroup" aria-labelledby="lbl-reg-p">
+                    <label class="selectcard">
+                      <span class="selectcard__lead">1</span>
+                      <span class="selectcard__body">
+                        <span class="selectcard__title">Regime Específico de Serviços Financeiros</span>
+                        <span class="selectcard__desc">Bancos, meios de pagamento, câmbio, seguros, valores mobiliários (regulação BCB/SUSEP).</span>
+                        <span class="selectcard__seal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .962 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.962 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg>Sugerido por IA com base no CNAE</span>
+                      </span>
+                      <input class="selectcard__input" type="radio" name="reg-p" value="1" checked onchange="onRegimeP()">
+                    </label>
+                    <label class="selectcard">
+                      <span class="selectcard__lead">2</span>
+                      <span class="selectcard__body">
+                        <span class="selectcard__title">Regime Específico de Plano de Assistência à Saúde</span>
+                        <span class="selectcard__desc">Operadoras de planos de saúde (regulação ANS).</span>
+                      </span>
+                      <input class="selectcard__input" type="radio" name="reg-p" value="2" onchange="onRegimeP()">
+                    </label>
+                    <label class="selectcard">
+                      <span class="selectcard__lead">3</span>
+                      <span class="selectcard__body">
+                        <span class="selectcard__title">Regime Específico de Concursos de Prognósticos</span>
+                        <span class="selectcard__desc">Loterias e apostas.</span>
+                      </span>
+                      <input class="selectcard__input" type="radio" name="reg-p" value="3" onchange="onRegimeP()">
+                    </label>
+                    <label class="selectcard">
+                      <span class="selectcard__lead">9</span>
+                      <span class="selectcard__body">
+                        <span class="selectcard__title">Outros Regimes de Tributação</span>
+                        <span class="selectcard__desc">Contribuinte obrigado à DeRE cuja atividade preponderante não é uma das três acima.</span>
+                      </span>
+                      <input class="selectcard__input" type="radio" name="reg-p" value="9" onchange="onRegimeP()">
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Regimes secundários (checkbox; só 1/2/3; não repete o principal) -->
+              <div class="row">
+                <div class="row__label"><span class="lbl" id="lbl-reg-s">Regimes secundários <span class="text-muted" style="font-weight:400">(até 3)</span></span><span class="hint">Outros regimes que também se aplicam, se houver. Não pode ser igual ao regime principal.</span></div>
+                <div class="row__field">
+                  <div class="selectcard-list" role="group" aria-labelledby="lbl-reg-s">
+                    <label class="selectcard" data-sec="1">
+                      <span class="selectcard__lead">1</span>
+                      <span class="selectcard__body">
+                        <span class="selectcard__title">Regime Específico de Serviços Financeiros</span>
+                        <span class="selectcard__desc">Bancos, meios de pagamento, câmbio, seguros, valores mobiliários (regulação BCB/SUSEP).</span>
+                      </span>
+                      <input class="selectcard__input" type="checkbox" name="reg-s" value="1" onchange="onRegimeS()">
+                    </label>
+                    <label class="selectcard" data-sec="2">
+                      <span class="selectcard__lead">2</span>
+                      <span class="selectcard__body">
+                        <span class="selectcard__title">Regime Específico de Plano de Assistência à Saúde</span>
+                        <span class="selectcard__desc">Operadoras de planos de saúde (regulação ANS).</span>
+                      </span>
+                      <input class="selectcard__input" type="checkbox" name="reg-s" value="2" onchange="onRegimeS()">
+                    </label>
+                    <label class="selectcard" data-sec="3">
+                      <span class="selectcard__lead">3</span>
+                      <span class="selectcard__body">
+                        <span class="selectcard__title">Regime Específico de Concursos de Prognósticos</span>
+                        <span class="selectcard__desc">Loterias e apostas.</span>
+                      </span>
+                      <input class="selectcard__input" type="checkbox" name="reg-s" value="3" onchange="onRegimeS()">
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Natureza da tributação (radio) -->
+              <div class="row">
+                <div class="row__label"><span class="lbl" id="lbl-nat">Natureza da tributação <span class="field__req" aria-hidden="true">*</span></span><span class="hint">Como a operação é tributada.</span></div>
+                <div class="row__field">
+                  <div class="selectcard-list" role="radiogroup" aria-labelledby="lbl-nat">
+                    <label class="selectcard">
+                      <span class="selectcard__lead"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 17.5v-11"/></svg></span>
+                      <span class="selectcard__body">
+                        <span class="selectcard__title">Tributação regular</span>
+                        <span class="selectcard__desc">Tributação normal das operações.</span>
+                      </span>
+                      <input class="selectcard__input" type="radio" name="nat" value="regular" checked onchange="onNatureza()">
+                    </label>
+                    <label class="selectcard">
+                      <span class="selectcard__lead"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg></span>
+                      <span class="selectcard__body">
+                        <span class="selectcard__title">Imunidade ou não incidência</span>
+                        <span class="selectcard__desc">Só para contribuintes imunes pela natureza jurídica (ex.: entidades sem fins lucrativos, entes públicos).</span>
+                      </span>
+                      <input class="selectcard__input" type="radio" name="nat" value="imunidade" onchange="onNatureza()">
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </section>
+
+          <!-- 4) ATIVIDADES -->
+          <section class="card sec-card" id="sec-atividades" data-spy aria-labelledby="t-ativ">
+            <div class="sec-card__head">
+              <span class="sec-card__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/></svg></span>
+              <h2 class="sec-card__title" id="t-ativ">Atividades</h2>
+            </div>
+            <div class="rows">
+              <div class="row">
+                <div class="row__label"><span class="lbl">Atividades de Serviços Financeiros <span class="field__req" aria-hidden="true">*</span></span><span class="hint">Selecione todas as atividades que se aplicam.</span></div>
+                <div class="row__field">
+                  <div id="ativ-empty" class="ativbox">
+                    <span class="ativbox__t">Nenhuma atividade selecionada</span>
+                    <button type="button" class="btn btn--secondary" onclick="openDk()">Selecionar atividades</button>
+                  </div>
+                  <div id="ativ-filled" class="selbar" hidden>
+                    <div class="chips" id="ativ-chips"></div>
+                    <button type="button" class="btn btn--secondary btn--sm" onclick="openDk()">Editar atividades</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 5) REVISÃO E ENVIO -->
+          <section class="card sec-card" id="sec-revisao" data-spy aria-labelledby="t-rev">
+            <div class="sec-card__head">
+              <span class="sec-card__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg></span>
+              <h2 class="sec-card__title" id="t-rev">Revisão e envio</h2>
+            </div>
+            <div class="rows">
+              <div class="row"><div class="row__label"><span class="lbl">Contribuinte</span></div><div class="row__field"><span class="val">Mercado Pago · CNPJ raiz <span class="val--mono">10.573.521</span></span></div></div>
+              <div class="row"><div class="row__label"><span class="lbl">Vigência</span></div><div class="row__field"><span class="val" id="sum-vigencia">A partir de 01/01/2026 · em aberto</span></div></div>
+              <div class="row"><div class="row__label"><span class="lbl">Regime principal</span></div><div class="row__field"><span class="val" id="sum-regp">Regime Específico de Serviços Financeiros</span></div></div>
+              <div class="row"><div class="row__label"><span class="lbl">Regimes secundários</span></div><div class="row__field"><span class="val" id="sum-regs">—</span></div></div>
+              <div class="row"><div class="row__label"><span class="lbl">Natureza da tributação</span></div><div class="row__field"><span class="val" id="sum-nat">Tributação regular</span></div></div>
+              <div class="row"><div class="row__label"><span class="lbl">Atividades de Serviços Financeiros</span></div><div class="row__field"><span class="val" id="sum-ativ">Nenhuma selecionada</span></div></div>
+            </div>          </section>
+
         </div>
 
-        <!-- Coluna lateral: acompanhamento + resumo -->
-        <div class="det-side">
-          <section class="det-card">
-            <div class="det-card__hd"><h2 class="det-card__t">Acompanhamento</h2></div>
-            <div class="stat-now"><span class="stat-now__lbl">Status atual</span><span class="wchip wchip--on" id="statusChip2"><span class="wchip__dot"></span>Em atendimento</span></div>
-            <p class="follow-when" id="followWhen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Iniciado em 18/08/2026 15:10</p>
-            <p class="follow-desc" id="followDesc">Contato comercial em andamento. Conclua convertendo em empresa ou marcando como não convertido.</p>
-            <div class="follow-act" id="followAct">
-              <button class="btn btn--primary" onclick="openDrawer()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M10 6h4M10 10h4M10 14h4"/><path d="M18 22v-4"/></svg>Converter em empresa</button>
-              <button class="btn btn--outline" onclick="markNotConverted()">Marcar como não convertido</button>
-            </div>
-          </section>
-        </div>
+        <!-- ÍNDICE (sticky, scrollspy) -->
+        <nav class="idx" aria-label="Seções do formulário">
+          <button type="button" class="idx__item is-current" data-target="sec-identificacao" aria-current="true"><span class="idx__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4M10 10h4M10 14h4"/></svg></span>Identificação</button>
+          <button type="button" class="idx__item" data-target="sec-vigencia"><span class="idx__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 2v4"/><path d="M16 2v4"/></svg></span>Vigência</button>
+          <button type="button" class="idx__item" data-target="sec-regime"><span class="idx__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" x2="21" y1="22" y2="22"/><line x1="6" x2="6" y1="18" y2="11"/><line x1="10" x2="10" y1="18" y2="11"/><line x1="14" x2="14" y1="18" y2="11"/><line x1="18" x2="18" y1="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg></span>Regime tributário</button>
+          <button type="button" class="idx__item" data-target="sec-atividades"><span class="idx__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/></svg></span>Atividades</button>
+          <button type="button" class="idx__item" data-target="sec-revisao"><span class="idx__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg></span>Revisão e envio</button>
+        </nav>
       </div>
     </main>
+
+    <!-- ===================== RODAPÉ FIXO ===================== -->
+    <footer class="foot">
+      <div class="foot__in">
+        <div class="foot__left"><button type="button" class="btn btn--ghost btn--lg" onclick="tryCancel()">Cancelar</button></div>
+        <div class="foot__right">
+          <button type="button" class="btn btn--secondary btn--lg" onclick="doToast('Rascunho guardado.','success')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg>Guardar rascunho</button>
+          <button type="button" class="btn btn--primary btn--lg" onclick="doToast('Formulário enviado para revisão.','success')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>Enviar para revisão</button>
+        </div>
+      </div>
+    </footer>
   </div>
 </div>
 
-<!-- DRAWER: converter lead em empresa (dados pré-preenchidos) -->
-<div class="bo-drawer" id="drawer" hidden>
-  <div class="bo-drawer__ovl" onclick="closeDrawer()"></div>
-  <aside class="bo-drawer__panel" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
-    <header class="bo-drawer__head">
-      <h2 class="bo-drawer__title" id="drawerTitle">Converter lead em empresa</h2>
-      <button class="bo-drawer__close" onclick="closeDrawer()" aria-label="Fechar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
-    </header>
-    <div class="bo-drawer__body">
-      <div class="fromlead"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1Z"/></svg><span>Dados recebidos do formulário da landing page. Revise e confira o CNPJ antes de criar a empresa.</span></div>
-      <form id="drawerForm" onsubmit="event.preventDefault();submitConvert();">
-        <section class="dsec">
-          <h3 class="dsec__t">Dados da empresa</h3>
-          <p class="dsec__d">Dados cadastrais da empresa que será gerida na a-DeRE.</p>
-          <div class="dfld"><label for="d-cnpj">CNPJ</label><input id="d-cnpj" inputmode="numeric" value="23.456.789/0001-01"><span class="dhint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>Confira o CNPJ informado antes de criar a empresa.</span></div>
-          <div class="dfld"><label for="d-razao">Razão social</label><input id="d-razao" value="Saúde Integral"></div>
-          <div class="dfld"><label for="d-fant">Nome fantasia <span class="opt">(opcional)</span></label><input id="d-fant" placeholder="Ex.: Grupo Saúde Integral"></div>
-        </section>
-        <section class="dsec">
-          <h3 class="dsec__t">Administrador da conta</h3>
-          <p class="dsec__d">Este usuário receberá o convite para ativar o acesso e realizar a configuração inicial da conta.</p>
-          <div class="dfld"><label for="d-adm">Nome do administrador</label><input id="d-adm" value="Carlos Menezes"></div>
-          <div class="dfld dfld--key"><label for="d-email">E-mail</label><input id="d-email" type="email" value="carlos@saudeintegral.com.br"><span class="dhint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>Endereço usado para enviar o convite de ativação. Confira antes de criar.</span></div>
-        </section>
-        <section class="dsec">
-          <h3 class="dsec__t">Documentos</h3>
-          <p class="dsec__d">Anexe o contrato e outros documentos da contratação. Classifique cada arquivo pelo tipo.</p>
-          <label class="dz" for="dz-input">
-            <span class="dz__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m17 8-5-5-5 5"/><path d="M21 21H3"/></svg></span>
-            <span class="dz__tx"><b>Clique para enviar</b> ou arraste os arquivos<span class="dz__hint">PDF, DOC, JPG ou PNG até 10 MB</span></span>
-            <input id="dz-input" type="file" multiple hidden onchange="dzAdd(this.files);this.value='';">
-          </label>
-          <div class="dz-files" id="dz-files"></div>
-        </section>
-      </form>
+<!-- ===================== DRAWER: Atividades (Tabela 21) ===================== -->
+<div class="dk-back" id="dkback" onclick="closeDk()"></div>
+<aside class="dk" id="dk" role="dialog" aria-modal="true" aria-labelledby="dktitle">
+  <div class="dk__head">
+    <div class="dk__title"><h2 id="dktitle">Atividades de Serviços Financeiros</h2><button type="button" class="icon-btn" aria-label="Fechar" onclick="closeDk()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div>
+    <p class="dk__sub">Marque as atividades que o contribuinte realiza (Tabela 21). A família sugerida pelo CNAE aparece destacada.</p>
+    <div class="field-icon"><span class="field-icon__i" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span><input class="input" id="dksearch" type="text" placeholder="Ex.: cartões, câmbio, crédito…" oninput="renderList()" aria-label="Buscar atividade por código ou nome"></div>
+  </div>
+  <div class="dk__body" id="dkbody"></div>
+  <div class="dk__foot">
+    <span class="dk__count"><b id="dkcount">0</b> selecionadas</span>
+    <div class="dk__acts"><button type="button" class="btn btn--ghost" onclick="closeDk()">Cancelar</button><button type="button" class="btn btn--primary" onclick="applyDk()">Aplicar</button></div>
+  </div>
+</aside>
+
+<!-- Modal: confirmação ao sair com alterações não guardadas -->
+<div class="modal-backdrop" id="cancel-modal" style="display:none" onclick="if(event.target===this)closeCancelModal()">
+  <div class="modal" role="alertdialog" aria-modal="true" aria-labelledby="cm-title" aria-describedby="cm-desc" tabindex="-1">
+    <div class="modal__header"><h3 class="modal__title" id="cm-title">Sair sem guardar as alterações?</h3><span class="tooltip"><button class="icon-btn icon-btn--sm" aria-label="Fechar" onclick="closeCancelModal()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button><span class="tooltip__bubble" role="tooltip">Fechar</span></span></div>
+    <div class="modal__body"><p id="cm-desc" style="margin:0">Você preencheu informações que ainda não foram guardadas. Se sair agora, elas serão perdidas.</p></div>
+    <div class="modal__footer">
+      <button type="button" class="btn btn--ghost" onclick="closeCancelModal()">Continuar editando</button>
+      <button type="button" class="btn btn--secondary" onclick="exitDiscard()">Sair e descartar</button>
+      <button type="button" class="btn btn--primary" onclick="exitSave()">Sair e guardar</button>
     </div>
-    <footer class="bo-drawer__foot">
-      <button class="btn btn--ghost" type="button" onclick="closeDrawer()">Cancelar</button>
-      <button class="btn btn--primary" type="submit" form="drawerForm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>Criar empresa e enviar convite</button>
-    </footer>
-  </aside>
+  </div>
 </div>
 
-<div class="toast" id="toast" role="status" aria-live="polite">
-  <span class="toast__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
-  <div class="toast__body"><b id="toastTitle">Pronto</b><p id="toastMsg"></p></div>
-  <button class="toast__close" onclick="hideToast()" aria-label="Fechar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
-</div>
+<div class="sidenav-backdrop" data-drawer-backdrop></div>
+<div class="toasts" id="toasts" role="status" aria-live="polite"></div>
 
 <script>
-  var _drawer=document.getElementById('drawer'), _toastT=null;
-  function showToast(title,msg){document.getElementById('toastTitle').textContent=title;document.getElementById('toastMsg').textContent=msg;var t=document.getElementById('toast');t.classList.add('is-on');if(_toastT)clearTimeout(_toastT);_toastT=setTimeout(hideToast,6000);}
-  function hideToast(){document.getElementById('toast').classList.remove('is-on');}
-  function openDrawer(){_drawer.hidden=false;requestAnimationFrame(function(){_drawer.classList.add('is-open');});document.body.style.overflow='hidden';}
-  function closeDrawer(){_drawer.classList.remove('is-open');document.body.style.overflow='';setTimeout(function(){_drawer.hidden=true;},220);}
-  var CLS={'Novo':'wchip--wait','Em atendimento':'wchip--on','Convertido':'wchip--done','Não convertido':'wchip--off'};
-  var BLD='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M10 6h4M10 10h4M10 14h4"/><path d="M18 22v-4"/></svg>';
-  var CLK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>';
-  function nowStr(){var d=new Date();function p(n){return(n<10?'0':'')+n;}return p(d.getDate())+'/'+p(d.getMonth()+1)+'/'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes());}
-  function startAtend(){var w=document.getElementById('followWhen');if(w)w.innerHTML=CLK+'Iniciado em '+nowStr();setStatus('Em atendimento');showToast('Atendimento iniciado','O lead está em atendimento.');}
-  function reopenAtend(){var w=document.getElementById('followWhen');if(w)w.innerHTML=CLK+'Reaberto em '+nowStr();setStatus('Em atendimento');showToast('Atendimento reaberto','O lead voltou para em atendimento.');}
-  function setStatus(s){['statusChip','statusChip2'].forEach(function(id){var el=document.getElementById(id);el.className='wchip '+CLS[s];el.innerHTML='<span class="wchip__dot"></span>'+s;});renderFollow(s);}
-  function renderFollow(s){
-    var d=document.getElementById('followDesc'), a=document.getElementById('followAct'), w=document.getElementById('followWhen');
-    if(w)w.style.display=(s==='Novo')?'none':'';
-    if(s==='Novo'){d.textContent='Lead recebido. O atendimento comercial ainda não começou.';a.innerHTML='<button class="btn btn--primary" onclick="startAtend()">Iniciar atendimento</button>';}
-    else if(s==='Em atendimento'){d.textContent='Contato comercial em andamento. Conclua convertendo em empresa ou marcando como não convertido.';a.innerHTML='<button class="btn btn--primary" onclick="openDrawer()">'+BLD+'Converter em empresa</button><button class="btn btn--outline" onclick="markNotConverted()">Marcar como não convertido</button>';}
-    else if(s==='Convertido'){d.textContent='Empresa criada a partir deste lead. O convite de ativação foi enviado ao administrador.';a.innerHTML='<a class="btn btn--outline" href="'+empHrefFromPage()+'">'+BLD+'Ver empresa</a>';}
-    else{d.textContent='Atendimento encerrado sem conversão.';a.innerHTML='<button class="btn btn--ghost" onclick="reopenAtend()">Reabrir atendimento</button>';}
-  }
-  function markNotConverted(){setStatus('Não convertido');showToast('Lead atualizado','Marcado como não convertido.');}
-  function empHref(v){return './backoffice-empresa-detalhes.html?empresa='+encodeURIComponent(v.empresa||'')+'&cnpj='+encodeURIComponent(v.cnpj||'')+'&adm='+encodeURIComponent(v.adm||'')+'&email='+encodeURIComponent(v.email||'')+'&lead='+encodeURIComponent(v.lead||'');}
-  function empHrefFromPage(){var g=function(id){var e=document.getElementById(id);return e?e.textContent.trim():'';};return empHref({empresa:g('t-emp'),cnpj:g('v-cnpj'),adm:g('v-nome'),email:g('v-email'),lead:g('t-id')});}
-  function submitConvert(){
-    var g=function(id){var e=document.getElementById(id);return e?e.value.trim():'';};
-    var lead=(document.getElementById('t-id')||{textContent:''}).textContent;
-    window.location.href=empHref({empresa:g('d-razao'),cnpj:g('d-cnpj'),adm:g('d-adm'),email:g('d-email'),lead:lead})+'&created=1';
-  }
-  function dzAdd(files){
-    var box=document.getElementById('dz-files');
-    var FI='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v6h6"/></svg>';
-    var XI='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>';
-    var TP='<option>Contrato</option><option>Proposta comercial</option><option>Documento de identificação</option><option>Outro</option>';
-    for(var i=0;i<files.length;i++){var f=files[i];var row=document.createElement('div');row.className='dz-file';row.innerHTML='<span class="dz-file__ico">'+FI+'</span><span class="dz-file__nm">'+f.name+'</span><select class="dz-file__tipo">'+TP+'</select><button type="button" class="dz-file__rm" aria-label="Remover">'+XI+'</button>';row.querySelector('.dz-file__rm').addEventListener('click',function(){this.closest('.dz-file').remove();});box.appendChild(row);}
-  }
-  // popula o detalhe com os dados do lead vindo da lista (querystring); sem querystring, mantém o exemplo
-  (function(){
-    if(!location.search){renderFollow('Em atendimento');return;}
-    var q=new URLSearchParams(location.search);
-    function set(id,v){var el=document.getElementById(id);if(el)el.textContent=v;}
-    var emp=q.get('empresa')||'Saúde Integral', cnpj=q.get('cnpj')||'', nome=q.get('nome')||'', email=q.get('email')||'', tel=q.get('tel')||'', st=q.get('status')||'Em atendimento', rec=q.get('recebido')||'', msg=q.get('msg')||'';
-    set('t-id', q.get('id')||'#1041');
-    set('t-emp', emp);
-    set('bc-emp', emp);
-    set('v-recebido', rec||'—');
-    set('v-nome', nome||'—');
-    set('v-inst', emp);
-    set('v-cnpj', cnpj||'—');
-    var em=document.getElementById('v-email'); if(em)em.textContent=email||'—';
-    var rt=document.getElementById('row-tel'); if(rt)rt.style.display=tel?'':'none'; set('v-tel',tel);
-    var rm=document.getElementById('row-msg'); if(rm)rm.style.display=msg?'':'none'; set('v-msg',msg);
-    document.getElementById('d-cnpj').value=cnpj;
-    document.getElementById('d-razao').value=emp;
-    document.getElementById('d-adm').value=nome;
-    document.getElementById('d-email').value=email;
-    var ini=q.get('iniciado')||''; var fw=document.getElementById('followWhen'); if(fw&&ini)fw.innerHTML=CLK+'Iniciado em '+ini;
-    setStatus(st);
-  })();
-  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!_drawer.hidden)closeDrawer();});
-</script>
+/* ===== Shell: colapsar sidenav + tooltips + menu do usuário + tema + drawer mobile ===== */
+document.querySelectorAll('[data-sidenav-toggle]').forEach(function(btn){
+  var nav=btn.closest('[data-sidenav]');
+  btn.addEventListener('click',function(){var c=nav.classList.toggle('is-collapsed');btn.setAttribute('aria-expanded',String(!c));btn.setAttribute('aria-label',c?'Expandir menu':'Colapsar menu');});
+});
+document.querySelectorAll('.sidenav__item').forEach(function(it){var l=it.querySelector('.sidenav__label');if(l){it.setAttribute('data-tip',l.textContent.trim());it.setAttribute('title',l.textContent.trim());}});
+document.querySelectorAll('[data-menu]').forEach(function(menu){
+  var b=menu.querySelector('button'),p=menu.querySelector('.menu__panel');
+  b.addEventListener('click',function(){var o=p.hidden;p.hidden=!o;b.setAttribute('aria-expanded',String(o));});
+  document.addEventListener('click',function(e){if(!menu.contains(e.target)){p.hidden=true;b.setAttribute('aria-expanded','false');}});
+});
+(function(){
+  var btn=document.querySelector('[data-theme-toggle]');if(!btn)return;
+  var icon=btn.querySelector('[data-theme-icon]'),tip=document.querySelector('[data-theme-tip]');
+  var MOON='<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>';
+  var SUN='<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>';
+  function sync(){var d=document.documentElement.classList.contains('dark');icon.innerHTML=d?SUN:MOON;btn.setAttribute('aria-label',d?'Alternar para modo claro':'Alternar para modo escuro');if(tip)tip.textContent=d?'Modo claro':'Modo escuro';}
+  btn.addEventListener('click',function(){document.documentElement.classList.toggle('dark');sync();});sync();
+})();
+(function(){
+  var nav=document.querySelector('[data-sidenav]'),opener=document.querySelector('[data-drawer-open]'),backdrop=document.querySelector('[data-drawer-backdrop]');
+  function openD(){nav.classList.add('is-open');if(backdrop)backdrop.classList.add('is-open');}
+  function closeD(){nav.classList.remove('is-open');if(backdrop)backdrop.classList.remove('is-open');}
+  if(opener)opener.addEventListener('click',openD);
+  if(backdrop)backdrop.addEventListener('click',closeD);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&nav.classList.contains('is-open'))closeD();});
+})();
 
-<script>(function(){var W={"Ativa":"ok","Convertido":"ok","Convite enviado":"warn","Novo":"new","Em atendimento":"info","Convite expirado":"bad","Não convertido":"bad","Inativa":"bad"};function col(r){(r||document).querySelectorAll(".wchip").forEach(function(c){var t=(c.textContent||"").trim(),k=W[t];["ok","warn","info","bad","new"].forEach(function(x){c.classList.remove("wchip--"+x);});if(k)c.classList.add("wchip--"+k);});}col();try{new MutationObserver(function(){col();}).observe(document.body,{childList:true,subtree:true});}catch(e){}})();</script>
+/* ===== Índice: scrollspy + clicar rola ===== */
+(function(){
+  var scroll=document.querySelector('.scroll');
+  var items=[].slice.call(document.querySelectorAll('.idx__item'));
+  var byId={};items.forEach(function(it){byId[it.getAttribute('data-target')]=it;});
+  var spies=[].slice.call(document.querySelectorAll('[data-spy]'));
+  function setCurrent(id){items.forEach(function(it){var on=it.getAttribute('data-target')===id;it.classList.toggle('is-current',on);if(on){it.setAttribute('aria-current','true');}else{it.removeAttribute('aria-current');}});}
+  items.forEach(function(it){it.addEventListener('click',function(){var el=document.getElementById(it.getAttribute('data-target'));if(el){el.scrollIntoView({behavior:'smooth',block:'start'});setCurrent(it.getAttribute('data-target'));}});});
+  if('IntersectionObserver' in window){
+    var obs=new IntersectionObserver(function(es){
+      es.forEach(function(en){if(en.isIntersecting){setCurrent(en.target.id);}});
+    },{root:scroll,rootMargin:'-12% 0px -78% 0px',threshold:0});
+    spies.forEach(function(s){obs.observe(s);});
+  }
+  // Fim da rolagem: a última seção não alcança a faixa de deteção -> destaca "Revisão e envio"
+  scroll.addEventListener('scroll',function(){
+    if(scroll.scrollTop+scroll.clientHeight>=scroll.scrollHeight-4){setCurrent('sec-revisao');}
+  },{passive:true});
+})();
+
+/* ===== Vigência: "em aberto" desabilita/limpa o Fim ===== */
+function toggleVigencia(open){
+  var fim=document.getElementById('vig-fim');
+  fim.disabled=open; if(open){fim.value='';}
+  updateSummary();
+}
+
+/* ===== Regime principal / secundários / natureza ===== */
+var REGLABEL={'1':'Regime Específico de Serviços Financeiros','2':'Regime Específico de Plano de Assistência à Saúde','3':'Regime Específico de Concursos de Prognósticos','9':'Outros Regimes de Tributação'};
+function onRegimeP(){
+  var p=(document.querySelector('input[name="reg-p"]:checked')||{}).value;
+  // Secundário não pode repetir o principal: desabilita e desmarca o correspondente
+  document.querySelectorAll('.selectcard[data-sec]').forEach(function(card){
+    var inp=card.querySelector('input'),same=card.getAttribute('data-sec')===p;
+    inp.disabled=same;
+    if(same){inp.checked=false;card.setAttribute('title','Já é o regime principal');}else{card.removeAttribute('title');}
+  });
+  updateSummary();
+}
+function onRegimeS(){updateSummary();}
+function onNatureza(){updateSummary();}
+
+/* ===== Resumo (Revisão e envio) ===== */
+function updateSummary(){
+  // Vigência
+  var open=document.getElementById('vig-aberta').checked;
+  var ini=document.getElementById('vig-inicio').value||'—';
+  var fim=document.getElementById('vig-fim').value;
+  document.getElementById('sum-vigencia').textContent='A partir de '+ini+' · '+(open||!fim?'em aberto':'até '+fim);
+  // Regime principal
+  var p=(document.querySelector('input[name="reg-p"]:checked')||{}).value;
+  document.getElementById('sum-regp').textContent=p?REGLABEL[p]:'—';
+  // Secundários
+  var s=[].slice.call(document.querySelectorAll('input[name="reg-s"]:checked')).map(function(i){return REGLABEL[i.value];});
+  document.getElementById('sum-regs').textContent=s.length?s.join(' · '):'—';
+  // Natureza
+  var n=(document.querySelector('input[name="nat"]:checked')||{}).value;
+  document.getElementById('sum-nat').textContent=n==='imunidade'?'Imunidade ou não incidência':(n==='regular'?'Tributação regular':'—');
+  // Atividades
+  var na=selected.size;
+  document.getElementById('sum-ativ').textContent=na?(na+' selecionada'+(na>1?'s':'')):'Nenhuma selecionada';
+}
+
+/* ===== Drawer de Atividades (Tabela 21) ===== */
+var CATS=[
+ {c:'Crédito',i:[['01A','Operações de crédito']]},
+ {c:'Câmbio',i:[['02A','Operações de câmbio']]},
+ {c:'Títulos e valores mobiliários',i:[['03A','Títulos e valores mobiliários']]},
+ {c:'Securitização e faturização',i:[['04A','Securitização'],['05A','Faturização (factoring)']]},
+ {c:'Arrendamento mercantil (leasing)',i:[['06A','Leasing operacional'],['06B','Leasing financeiro']]},
+ {c:'Consórcio',i:[['07A','Administração de consórcio']]},
+ {c:'Gestão de recursos',i:[['08A','Gestão e administração de recursos e fundos']]},
+ {c:'Arranjos de pagamento',sug:true,i:[['09A','Credenciadora ou subcredenciadora'],['09B','Instituidor do arranjo (bandeiras)'],['09C','Emissor de cartões'],['09D','Administração de programas de fidelização'],['09E','Programa de fidelidade próprio'],['09F','Vale refeição, alimentação ou transporte'],['09Z','Outros tipos de arranjo']]},
+ {c:'Mercados e infraestrutura',i:[['10A','Mercados organizados, infraestruturas e depositárias']]},
+ {c:'Seguros',i:[['11A','Seguros de ramos elementares e de pessoas'],['11B','Seguros de pessoas com cobertura por sobrevivência']]},
+ {c:'Resseguros',i:[['12A','Operações de resseguros']]},
+ {c:'Previdência privada',i:[['13A','Previdência complementar aberta'],['13B','Previdência complementar fechada']]},
+ {c:'Capitalização',i:[['14A','Operações de capitalização']]},
+ {c:'Intermediação',i:[['15A','Intermediação de consórcios, seguros, previdência e capitalização']]},
+ {c:'Ativos virtuais',i:[['16A','Serviços de ativos virtuais']]},
+ {c:'Proteção patrimonial',i:[['17A','Proteção patrimonial mutualista']]},
+];
+var NAME={};CATS.forEach(function(g){g.i.forEach(function(p){NAME[p[0]]=p[1];});});
+var selected=new Set();          // seleção confirmada (começa vazia)
+var draft=new Set();             // seleção temporária no drawer
+var XICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>';
+
+function renderChips(){
+  var empty=document.getElementById('ativ-empty'),filled=document.getElementById('ativ-filled'),chips=document.getElementById('ativ-chips');
+  var arr=Array.from(selected);
+  if(!arr.length){empty.hidden=false;filled.hidden=true;chips.innerHTML='';updateSummary();return;}
+  empty.hidden=true;filled.hidden=false;
+  chips.innerHTML=arr.map(function(c){return '<span class="tag tag--primary"><span class="chip__code">'+c+'</span> '+NAME[c]+'<button type="button" class="tag__x" aria-label="Remover '+c+'" onclick="removeChip(\''+c+'\')">'+XICON+'</button></span>';}).join('');
+  updateSummary();
+}
+function removeChip(c){selected.delete(c);renderChips();}
+function openDk(){draft=new Set(selected);document.getElementById('dksearch').value='';renderList();document.getElementById('dkback').classList.add('is-open');document.getElementById('dk').classList.add('is-open');}
+function closeDk(){document.getElementById('dkback').classList.remove('is-open');document.getElementById('dk').classList.remove('is-open');}
+function applyDk(){selected=new Set(draft);renderChips();closeDk();}
+function toggleAtiv(c,on){if(on)draft.add(c);else draft.delete(c);document.getElementById('dkcount').textContent=draft.size;}
+function renderList(){
+  var q=(document.getElementById('dksearch').value||'').toLowerCase().trim(),html='',any=false;
+  CATS.forEach(function(g){
+    var items=g.i.filter(function(it){return !q||it[0].toLowerCase().indexOf(q)>=0||it[1].toLowerCase().indexOf(q)>=0;});
+    if(!items.length)return;any=true;
+    html+='<div class="dk__group"><p class="dk__gh">'+g.c+(g.sug?'<span class="dk__gsug">Sugerido</span>':'')+'</p>';
+    items.forEach(function(it){var c=it[0],on=draft.has(c);html+='<label class="dk__item"><input type="checkbox" '+(on?'checked':'')+' onchange="toggleAtiv(\''+c+'\',this.checked)"><span class="dk__it"><b><span class="code">'+c+'</span>'+it[1]+'</b></span></label>';});
+    html+='</div>';
+  });
+  document.getElementById('dkbody').innerHTML=any?html:'<p class="dk__none">Nenhuma atividade encontrada.</p>';
+  document.getElementById('dkcount').textContent=draft.size;
+}
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeDk();});
+
+/* ===== Toasts ===== */
+function doToast(msg,kind){
+  var wrap=document.getElementById('toasts');
+  var t=document.createElement('div');t.className='toast'+(kind?' toast--'+kind:'');
+  var ic=kind==='success'?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>';
+  t.innerHTML='<span class="toast__icon" style="width:20px;height:20px">'+ic+'</span><div><p class="toast__title">'+msg+'</p></div>';
+  wrap.appendChild(t);setTimeout(function(){t.style.transition='opacity .3s';t.style.opacity='0';setTimeout(function(){t.remove();},300);},2600);
+}
+
+/* init */
+onRegimeP();renderChips();updateSummary();
+</script>
+<script>
+/* Cancelar com confirmação: funções globais chamadas pelos onclick do rodapé e da modal */
+function formHasData(){var ins=document.querySelectorAll('.body input[type="text"]');for(var i=0;i<ins.length;i++){if((ins[i].value||'').trim()!=='')return true;}return false;}
+function openCancelModal(){var m=document.getElementById('cancel-modal');m.style.display='grid';var b=m.querySelector('.btn--ghost');if(b)b.focus();}
+function closeCancelModal(){document.getElementById('cancel-modal').style.display='none';}
+function tryCancel(){if(formHasData()){openCancelModal();}else{location.href='painel.html';}}
+function exitDiscard(){location.href='painel.html';}
+function exitSave(){closeCancelModal();if(window.doToast)doToast('Rascunho guardado.','success');setTimeout(function(){location.href='painel.html';},700);}
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){var m=document.getElementById('cancel-modal');if(m&&m.style.display!=='none')closeCancelModal();}});
+</script>
+<script>
+/* Date picker do DS: input clicável -> popover de calendário com nossos estilos (sem lib externa) */
+(function(){
+  var MONTHS=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  var WD=['D','S','T','Q','Q','S','S'];
+  function pad(n){return (n<10?'0':'')+n;}
+  function parse(v){var m=/^(\d{2})\/(\d{2})\/(\d{4})$/.exec((v||'').trim());if(!m)return null;var d=new Date(+m[3],+m[2]-1,+m[1]);return isNaN(d.getTime())?null:d;}
+  function fmt(d){return pad(d.getDate())+'/'+pad(d.getMonth()+1)+'/'+d.getFullYear();}
+  var open=null;
+  function close(){if(open){open.pop.remove();open=null;document.removeEventListener('mousedown',onDoc,true);}}
+  function onDoc(e){if(open&&!open.pop.contains(e.target)&&e.target!==open.input)close();}
+  function build(inp){
+    close();
+    var sel=parse(inp.value);var today=new Date();today.setHours(0,0,0,0);
+    var base=sel||today;
+    var wrap=inp.closest('.field-icon')||inp.parentNode;
+    if(getComputedStyle(wrap).position==='static')wrap.style.position='relative';
+    var pop=document.createElement('div');pop.className='dp';pop.setAttribute('role','dialog');pop.setAttribute('aria-label','Escolher data');
+    open={input:inp,pop:pop,view:new Date(base.getFullYear(),base.getMonth(),1),sel:sel,today:today};
+    wrap.appendChild(pop);render();
+    document.addEventListener('mousedown',onDoc,true);
+  }
+  function render(){
+    var v=open.view,sel=open.sel,today=open.today;
+    var start=new Date(v.getFullYear(),v.getMonth(),1).getDay();
+    var daysIn=new Date(v.getFullYear(),v.getMonth()+1,0).getDate();
+    var prevDays=new Date(v.getFullYear(),v.getMonth(),0).getDate();
+    var h='<div class="dp__head"><button type="button" class="dp__nav" data-mv="-1" aria-label="Mês anterior"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button><button type="button" class="dp__title" data-today>'+MONTHS[v.getMonth()]+' '+v.getFullYear()+'</button><button type="button" class="dp__nav" data-mv="1" aria-label="Próximo mês"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button></div><div class="dp__grid">';
+    for(var w=0;w<7;w++)h+='<span class="dp__wd">'+WD[w]+'</span>';
+    for(var i=0;i<start;i++){var dn=prevDays-start+1+i;h+='<button type="button" class="dp__day dp__day--out" data-d="'+dn+'" data-m="-1">'+dn+'</button>';}
+    for(var d=1;d<=daysIn;d++){
+      var cur=new Date(v.getFullYear(),v.getMonth(),d).getTime();
+      var cls='dp__day';
+      if(sel&&cur===new Date(sel.getFullYear(),sel.getMonth(),sel.getDate()).getTime())cls+=' dp__day--sel';
+      if(cur===today.getTime())cls+=' dp__day--today';
+      h+='<button type="button" class="'+cls+'" data-d="'+d+'" data-m="0">'+d+'</button>';
+    }
+    var cells=start+daysIn,trail=(7-(cells%7))%7;
+    for(var t=1;t<=trail;t++)h+='<button type="button" class="dp__day dp__day--out" data-d="'+t+'" data-m="1">'+t+'</button>';
+    h+='</div>';
+    open.pop.innerHTML=h;
+    open.pop.querySelectorAll('[data-mv]').forEach(function(b){b.addEventListener('click',function(){open.view=new Date(open.view.getFullYear(),open.view.getMonth()+(+b.getAttribute('data-mv')),1);render();});});
+    open.pop.querySelector('[data-today]').addEventListener('click',function(){open.view=new Date(open.today.getFullYear(),open.today.getMonth(),1);render();});
+    open.pop.querySelectorAll('.dp__day').forEach(function(b){b.addEventListener('click',function(){
+      var picked=new Date(open.view.getFullYear(),open.view.getMonth()+(+b.getAttribute('data-m')),+b.getAttribute('data-d'));
+      var inp=open.input;inp.value=fmt(picked);inp.dispatchEvent(new Event('change',{bubbles:true}));close();
+    });});
+  }
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&open)close();});
+  function init(inp){
+    inp.readOnly=true;inp.style.cursor='pointer';
+    inp.addEventListener('focus',function(){build(inp);});
+    inp.addEventListener('click',function(){if(!open||open.input!==inp)build(inp);});
+  }
+  window.addEventListener('load',function(){document.querySelectorAll('input[data-datepicker]').forEach(init);});
+})();
+</script>
 </body></html>

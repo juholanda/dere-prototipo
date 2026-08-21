@@ -1,4 +1,4 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Detalhes do lead · a-DeRE Backoffice</title>
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Informações do contribuinte · Jornadas · a-DeRE</title>
 <style>/* =============================================================================
    Design System — DeRE (Plataforma de Gestão Tributária Especial)
    Tokens + componentes. CSS puro por variável: portável (funciona sem build) e
@@ -940,156 +940,77 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 .ctxsw > .orgswitch{padding-left:var(--space-4);padding-right:var(--space-4)}
 </style>
 <style>
-  :root{
-    --color-bg:var(--slate-100);--color-surface:#ffffff;--color-surface-2:var(--slate-100);
-    --color-border:var(--slate-200);--color-divider:var(--slate-200);
-    --color-text:var(--slate-700);--color-heading:var(--slate-900);--color-text-muted:var(--slate-500);--color-text-onmuted:var(--slate-600);
-    --color-primary:var(--slate-800);--color-primary-hover:var(--slate-900);--color-primary-active:var(--slate-900);
-    --color-primary-subtle:var(--slate-100);--color-primary-contrast:#ffffff;--color-primary-darker:var(--slate-900);
-    --ring:0 0 0 3px rgba(100,116,139,.35);
-  }
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--slate-100);color:var(--slate-700);font-family:var(--font-sans)}
-  .bo{display:grid;grid-template-columns:248px 1fr;min-height:100vh}
-  .bo__side{background:#fff;border-right:1px solid var(--slate-200);display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
-  .bo__brand{display:flex;align-items:center;gap:10px;padding:0 20px;border-bottom:1px solid var(--slate-200);height:65px}
-  .bo__brand-mark{width:30px;height:30px;border-radius:7px;background:var(--slate-800);color:#fff;display:grid;place-items:center;font-weight:800;font-size:14px;flex:0 0 auto}
-  .bo__brand-tx{display:flex;flex-direction:column;line-height:1.15}
-  .bo__brand-tx b{font-size:16px;color:var(--slate-900);font-weight:700}
-  .bo__brand-tx span{font-size:12px;color:var(--slate-500);letter-spacing:.04em;text-transform:uppercase;font-weight:600}
-  .bo__nav{padding:16px 12px;display:flex;flex-direction:column;gap:2px}
-  .bo__navitem{display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:8px;color:var(--slate-600);font-size:16px;font-weight:500;text-decoration:none;cursor:pointer}
-  .bo__navitem svg{width:18px;height:18px;flex:0 0 auto;color:var(--slate-400)}
-  .bo__navitem:hover{background:var(--slate-100);color:var(--slate-900)}
-  .bo__navitem.is-active{background:var(--slate-100);color:var(--slate-900);font-weight:600}
-  .bo__navitem.is-active svg{color:var(--slate-700)}
-  .bo__sidefoot{margin-top:auto;padding:14px 16px;border-top:1px solid var(--slate-200);font-size:12px;color:var(--slate-400)}
-  .bo__main{display:flex;flex-direction:column;min-width:0}
-  .bo__top{height:65px;background:#fff;border-bottom:1px solid var(--slate-200);display:flex;align-items:center;justify-content:space-between;gap:16px;padding:0 32px;position:sticky;top:0;z-index:20}
-  .bo__topnav{display:flex;align-items:center;gap:16px;min-width:0}
-  .bo__topright{display:flex;align-items:center;gap:8px}
-  .bo__user{display:flex;align-items:center;gap:10px}
-  .bo__avatar{width:36px;height:36px;border-radius:50%;background:var(--slate-200);color:var(--slate-700);display:grid;place-items:center;font-weight:700;font-size:14px}
-  .bo__userinfo{display:flex;flex-direction:column;line-height:1.2}
-  .bo__username{font-size:14px;font-weight:600;color:var(--slate-900)}
-  .bo__userrole{font-size:12px;color:var(--slate-500)}
-  .bo__iconbtn{width:34px;height:34px;border-radius:8px;border:1px solid var(--slate-200);background:#fff;color:var(--slate-500);display:grid;place-items:center;cursor:pointer;margin-left:6px}
-  .bo__iconbtn:hover{background:var(--slate-100);color:var(--slate-800)}
-  .bo__iconbtn svg{width:17px;height:17px}
-  .bo__content{padding:32px;width:100%;max-width:1120px;margin:0 auto}
-
-  .det__head{margin-bottom:26px}
-  .det__titlerow{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-  .det__title{font-size:var(--text-2xl)!important;font-weight:700;color:var(--slate-900);margin:0;display:inline-flex;align-items:baseline;gap:10px}
-  .det__title-id{font-size:var(--text-2xl);font-weight:600;color:var(--slate-400);font-variant-numeric:tabular-nums}
-  .backlink{display:inline-flex;align-items:center;gap:6px;font-size:16px;font-weight:600;color:var(--slate-600);text-decoration:none;white-space:nowrap}
-  .backlink svg{width:16px;height:16px}
-  .backlink:hover{color:var(--slate-900);text-decoration:underline}
-
-  .det__grid{display:grid;grid-template-columns:1.6fr 1fr;gap:20px;align-items:start}
-  .det-card{background:#fff;border:1px solid var(--slate-200);border-radius:10px;padding:22px 24px;margin-bottom:20px}
-  .det-card:last-child{margin-bottom:0}
-  .det-card__hd{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
-  .det-card__t{font-size:16px!important;font-weight:700;color:var(--slate-900);margin:0}
-
-  .dl{display:flex;flex-direction:column}
-  .dl__row{display:grid;grid-template-columns:132px 1fr;gap:16px;padding:13px 0;border-bottom:1px solid var(--slate-100)}
-  .dl__row:first-child{padding-top:0}
-  .dl__row:last-child{border-bottom:0;padding-bottom:0}
-  .dl__k{font-size:14px;color:var(--slate-500);font-weight:600}
-  .dl__v{font-size:16px;color:var(--slate-800);line-height:1.55;word-break:break-word}
-  .dl__v a{color:var(--slate-800);text-decoration:none;border-bottom:1px solid var(--slate-300)}
-  .dl__v--msg{color:var(--slate-700)}
-  .dl__na{color:var(--slate-400)}
-
-  .stat-now{display:flex;align-items:center;gap:10px;margin-bottom:18px}
-  .stat-now__lbl{font-size:14px;color:var(--slate-500);font-weight:600}
-  .follow-when{font-size:14px;color:var(--slate-500);margin:-6px 0 16px;display:flex;align-items:center;gap:6px}
-  .follow-when svg{width:13px;height:13px;color:var(--slate-400);flex:0 0 auto}
-  .follow-desc{font-size:14px;color:var(--slate-600);line-height:1.55;margin:0 0 16px}
-  .follow-act{display:flex;flex-direction:column;gap:10px}
-  .follow-act .btn{width:100%;justify-content:center}
-
-  .wchip{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;white-space:nowrap;border:1px solid var(--slate-200);background:var(--slate-100);color:var(--slate-700)}
-  .wchip--lg{font-size:14px;padding:6px 13px}
-  .wchip__dot{width:7px;height:7px;border-radius:50%;background:var(--slate-400);flex:0 0 auto}
-  .wchip--on{background:var(--slate-100);color:var(--slate-800);border-color:var(--slate-300)}
-  .wchip--on .wchip__dot{background:var(--slate-700)}
-  .wchip--wait .wchip__dot{background:var(--slate-400)}
-  .wchip--done{background:var(--slate-800);color:#fff;border-color:var(--slate-800)}
-  .wchip--done .wchip__dot{background:#fff}
-  .wchip--off{background:#fff;color:var(--slate-500);border-style:dashed;border-color:var(--slate-300)}
-  .wchip--off .wchip__dot{background:transparent;border:1.5px solid var(--slate-400);width:8px;height:8px}
-
-  /* drawer */
-  .bo-drawer[hidden]{display:none}
-  .bo-drawer{position:fixed;inset:0;z-index:100}
-  .bo-drawer__ovl{position:absolute;inset:0;background:rgba(15,23,42,.42);opacity:0;transition:opacity .2s ease}
-  .bo-drawer.is-open .bo-drawer__ovl{opacity:1}
-  .bo-drawer__panel{position:absolute;top:0;right:0;height:100%;width:min(540px,94vw);background:#fff;border-left:1px solid var(--slate-200);box-shadow:-24px 0 60px -24px rgba(15,23,42,.35);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .22s ease}
-  .bo-drawer.is-open .bo-drawer__panel{transform:translateX(0)}
-  .bo-drawer__head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:22px 24px;border-bottom:1px solid var(--slate-200)}
-  .bo-drawer__title{font-size:20px;font-weight:700;color:var(--slate-900);margin:0}
-  .bo-drawer__close{width:34px;height:34px;border-radius:8px;border:1px solid var(--slate-200);background:#fff;color:var(--slate-500);display:grid;place-items:center;cursor:pointer;flex:0 0 auto}
-  .bo-drawer__close:hover{background:var(--slate-100);color:var(--slate-800)}
-  .bo-drawer__close svg{width:17px;height:17px}
-  .bo-drawer__body{flex:1;overflow-y:auto;padding:24px}
-  .bo-drawer__foot{display:flex;justify-content:flex-end;gap:12px;padding:16px 24px;border-top:1px solid var(--slate-200)}
-  .fromlead{display:flex;align-items:flex-start;gap:9px;background:var(--slate-50);border:1px solid var(--slate-200);border-radius:9px;padding:12px 14px;margin-bottom:24px;font-size:14px;color:var(--slate-600);line-height:1.5}
-  .fromlead svg{width:16px;height:16px;color:var(--slate-500);flex:0 0 auto;margin-top:1px}
-  .dsec{margin-bottom:32px}
-  .dsec:last-child{margin-bottom:0}
-  .dsec__t{font-size:16px;font-weight:700;color:var(--slate-900);margin:0 0 3px}
-  .dsec__d{font-size:14px;color:var(--slate-500);margin:0 0 18px;line-height:1.5}
-  .dfld{display:flex;flex-direction:column;gap:7px;margin-bottom:16px}
-  .dfld:last-child{margin-bottom:0}
-  .dfld label{font-size:14px;font-weight:600;color:var(--slate-700)}
-  .dfld .opt{font-size:12px;color:var(--slate-400);font-weight:500}
-  .dfld input{height:42px;padding:0 13px;border:1px solid var(--slate-300);border-radius:8px;background:#fff;font:inherit;font-size:16px;color:var(--slate-800)}
-  .dfld input:focus{outline:none;border-color:var(--slate-500);box-shadow:0 0 0 3px rgba(100,116,139,.15)}
-  .dfld input::placeholder{color:var(--slate-400)}
-  .dfld--key input{border-color:var(--slate-400)}
-  .dhint{font-size:12px;color:var(--slate-500);display:flex;gap:6px;line-height:1.45}
-  .dhint svg{width:14px;height:14px;color:var(--slate-400);flex:0 0 auto;margin-top:1px}
-  .dz{display:flex;align-items:center;gap:12px;border:1.5px dashed var(--slate-300);border-radius:10px;padding:16px;background:var(--slate-50);cursor:pointer;transition:border-color .15s,background .15s;text-align:left}
-  .dz:hover{border-color:var(--slate-400);background:var(--slate-100)}
-  .dz__ico{width:38px;height:38px;border-radius:9px;background:#fff;border:1px solid var(--slate-200);color:var(--slate-500);display:grid;place-items:center;flex:0 0 auto}
-  .dz__ico svg{width:18px;height:18px}
-  .dz__tx{font-size:14px;color:var(--slate-600);line-height:1.5}
-  .dz__tx b{color:var(--slate-900);text-decoration:underline}
-  .dz__hint{display:block;font-size:11.5px;color:var(--slate-400)}
-  .dz-files{display:flex;flex-direction:column;gap:8px;margin-top:12px}
-  .dz-file{display:flex;align-items:center;gap:10px;padding:9px 10px 9px 12px;border:1px solid var(--slate-200);border-radius:8px;background:#fff}
-  .dz-file__ico{width:28px;height:28px;border-radius:6px;background:var(--slate-100);color:var(--slate-500);display:grid;place-items:center;flex:0 0 auto}
-  .dz-file__ico svg{width:15px;height:15px}
-  .dz-file__nm{flex:1;min-width:0;font-size:14px;color:var(--slate-800);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .dz-file__tipo{flex:0 0 auto;width:148px;font:inherit;font-size:12px;padding:5px 24px 5px 9px;border:1px solid var(--slate-300);border-radius:6px;background:#fff;color:var(--slate-700)}
-  .dz-file__rm{width:26px;height:26px;border-radius:6px;border:0;background:transparent;color:var(--slate-400);cursor:pointer;display:grid;place-items:center;flex:0 0 auto}
-  .dz-file__rm:hover{background:var(--slate-100);color:var(--slate-700)}
-  .dz-file__rm svg{width:15px;height:15px}
-
-  /* toast */
-  .toast{position:fixed;right:24px;bottom:24px;z-index:200;background:var(--slate-900);color:#fff;border-radius:11px;padding:14px 12px 14px 16px;display:flex;align-items:flex-start;gap:12px;box-shadow:0 16px 44px -14px rgba(15,23,42,.55);max-width:400px;transform:translateY(16px);opacity:0;transition:transform .25s ease,opacity .25s ease;pointer-events:none}
-  .toast.is-on{transform:translateY(0);opacity:1;pointer-events:auto}
-  .toast__ico{width:22px;height:22px;border-radius:50%;background:#fff;color:var(--slate-900);display:grid;place-items:center;flex:0 0 auto;margin-top:1px}
-  .toast__ico svg{width:13px;height:13px}
-  .toast__body{font-size:16px;line-height:1.4;padding-top:1px}
-  .toast__body b{font-weight:700;display:block;margin-bottom:2px}
-  .toast__body p{margin:0;color:var(--slate-300);font-size:14px}
-  .toast__close{width:26px;height:26px;border-radius:6px;border:0;background:transparent;color:var(--slate-400);display:grid;place-items:center;cursor:pointer;flex:0 0 auto;margin-left:2px}
-  .toast__close:hover{background:rgba(255,255,255,.12);color:#fff}
-  .toast__close svg{width:15px;height:15px}
-  @media (max-width:980px){.det__grid{grid-template-columns:1fr}}
-  @media (max-width:860px){.bo{grid-template-columns:1fr}.bo__side{display:none}}
-
-  /* status com cor (wireframe): versao light por significado */
-  .wchip--ok,.wchip--warn,.wchip--info,.wchip--new,.wchip--bad{border-style:solid}
-  .wchip--ok{background:var(--green-50);border-color:color-mix(in srgb,var(--green-600) 34%,#fff);color:var(--green-700)}
-  .wchip--warn{background:var(--amber-50);border-color:color-mix(in srgb,var(--amber-600) 38%,#fff);color:var(--amber-700)}
-  .wchip--info{background:var(--blue-50);border-color:var(--blue-300);color:var(--blue-700)}
-  .wchip--new{background:#faf5ff;border-color:color-mix(in srgb,#9333ea 32%,#fff);color:#7e22ce}
-  .wchip--bad{background:var(--red-50);border-color:color-mix(in srgb,var(--red-600) 32%,#fff);color:var(--red-700)}
-  .wchip--ok .wchip__dot,.wchip--warn .wchip__dot,.wchip--info .wchip__dot,.wchip--new .wchip__dot,.wchip--bad .wchip__dot{background:currentColor;border:0;width:7px;height:7px}
+  html{scrollbar-gutter:stable}
+  body{background:var(--slate-50);overflow-anchor:none}
+  .jhead{background:var(--color-surface);border-bottom:1px solid var(--color-border)}
+  .jhead .wrap{padding:56px 48px 0}
+  .jhead .tabs{border-bottom:0;margin-top:var(--space-8)}
+  .jhead .tab{font-size:var(--text-sm);padding-bottom:var(--space-3)}
+  .jhead .tab svg{width:18px;height:18px;flex:0 0 auto}
+  .jbody .wrap{padding:var(--space-8) 48px 88px}
+  .oblock{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:var(--space-6);margin-bottom:var(--space-8)}
+  .oblock .ctx{margin:0 0 var(--space-6)}
+  .oblock .ov{margin-bottom:0}
+  .wrap{max-width:940px;margin:0 auto;padding:56px 48px 88px}
+  .backrow{display:flex;align-items:center;gap:var(--space-6);margin-bottom:8px}
+  .hero{margin:36px 0 20px}
+  .hero .k{font-size:var(--text-xs);font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--color-primary);margin:0 0 6px}
+  .hero h1{font-size:var(--text-3xl);margin:0}
+  .hero .sub{color:var(--slate-600);font-size:var(--text-base);margin:10px 0 0;line-height:1.65}
+  .tabs{margin-top:6px}
+  /* contexto */
+  .ctx{margin:var(--space-6) 0 var(--space-12)}
+  .ctx p{margin:0;font-size:var(--text-base);color:var(--slate-600);line-height:1.65}
+  /* visão geral */
+  .lbl{font-size:var(--text-xs);font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--color-text-muted);margin:0 0 12px}
+  .ov{margin-bottom:var(--space-10)}
+  .seq{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+  .seq__i{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-pill);padding:6px 14px;font-size:var(--text-sm);font-weight:400;color:var(--color-heading);white-space:nowrap;box-shadow:var(--shadow-sm)}
+  .seq__n{color:var(--color-primary);font-weight:700;margin-right:6px;font-variant-numeric:tabular-nums}
+  .seq__a{color:var(--color-text-muted);flex:0 0 auto;display:grid;place-items:center}
+  .seq__a svg{width:15px;height:15px}
+  /* etapas */
+  .jstep{display:flex;flex-direction:column;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:var(--space-6);margin-bottom:16px;transition:box-shadow .15s ease;cursor:pointer}
+  .jstep:hover{box-shadow:var(--shadow-md);border-color:var(--color-primary)}
+  .jstep__hd{order:1;display:flex;align-items:center;margin-bottom:16px;cursor:pointer}
+  .jstep__num{width:34px;height:34px;border-radius:50%;background:var(--blue-50);color:var(--color-primary);font-weight:700;display:grid;place-items:center;flex:0 0 auto;font-variant-numeric:tabular-nums;border:1px solid var(--blue-200);margin-right:14px}
+  .jstep__ttl{margin:0 var(--space-6) 0 0;font-size:var(--text-lg)!important;color:var(--color-heading)}
+  .jstep__hd-r{margin-left:auto;display:flex;align-items:center;gap:14px;flex:0 0 auto}
+  .jstep__note{margin-left:var(--space-3);font-size:var(--text-xs);font-weight:600;color:var(--color-text-muted)}
+  .pctx{margin:0 0 var(--space-8);font-size:var(--text-base);color:var(--slate-600);line-height:1.6}
+  .jstep__soon{order:2;display:flex;align-items:center;gap:10px;color:var(--color-text-muted);font-size:var(--text-sm)}
+  .jstep__soon svg{width:18px;height:18px;flex:0 0 auto}
+  .jstep__chev{display:grid;place-items:center;width:32px;height:32px;padding:0;border-radius:var(--radius-base);border:1px solid var(--color-border);background:var(--color-surface);color:var(--color-text-muted);cursor:pointer;flex:0 0 auto;transition:transform .15s ease}
+  .jstep__chev:focus-visible{outline:2px solid var(--color-primary);outline-offset:2px}
+  .jstep__chev svg{width:18px;height:18px}
+  .jstep:not(.is-collapsed) .jstep__chev{transform:rotate(180deg)}
+  .jstep.is-collapsed .jstep__hd{margin-bottom:0}
+  .jstep.is-collapsed > *:not(.jstep__hd){display:none}
+  .jstep__desc{order:2;font-size:var(--text-sm);color:var(--slate-600);line-height:1.65;margin:0 0 var(--space-6)}
+  .jstep .jmeta{order:3}
+  .jstep .jblock{order:4}
+  .jstep .jctas{order:5}
+  .jstep__alt{order:6}
+  .jblock{margin:0 0 16px}
+  .jblock__k{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--color-text-muted);margin:0 0 7px}
+  .jseq{display:flex;flex-wrap:wrap;align-items:center;gap:5px}
+  .jseq__i{background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-base);padding:4px 10px;font-size:var(--text-xs);font-weight:600;color:var(--color-text);white-space:nowrap}
+  .jseq__a{color:var(--color-text-muted);flex:0 0 auto;display:grid;place-items:center}
+  .jseq__a svg{width:13px;height:13px}
+  .jmeta{display:flex;gap:40px;flex-wrap:wrap;margin:0 0 18px}
+  .jmeta__k{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--color-text-muted);margin:0 0 1px;line-height:1.2}
+  .jmeta__v{font-size:var(--text-sm);color:var(--color-heading);font-weight:500}
+  .jctas{display:flex;gap:10px;flex-wrap:wrap}
+  .jstep__alt{margin-top:18px;padding-top:18px;border-top:1px solid var(--color-divider)}
+  .jstep__alt-k{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--color-text-muted);margin:0 0 12px;display:flex;align-items:center;gap:6px}
+  .jstep__alt-k svg{width:14px;height:14px;color:var(--color-danger)}
+  .jalt{display:flex;gap:12px;align-items:flex-start;padding:14px;background:var(--color-surface-2);border-radius:var(--radius-base);margin-bottom:10px}
+  .jalt:last-child{margin-bottom:0}
+  .jalt__d{width:8px;height:8px;border-radius:50%;background:var(--color-danger);flex:0 0 auto;margin-top:7px}
+  .jalt__b{flex:1;min-width:0}
+  .jalt__b h4{margin:0 0 2px;font-size:var(--text-sm);color:var(--color-heading);font-weight:600}
+  .jalt__b p{margin:0;font-size:var(--text-xs);color:var(--slate-600);line-height:1.5}
+  .jalt__go{flex:0 0 auto;align-self:center;white-space:nowrap}
 </style>
 </head><body>
 <div id="dere-gate" style="position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;padding:24px;font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;background:radial-gradient(120% 120% at 20% 8%,#0c326f 0%,#071d41 55%,#05152e 100%)">
@@ -1115,185 +1036,47 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 </div>
 <script>if(localStorage.getItem('dere_ok')==='1'){var _g=document.getElementById('dere-gate');if(_g)_g.remove();}function dereGate(f){var i=f.querySelector('input'),e=document.getElementById('dere-err');if(i.value==='dere123'){localStorage.setItem('dere_ok','1');document.getElementById('dere-gate').remove();}else{e.innerHTML='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 auto"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>Senha incorreta. Tente novamente.';i.select();}return false;}</script>
 
-<div class="bo">
-  <aside class="bo__side">
-    <div class="bo__brand"><span class="bo__brand-mark">a</span><span class="bo__brand-tx"><b>a-DeRE</b><span>Backoffice</span></span></div>
-    <nav class="bo__nav" aria-label="Navegação principal">
-      <a class="bo__navitem" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>Dashboard</a>
-      <a class="bo__navitem is-active" href="./backoffice-leads.html" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 6.1H3M21 12.1H3M15.1 18H3"/></svg>Leads</a>
-      <a class="bo__navitem" href="./backoffice-empresas.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4M10 10h4M10 14h4"/></svg>Empresas</a>
-    </nav>
-    <div class="bo__sidefoot">a-DeRE Backoffice · v0 (wireframe)</div>
-  </aside>
-
-  <div class="bo__main">
-    <header class="bo__top">
-      <div class="bo__topnav">
-        <a class="backlink" href="./backoffice-leads.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>Voltar</a>
-        <nav class="breadcrumb" aria-label="Trilha"><a href="./backoffice-leads.html">Leads</a><span class="breadcrumb__sep">/</span><span class="breadcrumb__current" id="bc-emp">Saúde Integral</span></nav>
-      </div>
-      <div class="bo__topright">
-        <div class="bo__user"><span class="bo__avatar">JS</span><span class="bo__userinfo"><span class="bo__username">João Silva</span><span class="bo__userrole">Time de vendas</span></span></div>
-        <button class="bo__iconbtn" aria-label="Sair"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg></button>
-      </div>
-    </header>
-
-    <main class="bo__content">
-      <div class="det__head">
-        <div class="det__titlerow">
-          <h1 class="det__title"><span class="det__title-id" id="t-id">#1041</span><span id="t-emp">Saúde Integral</span></h1>
-          <span class="wchip wchip--on wchip--lg" id="statusChip"><span class="wchip__dot"></span>Em atendimento</span>
-        </div>
-      </div>
-
-      <div class="det__grid">
-        <!-- Coluna principal: dados do formulário -->
-        <div class="det-main">
-          <section class="det-card">
-            <div class="det-card__hd">
-              <h2 class="det-card__t">Dados do lead</h2>
-            </div>
-            <dl class="dl">
-              <div class="dl__row"><dt class="dl__k">Recebido em</dt><dd class="dl__v" id="v-recebido">18/08/2026 14:32</dd></div>
-              <div class="dl__row"><dt class="dl__k">Origem</dt><dd class="dl__v">Landing page</dd></div>
-              <div class="dl__row"><dt class="dl__k">Nome</dt><dd class="dl__v" id="v-nome">Carlos Menezes</dd></div>
-              <div class="dl__row"><dt class="dl__k">Instituição</dt><dd class="dl__v" id="v-inst">Saúde Integral</dd></div>
-              <div class="dl__row"><dt class="dl__k">CNPJ</dt><dd class="dl__v" id="v-cnpj">23.456.789/0001-01</dd></div>
-              <div class="dl__row"><dt class="dl__k">E-mail</dt><dd class="dl__v"><a href="#" id="v-email">carlos@saudeintegral.com.br</a></dd></div>
-              <div class="dl__row" id="row-tel"><dt class="dl__k">Telefone</dt><dd class="dl__v" id="v-tel">(21) 99876-5432</dd></div>
-              <div class="dl__row" id="row-msg"><dt class="dl__k">Mensagem</dt><dd class="dl__v dl__v--msg" id="v-msg">Somos uma operadora de saúde e queremos entender como a a-DeRE apura os regimes específicos. Podemos agendar uma demonstração para o time fiscal?</dd></div>
-            </dl>
-          </section>
-        </div>
-
-        <!-- Coluna lateral: acompanhamento + resumo -->
-        <div class="det-side">
-          <section class="det-card">
-            <div class="det-card__hd"><h2 class="det-card__t">Acompanhamento</h2></div>
-            <div class="stat-now"><span class="stat-now__lbl">Status atual</span><span class="wchip wchip--on" id="statusChip2"><span class="wchip__dot"></span>Em atendimento</span></div>
-            <p class="follow-when" id="followWhen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Iniciado em 18/08/2026 15:10</p>
-            <p class="follow-desc" id="followDesc">Contato comercial em andamento. Conclua convertendo em empresa ou marcando como não convertido.</p>
-            <div class="follow-act" id="followAct">
-              <button class="btn btn--primary" onclick="openDrawer()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M10 6h4M10 10h4M10 14h4"/><path d="M18 22v-4"/></svg>Converter em empresa</button>
-              <button class="btn btn--outline" onclick="markNotConverted()">Marcar como não convertido</button>
-            </div>
-          </section>
-        </div>
-      </div>
-    </main>
+<header class="jhead"><div class="wrap">
+  <div class="backrow"><a class="btn btn--outline btn--sm" href="./"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>Voltar</a><nav class="breadcrumb" aria-label="Trilha"><a href="../">Início</a><span class="breadcrumb__sep">/</span><a href="./">Jornadas do usuário</a><span class="breadcrumb__sep">/</span><span class="breadcrumb__current">Informações do contribuinte</span></nav></div>
+  <div class="hero">
+    <h1>Informações do contribuinte</h1>
+    <p class="sub">Primeiro preenchimento das informações do contribuinte: do painel guiado ao envio para revisão (evento D-1001).</p>
   </div>
-</div>
+</div></header>
 
-<!-- DRAWER: converter lead em empresa (dados pré-preenchidos) -->
-<div class="bo-drawer" id="drawer" hidden>
-  <div class="bo-drawer__ovl" onclick="closeDrawer()"></div>
-  <aside class="bo-drawer__panel" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
-    <header class="bo-drawer__head">
-      <h2 class="bo-drawer__title" id="drawerTitle">Converter lead em empresa</h2>
-      <button class="bo-drawer__close" onclick="closeDrawer()" aria-label="Fechar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
-    </header>
-    <div class="bo-drawer__body">
-      <div class="fromlead"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1Z"/></svg><span>Dados recebidos do formulário da landing page. Revise e confira o CNPJ antes de criar a empresa.</span></div>
-      <form id="drawerForm" onsubmit="event.preventDefault();submitConvert();">
-        <section class="dsec">
-          <h3 class="dsec__t">Dados da empresa</h3>
-          <p class="dsec__d">Dados cadastrais da empresa que será gerida na a-DeRE.</p>
-          <div class="dfld"><label for="d-cnpj">CNPJ</label><input id="d-cnpj" inputmode="numeric" value="23.456.789/0001-01"><span class="dhint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>Confira o CNPJ informado antes de criar a empresa.</span></div>
-          <div class="dfld"><label for="d-razao">Razão social</label><input id="d-razao" value="Saúde Integral"></div>
-          <div class="dfld"><label for="d-fant">Nome fantasia <span class="opt">(opcional)</span></label><input id="d-fant" placeholder="Ex.: Grupo Saúde Integral"></div>
-        </section>
-        <section class="dsec">
-          <h3 class="dsec__t">Administrador da conta</h3>
-          <p class="dsec__d">Este usuário receberá o convite para ativar o acesso e realizar a configuração inicial da conta.</p>
-          <div class="dfld"><label for="d-adm">Nome do administrador</label><input id="d-adm" value="Carlos Menezes"></div>
-          <div class="dfld dfld--key"><label for="d-email">E-mail</label><input id="d-email" type="email" value="carlos@saudeintegral.com.br"><span class="dhint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>Endereço usado para enviar o convite de ativação. Confira antes de criar.</span></div>
-        </section>
-        <section class="dsec">
-          <h3 class="dsec__t">Documentos</h3>
-          <p class="dsec__d">Anexe o contrato e outros documentos da contratação. Classifique cada arquivo pelo tipo.</p>
-          <label class="dz" for="dz-input">
-            <span class="dz__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m17 8-5-5-5 5"/><path d="M21 21H3"/></svg></span>
-            <span class="dz__tx"><b>Clique para enviar</b> ou arraste os arquivos<span class="dz__hint">PDF, DOC, JPG ou PNG até 10 MB</span></span>
-            <input id="dz-input" type="file" multiple hidden onchange="dzAdd(this.files);this.value='';">
-          </label>
-          <div class="dz-files" id="dz-files"></div>
-        </section>
-      </form>
-    </div>
-    <footer class="bo-drawer__foot">
-      <button class="btn btn--ghost" type="button" onclick="closeDrawer()">Cancelar</button>
-      <button class="btn btn--primary" type="submit" form="drawerForm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>Criar empresa e enviar convite</button>
-    </footer>
-  </aside>
-</div>
+<main class="jbody"><div class="wrap">
+  <p class="pctx">Com a conta ativada e o ambiente configurado, o próximo passo da organização é registrar o enquadramento do contribuinte na DeRE. Este é o primeiro preenchimento; alterações posteriores acontecem por eventos próprios.</p>
 
-<div class="toast" id="toast" role="status" aria-live="polite">
-  <span class="toast__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
-  <div class="toast__body"><b id="toastTitle">Pronto</b><p id="toastMsg"></p></div>
-  <button class="toast__close" onclick="hideToast()" aria-label="Fechar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
-</div>
+  <!-- 01 -->
+  <div class="jstep is-ready is-collapsed">
+    <div class="jstep__hd"><span class="jstep__num">01</span><h3 class="jstep__ttl">Acesso pelo painel guiado</h3><span class="status status--success"><span class="status__dot"></span>Disponível</span><span class="jstep__note">Front office</span><div class="jstep__hd-r"><a class="btn btn--primary btn--sm jstep__go" href="../app/frontoffice/painel.html" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Iniciar fluxo<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a><button type="button" class="jstep__chev" aria-expanded="false" aria-label="Expandir etapa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button></div></div>
+    <p class="jstep__desc">No primeiro acesso ao painel, o guia "Comece por aqui" apresenta as etapas necessárias para habilitar as declarações mensais. A Etapa 1, Informações do contribuinte, leva ao formulário de preenchimento; ela também fica acessível a qualquer momento pelo item "Info. do Contribuinte" do menu.</p>
+    <div class="jblock"><p class="jblock__k">Fluxo</p><div class="jseq"><span class="jseq__i">Login</span><span class="jseq__a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span><span class="jseq__i">Painel</span><span class="jseq__a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span><span class="jseq__i">Comece por aqui</span><span class="jseq__a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span><span class="jseq__i">Preencher informações</span></div></div>
+    <div class="jmeta"><div><p class="jmeta__k">Atores</p><p class="jmeta__v">Administrador ou preparador</p></div><div><p class="jmeta__k">Ambiente</p><p class="jmeta__v">Front office</p></div></div>
+  </div>
 
+  <!-- 02 -->
+  <div class="jstep is-ready is-collapsed">
+    <div class="jstep__hd"><span class="jstep__num">02</span><h3 class="jstep__ttl">Preenchimento do formulário</h3><span class="status status--success"><span class="status__dot"></span>Disponível</span><span class="jstep__note">Evento D-1001</span><div class="jstep__hd-r"><a class="btn btn--primary btn--sm jstep__go" href="../app/frontoffice/cadastro-contribuinte.html" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Iniciar fluxo<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a><button type="button" class="jstep__chev" aria-expanded="false" aria-label="Expandir etapa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button></div></div>
+    <p class="jstep__desc">O formulário organiza o evento D-1001 em cinco seções: Identificação (somente leitura, do Cartão CNPJ), Vigência, Regime tributário, Atividades e Revisão e envio. O preparador navega pelo índice lateral, pode guardar rascunho a qualquer momento e, ao tentar sair com alterações não guardadas, a plataforma pede confirmação.</p>
+    <div class="jblock"><p class="jblock__k">Fluxo</p><div class="jseq"><span class="jseq__i">Identificação</span><span class="jseq__a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span><span class="jseq__i">Vigência</span><span class="jseq__a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span><span class="jseq__i">Regime tributário</span><span class="jseq__a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span><span class="jseq__i">Atividades</span><span class="jseq__a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span><span class="jseq__i">Revisão e envio</span></div></div>
+    <div class="jmeta"><div><p class="jmeta__k">Atores</p><p class="jmeta__v">Preparador</p></div><div><p class="jmeta__k">Ambiente</p><p class="jmeta__v">Front office</p></div></div>
+  </div>
+
+  <!-- 03 (em breve) -->
+  <div class="jstep is-collapsed">
+    <div class="jstep__hd"><span class="jstep__num">03</span><h3 class="jstep__ttl">Revisão e envio à Receita</h3><span class="status"><span class="status__dot"></span>Em breve</span><div class="jstep__hd-r"><button type="button" class="jstep__chev" aria-expanded="false" aria-label="Expandir etapa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button></div></div>
+    <div class="jstep__soon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span>A revisão interna, o envio à Receita e o acompanhamento do processamento (protocolo e recibo) estão em construção.</span></div>
+  </div>
+</div></main>
 <script>
-  var _drawer=document.getElementById('drawer'), _toastT=null;
-  function showToast(title,msg){document.getElementById('toastTitle').textContent=title;document.getElementById('toastMsg').textContent=msg;var t=document.getElementById('toast');t.classList.add('is-on');if(_toastT)clearTimeout(_toastT);_toastT=setTimeout(hideToast,6000);}
-  function hideToast(){document.getElementById('toast').classList.remove('is-on');}
-  function openDrawer(){_drawer.hidden=false;requestAnimationFrame(function(){_drawer.classList.add('is-open');});document.body.style.overflow='hidden';}
-  function closeDrawer(){_drawer.classList.remove('is-open');document.body.style.overflow='';setTimeout(function(){_drawer.hidden=true;},220);}
-  var CLS={'Novo':'wchip--wait','Em atendimento':'wchip--on','Convertido':'wchip--done','Não convertido':'wchip--off'};
-  var BLD='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M10 6h4M10 10h4M10 14h4"/><path d="M18 22v-4"/></svg>';
-  var CLK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>';
-  function nowStr(){var d=new Date();function p(n){return(n<10?'0':'')+n;}return p(d.getDate())+'/'+p(d.getMonth()+1)+'/'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes());}
-  function startAtend(){var w=document.getElementById('followWhen');if(w)w.innerHTML=CLK+'Iniciado em '+nowStr();setStatus('Em atendimento');showToast('Atendimento iniciado','O lead está em atendimento.');}
-  function reopenAtend(){var w=document.getElementById('followWhen');if(w)w.innerHTML=CLK+'Reaberto em '+nowStr();setStatus('Em atendimento');showToast('Atendimento reaberto','O lead voltou para em atendimento.');}
-  function setStatus(s){['statusChip','statusChip2'].forEach(function(id){var el=document.getElementById(id);el.className='wchip '+CLS[s];el.innerHTML='<span class="wchip__dot"></span>'+s;});renderFollow(s);}
-  function renderFollow(s){
-    var d=document.getElementById('followDesc'), a=document.getElementById('followAct'), w=document.getElementById('followWhen');
-    if(w)w.style.display=(s==='Novo')?'none':'';
-    if(s==='Novo'){d.textContent='Lead recebido. O atendimento comercial ainda não começou.';a.innerHTML='<button class="btn btn--primary" onclick="startAtend()">Iniciar atendimento</button>';}
-    else if(s==='Em atendimento'){d.textContent='Contato comercial em andamento. Conclua convertendo em empresa ou marcando como não convertido.';a.innerHTML='<button class="btn btn--primary" onclick="openDrawer()">'+BLD+'Converter em empresa</button><button class="btn btn--outline" onclick="markNotConverted()">Marcar como não convertido</button>';}
-    else if(s==='Convertido'){d.textContent='Empresa criada a partir deste lead. O convite de ativação foi enviado ao administrador.';a.innerHTML='<a class="btn btn--outline" href="'+empHrefFromPage()+'">'+BLD+'Ver empresa</a>';}
-    else{d.textContent='Atendimento encerrado sem conversão.';a.innerHTML='<button class="btn btn--ghost" onclick="reopenAtend()">Reabrir atendimento</button>';}
-  }
-  function markNotConverted(){setStatus('Não convertido');showToast('Lead atualizado','Marcado como não convertido.');}
-  function empHref(v){return './backoffice-empresa-detalhes.html?empresa='+encodeURIComponent(v.empresa||'')+'&cnpj='+encodeURIComponent(v.cnpj||'')+'&adm='+encodeURIComponent(v.adm||'')+'&email='+encodeURIComponent(v.email||'')+'&lead='+encodeURIComponent(v.lead||'');}
-  function empHrefFromPage(){var g=function(id){var e=document.getElementById(id);return e?e.textContent.trim():'';};return empHref({empresa:g('t-emp'),cnpj:g('v-cnpj'),adm:g('v-nome'),email:g('v-email'),lead:g('t-id')});}
-  function submitConvert(){
-    var g=function(id){var e=document.getElementById(id);return e?e.value.trim():'';};
-    var lead=(document.getElementById('t-id')||{textContent:''}).textContent;
-    window.location.href=empHref({empresa:g('d-razao'),cnpj:g('d-cnpj'),adm:g('d-adm'),email:g('d-email'),lead:lead})+'&created=1';
-  }
-  function dzAdd(files){
-    var box=document.getElementById('dz-files');
-    var FI='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v6h6"/></svg>';
-    var XI='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>';
-    var TP='<option>Contrato</option><option>Proposta comercial</option><option>Documento de identificação</option><option>Outro</option>';
-    for(var i=0;i<files.length;i++){var f=files[i];var row=document.createElement('div');row.className='dz-file';row.innerHTML='<span class="dz-file__ico">'+FI+'</span><span class="dz-file__nm">'+f.name+'</span><select class="dz-file__tipo">'+TP+'</select><button type="button" class="dz-file__rm" aria-label="Remover">'+XI+'</button>';row.querySelector('.dz-file__rm').addEventListener('click',function(){this.closest('.dz-file').remove();});box.appendChild(row);}
-  }
-  // popula o detalhe com os dados do lead vindo da lista (querystring); sem querystring, mantém o exemplo
-  (function(){
-    if(!location.search){renderFollow('Em atendimento');return;}
-    var q=new URLSearchParams(location.search);
-    function set(id,v){var el=document.getElementById(id);if(el)el.textContent=v;}
-    var emp=q.get('empresa')||'Saúde Integral', cnpj=q.get('cnpj')||'', nome=q.get('nome')||'', email=q.get('email')||'', tel=q.get('tel')||'', st=q.get('status')||'Em atendimento', rec=q.get('recebido')||'', msg=q.get('msg')||'';
-    set('t-id', q.get('id')||'#1041');
-    set('t-emp', emp);
-    set('bc-emp', emp);
-    set('v-recebido', rec||'—');
-    set('v-nome', nome||'—');
-    set('v-inst', emp);
-    set('v-cnpj', cnpj||'—');
-    var em=document.getElementById('v-email'); if(em)em.textContent=email||'—';
-    var rt=document.getElementById('row-tel'); if(rt)rt.style.display=tel?'':'none'; set('v-tel',tel);
-    var rm=document.getElementById('row-msg'); if(rm)rm.style.display=msg?'':'none'; set('v-msg',msg);
-    document.getElementById('d-cnpj').value=cnpj;
-    document.getElementById('d-razao').value=emp;
-    document.getElementById('d-adm').value=nome;
-    document.getElementById('d-email').value=email;
-    var ini=q.get('iniciado')||''; var fw=document.getElementById('followWhen'); if(fw&&ini)fw.innerHTML=CLK+'Iniciado em '+ini;
-    setStatus(st);
-  })();
-  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!_drawer.hidden)closeDrawer();});
+  // etapas colapsáveis — clique no card todo (menos em links de ação)
+  document.querySelectorAll('.jstep').forEach(function(step){step.addEventListener('click',function(e){
+    if(e.target.closest('a')) return;
+    var collapsed = step.classList.toggle('is-collapsed');
+    var chev = step.querySelector('.jstep__chev');
+    if(chev){chev.setAttribute('aria-expanded', String(!collapsed));
+      chev.setAttribute('aria-label', collapsed ? 'Expandir etapa' : 'Recolher etapa');}
+  });});
 </script>
-
-<script>(function(){var W={"Ativa":"ok","Convertido":"ok","Convite enviado":"warn","Novo":"new","Em atendimento":"info","Convite expirado":"bad","Não convertido":"bad","Inativa":"bad"};function col(r){(r||document).querySelectorAll(".wchip").forEach(function(c){var t=(c.textContent||"").trim(),k=W[t];["ok","warn","info","bad","new"].forEach(function(x){c.classList.remove("wchip--"+x);});if(k)c.classList.add("wchip--"+k);});}col();try{new MutationObserver(function(){col();}).observe(document.body,{childList:true,subtree:true});}catch(e){}})();</script>
 </body></html>

@@ -75,8 +75,8 @@
   --text-lg:1.125rem;  /* 18px · lead, subtítulo, h4 */
   --text-xl:1.25rem;   /* 20px · h3 */
   --text-2xl:1.5rem;   /* 24px · h2 */
-  --text-3xl:1.875rem; /* 30px · h1 (título de página) */
-  --text-4xl:2.25rem;  /* 36px · display (hero, número grande de KPI) */
+  --text-3xl:1.75rem; /* 30px · h1 (título de página) */
+  --text-4xl:2rem;  /* 36px · display (hero, número grande de KPI) */
   --leading-tight:1.25; --leading-snug:1.4; --leading-normal:1.6;
 
   /* ---- Raio / sombra / foco / tipografia ---- */
@@ -85,8 +85,11 @@
   --shadow-sm:0 1px 2px rgba(15,23,42,.05);
   --shadow-md:0 1px 2px rgba(15,23,42,.04), 0 12px 32px -12px rgba(15,23,42,.16);
   --shadow-lg:0 1px 2px rgba(15,23,42,.04), 0 24px 48px -20px rgba(15,23,42,.20);
+  --shadow-up:0 -2px 10px rgba(15,23,42,.05);   /* sombra pra cima: barras fixas no rodapé */
   /* Foco: anel opaco na cor da marca, separado por um anel de superfície. Passa AA (≥3:1) e fica elegante. */
   --ring: 0 0 0 2px var(--color-surface), 0 0 0 4px var(--color-primary);
+  /* Check do Lucide (path M20 6 9 17l-5-5) como máscara — usado no checkbox custom (.check e .selectcard) */
+  --ds-check:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
   --font-sans:"Source Sans 3","Source Sans Pro","Segoe UI",system-ui,-apple-system,Arial,sans-serif;
   --control-h:40px; --control-h-sm:32px; --control-h-lg:44px;
 }
@@ -114,7 +117,7 @@
   --color-danger-bg:  color-mix(in srgb, var(--red-600) 22%, var(--slate-900));
   --color-info-bg:    color-mix(in srgb, var(--sky-600) 22%, var(--slate-900));
   --color-success-fg:var(--green-200); --color-warning-fg:var(--amber-200); --color-danger-fg:var(--red-200); --color-danger-hover:var(--red-500); --color-info-fg:var(--sky-200); --color-field-border:var(--slate-400);
-  --shadow-md:0 1px 2px rgba(0,0,0,.4), 0 14px 34px -12px rgba(0,0,0,.6);--shadow-lg:0 1px 2px rgba(0,0,0,.4), 0 26px 50px -20px rgba(0,0,0,.72);
+  --shadow-md:0 1px 2px rgba(0,0,0,.4), 0 14px 34px -12px rgba(0,0,0,.6);--shadow-lg:0 1px 2px rgba(0,0,0,.4), 0 26px 50px -20px rgba(0,0,0,.72);--shadow-up:0 -2px 10px rgba(0,0,0,.5);
 }
 
 /* ---- Base ---- */
@@ -245,6 +248,14 @@ textarea.input{height:auto;padding:var(--space-2) var(--space-3);min-height:84px
 .check:has(input:disabled){opacity:.55;cursor:not-allowed}
 .check input{width:18px;height:18px;accent-color:var(--color-primary);cursor:pointer}
 .check input[type=radio]{border-radius:50%}
+/* Checkbox: caixa mais arredondada + check do Lucide (menor) no lugar do desenho nativo do browser */
+.check input[type=checkbox]{appearance:none;-webkit-appearance:none;border:1.5px solid var(--color-field-border);border-radius:var(--radius-xl);background:var(--color-surface);display:inline-grid;place-content:center;transition:background .12s,border-color .12s}
+.check input[type=checkbox]::before{content:"";width:12px;height:12px;background:var(--color-primary-contrast);transform:scale(0);transition:transform .12s;-webkit-mask:var(--ds-check) center/contain no-repeat;mask:var(--ds-check) center/contain no-repeat}
+.check input[type=checkbox]:checked{background:var(--color-primary);border-color:var(--color-primary)}
+.check input[type=checkbox]:checked::before{transform:scale(1)}
+.check input[type=checkbox]:indeterminate{background:var(--color-primary);border-color:var(--color-primary)}
+.check input[type=checkbox]:indeterminate::before{transform:scale(1);-webkit-mask:none;mask:none;width:10px;height:2px;border-radius:1px}
+@media (prefers-reduced-motion:reduce){.check input[type=checkbox]::before{transition:none}}
 .check input:hover:not(:disabled){box-shadow:0 0 0 4px color-mix(in srgb, var(--color-primary) 12%, transparent)}
 .check input:focus-visible{outline:none;box-shadow:var(--ring)}
 .check input:disabled{cursor:not-allowed}
@@ -279,6 +290,49 @@ textarea.input{height:auto;padding:var(--space-2) var(--space-3);min-height:84px
 .choice:has(input:checked) .choice__tag{color:var(--color-primary);background:var(--color-surface)}
 .choice-grid{display:grid;gap:var(--space-3)}
 .choice-grid--2{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+
+/* Selectcard — cartão selecionável (radio/checkbox) rico: número OU ícone à esquerda,
+   título + descrição + selo opcional (ex.: sugestão de IA da Axians) + indicador à direita.
+   Forma listas de escolha densas — ex.: enquadramento de regime no D-1001.
+   Uso: <label class="selectcard"><span class="selectcard__lead">1</span>
+          <span class="selectcard__body"><span class="selectcard__title">…</span>
+            <span class="selectcard__desc">…</span>
+            <span class="selectcard__seal"><svg…/>Sugerido por IA com base no CNAE</span></span>
+        <input class="selectcard__input" type="radio" name="…"></label>
+   Input real DENTRO do label → acessível; estado visual via :has(input:checked).
+   Variantes: type="radio" (1 escolha) · type="checkbox" (várias). */
+.selectcard{display:flex;align-items:flex-start;gap:var(--space-6);padding:var(--space-4);
+  border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-surface);
+  cursor:pointer;transition:border-color .15s,background .15s,box-shadow .15s}
+.selectcard:hover:not(:has(.selectcard__input:disabled)){border-color:var(--color-primary)}
+.selectcard:has(.selectcard__input:checked){border-color:var(--color-primary);background:var(--color-primary-subtle)}
+.selectcard:has(.selectcard__input:focus-visible){box-shadow:var(--ring)}
+.selectcard:has(.selectcard__input:disabled){opacity:.55;cursor:not-allowed}
+/* Marcador (número tabular OU ícone), alinhado ao título */
+.selectcard__lead{flex:0 0 auto;width:24px;min-height:24px;margin-top:1px;display:grid;place-items:center;
+  font-size:var(--text-base);font-weight:700;font-variant-numeric:tabular-nums;line-height:var(--leading-snug);color:var(--color-text-muted)}
+.selectcard__lead svg{width:20px;height:20px}
+.selectcard:has(.selectcard__input:checked) .selectcard__lead{color:var(--color-primary)}
+.selectcard__body{min-width:0;flex:1;display:flex;flex-direction:column;gap:var(--space-1)}
+.selectcard__title{font-size:var(--text-base);font-weight:600;color:var(--color-heading);line-height:var(--leading-snug)}
+.selectcard__desc{font-size:var(--text-xs);color:var(--color-text-muted);line-height:var(--leading-snug)}
+.selectcard:has(.selectcard__input:checked) .selectcard__desc{color:var(--color-text-onmuted)}
+/* Selo opcional (ex.: sugestão de IA da Axians) */
+.selectcard__seal{display:inline-flex;align-items:center;align-self:flex-start;gap:var(--space-1-5);margin-top:var(--space-1);
+  padding:var(--space-1) var(--space-2);border-radius:var(--radius-pill);font-size:var(--text-xs);font-weight:600;
+  color:var(--color-primary);background:var(--color-primary-subtle);border:1px solid color-mix(in srgb, var(--color-primary) 22%, transparent)}
+.selectcard__seal svg{flex:0 0 auto;width:14px;height:14px}
+/* Indicador real (radio/checkbox) à direita — o anel de foco vai no cartão (:has) */
+.selectcard__input{flex:0 0 auto;order:3;margin:0;width:18px;height:18px;accent-color:var(--color-primary);cursor:pointer}
+.selectcard__input[type=checkbox]{appearance:none;-webkit-appearance:none;border:1.5px solid var(--color-field-border);border-radius:var(--radius-xl);background:var(--color-surface);display:inline-grid;place-content:center;transition:background .12s,border-color .12s}
+.selectcard__input[type=checkbox]::before{content:"";width:12px;height:12px;background:var(--color-primary-contrast);transform:scale(0);transition:transform .12s;-webkit-mask:var(--ds-check) center/contain no-repeat;mask:var(--ds-check) center/contain no-repeat}
+.selectcard__input[type=checkbox]:checked{background:var(--color-primary);border-color:var(--color-primary)}
+.selectcard__input[type=checkbox]:checked::before{transform:scale(1)}
+.selectcard__input:focus-visible{box-shadow:none}
+.selectcard__input:disabled{cursor:not-allowed}
+@media (prefers-reduced-motion:reduce){.selectcard__input[type=checkbox]::before{transition:none}}
+/* Lista de cartões empilhados */
+.selectcard-list{display:flex;flex-direction:column;gap:var(--space-4)}
 
 /* Card */
 .card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm)}
@@ -615,6 +669,23 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 .confirm__icon--info{background:var(--color-info-bg);color:var(--color-info)}
 .confirm__title{font-size:var(--text-base);font-weight:600;color:var(--color-heading);margin:0 0 var(--space-1)}
 .confirm__text{font-size:var(--text-sm);color:var(--color-text-onmuted);margin:0}
+
+/* ===== Date picker (popover de calendário, 100% tokens do DS) ===== */
+.dp{position:absolute;z-index:70;top:calc(100% + var(--space-1));left:0;width:17.5rem;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);padding:var(--space-3)}
+.dp[hidden]{display:none}
+.dp__head{display:flex;align-items:center;gap:var(--space-1);margin-bottom:var(--space-2)}
+.dp__title{flex:1 1 auto;text-align:center;font-family:inherit;font-size:var(--text-sm);font-weight:600;color:var(--color-heading);background:none;border:0;border-radius:var(--radius-base);padding:var(--space-1) var(--space-2);cursor:pointer}
+.dp__title:hover{background:var(--color-surface-2)}
+.dp__nav{flex:0 0 auto;width:var(--space-8);height:var(--space-8);display:inline-flex;align-items:center;justify-content:center;border:1px solid transparent;border-radius:var(--radius-base);background:none;color:var(--color-text-onmuted);cursor:pointer}
+.dp__nav:hover{background:var(--color-surface-2);color:var(--color-heading)}
+.dp__nav:focus-visible,.dp__title:focus-visible,.dp__day:focus-visible{outline:none;box-shadow:var(--ring)}
+.dp__grid{display:grid;grid-template-columns:repeat(7,1fr);gap:var(--space-1)}
+.dp__wd{text-align:center;font-size:var(--text-xs);font-weight:600;color:var(--color-text-muted);text-transform:uppercase;padding:var(--space-1) 0}
+.dp__day{aspect-ratio:1/1;display:inline-flex;align-items:center;justify-content:center;font-family:inherit;font-size:var(--text-sm);font-weight:500;color:var(--color-text);background:none;border:1px solid transparent;border-radius:var(--radius-base);cursor:pointer}
+.dp__day:hover{background:var(--color-primary-subtle);color:var(--color-primary)}
+.dp__day--out{color:var(--color-text-muted);opacity:.5}
+.dp__day--today{border-color:var(--color-border-strong)}
+.dp__day--sel,.dp__day--sel:hover{background:var(--color-primary);color:var(--color-primary-contrast);font-weight:600}
 
 /* Padrão de formulário: seção + grade de campos + barra de ações */
 .form-section + .form-section{margin-top:var(--space-8);padding-top:var(--space-8);border-top:1px solid var(--color-border)}
