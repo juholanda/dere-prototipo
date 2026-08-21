@@ -1654,9 +1654,14 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'){var m=docum
 </script>
 
 <style>
-  /* modo revisão: campos só leitura */
-  .is-review .input,.is-review .selectcard,.is-review .check,.is-review textarea,.is-review select,.is-review .field-icon__i{pointer-events:none}
-  .is-review .selectcard:not(:has(.selectcard__input:checked)){opacity:.45}
+  /* modo revisão: tudo só leitura e visualmente claro (campos com cara de desabilitado) */
+  .is-review .input,.is-review textarea{background:var(--color-surface-2)!important;border-color:var(--color-border)!important;color:var(--color-text-onmuted)!important;cursor:default;box-shadow:none!important;pointer-events:none}
+  .is-review .field-icon__i{display:none}
+  .is-review .selectcard{pointer-events:none;cursor:default}
+  .is-review .selectcard:not(:has(.selectcard__input:checked)){opacity:.4}
+  .is-review .selectcard__input{filter:grayscale(.4);opacity:.7}
+  .is-review .selectcard:has(.selectcard__input:checked) .selectcard__input{filter:none;opacity:1}
+  .is-review .check{pointer-events:none;color:var(--color-text-onmuted)}
   .is-review [onclick^="openDk"]{display:none}
   .foot__hint{display:inline-flex;align-items:center;gap:var(--space-2);font-size:var(--text-sm);color:var(--color-text-muted)}
   .foot__hint svg{flex:0 0 auto}
