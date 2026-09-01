@@ -322,8 +322,9 @@
     if(tc) tc.innerHTML='<b>'+rows.length+'</b> de <b>'+curEmp().length+'</b> empresas';
     document.getElementById('rows').innerHTML=rows.map(function(e){
       var semversao=(e.sit==='naoenviada');
-      /* "Ver detalhe" abre a página da empresa (lista de versões); sem versão nenhuma, abre o preenchimento */
-      var href=semversao?'info-contribuinte.html?modo=nova':('info-contribuinte-empresa.html?emp='+e.id);
+      /* "Ver detalhe" abre a página da empresa (lista de versões); sem versão nenhuma, abre o preenchimento.
+         Passa o cenário para a página de versões refletir primeiro acesso vs. populado. */
+      var href=semversao?'info-contribuinte.html?modo=nova':('info-contribuinte-empresa.html?emp='+e.id+'&scn='+scenario);
       var regime=e.regime?esc(e.regime):'<span class="muted">—</span>';
       var periodo=e.vigente ? (e.vigente.until ? 'até '+esc(e.vigente.until) : 'em aberto') : '';
       /* só há "versão vigente" quando alguma versão foi processada com sucesso; em revisão NÃO é vigente */

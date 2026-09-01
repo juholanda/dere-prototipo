@@ -422,9 +422,18 @@
   /* vigente separada no topo; depois as demais por versão desc */
   /* MAG Seguros: a versão em revisão só existe enquanto o envio do D-1001 não foi excluído */
   var _d1Sent=false; try{ _d1Sent=localStorage.getItem('adere.sent.d1001')==='seg'; }catch(e){}
-  var VERSIONS=CO.versions.slice()
-    .filter(function(v){ return !(param('emp')==='seg' && v.sit==='revisao' && !_d1Sent); })
-    .sort(function(a,b){ if(a.current!==b.current) return a.current?-1:1; return b.n-a.n; });
+  var _fresh=(param('scn')==='new');
+  var _baseVersions;
+  if(_fresh && param('emp')==='seg'){
+    /* primeiro acesso: a empresa só tem a versão recém-criada (em revisão), sem histórico populado */
+    _baseVersions = _d1Sent
+      ? [{n:1, current:false, sit:'revisao', vigrole:null, vig:'—', recibo:'—', quando:'01/09/2026, 14:32'}]
+      : [];
+  } else {
+    /* populado: histórico completo da empresa */
+    _baseVersions = CO.versions.slice().filter(function(v){ return !(param('emp')==='seg' && v.sit==='revisao' && !_d1Sent); });
+  }
+  var VERSIONS=_baseVersions.sort(function(a,b){ if(a.current!==b.current) return a.current?-1:1; return b.n-a.n; });
   var CHEV_R='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>';
   function renderVersions(){
     var tw=$('vertablewrap'), empty=$('verempty'), hint=document.querySelector('.verhint'), hAct=$('headerAct'), tabs=$('vertabs'), pTab=$('vp-tab'), pTl=$('vp-tl');
