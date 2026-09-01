@@ -92,12 +92,15 @@
       '<path d="m5.17 11.75-1.71 1.71a5.004 5.004 0 0 0 .12 7.07 5.006 5.006 0 0 0 6.95 0l1.71-1.71"/>'+
       '<line x1="8" x2="8" y1="2" y2="5"/><line x1="2" x2="5" y1="8" y2="8"/>'+
       '<line x1="16" x2="16" y1="19" y2="22"/><line x1="19" x2="22" y1="16" y2="16"/>';
-    function icon(){
+    /* Ícone "não é mais válido / já usado" (Lucide ban) — distinto do link quebrado do expirado */
+    var BAN='<circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/>';
+    function icon(kind){
+      var glyph = kind==='usado' ? BAN : UNLINK;
       return '<svg width="84" height="84" viewBox="0 0 84 84" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'+
         '<circle cx="42" cy="42" r="42" fill="url(#pg)"/>'+
         '<circle cx="42" cy="42" r="30" fill="#1351B4" fill-opacity="0.1"/>'+
         '<circle cx="42" cy="42" r="29" fill="white" stroke="#EEF4FC" stroke-width="2"/>'+
-        '<g transform="translate(30 30)" fill="none" stroke="#1351B4" stroke-width="2.16667" stroke-linecap="round" stroke-linejoin="round">'+UNLINK+'</g>'+
+        '<g transform="translate(30 30)" fill="none" stroke="#1351B4" stroke-width="2.16667" stroke-linecap="round" stroke-linejoin="round">'+glyph+'</g>'+
         '<defs><linearGradient id="pg" x1="42" y1="61.2382" x2="42" y2="-3.26472" gradientUnits="userSpaceOnUse">'+
           '<stop offset="0.048" stop-color="white"/><stop offset="0.293" stop-color="#ECF2FB" stop-opacity="0.41"/><stop offset="1" stop-color="#D3E0F5"/>'+
         '</linearGradient></defs></svg>';
@@ -114,13 +117,13 @@
       usado:{
         titulo:'Este link não é mais válido',
         texto:'Este link de convite já foi usado ou cancelado. Se você já criou sua senha, é só entrar.',
-        primaria:{txt:'Ir para o login', href:'login.html'},
-        secundaria:{txt:'Solicitar um novo link', href:'email.html'}
+        primaria:{txt:'Solicitar novo link', href:'email.html'},
+        secundaria:{txt:'Ir para o login', href:'login.html'}
       }
     };
     var v=VIEWS[motivo]||VIEWS.expirado;
     document.getElementById('box').innerHTML=
-      '<div class="box__ic">'+icon()+'</div>'+
+      '<div class="box__ic">'+icon(motivo)+'</div>'+
       '<div class="head"><h1>'+v.titulo+'</h1><p class="lead">'+v.texto+'</p></div>'+
       '<div class="acts">'+
         '<a class="btn btn--primary btn--lg" href="'+v.primaria.href+'">'+v.primaria.txt+'</a>'+
