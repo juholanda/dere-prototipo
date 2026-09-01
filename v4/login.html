@@ -42,7 +42,14 @@
   .hint{margin-top:var(--space-6);padding:var(--space-3) var(--space-4);background:color-mix(in srgb,var(--color-primary) 5%,var(--color-surface));border:1px solid var(--color-border);border-radius:var(--radius-base);font-size:var(--text-xs);color:var(--color-text-onmuted);line-height:1.5}
   .hint b{color:var(--color-heading);font-variant-numeric:tabular-nums}
   @media(max-width:820px){.auth{grid-template-columns:1fr}.aside{display:none}}
-</style>
+    .demo-hint{margin:var(--space-8) 0 0;text-align:center}
+    .demo-hint button{background:none;border:0;padding:0;font:inherit;font-size:var(--text-xs);color:var(--color-text-muted);cursor:pointer}
+    .demo-hint button:hover{color:var(--color-primary);text-decoration:underline;text-underline-offset:3px}
+    .acessos dl{margin:0;display:grid;gap:var(--space-3)}
+    .acessos .aitem{border:1px solid var(--color-border);border-radius:var(--radius-base);padding:var(--space-3) var(--space-4)}
+    .acessos dt{font-weight:700;color:var(--color-heading);font-size:var(--text-sm)}
+    .acessos dd{margin:var(--space-1) 0 0;font-size:var(--text-sm)}
+  </style>
 </head>
 <body>
 <style>
@@ -282,6 +289,7 @@
 
         <div class="hint">Conta simulada para teste: <b>ricardo@magseguros.com</b> &middot; senha <b>1234</b></div>
       </form>
+      <p class="demo-hint"><button type="button" id="acessosOpen">Acessos de demonstração</button></p>
     </main>
   </div>
 
@@ -330,6 +338,28 @@
       setTimeout(function(){ window.location.href=dest; }, 1000);
       return false;
     }
+  </script>
+  <div class="modal-backdrop" id="acessosBd" hidden>
+    <div class="modal acessos" role="dialog" aria-modal="true" aria-labelledby="acessosT">
+      <div class="modal__header"><h2 class="modal__title" id="acessosT">Acessos de demonstração</h2></div>
+      <div class="modal__body">
+        <p style="margin:0 0 var(--space-4)">A senha aceita qualquer valor. O perfil é definido pelo e-mail.</p>
+        <dl>
+          <div class="aitem"><dt>Preparador (admin)</dt><dd>E-mail: <b>ricardo.alves@mag.com.br</b> · entra no Painel de Monitoramento como Ricardo Alves.</dd></div>
+          <div class="aitem"><dt>Revisor (aprovador)</dt><dd>E-mail: <b>ana.prado@mag.com.br</b> (qualquer e-mail iniciado em "ana.") · entra na revisão do Plano de Contas como Ana Prado.</dd></div>
+        </dl>
+      </div>
+      <div class="modal__footer"><button type="button" class="btn btn--secondary" id="acessosClose">Fechar</button></div>
+    </div>
+  </div>
+  <script>
+    (function(){
+      var bd=document.getElementById('acessosBd');
+      document.getElementById('acessosOpen').addEventListener('click',function(){ bd.hidden=false; document.getElementById('acessosClose').focus(); });
+      document.getElementById('acessosClose').addEventListener('click',function(){ bd.hidden=true; });
+      bd.addEventListener('click',function(e){ if(e.target===bd) bd.hidden=true; });
+      document.addEventListener('keydown',function(e){ if(e.key==='Escape' && !bd.hidden) bd.hidden=true; });
+    })();
   </script>
 </body>
 </html>
