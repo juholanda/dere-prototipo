@@ -128,6 +128,8 @@
     /* modal de confirmação */
     .scrim{position:fixed;inset:0;background:var(--color-scrim);display:flex;align-items:center;justify-content:center;padding:var(--space-6);z-index:80}
     .scrim[hidden]{display:none}
+    .modal__footer--stack{flex-direction:column;align-items:stretch;gap:var(--space-2)}
+    .modal__footer--stack .btn{width:100%;justify-content:center}
     #confirmModal .modal__header{align-items:center}
     .modal__body p{margin:0 0 var(--space-4);font-size:var(--text-base);line-height:1.55;color:var(--color-text)}
     .cinfo{display:flex;flex-direction:column;gap:var(--space-4);background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-4)}
@@ -421,6 +423,24 @@
     </div>
   </div>
 
+  <!-- Modal: sair com dados não salvos -->
+  <div class="scrim" id="leaveModal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="leaveTitle" aria-describedby="leaveDesc">
+      <div class="modal__header">
+        <h3 class="modal__title" id="leaveTitle">Sair sem salvar?</h3>
+        <button class="icon-btn" type="button" data-leave-close aria-label="Fechar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="modal__body">
+        <p id="leaveDesc">Você preencheu informações que ainda não foram salvas. Se sair agora, pode perder o que inseriu.</p>
+      </div>
+      <div class="modal__footer modal__footer--stack">
+        <button class="btn btn--primary btn--lg" type="button" id="leaveSaveExit"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg>Sair e salvar rascunho</button>
+        <button class="btn btn--secondary btn--lg" type="button" id="leaveDiscard">Sair e não salvar</button>
+        <button class="btn btn--ghost btn--lg" type="button" data-leave-close>Cancelar</button>
+      </div>
+    </div>
+  </div>
+
 <script>
   var $=function(id){return document.getElementById(id);};
   function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
@@ -679,6 +699,22 @@
     }
     /* enviado para revisão = rascunho consumido */
     var cs=document.getElementById('confirmSubmit'); if(cs) cs.addEventListener('click',function(){ try{ localStorage.removeItem(KEY); }catch(e){} });
+
+    /* Guarda de saída: Cancelar com dados não salvos abre confirmação (vale para criar E editar) */
+    var leaveM=$('leaveModal'), cancelBtn=$('cancelBtn');
+    if(leaveM && cancelBtn){
+      var baseline='';
+      setTimeout(function(){ try{ baseline=JSON.stringify(snapshot()); }catch(e){} }, 60);
+      function isDirty(){ try{ return !!baseline && JSON.stringify(snapshot())!==baseline; }catch(e){ return false; } }
+      function closeLeave(){ leaveM.hidden=true; }
+      cancelBtn.addEventListener('click',function(e){ if(isDirty()){ e.preventDefault(); leaveM.hidden=false; document.getElementById('leaveSaveExit').focus(); } });
+      leaveM.querySelectorAll('[data-leave-close]').forEach(function(b){ b.addEventListener('click',closeLeave); });
+      leaveM.addEventListener('click',function(e){ if(e.target===leaveM) closeLeave(); });
+      document.addEventListener('keydown',function(e){ if(e.key==='Escape' && !leaveM.hidden) closeLeave(); });
+      var dest=function(){ return cancelBtn.getAttribute('href'); };
+      $('leaveSaveExit').addEventListener('click',function(){ try{ localStorage.setItem(KEY, JSON.stringify(snapshot())); }catch(e){} window.location.href=dest(); });
+      $('leaveDiscard').addEventListener('click',function(){ window.location.href=dest(); });
+    }
   })();
 
   /* Nav lateral: scroll-spy + rolagem suave */
