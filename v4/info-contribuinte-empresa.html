@@ -2,6 +2,9 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · MAG Seguros · Versões</title>
   <script src="https://cdn.tailwindcss.com"></script>
@@ -478,8 +481,9 @@
   function renderTimeline(){
     var el=$('tl'); if(!el) return;
     var items=[];
-    CO.versions.forEach(function(v){ var p=parseVig(v.vig); if(p&&p.from) items.push({ver:v.n, current:v.current, from:p.from, to:p.to, open:p.open, vig:v.vig}); });
-    if(items.length<1){ el.hidden=true; return; }
+    /* usa as versões do cenário atual (não a lista fixa): em revisão/rascunho não têm vigência, então a linha do tempo fica vazia */
+    VERSIONS.forEach(function(v){ var p=parseVig(v.vig); if(p&&p.from) items.push({ver:v.n, current:v.current, from:p.from, to:p.to, open:p.open, vig:v.vig}); });
+    if(items.length<1){ el.hidden=false; el.innerHTML='<p style="margin:0;padding:var(--space-8) var(--space-4);text-align:center;color:var(--color-text-muted);font-size:var(--text-base)">Nenhuma vigência ainda. A linha do tempo aparece quando houver uma versão processada com sucesso na Receita.</p>'; return; }
     el.hidden=false;
     items.sort(function(a,b){ return a.from-b.from; });
     var today=new Date();

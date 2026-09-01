@@ -2,6 +2,9 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Informações do Contribuinte</title>
   <script src="https://cdn.tailwindcss.com"></script>
@@ -248,6 +251,7 @@
     avisos:    {label:'Processado com adv.', pill:'status--warning'},
     rejeitado: {label:'Rejeitado',              pill:'status--danger'},
     revisao:   {label:'Em revisão',              pill:'status--info'},
+    rascunho:  {label:'Rascunho',                pill:'status--neutral'},
     naoenviada:{label:'Não iniciada',            pill:'status--neutral'}
   };
   /* pendência = nova versão em andamento sobre um cadastro que já tem versão aceita */
@@ -269,7 +273,8 @@
   var EMP_NEW=EMP_POP.map(function(e){ return {id:e.id, nome:e.nome, cnpj:e.cnpj, regime:null, vigente:null, sit:'naoenviada', draft:null, at:null, ts:0}; });
   var scenario=((/[?&]scn=(new|pop)/.exec(location.search)||[])[1])||'new';
   /* persistência do fluxo: enviei o D-1001 da MAG Seguros → ela aparece com a 1ª versão em revisão */
-  try{ if(localStorage.getItem('adere.sent.d1001')==='seg'){ var _s=EMP_NEW.filter(function(e){return e.id==='seg';})[0]; if(_s){ _s.sit='revisao'; _s.emrev={ver:1}; _s.regime='Serviços Financeiros'; _s.at='01/09/2026, 14:32'; _s.ts=9999; } } }catch(e){}
+  try{ if(localStorage.getItem('adere.sent.d1001')==='seg'){ var _s=EMP_NEW.filter(function(e){return e.id==='seg';})[0]; if(_s){ _s.sit='revisao'; _s.emrev={ver:1}; _s.regime='Serviços Financeiros'; _s.at='01/09/2026, 14:32'; _s.ts=9999; } }
+    else if(localStorage.getItem('adere.d1001.draft.seg')){ var _d=EMP_NEW.filter(function(e){return e.id==='seg';})[0]; if(_d){ _d.sit='rascunho'; _d.rascunho=true; _d.at='01/09/2026, 14:32'; _d.ts=9998; } } }catch(e){}
   function curEmp(){ return scenario==='new'?EMP_NEW:EMP_POP; }
   /* a empresa é contexto; o status é sempre da VERSÃO vigente (não um "estado da empresa") */
   function situacaoCell(e){
@@ -322,18 +327,21 @@
     if(tc) tc.innerHTML='<b>'+rows.length+'</b> de <b>'+curEmp().length+'</b> empresas';
     document.getElementById('rows').innerHTML=rows.map(function(e){
       var semversao=(e.sit==='naoenviada');
-      /* "Ver detalhe" abre a página da empresa (lista de versões); sem versão nenhuma, abre o preenchimento.
+      var isRascunho=(e.sit==='rascunho');
+      /* rascunho: continuar o preenchimento; sem versão: preencher; senão: abre a lista de versões da empresa.
          Passa o cenário para a página de versões refletir primeiro acesso vs. populado. */
-      var href=semversao?('info-contribuinte.html?modo=nova&emp='+e.id+'&scn='+scenario):('info-contribuinte-empresa.html?emp='+e.id+'&scn='+scenario);
+      var href=(semversao||isRascunho)?('info-contribuinte.html?modo=nova&emp='+e.id+'&scn='+scenario):('info-contribuinte-empresa.html?emp='+e.id+'&scn='+scenario);
       var regime=e.regime?esc(e.regime):'<span class="muted">—</span>';
       var periodo=e.vigente ? (e.vigente.until ? 'até '+esc(e.vigente.until) : 'em aberto') : '';
-      /* só há "versão vigente" quando alguma versão foi processada com sucesso; em revisão NÃO é vigente */
+      /* só há "versão vigente" quando alguma versão foi processada com sucesso; em revisão/rascunho NÃO é vigente */
       var versao=e.vigente
         ? '<span style="font-weight:600;color:var(--color-heading)">Versão '+e.vigente.ver+'</span><div class="cellsub" style="margin-top:2px">'+periodo+'</div>'
         : '<span class="muted">—</span>';
       var at=e.at?esc(e.at):'<span class="muted">—</span>';
       var btn=semversao
         ? '<a class="btn btn--primary rowbtn" href="'+href+'">Preencher</a>'
+        : isRascunho
+        ? '<a class="btn btn--primary rowbtn" href="'+href+'">Continuar</a>'
         : '<a class="btn btn--secondary rowbtn" href="'+href+'">Ver detalhe</a>';
       return '<tr data-href="'+href+'">'+
         '<td><div class="evemp">'+logoHtml(e)+'<div><div class="celltitle">'+esc(e.nome)+'</div><div class="cellcnpj">'+esc(e.cnpj)+'</div></div></div></td>'+
