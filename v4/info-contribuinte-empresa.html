@@ -455,7 +455,7 @@
       var vmark=(v.vigrole==='now')?'<span class="vigflag"><span class="vigdot" aria-hidden="true">'+DOT_VIG+'</span>Vigente</span>':'';
       /* o detalhe abre no estado real da versão (aceita/vigente -> aprovado; senão o estado interno) */
       var st=(v.sit==='revisao')?'revisao':(v.sit==='ajustes')?'ajuste':'aprovado';
-      var href='info-contribuinte-detalhe.html?emp='+emp+'&v='+v.n+'&st='+st;
+      var href='info-contribuinte-detalhe.html?emp='+emp+'&v='+v.n+'&st='+st+(param('scn')?('&scn='+param('scn')):'');
       return '<tr class="'+cls+'" data-href="'+href+'">'+
         '<td class="vigcol">'+vmark+'</td>'+
         '<td><span class="celltitle">Versão '+v.n+'</span></td>'+

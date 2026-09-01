@@ -350,7 +350,8 @@
   (function(){
     var emp=dparam('emp')||'seg';
     /* o detalhe é de uma versão de UMA empresa: o "Voltar" sobe um nível, para a página da empresa (ex.: MAG Seguros) */
-    var bl=$('backLink'); if(bl){ bl.setAttribute('href', 'info-contribuinte-empresa.html?emp='+emp); }
+    var _scnQ=dparam('scn')?('&scn='+dparam('scn')):'';
+    var bl=$('backLink'); if(bl){ bl.setAttribute('href', 'info-contribuinte-empresa.html?emp='+emp+_scnQ); }
     /* abre no estado real da versão clicada (não sempre "Em revisão") */
     var st=dparam('st'); render(STATES[st]?st:'revisao');
   })();
@@ -395,7 +396,7 @@
       if(naoTx){
         /* em revisão: exclusão imediata (descarte), volta direto para a página da empresa */
         try{ localStorage.removeItem('adere.sent.d1001'); }catch(e){}
-        window.location.href='info-contribuinte-empresa.html?emp='+(dparam('emp')||'seg');
+        window.location.href='info-contribuinte-empresa.html?emp='+(dparam('emp')||'seg')+(dparam('scn')?('&scn='+dparam('scn')):'');
         return;
       }
       var bar=$('statusbar'); bar.style.display='';

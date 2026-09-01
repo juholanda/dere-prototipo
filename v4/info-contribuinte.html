@@ -435,7 +435,7 @@
       if($('formTitle')) $('formTitle').textContent='Editar '+vlabel+' · Informações do contribuinte';
       if($('formSub')) $('formSub').textContent=DESC;
       /* vim do detalhe da versão: cancelar volta pra lá, não pro painel */
-      if($('cancelBtn')) $('cancelBtn').setAttribute('href','info-contribuinte-detalhe.html?v='+(param('v')||'1')+'&st=revisao&from=lista');
+      if($('cancelBtn')) $('cancelBtn').setAttribute('href','info-contribuinte-detalhe.html?v='+(param('v')||'1')+'&st=revisao&from=lista'+(param('scn')?('&scn='+param('scn')):'')+(param('emp')?('&emp='+param('emp')):''));
       document.title='a-DeRE · Editar informações do contribuinte';
     } else {
       if($('bcAcao')) $('bcAcao').textContent='Nova versão';
@@ -624,7 +624,7 @@
     modal.querySelectorAll('[data-confirm-close]').forEach(function(b){ b.addEventListener('click',close); });
     modal.addEventListener('click',function(e){ if(e.target===modal) close(); });
     document.addEventListener('keydown',function(e){ if(e.key==='Escape' && !modal.hidden) close(); });
-    $('confirmSubmit').addEventListener('click',function(){ try{localStorage.setItem('adere.sent.d1001','seg');}catch(e){} window.location.href='info-contribuinte-detalhe.html?v=1&st=revisao&from=lista'; });
+    $('confirmSubmit').addEventListener('click',function(){ try{localStorage.setItem('adere.sent.d1001','seg');}catch(e){} window.location.href='info-contribuinte-detalhe.html?v=1&st=revisao&from=lista'+(param('scn')?('&scn='+param('scn')):'')+(param('emp')?('&emp='+param('emp')):''); });
   })();
 
   /* Tooltip da sugestão da IA (position:fixed para escapar o recorte do drawer) */
