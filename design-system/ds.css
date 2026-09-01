@@ -646,6 +646,8 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 .cselect__panel [role=option]{display:block;width:100%;text-align:left;padding:var(--space-2) var(--space-3);border:0;background:none;font-family:inherit;font-size:var(--text-sm);color:var(--color-text);cursor:pointer;border-radius:var(--radius-sm)}
 .cselect__panel [role=option]:hover{background:var(--color-surface-2)}
 .cselect__panel [role=option].is-selected{background:var(--color-primary-subtle);color:var(--color-primary);font-weight:600}
+/* item de menu indisponível (ex.: área ainda em construção) */
+.sidenav__item.is-disabled{opacity:.5;pointer-events:none;cursor:default}
 
 /* Multiselect (busca + chips + opções com checkbox) — ex.: escolher vários codTrib */
 .ms{position:relative;max-width:460px}
