@@ -43,7 +43,7 @@
     .stat__ic--warning{background:var(--color-warning-bg);color:var(--color-warning-fg)}
 
     .card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-2xl);box-shadow:var(--shadow-sm);overflow:hidden}
-    .card__h{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-6) var(--space-6) var(--space-4);justify-content:space-between}
+    .card__h{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-6) var(--space-6) var(--space-6);justify-content:space-between}
     .card__h h2{font-size:var(--text-xl)!important;margin:0;font-weight:700!important}
     .card__hint{font-size:var(--text-sm);color:var(--color-text-muted);margin:2px 0 0}
     .tablewrap{overflow-x:auto}
@@ -70,15 +70,12 @@
     .col-act{text-align:right;width:1%;position:sticky;right:0;background:var(--color-surface);z-index:2;box-shadow:-1px 0 0 var(--color-border)}
     .table th:last-child{position:sticky;right:0;background:var(--color-surface);z-index:3;box-shadow:-1px 0 0 var(--color-border)}
     .table tbody tr[data-href]:hover .col-act{background:var(--color-primary-subtle)}
-    .table th.sortable{cursor:pointer;user-select:none;white-space:nowrap}
-    .table th.sortable:hover{color:var(--color-heading)}
-    .table th.sortable:focus-visible{outline:none;box-shadow:var(--ring)}
-    .sortcaret{display:inline-flex;vertical-align:middle;margin-left:var(--space-1);opacity:0;transition:opacity .1s}
-    .sortcaret svg{width:14px;height:14px}
-    .table th[aria-sort="ascending"] .sortcaret,.table th[aria-sort="descending"] .sortcaret{opacity:1}
-    .table th[aria-sort="ascending"] .sortcaret{transform:rotate(180deg)}
+    .table th.sortable{white-space:nowrap}
+    /* texto base da tabela a 16px e cabeçalhos a 14px (nesta tela) */
+    .table td{font-size:var(--text-base)}
+    .table th{font-size:var(--text-sm)}
     /* mesmas margens do cabeçalho do card (space-6) nas extremidades da tabela */
-    .card__h{padding:var(--space-6) var(--space-4) var(--space-4)}
+    .card__h{padding:var(--space-6) var(--space-4) var(--space-6)}
     .table th:first-child,.table td:first-child{padding-left:var(--space-4)}
     .table th:last-child,.table td:last-child{padding-right:var(--space-4)}
     .table tbody tr:last-child td{border-bottom:0}
@@ -197,12 +194,12 @@
               <table class="table">
                 <thead>
                   <tr>
-                    <th scope="col" class="sortable" data-sort="emp" aria-sort="ascending" tabindex="0">Empresa</th>
-                    <th scope="col" class="sortable" data-sort="cnpj" aria-sort="none" tabindex="0">CNPJ</th>
-                    <th scope="col" class="sortable" data-sort="regime" aria-sort="none" tabindex="0">Regime principal</th>
-                    <th scope="col" class="sortable" data-sort="ver" aria-sort="none" tabindex="0">Versão vigente</th>
-                    <th scope="col" class="sortable" data-sort="sit" aria-sort="none" tabindex="0">Status</th>
-                    <th scope="col" class="sortable" data-sort="at" aria-sort="none" tabindex="0">Atualizado em</th>
+                    <th scope="col" class="sortable is-sorted" data-sort="emp" aria-sort="ascending" tabindex="0" role="button">Empresa <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></th>
+                    <th scope="col" class="sortable" data-sort="cnpj" aria-sort="none" tabindex="0" role="button">CNPJ <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></th>
+                    <th scope="col" class="sortable" data-sort="regime" aria-sort="none" tabindex="0" role="button">Regime principal <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></th>
+                    <th scope="col" class="sortable" data-sort="ver" aria-sort="none" tabindex="0" role="button">Versão vigente <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></th>
+                    <th scope="col" class="sortable" data-sort="sit" aria-sort="none" tabindex="0" role="button">Status <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></th>
+                    <th scope="col" class="sortable" data-sort="at" aria-sort="none" tabindex="0" role="button">Atualizado em <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></th>
                     <th scope="col"><span class="sr-only">Ações</span></th>
                   </tr>
                 </thead>
@@ -313,8 +310,8 @@
         : '<span class="muted">—</span>';
       var at=e.at?esc(e.at):'<span class="muted">—</span>';
       var btn=semversao
-        ? '<a class="btn btn--primary btn--sm rowbtn" href="'+href+'">Preencher</a>'
-        : '<a class="btn btn--secondary btn--sm rowbtn" href="'+href+'">Ver detalhe</a>';
+        ? '<a class="btn btn--primary rowbtn" href="'+href+'">Preencher</a>'
+        : '<a class="btn btn--secondary rowbtn" href="'+href+'">Ver detalhe</a>';
       return '<tr data-href="'+href+'">'+
         '<td><div class="evemp">'+logoHtml(e)+'<div><div class="celltitle">'+esc(e.nome)+'</div></div></div></td>'+
         '<td><span class="cnpj-col">'+esc(e.cnpj)+'</span></td>'+
@@ -353,7 +350,7 @@
   (function(){
     var CHEV='<span class="sortcaret" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>';
     var ths=document.querySelectorAll('th.sortable');
-    function updateHeaders(){ ths.forEach(function(th){ var on=th.getAttribute('data-sort')===listSort.key; th.setAttribute('aria-sort', on?(listSort.dir==='asc'?'ascending':'descending'):'none'); }); }
+    function updateHeaders(){ ths.forEach(function(th){ var on=th.getAttribute('data-sort')===listSort.key; th.setAttribute('aria-sort', on?(listSort.dir==='asc'?'ascending':'descending'):'none'); th.classList.toggle('is-sorted', on); }); }
     ths.forEach(function(th){
       th.insertAdjacentHTML('beforeend', CHEV);
       function toggle(){ var k=th.getAttribute('data-sort'); if(listSort.key===k){ listSort.dir=listSort.dir==='asc'?'desc':'asc'; } else { listSort.key=k; listSort.dir='asc'; } renderRows(); updateHeaders(); }
