@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>a-DeRE · MAG Seguros · Versões</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=14">
+  <script src="../design-system/ds-tailwind.js"></script>
+  <style>
+    body{margin:0;background:var(--color-bg)}
+    .shell{display:flex;height:100vh;overflow:hidden}
+    .shell > .sidenav{border:0;border-radius:0;padding:0;position:relative!important;transform:none!important;visibility:visible!important;z-index:auto!important;transition:width .18s ease}
+    .brandrow{height:64px;flex:0 0 auto;display:flex;align-items:center;gap:var(--space-3);padding:0 var(--space-4) 0 var(--space-6);border-bottom:1px solid var(--color-border)}
+    .brandrow .wm{font-weight:800;font-size:var(--text-lg);letter-spacing:-.01em;color:var(--color-heading)}
+    .brandrow .avatar{background:rgba(255,255,255,.14);color:#fff;width:34px;height:34px;font-size:var(--text-sm);flex:0 0 auto;font-weight:800}
+    .navlist{flex:1;overflow:auto;min-height:0;padding:var(--space-3) var(--space-3) 0;display:flex;flex-direction:column;gap:2px}
+    .col{flex:1;display:flex;flex-direction:column;min-width:0;min-height:0}
+    .topbar{height:64px;flex:0 0 auto;background:var(--color-surface);border-bottom:1px solid var(--color-border);display:flex;align-items:center;gap:var(--space-4);padding:0 var(--space-6)}
+    .content{flex:1;overflow:auto;min-height:0;background:var(--slate-100);scrollbar-gutter:stable}
+    .dark .content,:root[data-theme="dark"] .content{background:var(--color-bg)}
+    .wrap{padding:var(--space-8);max-width:1480px;width:100%;margin:0 auto;box-sizing:border-box}
+    .page-h{background:var(--color-surface);border-bottom:1px solid var(--color-border)}
+    .page-h .wrap{padding-top:var(--space-8);padding-bottom:var(--space-8)}
+    .page-h__row{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--space-6);flex-wrap:wrap}
+    .page-h__row > div{min-width:0}
+    .eyebrow{margin:0 0 var(--space-1-5)}
+    .evtag{display:inline-flex;align-items:center;font-size:var(--text-xs);font-weight:700;letter-spacing:.02em;padding:2px var(--space-2);border-radius:var(--radius-sm);background:var(--color-success-bg);color:var(--color-success-fg);font-variant-numeric:tabular-nums}
+    .page-h h1{margin:0;font-size:var(--text-4xl)!important;font-weight:700!important;letter-spacing:-.015em;line-height:1.15}
+    .page-h p{color:var(--color-text-muted);font-size:var(--text-base);margin:var(--space-2) 0 0}
+    .scenario{display:inline-flex;gap:2px;padding:var(--space-1);background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-pill);flex:0 0 auto}
+    .scenario button{border:0;background:none;font-family:inherit;font-size:var(--text-sm);font-weight:600;color:var(--color-text-muted);padding:var(--space-1-5) var(--space-4);border-radius:var(--radius-pill);cursor:pointer;white-space:nowrap}
+    .scenario button.on{background:var(--color-surface);color:var(--color-primary);box-shadow:var(--shadow-sm)}
+    .scenario button:focus-visible{outline:none;box-shadow:var(--ring)}
+    .bc{display:flex;align-items:center;gap:var(--space-2);font-size:var(--text-sm);min-width:0;overflow:hidden}
+    .bc a{color:var(--color-primary);text-decoration:none;white-space:nowrap;font-weight:500}
+    .bc a:hover{text-decoration:underline}
+    .bc span{color:var(--color-text);font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .bc svg{width:15px;height:15px;color:var(--color-text-muted);flex:0 0 auto}
+    .bc .bc-hide{display:inline}
+
+    /* banner de status da submissão */
+    .statusbar{display:flex;gap:var(--space-4);align-items:flex-start;background:var(--color-surface);border:1px solid var(--color-border);border-left:4px solid var(--color-border-strong);border-radius:var(--radius-2xl);box-shadow:var(--shadow-sm);padding:var(--space-6);margin-bottom:var(--space-6)}
+    .statusbar--info{border-left-color:var(--color-info-fg)}
+    .statusbar--warning{border-left-color:var(--color-warning)}
+    .statusbar--success{border-left-color:var(--color-success-fg)}
+    .statusbar__ic{width:40px;height:40px;border-radius:var(--radius-lg);display:grid;place-items:center;flex:0 0 auto;background:var(--color-surface-2);color:var(--color-text-onmuted)}
+    .statusbar--info .statusbar__ic{background:var(--color-info-bg);color:var(--color-info-fg)}
+    .statusbar--warning .statusbar__ic{background:var(--color-warning-bg);color:var(--color-warning-fg)}
+    .statusbar--success .statusbar__ic{background:var(--color-success-bg);color:var(--color-success-fg)}
+    .statusbar__ic svg{width:20px;height:20px}
+    .statusbar__b{flex:1;min-width:0}
+    .statusbar__title{font-size:var(--text-lg)!important;font-weight:700!important;color:var(--color-heading);margin:0;line-height:1.25}
+    .statusbar__desc{font-size:var(--text-base);color:var(--color-text-onmuted);margin:var(--space-2) 0 0;line-height:1.5}
+    .statusbar__comment{display:flex;gap:var(--space-3);margin-top:var(--space-4);padding:var(--space-4);background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-lg);font-size:var(--text-base);color:var(--color-text);line-height:1.5}
+    .statusbar__comment svg{width:18px;height:18px;flex:0 0 auto;color:var(--color-text-muted);margin-top:1px}
+    .statusbar__actions{display:flex;gap:var(--space-2);flex:0 0 auto;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+    .statusbar__actions .btn{white-space:nowrap}
+
+    /* empresa (topo do cabeçalho) */
+    .idcompany{display:flex;align-items:center;gap:var(--space-3);margin-bottom:var(--space-6)}
+    .idcompany__logo{width:56px;height:56px;border-radius:var(--radius-lg);overflow:hidden;background:var(--color-surface);border:1px solid var(--color-border);flex:0 0 auto}
+    .backlink{display:inline-flex;align-items:center;gap:var(--space-1-5);font-size:var(--text-sm);font-weight:600;color:var(--color-primary);text-decoration:none;margin-bottom:var(--space-3)}
+    .backlink:hover{text-decoration:underline}
+    .backlink svg{width:16px;height:16px}
+    #vertable th:first-child,#vertable td:first-child{padding-left:var(--space-4)}
+    #vertable th:last-child,#vertable td:last-child{padding-right:var(--space-4)}
+    #vertable tbody tr:last-child td{border-bottom:0}
+    #vertable tbody tr{cursor:pointer}
+    #vertable tbody tr:hover{background:var(--color-surface-2)}
+    .verrow--current,#vertable tbody tr.verrow--current:hover{background:var(--color-primary-subtle)}
+    .ver-act{text-align:right;white-space:nowrap;width:1%}
+    a.evact{color:var(--color-primary)}
+    a.evact:hover{background:var(--color-primary-subtle)}
+    .idcompany__logo img{width:100%;height:100%;object-fit:cover;display:block}
+    .idcompany__name{font-size:var(--text-base);font-weight:600;color:var(--color-heading);margin:0;line-height:1.3}
+    .idcompany__cnpj{font-size:var(--text-sm);color:var(--color-text-muted);margin:0;font-variant-numeric:tabular-nums}
+    /* metadados da submissão (dentro do cabeçalho, separado por linha fina) */
+    .submeta{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:var(--space-6);border-top:1px solid var(--color-divider);padding-top:var(--space-6);margin-top:var(--space-6)}
+    .submeta__k{font-size:var(--text-xs);color:var(--color-text-muted);font-weight:600;margin:0 0 var(--space-1)}
+    .submeta__v{font-size:var(--text-sm);color:var(--color-heading);font-weight:500;display:flex;align-items:center;gap:var(--space-2);min-width:0}
+    .submeta__v .avatar{flex:0 0 auto}
+    .submeta__v .num{font-variant-numeric:tabular-nums}
+    .submeta__logo{width:28px;height:28px;border-radius:var(--radius-base);overflow:hidden;background:var(--color-surface);border:1px solid var(--color-border);flex:0 0 auto}
+    .submeta__logo img{width:100%;height:100%;object-fit:cover;display:block}
+
+    /* lista de versões (vigências do D-1001) */
+    .status--neutral{background:var(--color-surface-2);color:var(--color-text-onmuted)}
+    .verlist{display:flex;flex-direction:column;gap:var(--space-3)}
+    .verrow{display:flex;gap:var(--space-4);align-items:flex-start;padding:var(--space-4);border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-surface)}
+    .verrow--current{border-color:var(--color-primary);background:var(--color-primary-subtle)}
+    .verrow--inativa{opacity:.9}
+    .verrow__badge{flex:0 0 auto;width:40px;height:40px;border-radius:var(--radius-lg);display:grid;place-items:center;font-weight:700;font-size:var(--text-sm);background:var(--color-surface-2);color:var(--color-text-onmuted);font-variant-numeric:tabular-nums}
+    .verrow--current .verrow__badge{background:var(--color-primary-subtle);color:var(--color-primary)}
+    .verrow__main{flex:1;min-width:0}
+    .verrow__top{display:flex;align-items:center;gap:var(--space-2);flex-wrap:wrap}
+    .verrow__title{font-size:var(--text-base);font-weight:600;color:var(--color-heading)}
+    .verrow__meta{font-size:var(--text-sm);color:var(--color-text-muted);margin-top:var(--space-1);line-height:1.5}
+    .verrow__note{font-size:var(--text-sm);color:var(--color-text-onmuted);margin-top:var(--space-2);display:flex;align-items:center;gap:var(--space-2);flex-wrap:wrap}
+    .verrow__actions{flex:0 0 auto;display:flex;gap:var(--space-2);align-items:center;flex-wrap:wrap;justify-content:flex-end}
+    .verhint{font-size:var(--text-base);color:var(--color-text-muted);margin:0;padding:0 var(--space-4) var(--space-4);line-height:1.5}
+    /* tabs de visualização das versões */
+    .card .tabs{margin-top:var(--space-1)}
+    #vp-tab{padding-top:var(--space-8)}
+    #vp-tl{padding:var(--space-6) 0 0}
+    /* linha do tempo das vigências */
+    .tl{padding:var(--space-6)}
+    .tl__cap{display:flex;align-items:center;justify-content:flex-end;gap:var(--space-3);flex-wrap:wrap;margin-bottom:var(--space-4)}
+    .tl__legend{display:flex;gap:var(--space-4);font-size:var(--text-xs);color:var(--color-text-muted)}
+    .tl__legend span{display:inline-flex;align-items:center;gap:var(--space-1-5)}
+    .tl__sw{width:12px;height:12px;border-radius:3px;flex:0 0 auto}
+    .tl__sw--vig{background:var(--color-success-fg)} .tl__sw--ina{background:var(--color-border-strong)} .tl__sw--gap{background:repeating-linear-gradient(45deg,var(--color-danger) 0 3px,transparent 3px 6px);border:1px solid var(--color-danger)}
+    .tl__track{position:relative;height:38px;background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-lg);overflow:hidden}
+    .tl__bar{position:absolute;top:5px;bottom:5px;border-radius:var(--radius-base);display:flex;align-items:center;padding:0 var(--space-2);font-size:var(--text-2xs);font-weight:700;overflow:hidden;white-space:nowrap;box-sizing:border-box}
+    .tl__bar--vig{background:var(--color-success-bg);color:var(--color-success-fg);border:1px solid var(--color-success-fg)}
+    .tl__bar--ina{background:var(--color-border);color:var(--color-text-onmuted);border:1px solid var(--color-border-strong)}
+    .tl__bar--open::after{content:"";position:absolute;right:0;top:0;bottom:0;width:22px;background:linear-gradient(90deg,transparent,var(--color-success-bg))}
+    .tl__gap{position:absolute;top:0;bottom:0;background:repeating-linear-gradient(45deg,color-mix(in srgb,var(--color-danger) 22%,transparent) 0 5px,transparent 5px 10px);border-left:1px dashed var(--color-danger);border-right:1px dashed var(--color-danger)}
+    .tl__gap-lbl{position:absolute;top:-2px;font-size:var(--text-2xs);font-weight:700;color:var(--color-danger);white-space:nowrap}
+    .tl__axis{display:flex;justify-content:space-between;font-size:var(--text-2xs);color:var(--color-text-muted);margin-top:var(--space-1-5);font-variant-numeric:tabular-nums}
+    .tl__ok{font-size:var(--text-xs);color:var(--color-success-fg);font-weight:600;display:inline-flex;align-items:center;gap:var(--space-1-5)}
+    .tl__ticks{position:relative;height:36px;margin-top:var(--space-2)}
+    .tl__tick{position:absolute;top:0;display:flex;flex-direction:column;align-items:center;gap:3px;transform:translateX(-50%)}
+    .tl__tick::before{content:"";width:1px;height:8px;background:var(--color-border-strong)}
+    .tl__tick--start{transform:translateX(0);align-items:flex-start}
+    .tl__tick--end{transform:translateX(-100%);align-items:flex-end}
+    .tl__tickv{font-size:var(--text-2xs);font-weight:700;color:var(--color-text-onmuted);order:2;text-transform:uppercase;letter-spacing:.04em}
+    .tl__tickd{font-size:var(--text-xs);color:var(--color-text-muted);font-variant-numeric:tabular-nums;white-space:nowrap;order:3}
+    .tl__note{margin-top:var(--space-4);text-align:center}
+    #vertable .celltitle{font-weight:700}
+    #vertable td{vertical-align:middle}
+    .vigdot{color:var(--color-success-fg);display:inline-flex;flex:0 0 auto}
+    .vigdot svg{width:14px;height:14px}
+    .vigrole{font-weight:700;font-size:var(--text-sm);display:inline-flex;align-items:center;gap:var(--space-1-5);line-height:1.35}
+    .vigrole--now{color:var(--color-success-fg)} .vigrole--past{color:var(--color-text-muted)} .vigrole--soon{color:var(--color-info-fg)}
+    .vigper{display:block;font-size:var(--text-xs);color:var(--color-text-muted);margin-top:1px}
+    .vigcol{width:1%;white-space:nowrap}
+    .vigflag{display:inline-flex;align-items:center;gap:var(--space-1-5);color:var(--color-success-fg);font-weight:700;font-size:var(--text-sm);white-space:nowrap}
+    @media(max-width:640px){.verrow{flex-wrap:wrap}.verrow__actions{width:100%;justify-content:flex-start;margin-top:var(--space-2)}}
+
+    /* cards de dados (leitura) */
+    .card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-2xl);box-shadow:var(--shadow-sm);overflow:hidden;margin-bottom:var(--space-6)}
+    .card__h{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-6) var(--space-4) var(--space-4)}
+    .card__ic{width:34px;height:34px;border-radius:var(--radius-lg);background:var(--color-primary-subtle);color:var(--color-primary);display:grid;place-items:center;flex:0 0 auto}
+    .card__ic svg{width:19px;height:19px}
+    .card__h h2{font-size:var(--text-xl)!important;margin:0;font-weight:700!important}
+    .rogrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-6) var(--space-8)}
+    .rogrid__full{grid-column:1/-1}
+    .roitem dt{font-size:var(--text-sm);color:var(--color-text-muted);margin:0 0 var(--space-1)}
+    .roitem dd{margin:0;font-size:var(--text-base);color:var(--color-heading);font-weight:500;line-height:1.4}
+    .ronum{display:inline-grid;place-items:center;width:22px;height:22px;font-size:var(--text-xs);font-weight:700;color:var(--color-primary);background:var(--color-primary-subtle);border-radius:var(--radius-base);font-variant-numeric:tabular-nums;margin-right:var(--space-2);vertical-align:middle}
+    .ropicks{display:flex;flex-direction:column;margin-top:var(--space-2)}
+    .ropick{display:flex;gap:var(--space-3);align-items:baseline;padding:var(--space-2) 0;min-width:0}
+    .ropick:first-child{padding-top:0}
+    .ropick + .ropick{border-top:1px solid var(--color-divider)}
+    .ropick__cod{font-size:var(--text-sm);font-weight:700;color:var(--color-primary);font-variant-numeric:tabular-nums;flex:0 0 auto;min-width:2.8em}
+    .ropick__desc{font-size:var(--text-base);color:var(--color-heading);line-height:1.4}
+    .rotab{font-size:var(--text-sm);font-weight:700;color:var(--color-primary);background:var(--color-primary-subtle);border-radius:var(--radius-pill);padding:2px var(--space-2);margin-left:var(--space-2)}
+
+    /* modal de exclusão */
+    .scrim{position:fixed;inset:0;background:var(--color-scrim);display:flex;align-items:center;justify-content:center;padding:var(--space-6);z-index:80}
+    .scrim[hidden]{display:none}
+    .modal__lead{display:flex;gap:var(--space-3);align-items:flex-start;margin:0 0 var(--space-4)}
+    .modal__lead-ic{width:36px;height:36px;border-radius:var(--radius-lg);flex:0 0 auto;display:grid;place-items:center;background:var(--color-danger-bg);color:var(--color-danger-fg)}
+    .modal__lead-ic svg{width:19px;height:19px}
+    .modal__lead p{margin:0;line-height:1.5}
+    .mform{display:flex;flex-direction:column;gap:var(--space-4);margin-top:var(--space-2)}
+    .mnote{display:flex;gap:var(--space-2);align-items:flex-start;font-size:var(--text-base);color:var(--color-text-onmuted);background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-3)}
+    .mnote svg{width:16px;height:16px;flex:0 0 auto;color:var(--color-text-muted);margin-top:2px}
+
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    @media(max-width:820px){.submeta{grid-template-columns:1fr}.rogrid{grid-template-columns:1fr}.statusbar{flex-wrap:wrap}.statusbar__actions{width:100%}}
+    @media(max-width:720px){.bc .bc-hide{display:none}}
+  </style>
+</head>
+<body>
+<style>    #dere-gate .dots{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(2px 2px at 12% 22%,rgba(255,255,255,.06),transparent),radial-gradient(2px 2px at 82% 15%,rgba(255,255,255,.05),transparent),radial-gradient(1.5px 1.5px at 68% 62%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 27% 78%,rgba(255,255,255,.045),transparent),radial-gradient(1.5px 1.5px at 90% 82%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 45% 34%,rgba(255,255,255,.04),transparent),radial-gradient(1.5px 1.5px at 8% 55%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 58% 90%,rgba(255,255,255,.04),transparent)}
+    #dere-gate .card{animation:dereIn .38s cubic-bezier(.2,.7,.2,1) both}
+    @media (prefers-reduced-motion:reduce){#dere-gate .card{animation:none}
+    #dere-gate input:focus{border-color:#1351b4 !important;box-shadow:0 0 0 3px rgba(19,81,180,.18) !important}
+    #dere-gate button:hover{background:#0c326f !important}
+    #dere-gate button:active{transform:translateY(1px)}
+    #dere-gate .dots{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(2px 2px at 12% 22%,rgba(255,255,255,.06),transparent),radial-gradient(2px 2px at 82% 15%,rgba(255,255,255,.05),transparent),radial-gradient(1.5px 1.5px at 68% 62%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 27% 78%,rgba(255,255,255,.045),transparent),radial-gradient(1.5px 1.5px at 90% 82%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 45% 34%,rgba(255,255,255,.04),transparent),radial-gradient(1.5px 1.5px at 8% 55%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 58% 90%,rgba(255,255,255,.04),transparent)}</style>
+<div id="dere-gate" style="position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;padding:24px;font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;background:radial-gradient(120% 120% at 20% 8%,#0c326f 0%,#071d41 55%,#05152e 100%)">
+  <style>
+    #dere-gate .dots{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(2px 2px at 12% 22%,rgba(255,255,255,.06),transparent),radial-gradient(2px 2px at 82% 15%,rgba(255,255,255,.05),transparent),radial-gradient(1.5px 1.5px at 68% 62%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 27% 78%,rgba(255,255,255,.045),transparent),radial-gradient(1.5px 1.5px at 90% 82%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 45% 34%,rgba(255,255,255,.04),transparent),radial-gradient(1.5px 1.5px at 8% 55%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 58% 90%,rgba(255,255,255,.04),transparent)}
+    #dere-gate .card{animation:dereIn .38s cubic-bezier(.2,.7,.2,1) both}
+    @keyframes dereIn{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+    @media (prefers-reduced-motion:reduce){#dere-gate .card{animation:none}}
+    #dere-gate input:focus{border-color:#1351b4 !important;box-shadow:0 0 0 3px rgba(19,81,180,.18) !important}
+    #dere-gate button:hover{background:#0c326f !important}
+    #dere-gate button:active{transform:translateY(1px)}
+  </style>
+  <span class="dots"></span>
+  <form class="card" onsubmit="return dereGate(this)" style="position:relative;background:#fff;padding:38px 34px 26px;border-radius:14px;width:100%;max-width:360px;text-align:center;box-shadow:0 24px 70px -12px rgba(3,17,42,.55)">
+    <div style="font-size:21px;font-weight:800;color:#0b1f3a;letter-spacing:-.01em;font-family:inherit">DeRE</div>
+    <div style="display:inline-flex;align-items:center;gap:6px;color:#5b6b82;font-size:13px;margin:5px 0 22px;font-family:inherit"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Protótipo &middot; acesso restrito</div>
+    <label for="dere-pw" style="display:block;text-align:left;font-size:12.5px;font-weight:600;color:#334155;margin:0 0 6px;font-family:inherit">Senha de acesso</label>
+    <input id="dere-pw" type="password" placeholder="Digite a senha" autofocus autocomplete="off" aria-label="Senha de acesso" style="width:100%;height:44px;border:1px solid #cbd5e1;border-radius:8px;padding:0 14px;font-size:16px;box-sizing:border-box;outline:none;color:#0f172a;background:#fff;font-family:inherit">
+    <div id="dere-err" style="color:#dc2626;font-size:12.5px;min-height:18px;margin-top:8px;text-align:left;display:flex;align-items:center;gap:5px;font-family:inherit"></div>
+    <button type="submit" style="width:100%;height:44px;margin-top:6px;background:#1351b4;color:#fff;border:0;border-radius:8px;font-weight:700;font-size:15px;cursor:pointer;font-family:inherit">Entrar</button>
+    <div style="margin-top:20px;font-size:11.5px;color:#94a3b8;letter-spacing:.02em;font-family:inherit">uma solução Axians</div>
+  </form>
+</div>
+<script>if(localStorage.getItem('dere_ok')==='1'){var _g=document.getElementById('dere-gate');if(_g)_g.remove();}function dereGate(f){var i=f.querySelector('input'),e=document.getElementById('dere-err');if(i.value==='dere123'){localStorage.setItem('dere_ok','1');document.getElementById('dere-gate').remove();}else{e.innerHTML='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 auto"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>Senha incorreta. Tente novamente.';i.select();}return false;}</script>
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  <div class="shell">
+    <nav class="sidenav sidenav--navy" data-sidenav aria-label="Navegação principal">
+      <div class="brandrow"><span class="avatar">a</span><span class="sidenav__label wm">a-DeRE</span></div>
+      <div class="navlist">
+        <p class="sidenav__group">Principal</p>
+        <a class="sidenav__item" href="painel.html" data-tip="Painel de Monitoramento"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg><span class="sidenav__label">Painel de Monitoramento</span></a>
+        <a class="sidenav__item" href="#" data-tip="Minhas empresas"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4M10 10h4M10 14h4M10 18h4"/></svg><span class="sidenav__label">Minhas empresas</span></a>
+        <p class="sidenav__group">Cadastro</p>
+        <a class="sidenav__item" href="info-contribuinte-lista.html" data-tip="Informações do Contribuinte"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg><span class="sidenav__label">Informações do Contribuinte</span></a>
+        <a class="sidenav__item is-active" href="plano-contas-lista.html" aria-current="page" data-tip="Plano de contas"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M7 12h14M7 18h14M3 12h.01M3 18h.01"/></svg><span class="sidenav__label">Plano de contas</span></a>
+        <p class="sidenav__group">Declarações</p>
+        <a class="sidenav__item" href="#" data-tip="Declaração mensal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span class="sidenav__label">Declaração mensal</span></a>
+        <a class="sidenav__item" href="#" data-tip="Recibos e envios"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6M16 12h-6M13 16H10"/></svg><span class="sidenav__label">Recibos e envios</span></a>
+        <p class="sidenav__group">Sistema</p>
+        <a class="sidenav__item" href="#" data-tip="Configurações"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg><span class="sidenav__label">Configurações</span></a>
+      </div>
+      <div class="sidenav__foot"><button class="sidenav__item sidenav__toggle" type="button" aria-label="Colapsar menu" data-tip="Colapsar menu" aria-expanded="true" data-sidenav-toggle><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m11 17-5-5 5-5"/><path d="m18 17-5-5 5-5"/></svg><span class="sidenav__label">Colapsar</span></button></div>
+    </nav>
+
+    <div class="col">
+      <header class="topbar">
+        <nav class="bc" aria-label="Trilha de navegação">
+          <a href="plano-contas-lista.html">Plano de contas</a>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+          <span id="bcNome">MAG Seguros</span>
+        </nav>
+        <div class="flex items-center gap-1" style="margin-left:auto">
+          <span class="tooltip"><button class="icon-btn" type="button" aria-label="Buscar"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></button><span class="tooltip__bubble" role="tooltip">Buscar</span></span>
+          <span class="tooltip"><button class="icon-btn" type="button" data-theme-toggle aria-label="Alternar para modo escuro"><svg data-theme-icon width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg></button><span class="tooltip__bubble" role="tooltip" data-theme-tip>Modo escuro</span></span>
+          <span class="tooltip"><button class="icon-btn" aria-label="Notificações, 3 pendências" style="position:relative"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="badge badge--danger" style="position:absolute;top:3px;right:3px">3</span></button><span class="tooltip__bubble" role="tooltip">Notificações</span></span>
+        </div>
+        <span aria-hidden="true" style="width:1px;height:22px;background:var(--color-divider);flex:0 0 auto"></span>
+        <div class="menu" data-menu>
+          <span class="tooltip tooltip--end"><button class="avatar" aria-haspopup="true" aria-expanded="false" aria-label="Ricardo Alves, abrir menu do usuário">RA</button><span class="tooltip__bubble tooltip__bubble--stack" role="tooltip"><strong>Ricardo Alves</strong>Administrador da conta</span></span>
+          <div class="menu__panel" hidden><div class="menu__head"><p class="menu__head-name">Ricardo Alves</p><p class="menu__head-mail">Administrador da conta</p></div><div class="menu__sep"></div><button class="menu__item">Perfil</button><button class="menu__item">Preferências</button><button class="menu__item menu__item--danger">Sair</button></div>
+        </div>
+      </header>
+
+      <main id="conteudo" tabindex="-1" class="content skip-target">
+        <div class="page-h">
+          <div class="wrap">
+            <div class="page-h__row">
+              <div>
+                <a class="backlink" href="plano-contas-lista.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>Voltar</a>
+                <div class="idcompany">
+                  <span class="idcompany__logo" id="coLogo"></span>
+                  <div>
+                    <h1 id="coNome" style="font-size:var(--text-3xl)!important;line-height:1.15;margin:0">MAG Seguros</h1>
+                    <p id="coSub" style="margin:2px 0 0">Informações do contribuinte · 33.608.308/0001-73 · Serviços Financeiros</p>
+                  </div>
+                </div>
+              </div>
+              <a class="btn btn--primary" id="headerAct" href="plano-contas-classificar.html?modo=alterar">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5v14"/></svg>
+                Registrar nova versão
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="wrap">
+          <section class="card" aria-labelledby="d-ver">
+            <div class="card__h"><span class="card__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m2 12 8.58 3.91a2 2 0 0 0 1.66 0L22 12"/><path d="m2 17 8.58 3.91a2 2 0 0 0 1.66 0L22 17"/></svg></span><h2 id="d-ver">Versões</h2></div>
+            <p class="verhint">Cada alteração no plano de contas gera uma nova versão. A versão vigente é a que está ativa na Receita. Você pode preparar o plano quando quiser; a transmissão só ocorre depois do D-1001 processado.</p>
+            <div class="tabs" id="vertabs" role="tablist" aria-label="Como ver as versões">
+              <button class="tab is-active" type="button" role="tab" id="vt-tab" aria-selected="true" aria-controls="vp-tab" data-vtab="tab"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M7 12h14M7 18h14M3 12h.01M3 18h.01"/></svg>Tabela</button>
+              <button class="tab" type="button" role="tab" id="vt-tl" aria-selected="false" aria-controls="vp-tl" data-vtab="tl"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><rect width="4" height="7" x="7" y="10" rx="1"/><rect width="4" height="12" x="15" y="5" rx="1"/></svg>Linha do tempo</button>
+            </div>
+            <div class="tabs__panel" id="vp-tab" role="tabpanel" aria-labelledby="vt-tab" tabindex="0">
+              <div class="tablewrap" id="vertablewrap">
+                <table class="table" id="vertable">
+                  <thead>
+                    <tr>
+                      <th scope="col"><span class="sr-only">Em vigor</span></th>
+                      <th scope="col">Versão</th>
+                      <th scope="col">Situação</th>
+                      <th scope="col">Vigência</th>
+                      <th scope="col">Recibo</th>
+                      <th scope="col">Última atualização</th>
+                      <th scope="col"><span class="sr-only">Ações</span></th>
+                    </tr>
+                  </thead>
+                  <tbody id="verlist"></tbody>
+                </table>
+              </div>
+            </div>
+            <div class="tabs__panel" id="vp-tl" role="tabpanel" aria-labelledby="vt-tl" tabindex="0" hidden>
+              <div class="tl" id="tl"></div>
+            </div>
+            <div class="empty" id="verempty" hidden>
+              <div class="empty__icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M9 15h6M12 12v6"/></svg></div>
+              <p class="empty__title">Plano de contas não iniciado</p>
+              <p style="margin:0;max-width:46ch">Este contribuinte ainda não tem plano de contas. Comece importando o plano de contas ou montando as contas. A transmissão só ocorre depois do D-1001 processado.</p>
+              <a class="btn btn--primary" href="plano-contas-classificar.html?modo=nova" style="margin-top:var(--space-2)">Começar o plano de contas</a>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+  </div>
+
+<script>
+  var $=function(id){return document.getElementById(id);};
+  var CLOCK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>';
+  var ALERT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg>';
+  var CHECK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
+  var ARROW='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>';
+  var COMMENT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>';
+
+  /* Estados da submissão (antes e depois do aprovador) */
+  var STATES={
+    revisao:{
+      tone:'info', ic:CLOCK, pill:'status--info', label:'Em revisão',
+      desc:'A submissão está com o aprovador. Assim que for aprovada, é transmitida à Receita. Enquanto não for revisada, você ainda pode cancelar e editar.',
+      meta:[{k:'Enviado por',by:'Ricardo Alves',v:'hoje, 14:32'},{k:'Aprovador',by:'Ana Prado',v:'Aguardando revisão'}],
+      comment:null,
+      actions:'<button class="btn btn--ghost" type="button">Cancelar submissão</button><button class="btn btn--secondary" type="button">Editar informações</button>'
+    },
+    ajuste:{
+      tone:'warning', ic:ALERT, pill:'status--warning', label:'Ajustes solicitados',
+      desc:'O aprovador devolveu a submissão com pedidos de ajuste. Faça as correções e reenvie para revisão. Nada foi transmitido à Receita.',
+      meta:[{k:'Enviado por',by:'Ricardo Alves',v:'hoje, 14:32'},{k:'Revisado por',by:'Ana Prado',v:'hoje, 15:10'}],
+      comment:'Ana Prado: “O regime secundário não se aplica à MAG Seguros. Remova a marcação e confirme a vigência antes de reenviar.”',
+      actions:'<a class="btn btn--primary" href="info-contribuinte.html?from=detalhe">Ajustar informações'+ARROW+'</a>'
+    },
+    aprovado:{
+      tone:'success', ic:CHECK, pill:'status--success', label:'Aprovado e transmitido',
+      desc:'O aprovador aprovou e as informações foram transmitidas à Receita, com recibo. A vigência está ativa. Para mudar, altere os dados (gera uma nova versão) ou exclua a vigência. Toda alteração ou exclusão passa por nova aprovação antes de ir à Receita.',
+      meta:[{k:'Enviado por',by:'Ricardo Alves',v:'hoje, 14:32'},{k:'Aprovado por',by:'Ana Prado',v:'hoje, 15:40'},{k:'Recibo (Receita)',v:'RC-2026.0001'}],
+      comment:null,
+      actions:'<a class="btn btn--secondary" href="info-contribuinte.html?modo=alteracao">Alterar informações</a><button class="btn btn--ghost" type="button" data-open-excluir>Excluir</button><button class="btn btn--ghost" type="button">Ver comprovante</button>'
+    }
+  };
+  function initials(n){return n.split(/\s+/).slice(0,2).map(function(w){return w[0];}).join('').toUpperCase();}
+  function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
+  function render(key){
+    var s=STATES[key], bar=$('statusbar');
+    bar.className='statusbar statusbar--'+s.tone;
+    var comment = s.comment? '<div class="statusbar__comment">'+COMMENT+'<span>'+esc(s.comment)+'</span></div>':'';
+    bar.innerHTML='<span class="statusbar__ic">'+s.ic+'</span>'+
+      '<div class="statusbar__b"><h2 class="statusbar__title">'+esc(s.label)+'</h2>'+
+      '<p class="statusbar__desc">'+esc(s.desc)+'</p>'+comment+'</div>'+
+      '<div class="statusbar__actions">'+s.actions+'</div>';
+    var company='<div><p class="submeta__k">Empresa</p><div class="submeta__v"><span class="submeta__logo"><img src="../Logos/MAG%20seguros.png" alt=""></span><span>MAG Seguros <span class="num" style="color:var(--color-text-muted);font-weight:400">· 33.608.308/0001-73</span></span></div></div>';
+    $('submeta').innerHTML=company+s.meta.map(function(m){
+      var v = m.by ? '<span class="avatar avatar--sm">'+initials(m.by)+'</span>'+esc(m.by)+' <span class="num" style="color:var(--color-text-muted);font-weight:400">· '+esc(m.v)+'</span>' : '<span class="num">'+esc(m.v)+'</span>';
+      return '<div><p class="submeta__k">'+esc(m.k)+'</p><div class="submeta__v">'+v+'</div></div>';
+    }).join('');
+    document.querySelectorAll('.scenario button').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-sc')===key); });
+  }
+  /* Versões do D-1001 desta empresa (a vigente + rascunho em revisão + inativadas) */
+  /* Empresa é o contexto; a tela abre pela empresa clicada (?emp). A tabela não traz ações
+     condicionais: a linha inteira abre o detalhe da versão, onde ficam as ações do estado. */
+  function param(k){ var m=new RegExp('[?&]'+k+'=([^&]+)').exec(location.search); return m?decodeURIComponent(m[1]):''; }
+  function code(n){ return (n||'?').replace(/[^A-Za-zÀ-ú ]/g,'').trim().split(/\s+/)[0].slice(0,3).toUpperCase(); }
+  var COMPANIES={
+    seg:{nome:'MAG Seguros', cnpj:'33.608.308/0001-73', logo:'../Logos/MAG%20seguros.png', ref:'SUSEP', versions:[
+      {n:5, current:false, sit:'revisao', vigrole:null,  vig:'—',                       recibo:'—',            quando:'hoje, 10:12'},
+      {n:4, current:true,  sit:'sucesso', vigrole:'now',  vig:'01/07/2026 · em aberto',  recibo:'RP-2026.0004', quando:'01/jul, 09:30'},
+      {n:3, current:false, sit:'sucesso', vigrole:'past', vig:'01/01/2026 a 30/06/2026', recibo:'RP-2026.0003', quando:'02/jan, 10:00'},
+      {n:2, current:false, sit:'sucesso', vigrole:'past', vig:'01/06/2025 a 31/12/2025', recibo:'RP-2025.0002', quando:'02/jun, 14:00'},
+      {n:1, current:false, sit:'sucesso', vigrole:'past', vig:'01/01/2025 a 31/05/2025', recibo:'RP-2025.0001', quando:'03/jan, 11:20'}
+    ]},
+    cap:{nome:'MAG Capitalização', cnpj:'52.780.551/0001-19', logo:'../Logos/mag%20capitalizacoes.jpeg', ref:'SUSEP', versions:[
+      {n:1, current:true,  sit:'sucesso', vigrole:'now', vig:'01/01/2026 · em aberto', recibo:'RP-2026.0001', quando:'ontem, 09:40'}
+    ]},
+    fin:{nome:'MAG Finanças', cnpj:'21.995.256/0001-56', logo:'../Logos/mag%20financas.jpeg', ref:'COSIF', versions:[
+      {n:1, current:false, sit:'rascunho', vigrole:null, vig:'—', recibo:'—', quando:'hoje, 09:40'}
+    ]},
+    sic:{nome:'Sicoob Seguradora', cnpj:'26.314.512/0001-16', logo:'../Logos/sicoob.svg', ref:'SUSEP', versions:[
+      {n:1, current:false, sit:'rascunho', vigrole:null, vig:'—', recibo:'—', quando:'hoje, 08:10'}
+    ]},
+    s2u:{nome:'Simple2u', cnpj:'40.997.879/0001-02', logo:'../Logos/simple2u.svg', ref:'SUSEP', versions:[]}
+  };
+  /* Ciclo de vida único (interno → Receita). A pílula mostra o estágio; a vigência é selo derivado. */
+  var SIT={
+    rascunho:    {label:'Rascunho',                   pill:''},
+    revisao:     {label:'Em revisão',                 pill:'status--info'},
+    ajustes:     {label:'Ajustes solicitados',        pill:'status--warning'},
+    processando: {label:'Em processamento',           pill:'status--info'},
+    sucesso:     {label:'Processado com sucesso',     pill:'status--success'},
+    advertencias:{label:'Processado com adv.',pill:'status--warning'},
+    rejeitado:   {label:'Rejeitado',                  pill:'status--danger'}
+  };
+  var VIG={ now:{w:'Vigente',c:'vigrole--now'}, past:{w:'Encerrada',c:'vigrole--past'}, soon:{w:'Futura',c:'vigrole--soon'} };
+  var ENC={ label:'Encerrada', pill:'status--neutral' };
+  var DOT_VIG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg>';
+  var CO=COMPANIES[param('emp')]||COMPANIES.seg;
+  document.title='a-DeRE · '+CO.nome+' · Plano de contas';
+  $('bcNome').textContent=CO.nome;
+  $('coNome').textContent=CO.nome;
+  $('coSub').textContent='Plano de contas · '+CO.cnpj+(CO.ref?' · '+CO.ref:'');
+  $('coLogo').innerHTML=CO.logo?'<img src="'+CO.logo+'" alt="Logo '+esc(CO.nome)+'">':'<span class="co-code">'+code(CO.nome)+'</span>';
+  /* vigente separada no topo; depois as demais por versão desc */
+  var VERSIONS=CO.versions.slice().sort(function(a,b){ if(a.current!==b.current) return a.current?-1:1; return b.n-a.n; });
+  var CHEV_R='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>';
+  function renderVersions(){
+    var tw=$('vertablewrap'), empty=$('verempty'), hint=document.querySelector('.verhint'), hAct=$('headerAct'), tabs=$('vertabs'), pTab=$('vp-tab'), pTl=$('vp-tl');
+    var has=VERSIONS.length>0;
+    if(tabs) tabs.hidden=!has;
+    if(empty) empty.hidden=has;
+    if(hint) hint.hidden=!has;
+    if(hAct) hAct.hidden=!has;
+    if(pTl) pTl.hidden=true;
+    if(pTab) pTab.hidden=!has;
+    if(!has){ if(tw) tw.hidden=true; return; }
+    if(tw) tw.hidden=false;
+    var emp=param('emp')||'seg';
+    $('verlist').innerHTML=VERSIONS.map(function(v){
+      /* ciclo único: uma vez substituída, a versão passa a "Encerrada" (esse vira o estado dela) */
+      var s=(v.vigrole==='past')?ENC:(SIT[v.sit]||{label:v.sit,pill:''});
+      var cls=v.current?'verrow--current':'';
+      var vmark=(v.vigrole==='now')?'<span class="vigflag"><span class="vigdot" aria-hidden="true">'+DOT_VIG+'</span>Vigente</span>':'';
+      var href='plano-contas-classificar.html?emp='+emp+'&v='+v.n+'&sit='+v.sit;
+      return '<tr class="'+cls+'" data-href="'+href+'">'+
+        '<td class="vigcol">'+vmark+'</td>'+
+        '<td><span class="celltitle">Versão '+v.n+'</span></td>'+
+        '<td><span class="status '+s.pill+'"><span class="status__dot"></span>'+esc(s.label)+'</span></td>'+
+        '<td><span class="num">'+esc(v.vig)+'</span></td>'+
+        '<td><span class="num">'+esc(v.recibo)+'</span></td>'+
+        '<td>'+esc(v.quando)+'</td>'+
+        '<td class="ver-act"><a class="btn btn--secondary btn--sm" href="'+href+'">Ver detalhe</a></td>'+
+      '</tr>';
+    }).join('');
+    document.querySelectorAll('#verlist tr[data-href]').forEach(function(tr){
+      tr.addEventListener('click',function(ev){ if(ev.target.closest('a,button')) return; window.location.href=tr.getAttribute('data-href'); });
+    });
+  }
+  renderVersions();
+
+  /* Linha do tempo das vigências (barras por versão; destaca lacuna/sobreposição) */
+  function pdate(s){ var m=/(\d{2})\/(\d{2})\/(\d{4})/.exec(s||''); return m?new Date(+m[3],+m[2]-1,+m[1]):null; }
+  function parseVig(v){ if(!v||v==='—') return null; var open=/em aberto/.test(v); var m=(v.match(/\d{2}\/\d{2}\/\d{4}/g)||[]); if(!m.length) return null; return {from:pdate(m[0]), to:open?null:(m[1]?pdate(m[1]):null), open:open}; }
+  function renderTimeline(){
+    var el=$('tl'); if(!el) return;
+    var items=[];
+    CO.versions.forEach(function(v){ var p=parseVig(v.vig); if(p&&p.from) items.push({ver:v.n, current:v.current, from:p.from, to:p.to, open:p.open, vig:v.vig}); });
+    if(items.length<1){ el.hidden=true; return; }
+    el.hidden=false;
+    items.sort(function(a,b){ return a.from-b.from; });
+    var today=new Date();
+    var minT=items[0].from.getTime();
+    var maxT=Math.max.apply(null, items.map(function(i){ return (i.to||today).getTime(); }));
+    var span=Math.max(maxT-minT, 86400000*60); var DAY=86400000;
+    function pct(t){ return ((t-minT)/span)*100; }
+    var bars='', gaps='', hasGap=false, hasOverlap=false;
+    items.forEach(function(i){
+      var end=(i.to||today).getTime(), l=pct(i.from.getTime()), w=Math.max(pct(end)-l,6);
+      bars+='<div class="tl__bar '+(i.current?'tl__bar--vig':'tl__bar--ina')+(i.open?' tl__bar--open':'')+'" style="left:'+l.toFixed(2)+'%;width:'+w.toFixed(2)+'%" title="Versão '+i.ver+' · '+esc(i.vig||'')+'">v'+i.ver+'</div>';
+    });
+    for(var k=0;k<items.length-1;k++){
+      var a=items[k], b=items[k+1];
+      if(a.to){
+        if(b.from.getTime() <= a.to.getTime()){ hasOverlap=true; }
+        else if(b.from.getTime() > a.to.getTime()+DAY+DAY){ hasGap=true; var gs=a.to.getTime()+DAY, gl=pct(gs), gw=Math.max(pct(b.from.getTime())-gl,1); gaps+='<div class="tl__gap" style="left:'+gl.toFixed(2)+'%;width:'+gw.toFixed(2)+'%"><span class="tl__gap-lbl">lacuna</span></div>'; }
+      }
+    }
+    var fmt=function(d){ return ('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2)+'/'+d.getFullYear(); };
+    var last=items[items.length-1];
+    /* marcos datados: início de cada versão + fim da vigência (ou hoje) */
+    var ticks='';
+    items.forEach(function(i,idx){
+      var l=pct(i.from.getTime());
+      ticks+='<div class="tl__tick'+(idx===0?' tl__tick--start':'')+'" style="left:'+l.toFixed(2)+'%"><span class="tl__tickv">v'+i.ver+'</span><span class="tl__tickd">'+fmt(i.from)+'</span></div>';
+    });
+    ticks+='<div class="tl__tick tl__tick--end" style="left:100%"><span class="tl__tickv">'+(last.open?'hoje':'fim')+'</span><span class="tl__tickd">'+(last.open?'em aberto':fmt(new Date(maxT)))+'</span></div>';
+    var status = hasGap ? '<span style="color:var(--color-danger);font-weight:600;font-size:var(--text-xs)">Há lacuna de vigência</span>'
+      : hasOverlap ? '<span style="color:var(--color-warning);font-weight:600;font-size:var(--text-xs)">Há sobreposição de vigência</span>'
+      : '';
+    el.innerHTML='<div class="tl__cap"><div class="tl__legend"><span><span class="tl__sw tl__sw--vig"></span>Vigente</span><span><span class="tl__sw tl__sw--ina"></span>Encerrada</span></div></div>'+
+      '<div class="tl__track">'+bars+gaps+'</div>'+
+      '<div class="tl__ticks">'+ticks+'</div>'+
+      (status?'<div class="tl__note">'+status+'</div>':'');
+  }
+  renderTimeline();
+
+  /* Tabs: Tabela x Linha do tempo */
+  document.addEventListener('click',function(ev){
+    var t=ev.target.closest('[data-vtab]'); if(!t) return;
+    var key=t.getAttribute('data-vtab');
+    document.querySelectorAll('[data-vtab]').forEach(function(x){ var on=x===t; x.classList.toggle('is-active',on); x.setAttribute('aria-selected',String(on)); });
+    if($('vp-tab')) $('vp-tab').hidden=(key!=='tab');
+    if($('vp-tl')) $('vp-tl').hidden=(key!=='tl');
+  });
+
+  /* Shell */
+  document.querySelectorAll('[data-menu]').forEach(function(menu){
+    var b=menu.querySelector('button'), p=menu.querySelector('.menu__panel'); if(!b||!p) return;
+    b.addEventListener('click',function(e){ e.stopPropagation(); var o=p.hidden; document.querySelectorAll('.menu__panel').forEach(function(x){x.hidden=true;}); p.hidden=!o; b.setAttribute('aria-expanded',String(o)); });
+    document.addEventListener('click',function(e){ if(!menu.contains(e.target)){ p.hidden=true; b.setAttribute('aria-expanded','false'); } });
+  });
+  document.querySelectorAll('[data-sidenav-toggle]').forEach(function(btn){ var nav=btn.closest('[data-sidenav]'); btn.addEventListener('click',function(){ var c=nav.classList.toggle('is-collapsed'); btn.setAttribute('aria-expanded',String(!c)); btn.setAttribute('aria-label', c?'Expandir menu':'Colapsar menu'); btn.setAttribute('data-tip', c?'Expandir menu':'Colapsar menu'); }); });
+  (function(){ var btn=document.querySelector('[data-theme-toggle]'); if(!btn) return; var icon=btn.querySelector('[data-theme-icon]'), tip=document.querySelector('[data-theme-tip]'); var MOON='<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>'; var SUN='<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>'; function sync(){ var d=document.documentElement.classList.contains('dark'); icon.innerHTML=d?SUN:MOON; btn.setAttribute('aria-label',d?'Alternar para modo claro':'Alternar para modo escuro'); if(tip) tip.textContent=d?'Modo claro':'Modo escuro'; } btn.addEventListener('click',function(){ document.documentElement.classList.toggle('dark'); sync(); }); sync(); })();
+</script>
+
+</body>
+</html>

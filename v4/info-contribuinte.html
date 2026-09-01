@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>a-DeRE · Informações do Contribuinte</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=14">
+  <script src="../design-system/ds-tailwind.js"></script>
+  <style>
+    body{margin:0;background:var(--color-bg)}
+    /* ===== App shell (mesmo do painel) ===== */
+    .shell{display:flex;height:100vh;overflow:hidden}
+    .shell > .sidenav{border:0;border-radius:0;padding:0;position:relative!important;transform:none!important;visibility:visible!important;z-index:auto!important;transition:width .18s ease}
+    .brandrow{height:64px;flex:0 0 auto;display:flex;align-items:center;gap:var(--space-3);padding:0 var(--space-4) 0 var(--space-6);border-bottom:1px solid var(--color-border)}
+    .brandrow .wm{font-weight:800;font-size:var(--text-lg);letter-spacing:-.01em;color:var(--color-heading)}
+    .brandrow .avatar{background:rgba(255,255,255,.14);color:#fff;width:34px;height:34px;font-size:var(--text-sm);flex:0 0 auto;font-weight:800}
+    .navlist{flex:1;overflow:auto;min-height:0;padding:var(--space-3) var(--space-3) 0;display:flex;flex-direction:column;gap:2px}
+    .col{flex:1;display:flex;flex-direction:column;min-width:0;min-height:0}
+    .topbar{height:64px;flex:0 0 auto;background:var(--color-surface);border-bottom:1px solid var(--color-border);display:flex;align-items:center;gap:var(--space-4);padding:0 var(--space-6)}
+    .content{flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden;background:var(--slate-100)}
+    .dark .content,:root[data-theme="dark"] .content{background:var(--color-bg)}
+    .cadscroll{flex:1;overflow:auto;min-height:0;scroll-behavior:smooth}
+    @media(prefers-reduced-motion:reduce){.cadscroll{scroll-behavior:auto}}
+    .wrap{padding:var(--space-8);max-width:1480px;width:100%;margin:0 auto;box-sizing:border-box}
+    .page-h{background:var(--color-surface);border-bottom:1px solid var(--color-border)}
+    .page-h .wrap{padding-top:var(--space-8);padding-bottom:var(--space-8)}
+    .eyebrow{font-size:var(--text-xs);font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--color-text-muted);margin:0 0 var(--space-1-5)}
+    .page-h h1{margin:0;font-size:var(--text-4xl)!important;font-weight:700!important;letter-spacing:-.015em;line-height:1.15}
+    .titlerow{display:flex;align-items:center;gap:var(--space-3);flex-wrap:wrap}
+    .subrow{display:flex;align-items:center;gap:var(--space-3);margin-top:var(--space-2)}
+    .subrow p{margin:0;font-size:var(--text-base);color:var(--color-text-muted)}
+    .evtag{display:inline-flex;align-items:center;font-size:var(--text-xs);font-weight:700;letter-spacing:.02em;padding:2px var(--space-2);border-radius:var(--radius-sm);background:var(--color-surface-2);color:var(--color-text-onmuted);border:1px solid var(--color-border);font-variant-numeric:tabular-nums;flex:0 0 auto}
+
+    /* ===== layout do formulário: cards + nav à direita ===== */
+    .cadwrap{display:grid;grid-template-columns:minmax(0,1fr) 232px;gap:var(--space-10);align-items:start}
+    .cadnav{position:sticky;top:var(--space-6);display:flex;flex-direction:column;gap:0;border-left:2px solid var(--color-border)}
+    .cadnav__item{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-2) var(--space-4);margin-left:-2px;border-left:2px solid transparent;color:var(--color-text-muted);font-size:var(--text-sm);font-weight:500;line-height:1.3;background:transparent;cursor:pointer;text-align:left;text-decoration:none;transition:color .12s,border-color .12s}
+    .cadnav__item:hover:not(.is-current){color:var(--color-heading);border-left-color:var(--color-text-muted)}
+    .cadnav__item.is-current{color:var(--color-primary);border-left-color:var(--color-primary);font-weight:600}
+    .cadnav__item svg{width:17px;height:17px;flex:0 0 auto}
+    .cadnav__item:focus-visible{outline:none;box-shadow:var(--ring)}
+
+    .cadform{display:flex;flex-direction:column;gap:var(--space-6);min-width:0}
+    .card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-2xl);box-shadow:var(--shadow-sm);padding:var(--space-8);scroll-margin-top:var(--space-6)}
+    .card__h{display:flex;align-items:center;gap:var(--space-3);padding-bottom:var(--space-4);margin-bottom:var(--space-4);border-bottom:1px solid var(--color-divider)}
+    .card__ic{width:34px;height:34px;border-radius:var(--radius-lg);background:var(--color-primary-subtle);color:var(--color-primary);display:grid;place-items:center;flex:0 0 auto}
+    .card__ic svg{width:19px;height:19px}
+    .card__h h2{font-size:var(--text-xl)!important;margin:0;font-weight:700!important}
+
+    .cadrow{display:grid;grid-template-columns:236px minmax(0,1fr);gap:var(--space-4) var(--space-10);padding:var(--space-4) 0;align-items:start}
+    .cadrow + .cadrow{border-top:1px solid var(--color-divider)}
+    .cadrow__label{padding-top:var(--space-1-5)}
+    .cadrow__label .lb{font-size:var(--text-sm);font-weight:600;color:var(--color-heading)}
+    .cadrow__label .req{color:var(--color-danger-fg);margin-left:2px}
+    .cadrow__hint{font-size:var(--text-xs);color:var(--color-text-muted);margin:var(--space-1) 0 0;line-height:1.5}
+    .cadrow__field{min-width:0;display:flex;flex-direction:column;gap:var(--space-3)}
+    .roval{font-size:var(--text-base);color:var(--color-heading);font-weight:500;line-height:1.4;padding-top:var(--space-1-5)}
+    .datefield{position:relative;max-width:340px}
+    .datefield .input{padding-right:var(--space-10);cursor:pointer}
+    .datefield .input:read-only{background:var(--color-surface)}
+    .datefield .input:disabled{cursor:not-allowed}
+    .datefield__ic{position:absolute;right:var(--space-3);top:50%;transform:translateY(-50%);color:var(--color-text-muted);pointer-events:none;display:grid;z-index:1}
+    .datefield .input:disabled ~ .datefield__ic{opacity:.5}
+    .datefield__ic svg{width:18px;height:18px}
+    .datefield .dp{left:auto;right:0}
+    .selectstack{display:flex;flex-direction:column;gap:var(--space-3)}
+    .selectcard__num{font-variant-numeric:tabular-nums}
+    .atv-empty{display:flex;flex-direction:column;align-items:center;gap:var(--space-3);text-align:center;padding:var(--space-8);background:var(--color-surface-2);border:1px dashed var(--color-border);border-radius:var(--radius-xl);color:var(--color-text-muted);font-size:var(--text-sm)}
+    .cadsum{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-4) var(--space-8);margin:0}
+    .cadsum dt{font-size:var(--text-sm);color:var(--color-text-muted);font-weight:500;margin:0 0 var(--space-1)}
+    .cadsum dd{margin:0;font-size:var(--text-base);color:var(--color-heading);font-weight:500;line-height:1.4}
+    .cadsum > div{min-width:0}
+    .cadsum__full{grid-column:1/-1}
+    .atvsel{display:flex;flex-wrap:wrap;gap:var(--space-2);align-items:center}
+    .atvsel__empty{font-size:var(--text-sm);color:var(--color-text-muted)}
+    .tag b{font-weight:700}
+    /* drawer de atividades */
+    .drawer-backdrop[hidden]{display:none}
+    .drawer__intro{font-size:var(--text-base);color:var(--color-text-muted);margin:0 0 var(--space-4);line-height:1.5}
+    .atvsearch{position:relative;flex:1;min-width:220px}
+    .atvsearch > svg{position:absolute;left:var(--space-3);top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--color-text-muted);pointer-events:none}
+    .atvsearch .input{padding-left:var(--space-10)}
+    .atvlist{display:flex;flex-direction:column;gap:var(--space-2)}
+    .atvitem{display:flex;align-items:flex-start;gap:var(--space-3);padding:var(--space-3) var(--space-4);border-top:1px solid var(--color-divider);cursor:pointer;margin:0}
+    .atvitem:first-child{border-top:0}
+    .atvitem.is-sel{background:var(--color-primary-subtle)}
+    .atvcatsec .atvcat{display:flex;align-items:center;gap:var(--space-2);width:100%;padding:var(--space-3) var(--space-4);background:var(--color-surface-2);border:0;border-top:1px solid var(--color-divider);font-family:inherit;font-size:var(--text-sm);font-weight:600;color:var(--color-heading);cursor:pointer;text-align:left}
+    .atvlistgroup > .atvcatsec:first-child .atvcat{border-top:0}
+    .atvcat__chev{width:16px;height:16px;flex:0 0 auto;color:var(--color-text-muted);transition:transform .15s}
+    .atvcatsec.is-collapsed .atvcat__chev{transform:rotate(-90deg)}
+    .atvcat__name{flex:1 1 auto;min-width:0}
+    .atvcat__count{font-size:var(--text-xs);font-weight:500;color:var(--color-text-muted);white-space:nowrap}
+    .atvcatsec.is-collapsed .atvcat__items{display:none}
+    .atvcat:focus-visible{outline:none;box-shadow:var(--ring)}
+    .atvitem:hover:not(.is-sel){background:var(--color-surface-2)}
+    .atvitem input{margin:0;margin-top:2px;flex:0 0 auto;width:18px;height:18px;accent-color:var(--color-primary);cursor:pointer}
+    .atvitem__b{min-width:0;display:flex;flex-direction:column;gap:var(--space-1)}
+    .atvitem__cod{font-size:var(--text-sm);font-weight:700;color:var(--color-primary);font-variant-numeric:tabular-nums;flex:0 0 auto;min-width:2.8em;line-height:1.4}
+    .atvitem__desc{font-size:var(--text-base);color:var(--color-heading);font-weight:400;line-height:1.4}
+    .atvsugg{align-self:flex-start;display:inline-flex;align-items:center;gap:var(--space-1-5);font-size:var(--text-xs);font-weight:600;color:var(--color-primary);background:var(--color-primary-subtle);border:1px solid color-mix(in srgb, var(--color-primary) 22%, transparent);border-radius:var(--radius-pill);padding:var(--space-1) var(--space-2);white-space:nowrap;cursor:help}
+    .atvsugg svg{flex:0 0 auto;width:14px;height:14px}
+    .atvsugg:focus-visible{outline:none;box-shadow:var(--ring)}
+    .suggtip{position:fixed;z-index:200;max-width:440px;background:var(--color-heading);color:var(--color-surface);font-size:var(--text-xs);line-height:1.45;padding:var(--space-2) var(--space-3);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);pointer-events:none}
+    .suggtip[hidden]{display:none}
+    /* atividades selecionadas (por regime) */
+    #atvSelected{display:flex;flex-direction:column;gap:var(--space-4)}
+    .atvgroup{border:1px solid var(--color-border);border-radius:var(--radius-xl);padding:var(--space-4);display:flex;flex-direction:column;gap:var(--space-3)}
+    .atvgroup--flat{border:0;border-radius:0;padding:0}
+    .atvgroup__h{display:flex;align-items:center;gap:var(--space-2);flex-wrap:wrap}
+    .atvgroup__name{font-size:var(--text-lg);font-weight:600;color:var(--color-heading)}
+    .atvgroup__tab{font-size:var(--text-sm);font-weight:700;color:var(--color-primary);background:var(--color-primary-subtle);border-radius:var(--radius-pill);padding:2px var(--space-2)}
+    .atvpicks{display:flex;flex-direction:column}
+    .atvpick{display:flex;gap:var(--space-3);align-items:baseline;padding:var(--space-2) 0;min-width:0}
+    .atvpick:first-child{padding-top:0}
+    .atvpick:last-child{padding-bottom:0}
+    .atvpick + .atvpick{border-top:1px solid var(--color-divider)}
+    .atvpick__cod{font-size:var(--text-sm);font-weight:700;color:var(--color-primary);font-variant-numeric:tabular-nums;flex:0 0 auto;min-width:2.8em}
+    .atvpick__desc{font-size:var(--text-base);color:var(--color-heading);line-height:1.4;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    #atvSelReview .atvpick__desc{white-space:normal;overflow:visible;text-overflow:clip}
+    /* drawer: toolbar (busca + filtro) e seção por regime */
+    .drawer__body{scrollbar-gutter:stable}
+    .atvtoolbar{display:flex;flex-direction:column;align-items:stretch;gap:var(--space-4);margin-bottom:var(--space-6)}
+    .atvsuggonly{align-self:flex-start}
+    .atvreg{display:flex;align-items:center;gap:var(--space-2);flex-wrap:wrap;margin:var(--space-4) 0 var(--space-2)}
+    .atvreg__name{font-size:var(--text-lg);font-weight:700;color:var(--color-heading)}
+    .atvlistgroup{border:1px solid var(--color-border);border-radius:var(--radius-2xl);overflow:hidden}
+    /* modal de confirmação */
+    .scrim{position:fixed;inset:0;background:var(--color-scrim);display:flex;align-items:center;justify-content:center;padding:var(--space-6);z-index:80}
+    .scrim[hidden]{display:none}
+    #confirmModal .modal__header{align-items:center}
+    .modal__body p{margin:0 0 var(--space-4);font-size:var(--text-base);line-height:1.55;color:var(--color-text)}
+    .cinfo{display:flex;flex-direction:column;gap:var(--space-4);background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-4)}
+    .cinfo__row{display:flex;flex-direction:column;gap:2px}
+    .cinfo__k{font-size:var(--text-xs);color:var(--color-text-muted);font-weight:600}
+    .cinfo__v{font-size:var(--text-base);color:var(--color-heading);line-height:1.5}
+    .cinfo__v .avatar{display:inline-grid;vertical-align:middle;margin-right:var(--space-1-5)}
+    .atvempty{font-size:var(--text-sm);color:var(--color-text-muted);text-align:center;padding:var(--space-6) 0}
+    .atvcount{font-size:var(--text-xs);color:var(--color-text-muted);margin-right:var(--space-2)}
+    .cadnote{display:flex;gap:var(--space-3);align-items:flex-start;padding:var(--space-4);border-radius:var(--radius-lg);background:color-mix(in srgb, var(--color-primary) 6%, var(--color-surface-2));color:var(--color-text);margin-top:var(--space-6)}
+    .cadnote svg{flex:0 0 auto;width:18px;height:18px;color:var(--color-primary);margin-top:1px}
+    .cadnote p{margin:0;font-size:var(--text-base);line-height:1.55}
+
+    /* rodapé fixo */
+    .cadfoot{flex:0 0 auto;background:var(--color-surface);border-top:1px solid var(--color-border)}
+    .cadfoot__inner{max-width:1480px;margin:0 auto;padding:var(--space-4) var(--space-8);display:flex;align-items:center;justify-content:space-between;gap:var(--space-4)}
+    .cadfoot__right{display:flex;align-items:center;gap:var(--space-3)}
+
+    .bc{display:flex;align-items:center;gap:var(--space-2);font-size:var(--text-sm);min-width:0;overflow:hidden}
+    .bc a{color:var(--color-primary);text-decoration:none;white-space:nowrap;font-weight:500}
+    .bc a:hover{text-decoration:underline}
+    .bc span{color:var(--color-text);font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .bc svg{width:15px;height:15px;color:var(--color-text-muted);flex:0 0 auto}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+    @media(max-width:1040px){.cadwrap{grid-template-columns:1fr}.cadnav{position:static;flex-direction:row;flex-wrap:wrap;order:-1;margin-bottom:var(--space-2)}}
+    @media(max-width:720px){.cadrow{grid-template-columns:1fr;gap:var(--space-2)}.cadsum{grid-template-columns:1fr}.bc .bc-hide{display:none}}
+  </style>
+</head>
+<body>
+<style>    #dere-gate .dots{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(2px 2px at 12% 22%,rgba(255,255,255,.06),transparent),radial-gradient(2px 2px at 82% 15%,rgba(255,255,255,.05),transparent),radial-gradient(1.5px 1.5px at 68% 62%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 27% 78%,rgba(255,255,255,.045),transparent),radial-gradient(1.5px 1.5px at 90% 82%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 45% 34%,rgba(255,255,255,.04),transparent),radial-gradient(1.5px 1.5px at 8% 55%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 58% 90%,rgba(255,255,255,.04),transparent)}
+    #dere-gate .card{animation:dereIn .38s cubic-bezier(.2,.7,.2,1) both}
+    @media (prefers-reduced-motion:reduce){#dere-gate .card{animation:none}
+    #dere-gate input:focus{border-color:#1351b4 !important;box-shadow:0 0 0 3px rgba(19,81,180,.18) !important}
+    #dere-gate button:hover{background:#0c326f !important}
+    #dere-gate button:active{transform:translateY(1px)}
+    #dere-gate .dots{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(2px 2px at 12% 22%,rgba(255,255,255,.06),transparent),radial-gradient(2px 2px at 82% 15%,rgba(255,255,255,.05),transparent),radial-gradient(1.5px 1.5px at 68% 62%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 27% 78%,rgba(255,255,255,.045),transparent),radial-gradient(1.5px 1.5px at 90% 82%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 45% 34%,rgba(255,255,255,.04),transparent),radial-gradient(1.5px 1.5px at 8% 55%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 58% 90%,rgba(255,255,255,.04),transparent)}</style>
+<div id="dere-gate" style="position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;padding:24px;font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;background:radial-gradient(120% 120% at 20% 8%,#0c326f 0%,#071d41 55%,#05152e 100%)">
+  <style>
+    #dere-gate .dots{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(2px 2px at 12% 22%,rgba(255,255,255,.06),transparent),radial-gradient(2px 2px at 82% 15%,rgba(255,255,255,.05),transparent),radial-gradient(1.5px 1.5px at 68% 62%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 27% 78%,rgba(255,255,255,.045),transparent),radial-gradient(1.5px 1.5px at 90% 82%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 45% 34%,rgba(255,255,255,.04),transparent),radial-gradient(1.5px 1.5px at 8% 55%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 58% 90%,rgba(255,255,255,.04),transparent)}
+    #dere-gate .card{animation:dereIn .38s cubic-bezier(.2,.7,.2,1) both}
+    @keyframes dereIn{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+    @media (prefers-reduced-motion:reduce){#dere-gate .card{animation:none}}
+    #dere-gate input:focus{border-color:#1351b4 !important;box-shadow:0 0 0 3px rgba(19,81,180,.18) !important}
+    #dere-gate button:hover{background:#0c326f !important}
+    #dere-gate button:active{transform:translateY(1px)}
+  </style>
+  <span class="dots"></span>
+  <form class="card" onsubmit="return dereGate(this)" style="position:relative;background:#fff;padding:38px 34px 26px;border-radius:14px;width:100%;max-width:360px;text-align:center;box-shadow:0 24px 70px -12px rgba(3,17,42,.55)">
+    <div style="font-size:21px;font-weight:800;color:#0b1f3a;letter-spacing:-.01em;font-family:inherit">DeRE</div>
+    <div style="display:inline-flex;align-items:center;gap:6px;color:#5b6b82;font-size:13px;margin:5px 0 22px;font-family:inherit"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Protótipo &middot; acesso restrito</div>
+    <label for="dere-pw" style="display:block;text-align:left;font-size:12.5px;font-weight:600;color:#334155;margin:0 0 6px;font-family:inherit">Senha de acesso</label>
+    <input id="dere-pw" type="password" placeholder="Digite a senha" autofocus autocomplete="off" aria-label="Senha de acesso" style="width:100%;height:44px;border:1px solid #cbd5e1;border-radius:8px;padding:0 14px;font-size:16px;box-sizing:border-box;outline:none;color:#0f172a;background:#fff;font-family:inherit">
+    <div id="dere-err" style="color:#dc2626;font-size:12.5px;min-height:18px;margin-top:8px;text-align:left;display:flex;align-items:center;gap:5px;font-family:inherit"></div>
+    <button type="submit" style="width:100%;height:44px;margin-top:6px;background:#1351b4;color:#fff;border:0;border-radius:8px;font-weight:700;font-size:15px;cursor:pointer;font-family:inherit">Entrar</button>
+    <div style="margin-top:20px;font-size:11.5px;color:#94a3b8;letter-spacing:.02em;font-family:inherit">uma solução Axians</div>
+  </form>
+</div>
+<script>if(localStorage.getItem('dere_ok')==='1'){var _g=document.getElementById('dere-gate');if(_g)_g.remove();}function dereGate(f){var i=f.querySelector('input'),e=document.getElementById('dere-err');if(i.value==='dere123'){localStorage.setItem('dere_ok','1');document.getElementById('dere-gate').remove();}else{e.innerHTML='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 auto"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>Senha incorreta. Tente novamente.';i.select();}return false;}</script>
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  <div class="shell">
+
+    <nav class="sidenav sidenav--navy" data-sidenav aria-label="Navegação principal">
+      <div class="brandrow"><span class="avatar">a</span><span class="sidenav__label wm">a-DeRE</span></div>
+      <div class="navlist">
+        <p class="sidenav__group">Principal</p>
+        <a class="sidenav__item" href="painel.html" data-tip="Painel de Monitoramento"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg><span class="sidenav__label">Painel de Monitoramento</span></a>
+        <a class="sidenav__item" href="#" data-tip="Minhas empresas"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4M10 10h4M10 14h4M10 18h4"/></svg><span class="sidenav__label">Minhas empresas</span></a>
+        <p class="sidenav__group">Cadastro</p>
+        <a class="sidenav__item is-active" href="info-contribuinte-lista.html" data-tip="Informações do Contribuinte"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg><span class="sidenav__label">Informações do Contribuinte</span></a>
+        <a class="sidenav__item" href="plano-contas-lista.html" data-tip="Plano de contas"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M7 12h14M7 18h14M3 12h.01M3 18h.01"/></svg><span class="sidenav__label">Plano de contas</span></a>
+        <p class="sidenav__group">Declarações</p>
+        <a class="sidenav__item" href="#" data-tip="Declaração mensal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span class="sidenav__label">Declaração mensal</span></a>
+        <a class="sidenav__item" href="#" data-tip="Recibos e envios"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6M16 12h-6M13 16H10"/></svg><span class="sidenav__label">Recibos e envios</span></a>
+        <p class="sidenav__group">Sistema</p>
+        <a class="sidenav__item" href="#" data-tip="Configurações"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg><span class="sidenav__label">Configurações</span></a>
+      </div>
+      <div class="sidenav__foot"><button class="sidenav__item sidenav__toggle" type="button" aria-label="Colapsar menu" data-tip="Colapsar menu" aria-expanded="true" data-sidenav-toggle><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m11 17-5-5 5-5"/><path d="m18 17-5-5 5-5"/></svg><span class="sidenav__label">Colapsar</span></button></div>
+    </nav>
+
+    <div class="col">
+      <header class="topbar">
+        <nav class="bc" aria-label="Trilha de navegação">
+          <a href="info-contribuinte-lista.html" class="bc-hide">Informações do Contribuinte</a>
+          <svg class="bc-hide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+          <a href="info-contribuinte-empresa.html?emp=seg">MAG Seguros</a>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+          <span id="bcAcao">Nova versão</span>
+        </nav>
+        <div class="flex items-center gap-1" style="margin-left:auto">
+          <span class="tooltip"><button class="icon-btn" type="button" aria-label="Buscar"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></button><span class="tooltip__bubble" role="tooltip">Buscar</span></span>
+          <span class="tooltip"><button class="icon-btn" type="button" data-theme-toggle aria-label="Alternar para modo escuro"><svg data-theme-icon width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg></button><span class="tooltip__bubble" role="tooltip" data-theme-tip>Modo escuro</span></span>
+          <span class="tooltip"><button class="icon-btn" aria-label="Notificações, 3 pendências" id="bellBtn" style="position:relative"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="badge badge--danger" style="position:absolute;top:3px;right:3px">3</span></button><span class="tooltip__bubble" role="tooltip">Notificações</span></span>
+        </div>
+        <span aria-hidden="true" style="width:1px;height:22px;background:var(--color-divider);flex:0 0 auto"></span>
+        <div class="menu" data-menu>
+          <span class="tooltip tooltip--end"><button class="avatar" aria-haspopup="true" aria-expanded="false" aria-label="Ricardo Alves, abrir menu do usuário">RA</button><span class="tooltip__bubble tooltip__bubble--stack" role="tooltip"><strong>Ricardo Alves</strong>Administrador da conta</span></span>
+          <div class="menu__panel" hidden><div class="menu__head"><p class="menu__head-name">Ricardo Alves</p><p class="menu__head-mail">Administrador da conta</p></div><div class="menu__sep"></div><button class="menu__item">Perfil</button><button class="menu__item">Preferências</button><button class="menu__item menu__item--danger">Sair</button></div>
+        </div>
+      </header>
+
+      <main id="conteudo" tabindex="-1" class="content skip-target">
+        <div class="cadscroll" id="cadscroll">
+          <div class="page-h">
+            <div class="wrap">
+              <div class="titlerow"><h1 id="formTitle">Preencher informações do contribuinte</h1></div>
+              <div class="subrow"><p id="formSub">Nova versão · Enquadramento do contribuinte nos regimes específicos da DeRE.</p></div>
+            </div>
+          </div>
+
+          <div class="wrap">
+            <div class="cadwrap">
+              <div class="cadform">
+
+                <!-- Identificação -->
+                <section id="s-ident" class="card cadsec" aria-labelledby="h-ident">
+                  <div class="card__h"><span class="card__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg></span><h2 id="h-ident">Identificação</h2></div>
+                  <div class="cadrow">
+                    <div class="cadrow__label"><span class="lb">Nome empresarial</span><p class="cadrow__hint">Informação obtida do cadastro do CNPJ.</p></div>
+                    <div class="cadrow__field"><p class="roval">MAG Seguros</p></div>
+                  </div>
+                  <div class="cadrow">
+                    <div class="cadrow__label"><span class="lb">CNPJ (raiz)</span><p class="cadrow__hint">Identifica o contribuinte pela raiz de 8 dígitos do CNPJ.</p></div>
+                    <div class="cadrow__field"><p class="roval">33.608.308</p></div>
+                  </div>
+                  <div class="cadrow">
+                    <div class="cadrow__label"><span class="lb">Natureza jurídica</span><p class="cadrow__hint">Classificação jurídica do contribuinte conforme seu cadastro.</p></div>
+                    <div class="cadrow__field"><p class="roval">Sociedade Anônima</p></div>
+                  </div>
+                </section>
+
+                <!-- Vigência -->
+                <section id="s-vig" class="card cadsec" aria-labelledby="h-vig">
+                  <div class="card__h"><span class="card__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span><h2 id="h-vig">Vigência</h2></div>
+                  <div class="cadrow">
+                    <div class="cadrow__label"><span class="lb">Início da vigência<span class="req" aria-hidden="true">*</span></span><p class="cadrow__hint">A partir de quando o enquadramento passa a valer.</p></div>
+                    <div class="cadrow__field">
+                      <div class="datefield" data-datefield><input class="input" id="iniVig" type="text" value="01/01/2026" readonly placeholder="dd/mm/aaaa" autocomplete="off" aria-label="Início da vigência"><span class="datefield__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span><div class="dp" hidden></div></div>
+                    </div>
+                  </div>
+                  <div class="cadrow">
+                    <div class="cadrow__label"><span class="lb">Fim da vigência</span><p class="cadrow__hint">Deixe em branco para vigência por prazo indeterminado.</p></div>
+                    <div class="cadrow__field">
+                      <div class="datefield" data-datefield><input class="input" id="fimVig" type="text" value="" readonly placeholder="dd/mm/aaaa" autocomplete="off" aria-label="Fim da vigência" disabled><span class="datefield__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span><div class="dp" hidden></div></div>
+                      <label class="check"><input type="checkbox" id="vigAberta" checked><span>Vigência em aberto (sem data de fim)</span></label>
+                    </div>
+                  </div>
+                </section>
+
+                <!-- Regime tributário -->
+                <section id="s-reg" class="card cadsec" aria-labelledby="h-reg">
+                  <div class="card__h"><span class="card__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10M12 3v18M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg></span><h2 id="h-reg">Regime tributário</h2></div>
+                  <div class="cadrow">
+                    <div class="cadrow__label"><span class="lb">CNAE principal</span><p class="cadrow__hint">Vem do Cartão CNPJ. É a base para sugerir o regime.</p></div>
+                    <div class="cadrow__field"><p class="roval">65.11-1/01 · Seguros de vida</p></div>
+                  </div>
+                  <div class="cadrow">
+                    <div class="cadrow__label"><span class="lb">Regime principal<span class="req" aria-hidden="true">*</span></span><p class="cadrow__hint">Regime da atividade preponderante: a que sujeita ao regulador (BCB, ANS ou SUSEP). Sem regulador, a de maior faturamento no ano anterior.</p></div>
+                    <div class="cadrow__field">
+                      <div class="selectstack">
+                        <label class="selectcard"><span class="selectcard__lead selectcard__num" aria-hidden="true">1</span><span class="selectcard__body"><span class="selectcard__title">Regime Específico de Serviços Financeiros</span><span class="selectcard__desc">Bancos, meios de pagamento, câmbio, seguros e valores mobiliários (regulação BCB/SUSEP).</span><span class="selectcard__seal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 3 11 8l5 1.5-5 1.5L9.5 16 8 11l-5-1.5L8 8Z"/><path d="M18 14l.7 2.3L21 17l-2.3.7L18 20l-.7-2.3L15 17l2.3-.7Z"/></svg>Sugerido pela IA com base no CNAE</span></span><input class="selectcard__input" type="radio" name="regprin" checked></label>
+                        <label class="selectcard"><span class="selectcard__lead selectcard__num" aria-hidden="true">2</span><span class="selectcard__body"><span class="selectcard__title">Regime Específico de Plano de Assistência à Saúde</span><span class="selectcard__desc">Operadoras de planos de saúde (regulação ANS).</span></span><input class="selectcard__input" type="radio" name="regprin"></label>
+                        <label class="selectcard"><span class="selectcard__lead selectcard__num" aria-hidden="true">3</span><span class="selectcard__body"><span class="selectcard__title">Regime Específico de Concursos de Prognósticos</span><span class="selectcard__desc">Loterias e apostas.</span></span><input class="selectcard__input" type="radio" name="regprin"></label>
+                        <label class="selectcard"><span class="selectcard__lead selectcard__num" aria-hidden="true">9</span><span class="selectcard__body"><span class="selectcard__title">Outros Regimes de Tributação</span><span class="selectcard__desc">Contribuinte obrigado à DeRE cuja atividade preponderante não é uma das três acima.</span></span><input class="selectcard__input" type="radio" name="regprin"></label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="cadrow">
+                    <div class="cadrow__label"><span class="lb">Regimes secundários</span><p class="cadrow__hint">Outros regimes específicos que também se apliquem (até 3). Não pode repetir o principal.</p></div>
+                    <div class="cadrow__field">
+                      <div class="selectstack" id="secStack">
+                        <label class="selectcard" data-reg="1"><span class="selectcard__lead selectcard__num" aria-hidden="true">1</span><span class="selectcard__body"><span class="selectcard__title">Regime Específico de Serviços Financeiros</span><span class="selectcard__desc">Já selecionado como regime principal.</span></span><input class="selectcard__input" type="checkbox" name="regsec" disabled></label>
+                        <label class="selectcard" data-reg="2"><span class="selectcard__lead selectcard__num" aria-hidden="true">2</span><span class="selectcard__body"><span class="selectcard__title">Regime Específico de Plano de Assistência à Saúde</span><span class="selectcard__desc">Operadoras de planos de saúde (regulação ANS).</span></span><input class="selectcard__input" type="checkbox" name="regsec"></label>
+                        <label class="selectcard" data-reg="3"><span class="selectcard__lead selectcard__num" aria-hidden="true">3</span><span class="selectcard__body"><span class="selectcard__title">Regime Específico de Concursos de Prognósticos</span><span class="selectcard__desc">Loterias e apostas.</span></span><input class="selectcard__input" type="checkbox" name="regsec"></label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="cadrow">
+                    <div class="cadrow__label"><span class="lb">Natureza da tributação<span class="req" aria-hidden="true">*</span></span><p class="cadrow__hint">Como o contribuinte é tributado. Só muda de "regular" quando a entidade é imune pela própria natureza.</p></div>
+                    <div class="cadrow__field">
+                      <div class="selectstack">
+                        <label class="selectcard"><span class="selectcard__lead" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 5.5v13"/></svg></span><span class="selectcard__body"><span class="selectcard__title">Tributação regular</span><span class="selectcard__desc">Tributação normal das operações.</span></span><input class="selectcard__input" type="radio" name="nattrib" checked></label>
+                        <label class="selectcard"><span class="selectcard__lead" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg></span><span class="selectcard__body"><span class="selectcard__title">Imunidade ou não incidência</span><span class="selectcard__desc">Quando o contribuinte não é tributado pela própria natureza jurídica.</span></span><input class="selectcard__input" type="radio" name="nattrib"></label>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                <!-- Atividades -->
+                <section id="s-atv" class="card cadsec" aria-labelledby="h-atv">
+                  <div class="card__h"><span class="card__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8M13 12h8M13 18h8"/></svg></span><h2 id="h-atv">Atividades</h2></div>
+                  <div class="cadrow">
+                    <div class="cadrow__label"><span class="lb">Atividades<span class="req" aria-hidden="true">*</span></span><p class="cadrow__hint">Detalhe as atividades de cada regime selecionado. Ao menos uma por regime.</p></div>
+                    <div class="cadrow__field">
+                      <div id="atvSelected"></div>
+                    </div>
+                  </div>
+                </section>
+
+                <!-- Revisão e envio -->
+                <section id="s-rev" class="card cadsec" aria-labelledby="h-rev">
+                  <div class="card__h"><span class="card__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg></span><h2 id="h-rev">Revisão e envio</h2></div>
+                  <dl class="cadsum">
+                    <div><dt>Contribuinte</dt><dd>MAG Seguros</dd></div>
+                    <div><dt>CNPJ (raiz)</dt><dd>33.608.308</dd></div>
+                    <div><dt>Natureza jurídica</dt><dd>Sociedade Anônima</dd></div>
+                    <div><dt>Vigência</dt><dd>01/01/2026 · sem data de fim</dd></div>
+                    <div><dt>CNAE principal</dt><dd>65.11-1/01 · Seguros de vida</dd></div>
+                    <div><dt>Regime principal</dt><dd>Serviços Financeiros</dd></div>
+                    <div><dt>Regimes secundários</dt><dd>Nenhum</dd></div>
+                    <div><dt>Natureza da tributação</dt><dd>Tributação regular</dd></div>
+                    <div class="cadsum__full"><dt>Atividades</dt><dd><div class="atvsel" id="atvSelReview"></div></dd></div>
+                  </dl>
+                  <div class="cadnote">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+                    <p>Ao submeter, as informações vão para revisão interna do aprovador. A transmissão para a Receita acontece após a aprovação.</p>
+                  </div>
+                </section>
+
+              </div>
+
+              <nav class="cadnav" aria-label="Seções do formulário">
+                <a href="#s-ident" class="cadnav__item is-current"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg><span>Identificação</span></a>
+                <a href="#s-vig" class="cadnav__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span>Vigência</span></a>
+                <a href="#s-reg" class="cadnav__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10M12 3v18M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg><span>Regime tributário</span></a>
+                <a href="#s-atv" class="cadnav__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8M13 12h8M13 18h8"/></svg><span>Atividades</span></a>
+                <a href="#s-rev" class="cadnav__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg><span>Revisão e envio</span></a>
+              </nav>
+            </div>
+          </div>
+        </div>
+
+        <div class="cadfoot">
+          <div class="cadfoot__inner">
+            <a class="btn btn--ghost btn--lg" href="painel.html" id="cancelBtn">Cancelar</a>
+            <div class="cadfoot__right">
+              <button class="btn btn--secondary btn--lg" type="button" id="saveDraftBtn">Salvar rascunho</button>
+              <button class="btn btn--primary btn--lg" type="button" id="submitBtn">Enviar para revisão</button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Drawer: selecionar atividades (Tabela 21 - Atividades de Serviços Financeiros) -->
+  <div class="drawer-backdrop" id="atvDrawer" hidden>
+    <div class="drawer drawer--lg" role="dialog" aria-modal="true" aria-labelledby="atvDrawerTitle">
+      <div class="drawer__header">
+        <h2 id="atvDrawerTitle">Selecionar atividades</h2>
+        <button class="icon-btn" type="button" data-atv-close aria-label="Fechar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="drawer__body">
+        <div class="atvtoolbar">
+          <div class="atvsearch"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><input class="input" id="atvSearch" type="search" placeholder="Ex.: seguros, previdência, câmbio" aria-label="Buscar atividade"></div>
+          <label class="check atvsuggonly"><input type="checkbox" id="atvSuggOnly"><span>Ver só as sugestões da IA</span></label>
+        </div>
+        <div class="atvlist" id="atvList" role="group" aria-label="Atividades"></div>
+        <p class="atvempty" id="atvEmpty" hidden>Nenhuma atividade encontrada.</p>
+      </div>
+      <div class="drawer__footer">
+        <button class="btn btn--ghost" type="button" data-atv-close>Cancelar</button>
+        <button class="btn btn--secondary" type="button" id="atvClear">Limpar seleção</button>
+        <button class="btn btn--primary" type="button" id="atvConfirm">Confirmar seleção</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de confirmação: submeter para revisão -->
+  <div class="scrim" id="confirmModal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+      <div class="modal__header">
+        <h3 class="modal__title" id="confirmTitle">Enviar para revisão?</h3>
+        <button class="icon-btn" type="button" data-confirm-close aria-label="Fechar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="modal__body">
+        <p id="confirmDesc">As informações do contribuinte (D-1001) vão para <b>revisão interna</b> antes de serem transmitidas à Receita.</p>
+        <div class="cinfo">
+          <div class="cinfo__row"><span class="cinfo__k">Aprovador responsável</span><span class="cinfo__v"><span class="avatar avatar--sm">AP</span>Ana Prado</span></div>
+        </div>
+      </div>
+      <div class="modal__footer">
+        <button class="btn btn--ghost btn--lg" type="button" data-confirm-close>Cancelar</button>
+        <button class="btn btn--primary btn--lg" type="button" id="confirmSubmit">Enviar para revisão</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  var $=function(id){return document.getElementById(id);};
+  function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
+
+  /* Modo do formulário: nova versão (padrão) x editar versão existente (?modo=editar&v=N) */
+  (function(){
+    function param(k){ var m=new RegExp('[?&]'+k+'=([^&]+)').exec(location.search); return m?decodeURIComponent(m[1]):''; }
+    var DESC='Enquadramento do contribuinte nos regimes específicos da DeRE.';
+    if(param('modo')==='editar'){
+      var vlabel=param('v')?('Versão '+param('v')):'Versão';
+      if($('bcAcao')) $('bcAcao').textContent='Editar '+vlabel;
+      if($('formTitle')) $('formTitle').textContent='Editar '+vlabel+' · Informações do contribuinte';
+      if($('formSub')) $('formSub').textContent=DESC;
+      /* vim do detalhe da versão: cancelar volta pra lá, não pro painel */
+      if($('cancelBtn')) $('cancelBtn').setAttribute('href','info-contribuinte-detalhe.html?v='+(param('v')||'1')+'&st=revisao&from=painel');
+      document.title='a-DeRE · Editar informações do contribuinte';
+    } else {
+      if($('bcAcao')) $('bcAcao').textContent='Nova versão';
+      if($('formTitle')) $('formTitle').textContent='Nova versão · Preencher informações do contribuinte';
+      if($('formSub')) $('formSub').textContent=DESC;
+    }
+  })();
+
+  /* Vigência em aberto → habilita/limpa o Fim */
+  (function(){
+    var chk=$('vigAberta'), fim=$('fimVig');
+    function sync(){ fim.disabled=chk.checked; if(chk.checked) fim.value=''; }
+    chk.addEventListener('change',sync); sync();
+  })();
+
+  /* Date picker do ds (.dp) */
+  (function(){
+    var MESES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+    var WD=['D','S','T','Q','Q','S','S'];
+    var CHL='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>';
+    var CHR='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>';
+    function pad(n){return n<10?'0'+n:''+n;}
+    function fmt(d){return pad(d.getDate())+'/'+pad(d.getMonth()+1)+'/'+d.getFullYear();}
+    function parse(s){ var m=/^(\d{2})\/(\d{2})\/(\d{4})$/.exec((s||'').trim()); if(!m) return null; var d=new Date(+m[3],+m[2]-1,+m[1]); return isNaN(d.getTime())?null:d; }
+    document.querySelectorAll('[data-datefield]').forEach(function(field){
+      var input=field.querySelector('.input'), pop=field.querySelector('.dp'), view, sel, onDoc=null;
+      function render(){
+        var y=view.getFullYear(), mo=view.getMonth(), start=new Date(y,mo,1).getDay();
+        var h='<div class="dp__head"><button type="button" class="dp__nav" data-prev aria-label="Mês anterior">'+CHL+'</button><span class="dp__title">'+MESES[mo]+' '+y+'</span><button type="button" class="dp__nav" data-next aria-label="Próximo mês">'+CHR+'</button></div><div class="dp__grid">';
+        WD.forEach(function(w){ h+='<span class="dp__wd">'+w+'</span>'; });
+        var cur=new Date(y,mo,1-start);
+        for(var i=0;i<42;i++){
+          var out=cur.getMonth()!==mo, isSel=sel&&cur.getFullYear()===sel.getFullYear()&&cur.getMonth()===sel.getMonth()&&cur.getDate()===sel.getDate();
+          h+='<button type="button" class="dp__day'+(out?' dp__day--out':'')+(isSel?' dp__day--sel':'')+'" data-d="'+cur.getFullYear()+','+cur.getMonth()+','+cur.getDate()+'">'+cur.getDate()+'</button>';
+          cur.setDate(cur.getDate()+1);
+        }
+        pop.innerHTML=h+'</div>';
+        pop.querySelector('[data-prev]').addEventListener('click',function(e){e.stopPropagation();view=new Date(y,mo-1,1);render();});
+        pop.querySelector('[data-next]').addEventListener('click',function(e){e.stopPropagation();view=new Date(y,mo+1,1);render();});
+        pop.querySelectorAll('.dp__day').forEach(function(b){ b.addEventListener('click',function(e){ e.stopPropagation(); var p=b.getAttribute('data-d').split(','); input.value=fmt(new Date(+p[0],+p[1],+p[2])); input.dispatchEvent(new Event('change')); close(); }); });
+      }
+      function open(){ if(input.disabled) return; sel=parse(input.value); view=sel?new Date(sel.getFullYear(),sel.getMonth(),1):new Date(2026,0,1); render(); pop.hidden=false; onDoc=function(e){ if(!field.contains(e.target)) close(); }; setTimeout(function(){document.addEventListener('click',onDoc,true);},0); }
+      function close(){ pop.hidden=true; if(onDoc){document.removeEventListener('click',onDoc,true);onDoc=null;} }
+      input.addEventListener('click',function(e){ e.stopPropagation(); if(pop.hidden) open(); else close(); });
+      input.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){e.preventDefault(); pop.hidden?open():close();} else if(e.key==='Escape') close(); });
+    });
+  })();
+
+  /* Regimes (principal + secundários) + Atividades por regime (drawer).
+     Descrições OFICIAIS verbatim (Anexo I). t = título curto; d = descrição oficial completa. */
+  (function(){
+    /* Tabela 21 (Serviços Financeiros), agrupada por família */
+    var CATS21=[
+      {n:'Crédito, câmbio e mercado de capitais', a:[
+        {c:'01A',t:'Operações de crédito',d:'Operações de crédito, incluídas as operações de captação e repasse, adiantamento, empréstimo, financiamento, desconto de títulos, recuperação de créditos e prestação de garantias, com exceção da securitização, faturização e liquidação antecipada de recebíveis de arranjos de pagamento, de que tratam, respectivamente, os incisos IV, V e IX do caput do art. 182 da Lei Complementar nº 214/2025'},
+        {c:'02A',t:'Operações de câmbio',d:'Operações de câmbio, inclusive quando cobrado por tarifa ou comissão'},
+        {c:'03A',t:'Títulos e valores mobiliários',d:'Operações com títulos e valores mobiliários, incluídas a aquisição, negociação, liquidação, custódia, corretagem, distribuição e outras formas de intermediação, bem como a atividade de assessor de investimento e de consultor de valores mobiliários'},
+        {c:'04A',t:'Securitização',d:'Operações de securitização'},
+        {c:'05A',t:'Faturização (factoring)',d:'Operações de faturização (factoring)'},
+        {c:'10A',t:'Mercados organizados e infraestruturas',d:'Atividades de entidades administradoras de mercados organizados, infraestruturas de mercado e depositárias centrais'},
+        {c:'15A',t:'Intermediação',d:'Intermediação de consórcios, seguros, resseguros, previdência complementar e capitalização'},
+        {c:'16A',t:'Ativos virtuais',d:'Serviços de ativos virtuais'}
+      ]},
+      {n:'Arrendamento, consórcio e gestão de recursos', a:[
+        {c:'06A',t:'Arrendamento mercantil operacional',d:'Arrendamento mercantil (leasing) operacional, de quaisquer bens, incluídos a cessão de direitos e obrigações, substituição de garantia, alteração, cancelamento e registro de contrato e demais serviços relacionados ao arrendamento mercantil'},
+        {c:'06B',t:'Arrendamento mercantil financeiro',d:'Arrendamento mercantil (leasing) financeiro, de quaisquer bens, incluídos a cessão de direitos e obrigações, substituição de garantia, alteração, cancelamento e registro de contrato e demais serviços relacionados ao arrendamento mercantil'},
+        {c:'07A',t:'Administração de consórcio',d:'Administração de consórcio'},
+        {c:'08A',t:'Gestão e administração de recursos',d:'Gestão e administração de recursos, inclusive de fundos de investimento'}
+      ]},
+      {n:'Arranjos de pagamento', a:[
+        {c:'09A',t:'Credenciadora ou subcredenciadora',d:'Arranjos de pagamento - credenciadora ou subcredenciadora'},
+        {c:'09B',t:'Instituidor do arranjo (bandeiras)',d:'Arranjos de pagamento - instituidor do arranjo (bandeiras)'},
+        {c:'09C',t:'Emissor de cartões',d:'Arranjos de pagamento - emissor de cartões'},
+        {c:'09D',t:'Administração de programas de fidelização',d:'Arranjos de pagamento - administração de programas de fidelização'},
+        {c:'09E',t:'Programa de fidelidade próprio',d:'Arranjos de pagamento - programa de fidelidade próprio'},
+        {c:'09F',t:'Vale refeição, alimentação ou transporte',d:'Arranjos de pagamento - vale refeição, vale alimentação ou vale transporte'},
+        {c:'09Z',t:'Outros tipos de arranjo',d:'Arranjos de pagamento - outros tipos de arranjo'}
+      ]},
+      {n:'Seguros, resseguros, previdência e capitalização', a:[
+        {c:'11A',t:'Seguros de ramos elementares e de pessoas (sem sobrevivência)',d:'Operações de seguros de ramos elementares e seguros de pessoas sem cobertura por sobrevivência, com exceção dos seguros de saúde de que trata o Capítulo III do Título V da Lei Complementar nº 214/2025'},
+        {c:'11B',t:'Seguros de pessoas com cobertura por sobrevivência',d:'Operações de seguros de pessoas com cobertura por sobrevivência, com exceção dos seguros de saúde de que trata o Capítulo III do Título V da Lei Complementar nº 214/2025'},
+        {c:'12A',t:'Resseguros',d:'Operações de resseguros'},
+        {c:'13A',t:'Previdência complementar aberta',d:'Previdência privada, composta de operações de administração e gestão da previdência complementar aberta'},
+        {c:'13B',t:'Previdência complementar fechada',d:'Previdência privada, composta de operações de administração e gestão da previdência complementar fechada'},
+        {c:'14A',t:'Capitalização',d:'Operações de capitalização'},
+        {c:'17A',t:'Proteção patrimonial mutualista',d:'Operações de proteção patrimonial mutualista'}
+      ]}
+    ];
+    var CATS31=[{n:'Operadoras e planos de saúde', a:[
+      {c:'01A',t:'Seguradoras de saúde'},{c:'02A',t:'Administradoras de benefícios'},
+      {c:'03A',t:'Cooperativas operadoras de planos de saúde'},{c:'04A',t:'Cooperativas de seguro saúde'},
+      {c:'05A',t:'Demais operadoras de planos de assistência à saúde'},{c:'06A',t:'Plano de assistência funerária'},
+      {c:'07A',t:'Plano de assistência à saúde de animais'},{c:'08A',t:'Plano de assistência à saúde modalidade autogestão'}
+    ]}];
+    var CATS41=[{n:'Modalidades', a:[
+      {c:'01A',t:'Apostas esportivas'},{c:'01B',t:'Apostas de turfe'},{c:'01C',t:'Modalidades lotéricas'},
+      {c:'01D',t:'Jogos online (iGaming)'},{c:'01E',t:'Fantasy sport'},{c:'01F',t:'Sweepstakes'},{c:'01G',t:'Demais apostas'}
+    ]}];
+    var TAB={'1':{name:'Serviços Financeiros',tab:'21',cats:CATS21},'2':{name:'Plano de Assistência à Saúde',tab:'31',cats:CATS31},'3':{name:'Concursos de Prognósticos',tab:'41',cats:CATS41}};
+    function byCode(reg){var m={};TAB[reg].cats.forEach(function(g){g.a.forEach(function(a){m[a.c]=a;});});return m;}
+    function orderMap(reg){var o={},i=0;TAB[reg].cats.forEach(function(g){g.a.forEach(function(a){o[a.c]=i++;});});return o;}
+    var sel={'1':[],'2':[],'3':[]}; // começa vazio: o usuário adiciona as atividades (a IA só sugere)
+
+    /* Regimes: principal + secundários (secundário igual ao principal fica desabilitado) */
+    var SECDESC={'1':'Bancos, meios de pagamento, câmbio, seguros e valores mobiliários (regulação BCB/SUSEP).','2':'Operadoras de planos de saúde (regulação ANS).','3':'Loterias e apostas.'};
+    var stack=$('secStack'), regprins=document.querySelectorAll('input[name="regprin"]');
+    var vals=['1','2','3','9']; regprins.forEach(function(r,i){ r.value=vals[i]||''; });
+    function principal(){ var c=document.querySelector('input[name="regprin"]:checked'); return c?c.value:'1'; }
+    function secundarios(){ return [].slice.call(document.querySelectorAll('#secStack input[name="regsec"]:checked')).filter(function(i){return !i.disabled;}).map(function(i){return i.closest('.selectcard').getAttribute('data-reg');}); }
+    function selectedRegimes(){ var p=principal(), out=[]; if(TAB[p]) out.push(p); secundarios().forEach(function(r){ if(TAB[r] && out.indexOf(r)<0) out.push(r); }); return out; }
+    function syncSec(){
+      var p=principal();
+      stack.querySelectorAll('.selectcard[data-reg]').forEach(function(card){
+        var reg=card.getAttribute('data-reg'), inp=card.querySelector('.selectcard__input'), desc=card.querySelector('.selectcard__desc');
+        if(reg===p){ inp.disabled=true; inp.checked=false; desc.textContent='Já selecionado como regime principal.'; }
+        else { inp.disabled=false; desc.textContent=SECDESC[reg]||''; }
+      });
+    }
+
+    /* Grupos de atividade: um por regime selecionado */
+    /* Sugestões da IA (por CNAE), por regime */
+    var SUGG={'1':['11A','11B','13A'],'2':[],'3':[]};
+    function isSugg(reg,c){ return (SUGG[reg]||[]).indexOf(c)>=0; }
+    var SPARK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 3 11 8l5 1.5-5 1.5L9.5 16 8 11l-5-1.5L8 8Z"/></svg>';
+    function descOf(a){ return a.d||a.t||''; }
+
+    /* Atividades selecionadas (exibição por regime, só descrição oficial) + drawer único */
+    var selectedEl=$('atvSelected'), reviewEl=$('atvSelReview');
+    function picksHtml(reg,codes){ if(!codes.length) return '<span class="atvsel__empty">Nenhuma atividade selecionada.</span>'; var m=byCode(reg); return '<div class="atvpicks">'+codes.map(function(c){var a=m[c];return a?'<div class="atvpick"><span class="atvpick__cod">'+a.c+'</span><span class="atvpick__desc" title="'+esc(descOf(a))+'">'+esc(descOf(a))+'</span></div>':'';}).join('')+'</div>'; }
+    function renderSelected(){
+      var regs=selectedRegimes(), html='';
+      regs.forEach(function(reg){
+        var lbl = sel[reg].length ? 'Editar atividades' : 'Adicionar atividades';
+        html+='<div class="atvgroup"><div class="atvgroup__h"><span class="atvgroup__name">'+esc(TAB[reg].name)+'</span><span class="atvgroup__tab">Tabela '+TAB[reg].tab+'</span><button class="btn btn--secondary btn--sm" type="button" data-atvopen="'+reg+'" style="margin-left:auto">'+lbl+'</button></div>'+picksHtml(reg,sel[reg])+'</div>';
+      });
+      selectedEl.innerHTML=html;
+      selectedEl.querySelectorAll('[data-atvopen]').forEach(function(b){ b.addEventListener('click',function(){ openDrawer(b.getAttribute('data-atvopen')); }); });
+      if(reviewEl){ var rh=''; regs.forEach(function(reg){ if(sel[reg].length) rh+='<div class="atvgroup atvgroup--flat"><span class="atvgroup__name">'+esc(TAB[reg].name)+'</span>'+picksHtml(reg,sel[reg])+'</div>'; }); reviewEl.innerHTML = rh || '<span class="atvsel__empty">Nenhuma atividade selecionada.</span>'; }
+    }
+
+    /* Drawer único: todos os regimes selecionados */
+    var drawer=$('atvDrawer'), listEl=$('atvList'), emptyEl=$('atvEmpty'), searchEl=$('atvSearch');
+    var clearBtn=$('atvClear'), confirmBtn=$('atvConfirm'), suggChk=$('atvSuggOnly');
+    var temp={}, curReg='1';
+    function tempCount(){ return (temp[curReg]||[]).length; }
+    function updateFooter(){ var n=tempCount(); clearBtn.textContent='Limpar seleção ('+n+')'; clearBtn.disabled=n===0; confirmBtn.textContent='Confirmar seleção ('+n+')'; confirmBtn.disabled=n===0; }
+    function renderList(){
+      var regs=[curReg], q=(searchEl.value||'').toLowerCase(), onlyS=suggChk&&suggChk.checked, html='', any=false, multi=false;
+      regs.forEach(function(reg){
+        var T=TAB[reg], grp='', has=false;
+        T.cats.forEach(function(g){
+          var rows=g.a.filter(function(a){ if(onlyS && !isSugg(reg,a.c)) return false; return (a.c+' '+descOf(a)).toLowerCase().indexOf(q)>=0; });
+          if(!rows.length) return; has=true;
+          var selCount=g.a.filter(function(a){ return (temp[reg]||[]).indexOf(a.c)>=0; }).length;
+          var cnt = selCount ? '<span class="atvcat__count">'+selCount+' selecionada'+(selCount>1?'s':'')+'</span>' : '';
+          var items='';
+          rows.forEach(function(a){ var ck=(temp[reg]||[]).indexOf(a.c)>=0, sg=isSugg(reg,a.c); items+='<label class="atvitem'+(ck?' is-sel':'')+'"><input type="checkbox" data-reg="'+reg+'" value="'+a.c+'"'+(ck?' checked':'')+'><span class="atvitem__cod">'+a.c+'</span><span class="atvitem__b"><span class="atvitem__desc">'+esc(descOf(a))+'</span>'+(sg?'<span class="atvsugg" tabindex="0" data-sugg>'+SPARK+'Sugerido pela IA</span>':'')+'</span></label>'; });
+          grp+='<div class="atvcatsec"><button class="atvcat" type="button" data-toggle aria-expanded="true"><svg class="atvcat__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg><span class="atvcat__name">'+esc(g.n)+' ('+g.a.length+')</span>'+cnt+'</button><div class="atvcat__items">'+items+'</div></div>';
+        });
+        if(has){ any=true; if(multi) html+='<div class="atvreg"><span class="atvreg__name">'+esc(T.name)+'</span><span class="atvgroup__tab">Tabela '+T.tab+'</span></div>'; html+='<div class="atvlistgroup">'+grp+'</div>'; }
+      });
+      listEl.innerHTML=html; emptyEl.hidden=any;
+      listEl.querySelectorAll('[data-toggle]').forEach(function(btn){ btn.addEventListener('click',function(){ var sec=btn.closest('.atvcatsec'), col=sec.classList.toggle('is-collapsed'); btn.setAttribute('aria-expanded',String(!col)); }); });
+      listEl.querySelectorAll('.atvitem input').forEach(function(inp){ inp.addEventListener('change',function(){ var reg=inp.getAttribute('data-reg'), c=inp.value, lab=inp.closest('.atvitem'); if(!temp[reg])temp[reg]=[]; var i=temp[reg].indexOf(c); if(inp.checked){ if(i<0)temp[reg].push(c); lab.classList.add('is-sel'); } else { if(i>=0)temp[reg].splice(i,1); lab.classList.remove('is-sel'); } var sec=inp.closest('.atvcatsec'); if(sec){ var n=sec.querySelectorAll('.atvitem input:checked').length, head=sec.querySelector('.atvcat'), cntEl=sec.querySelector('.atvcat__count'); if(n>0){ if(!cntEl){ cntEl=document.createElement('span'); cntEl.className='atvcat__count'; head.appendChild(cntEl); } cntEl.textContent=n+' selecionada'+(n>1?'s':''); } else if(cntEl){ cntEl.remove(); } } updateFooter(); }); });
+    }
+    function openDrawer(reg){ curReg=reg; temp={}; temp[reg]=sel[reg].slice(); searchEl.value=''; if(suggChk)suggChk.checked=false; $('atvDrawerTitle').textContent='Atividades de '+TAB[reg].name; renderList(); updateFooter(); drawer.hidden=false; }
+    function closeDrawer(){ drawer.hidden=true; }
+    drawer.querySelectorAll('[data-atv-close]').forEach(function(b){ b.addEventListener('click',closeDrawer); });
+    drawer.addEventListener('click',function(e){ if(e.target===drawer) closeDrawer(); });
+    searchEl.addEventListener('input',renderList);
+    if(suggChk) suggChk.addEventListener('change',renderList);
+    clearBtn.addEventListener('click',function(){ temp[curReg]=[]; renderList(); updateFooter(); });
+    confirmBtn.addEventListener('click',function(){ var o=orderMap(curReg); sel[curReg]=(temp[curReg]||[]).slice().sort(function(x,y){return o[x]-o[y];}); renderSelected(); closeDrawer(); });
+    document.addEventListener('keydown',function(e){ if(e.key==='Escape' && !drawer.hidden) closeDrawer(); });
+
+    regprins.forEach(function(r){ r.addEventListener('change',function(){ syncSec(); renderSelected(); }); });
+    document.querySelectorAll('#secStack input[name="regsec"]').forEach(function(i){ i.addEventListener('change',renderSelected); });
+    syncSec(); renderSelected();
+  })();
+
+  /* Modal de confirmação: submeter para revisão */
+  (function(){
+    var modal=$('confirmModal'), openB=$('submitBtn'); if(!modal||!openB) return;
+    function close(){ modal.hidden=true; }
+    openB.addEventListener('click',function(){ modal.hidden=false; });
+    modal.querySelectorAll('[data-confirm-close]').forEach(function(b){ b.addEventListener('click',close); });
+    modal.addEventListener('click',function(e){ if(e.target===modal) close(); });
+    document.addEventListener('keydown',function(e){ if(e.key==='Escape' && !modal.hidden) close(); });
+    $('confirmSubmit').addEventListener('click',function(){ try{localStorage.setItem('adere.sent.d1001','seg');}catch(e){} window.location.href='info-contribuinte-detalhe.html?v=1&st=revisao&from=painel'; });
+  })();
+
+  /* Tooltip da sugestão da IA (position:fixed para escapar o recorte do drawer) */
+  (function(){
+    var tip=document.createElement('div'); tip.className='suggtip'; tip.setAttribute('role','tooltip'); tip.hidden=true;
+    tip.textContent='O CNAE principal (65.11-1/01 · Seguros de vida) indica atividade de seguros e previdência, que no regime de Serviços Financeiros corresponde a estes tipos da Tabela 21.';
+    document.body.appendChild(tip);
+    function show(el){ tip.hidden=false; var r=el.getBoundingClientRect(), tw=tip.offsetWidth, th=tip.offsetHeight; var left=Math.min(Math.max(8,r.left), window.innerWidth-tw-8); var top=r.top-th-8; if(top<8) top=r.bottom+8; tip.style.left=left+'px'; tip.style.top=top+'px'; }
+    function hide(){ tip.hidden=true; }
+    function hit(e){ return e.target && e.target.closest ? e.target.closest('[data-sugg]') : null; }
+    document.addEventListener('mouseover',function(e){ var b=hit(e); if(b) show(b); });
+    document.addEventListener('mouseout',function(e){ if(hit(e)) hide(); });
+    document.addEventListener('focusin',function(e){ var b=hit(e); if(b) show(b); });
+    document.addEventListener('focusout',function(e){ if(hit(e)) hide(); });
+  })();
+
+  /* Se veio de "Ajustar informações" (tela de detalhe), Cancelar volta pro detalhe */
+  if(location.search.indexOf('from=detalhe')>=0){ var cb=$('cancelBtn'); if(cb) cb.setAttribute('href','info-contribuinte-detalhe.html'); }
+
+  /* ===== Rascunho do D-1001 persiste localmente (paridade com o plano de contas) ===== */
+  (function(){
+    var KEY='adere.d1001.draft.seg';
+    function qs(k){ var m=new RegExp('[?&]'+k+'=([^&]*)').exec(location.search); return m?decodeURIComponent(m[1]):null; }
+    /* os campos por id cobrem vigência, regimes, natureza etc.; as atividades vivem em outro escopo e ficam de fora do rascunho por ora */
+    function snapshot(){
+      var f={};
+      document.querySelectorAll('input[id],select[id],textarea[id]').forEach(function(el){
+        if(el.type==='checkbox'||el.type==='radio') f[el.id]={c:el.checked};
+        else f[el.id]={v:el.value};
+      });
+      return {f:f};
+    }
+    function restore(d){
+      if(!d||!d.f) return;
+      Object.keys(d.f).forEach(function(id){
+        var el=document.getElementById(id); if(!el) return;
+        if('c' in d.f[id]) el.checked=d.f[id].c; else el.value=d.f[id].v;
+      });
+      var chk=document.getElementById('vigAberta'); if(chk) chk.dispatchEvent(new Event('change'));
+    }
+    var btn=document.getElementById('saveDraftBtn');
+    if(btn) btn.addEventListener('click',function(){
+      try{ localStorage.setItem(KEY, JSON.stringify(snapshot())); }catch(e){}
+      var old=btn.textContent; btn.textContent='Rascunho salvo';
+      setTimeout(function(){ btn.textContent=old; }, 1600);
+    });
+    /* restaura só ao criar nova versão (edição carrega da versão em revisão) */
+    if(qs('modo')!=='editar'){
+      try{ restore(JSON.parse(localStorage.getItem(KEY)||'null')); }catch(e){}
+    }
+    /* enviado para revisão = rascunho consumido */
+    var cs=document.getElementById('confirmSubmit'); if(cs) cs.addEventListener('click',function(){ try{ localStorage.removeItem(KEY); }catch(e){} });
+  })();
+
+  /* Nav lateral: scroll-spy + rolagem suave */
+  (function(){
+    var scroller=$('cadscroll');
+    var secs=[].slice.call(document.querySelectorAll('.cadsec'));
+    var items=[].slice.call(document.querySelectorAll('.cadnav__item'));
+    function setCurrent(i){ items.forEach(function(n,j){ var on=j===i; n.classList.toggle('is-current',on); if(on) n.setAttribute('aria-current','true'); else n.removeAttribute('aria-current'); }); }
+    function spy(){ var sr=scroller.getBoundingClientRect().top, best=0; secs.forEach(function(s,i){ if(s.getBoundingClientRect().top - sr <= 140) best=i; }); setCurrent(best); }
+    scroller.addEventListener('scroll',spy,{passive:true});
+    items.forEach(function(n,i){ n.addEventListener('click',function(e){ e.preventDefault(); var t=secs[i]; var target=scroller.scrollTop + (t.getBoundingClientRect().top - scroller.getBoundingClientRect().top) - 20; scroller.scrollTo({top:Math.max(0,target), behavior:'smooth'}); setCurrent(i); }); });
+    spy();
+  })();
+
+  /* Shell: menu do usuário */
+  document.querySelectorAll('[data-menu]').forEach(function(menu){
+    var b=menu.querySelector('button'), p=menu.querySelector('.menu__panel'); if(!b||!p) return;
+    b.addEventListener('click',function(e){ e.stopPropagation(); var o=p.hidden; document.querySelectorAll('.menu__panel').forEach(function(x){x.hidden=true;}); p.hidden=!o; b.setAttribute('aria-expanded',String(o)); });
+    document.addEventListener('click',function(e){ if(!menu.contains(e.target)){ p.hidden=true; b.setAttribute('aria-expanded','false'); } });
+  });
+  /* Colapsar menu */
+  document.querySelectorAll('[data-sidenav-toggle]').forEach(function(btn){ var nav=btn.closest('[data-sidenav]'); btn.addEventListener('click',function(){ var c=nav.classList.toggle('is-collapsed'); btn.setAttribute('aria-expanded',String(!c)); btn.setAttribute('aria-label', c?'Expandir menu':'Colapsar menu'); btn.setAttribute('data-tip', c?'Expandir menu':'Colapsar menu'); }); });
+  /* Tema */
+  (function(){ var btn=document.querySelector('[data-theme-toggle]'); if(!btn) return; var icon=btn.querySelector('[data-theme-icon]'), tip=document.querySelector('[data-theme-tip]'); var MOON='<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>'; var SUN='<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>'; function sync(){ var d=document.documentElement.classList.contains('dark'); icon.innerHTML=d?SUN:MOON; btn.setAttribute('aria-label',d?'Alternar para modo claro':'Alternar para modo escuro'); if(tip) tip.textContent=d?'Modo claro':'Modo escuro'; } btn.addEventListener('click',function(){ document.documentElement.classList.toggle('dark'); sync(); }); sync(); })();
+</script>
+</body>
+</html>

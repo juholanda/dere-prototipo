@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>a-DeRE · Painel de Monitoramento</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=14">
+  <script src="../design-system/ds-tailwind.js"></script>
+  <style>
+    body{margin:0;background:var(--color-bg)}
+    /* ===== App shell ===== */
+    .shell{display:flex;height:100vh;overflow:hidden}
+    .shell > .sidenav{border:0;border-radius:0;padding:0;position:relative!important;transform:none!important;visibility:visible!important;z-index:auto!important;transition:width .18s ease}
+    .brandrow{height:64px;flex:0 0 auto;display:flex;align-items:center;gap:var(--space-3);padding:0 var(--space-4) 0 var(--space-6);border-bottom:1px solid var(--color-border)}
+    .brandrow .wm{font-weight:800;font-size:var(--text-lg);letter-spacing:-.01em;color:var(--color-heading)}
+    .brandrow .avatar{background:rgba(255,255,255,.14);color:#fff;width:34px;height:34px;font-size:var(--text-sm);flex:0 0 auto;font-weight:800}
+    .navlist{flex:1;overflow:auto;min-height:0;padding:var(--space-3) var(--space-3) 0;display:flex;flex-direction:column;gap:2px}
+    .col{flex:1;display:flex;flex-direction:column;min-width:0;min-height:0}
+    .topbar{height:64px;flex:0 0 auto;background:var(--color-surface);border-bottom:1px solid var(--color-border);display:flex;align-items:center;gap:var(--space-4);padding:0 var(--space-6)}
+    .content{flex:1;overflow:auto;min-height:0;background:var(--slate-100);scrollbar-gutter:stable}
+    .dark .content,:root[data-theme="dark"] .content{background:var(--color-bg)}
+    .wrap{padding:var(--space-8);max-width:1480px;width:100%;margin:0 auto;box-sizing:border-box}
+    .page-h{background:var(--color-surface);border-bottom:1px solid var(--color-border)}
+    .page-h .wrap{padding-top:var(--space-8);padding-bottom:var(--space-8)}
+    .page-h__row{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--space-6);flex-wrap:wrap}
+    .page-h__row > div{min-width:0}
+    .page-h h1{margin:0;font-size:var(--text-4xl)!important;font-weight:700!important;letter-spacing:-.015em;line-height:1.15}
+    .page-h p{color:var(--color-text-muted);font-size:var(--text-base);margin:var(--space-1-5) 0 0;max-width:80ch;line-height:1.5}
+
+    /* Legenda das trilhas */
+    .legend{display:inline-flex;align-items:center;gap:var(--space-4);margin-top:var(--space-3)}
+    .legend__i{display:inline-flex;align-items:center;gap:var(--space-1-5);font-size:var(--text-xs);color:var(--color-text-onmuted)}
+    .legend__sw{width:10px;height:10px;border-radius:3px;flex:0 0 auto}
+    .legend__sw--adere{background:var(--color-text-muted)}
+    .legend__sw--receita{background:var(--color-primary)}
+
+    /* Switcher de cenário (demo) */
+    .scenario{display:inline-flex;flex:0 0 auto;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-pill);padding:3px;gap:2px}
+    .scenario button{border:0;background:none;font-family:inherit;font-size:var(--text-sm);font-weight:600;color:var(--color-text-muted);padding:var(--space-1-5) var(--space-4);border-radius:var(--radius-pill);cursor:pointer;white-space:nowrap;transition:background-color .12s,color .12s}
+    .scenario button.on{background:var(--color-primary-subtle);color:var(--color-primary)}
+    .scenario button:focus-visible{outline:none;box-shadow:var(--ring)}
+    /* Overlay de DEMONSTRAÇÃO (dev): cenário. Flutua por cima, não faz parte do produto. */
+    .demobar{position:fixed;bottom:var(--space-4);right:var(--space-4);z-index:200;display:flex;align-items:center;gap:var(--space-1);background:var(--slate-900);border:1px solid rgba(255,255,255,.14);border-radius:var(--radius-pill);padding:var(--space-1) var(--space-2);box-shadow:var(--shadow-md);font-size:var(--text-xs)}
+    .demobar__lbl{text-transform:uppercase;letter-spacing:.08em;font-weight:700;color:rgba(255,255,255,.5);padding:0 var(--space-1) 0 var(--space-2);font-size:var(--text-2xs)}
+    .demobar__sep{width:1px;height:16px;background:rgba(255,255,255,.18)}
+    .demobar button{background:none;border:0;color:rgba(255,255,255,.72);font-family:inherit;font-size:var(--text-xs);cursor:pointer;padding:var(--space-1) var(--space-2);border-radius:var(--radius-pill)}
+    .demobar button:hover{color:rgba(255,255,255,1);background:rgba(255,255,255,.08)}
+    .demobar button.on{background:rgba(255,255,255,.16);color:rgba(255,255,255,1);font-weight:600}
+
+    /* KPIs — cards com raio 12px */
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-4);margin-bottom:var(--space-8)}
+    .stat{position:relative;box-shadow:var(--shadow-sm);border-radius:var(--radius-2xl)}
+    .stat__label{color:var(--color-heading)}
+    .stat__foot{margin-top:2px}
+    .kpi-sub{font-size:var(--text-lg);color:var(--color-text-muted);font-weight:600}
+
+    /* Seções + painel (raio 12px) */
+    .sec{margin-bottom:var(--space-10)}
+    .sec:last-child{margin-bottom:0}
+    .sec__h{display:flex;align-items:center;gap:var(--space-2);margin:0 0 var(--space-1)}
+    .sec__h h2{font-size:var(--text-lg)!important;font-weight:700!important;margin:0}
+    #pendCount{min-width:20px;height:20px;font-size:var(--text-xs)}
+    .sec__sub{font-size:var(--text-sm);color:var(--color-text-onmuted);margin:0 0 var(--space-4);line-height:1.5}
+    .panel{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-2xl);box-shadow:var(--shadow-sm);overflow:hidden}
+    .panel .table{margin:0}
+
+    /* Ações pendentes (taskrow do ds) */
+    /* logo da empresa: imagem real quando houver, senão monograma */
+    .co-logo{width:var(--space-10);height:var(--space-10);border-radius:var(--radius-lg);flex:0 0 auto;display:grid;place-items:center;overflow:hidden}
+    .co-logo--sm{width:var(--space-8);height:var(--space-8);border-radius:var(--radius-base)}
+    .co-logo--code{background:var(--color-primary-subtle);color:var(--color-primary);font-weight:700;font-size:var(--text-sm)}
+    .co-logo--sm.co-logo--code{font-size:var(--text-xs)}
+    .co-logo--img{background:var(--color-surface);border:1px solid var(--color-border)}
+    .co-logo--img img{width:100%;height:100%;object-fit:cover;display:block}
+    /* Ações pendentes — linha rica (situação · explicação · próxima ação) */
+    .taskrow__b{display:flex;flex-direction:column;gap:var(--space-1)}
+    .taskrow__sit{align-self:flex-start;margin:2px 0}
+    .taskrow__exp{font-size:var(--text-sm);color:var(--color-text-onmuted);line-height:1.45;margin:0}
+    .taskrow__next{font-size:var(--text-sm);color:var(--color-text);line-height:1.45;margin:0}
+    .taskrow__next-lbl{font-weight:600;color:var(--color-heading)}
+    .cdays{color:var(--color-warning-fg);font-weight:700;white-space:nowrap}
+    /* detalhe do evento (modal) */
+    .scrim{position:fixed;inset:0;background:rgba(15,23,42,.5);display:flex;align-items:center;justify-content:center;padding:var(--space-6);z-index:60}
+    .scrim[hidden]{display:none}
+    .dv{display:flex;flex-direction:column;gap:var(--space-2);padding-bottom:var(--space-4)}
+    .dv__row{display:flex;justify-content:space-between;align-items:center;gap:var(--space-4);font-size:var(--text-sm)}
+    .dv__k{color:var(--color-text-muted)}
+    .dv__block{border-top:1px solid var(--color-border);padding-top:var(--space-4);margin-top:var(--space-1)}
+    .dv__block h4{font-size:var(--text-sm);color:var(--color-heading);margin:0 0 var(--space-1)}
+    .dv__block p{margin:0;font-size:var(--text-sm);color:var(--color-text-onmuted);line-height:1.5}
+    .taskrow__side{gap:var(--space-4)}
+    .taskrow__side .status{white-space:nowrap}
+    .allclear{display:flex;align-items:flex-start;gap:var(--space-3);padding:var(--space-4) var(--space-6);background:var(--color-success-bg)}
+    .allclear svg{width:20px;height:20px;flex:0 0 auto;color:var(--color-success-fg)}
+    .allclear b{color:var(--color-success-fg);display:block}
+    .allclear span{display:block;font-size:var(--text-sm);color:var(--color-text-onmuted);margin-top:2px}
+
+    /* Tabela de eventos */
+    .celltitle{font-size:var(--text-sm);font-weight:600;color:var(--color-heading)}
+    .cellsub{font-size:var(--text-xs);color:var(--color-text-muted);font-variant-numeric:tabular-nums;margin-top:2px}
+    .evemp{display:flex;align-items:center;gap:var(--space-3)}
+    .evemp > div{min-width:0}
+    .evcell{display:inline-flex;flex-direction:column;align-items:flex-start;gap:var(--space-1)}
+    .who{display:inline-flex;align-items:center;gap:var(--space-2);white-space:nowrap}
+    .who .avatar{width:30px;height:30px;font-size:var(--text-xs);flex:0 0 auto}
+    .who span{font-size:var(--text-sm)}
+    .num{font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--color-text-onmuted)}
+    .muted{color:var(--color-text-muted)}
+    .tracktag{display:inline-flex;align-items:center;font-size:var(--text-2xs);font-weight:700;letter-spacing:.03em;text-transform:uppercase;padding:1px var(--space-1-5);border-radius:var(--radius-sm);white-space:nowrap}
+    .tracktag--adere{background:var(--color-surface-2);color:var(--color-text-onmuted)}
+    .tracktag--receita{background:var(--color-primary-subtle);color:var(--color-primary)}
+    .status--neutral{background:var(--color-surface-2);color:var(--color-text-onmuted)}
+    .status__dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex:0 0 auto}
+    .table th.sortable{white-space:nowrap}
+    .th-sort{display:inline-flex;align-items:center;gap:4px}
+    .th-sort svg{width:13px;height:13px;opacity:.55}
+    .tbl-scroll{overflow-x:auto}
+    /* painel colapsável: cabeçalho (título + subtítulo) fica dentro do card e sempre visível */
+    .panel__head{display:flex;align-items:center;gap:var(--space-4);padding:var(--space-6);cursor:pointer}
+    .panel__head--static{cursor:default}
+    .panel__head--static:hover{background:transparent}
+    .panel__titles{flex:1;min-width:0}
+    .panel__h{display:flex;align-items:center;gap:var(--space-2)}
+    .panel__h h2{font-size:var(--text-lg)!important;font-weight:700!important;margin:0}
+    .panel__sub{font-size:var(--text-sm);color:var(--color-text-onmuted);margin:var(--space-1) 0 0;line-height:1.5}
+    .panel__chev{flex:0 0 auto;transition:transform .18s ease,background-color .12s,color .12s}
+    .panel__head:hover .panel__chev:not(:disabled){background:var(--color-border);color:var(--color-heading)}
+    .panel.is-collapsed .panel__chev{transform:rotate(180deg)}
+    .panel:not(.is-collapsed) .panel__head{border-bottom:1px solid var(--color-divider)}
+    .panel__body{overflow:hidden;transition:height .28s ease}
+    @media (prefers-reduced-motion:reduce){.panel__body{transition:none}}
+    /* filtros da tabela de eventos (dentro do card) */
+    .evfilters{display:flex;gap:var(--space-3);flex-wrap:wrap;align-items:center;padding:var(--space-4) var(--space-6);border-bottom:1px solid var(--color-divider)}
+    .evfilters__search{position:relative;flex:1 1 240px;min-width:180px;max-width:360px}
+    .evfilters__search > svg{position:absolute;left:var(--space-3);top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--color-text-muted);pointer-events:none}
+    .evfilters__search .input{padding-left:calc(var(--space-6) + var(--space-2))}
+    .evfilters__cs{flex:0 0 auto;width:190px}
+    .evfilters__cs--wide{width:220px}
+    .evfilters .combo__panel{right:auto;min-width:100%;width:max-content;max-width:280px}
+    .evfilters .combo__label{white-space:normal}
+    .erro-row td{border-bottom:1px solid var(--color-border)}
+    .erro-cell{padding-top:0!important}
+    .erro-inline{display:inline-flex;align-items:flex-start;gap:var(--space-2);font-size:var(--text-xs);color:var(--color-danger-fg);line-height:1.45}
+    .erro-inline svg{width:14px;height:14px;flex:0 0 auto;margin-top:1px}
+    .erro-txt{display:flex;flex-direction:column;gap:var(--space-1)}
+    .erro-meta{display:flex;flex-wrap:wrap;gap:var(--space-2)}
+    .erro-tag{display:inline-flex;align-items:center;gap:var(--space-1);font-size:var(--text-2xs);font-weight:600;color:var(--color-text-onmuted);background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:1px var(--space-1-5);font-variant-numeric:tabular-nums;text-transform:none;letter-spacing:0}
+    /* botões da coluna Ação com largura igual */
+    a.evact{color:var(--color-primary)}
+    a.evact:hover{background:var(--color-primary-subtle)}
+    /* hover na linha destaca a linha e faz a seta responder */
+    #evTable tbody tr:not(.evempty):hover{background:var(--color-surface-2)}
+    #evTable tbody tr:not(.evempty):hover a.evact{background:var(--color-primary-subtle);color:var(--color-primary-darker)}
+    /* grupos de Ações pendentes (o que vem de eventos × o que vira evento) */
+    .taskgroup__label{font-size:var(--text-xs);font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--color-text-onmuted);padding:var(--space-4) var(--space-6) var(--space-1)}
+    .tasklist > .taskgroup__label:first-child{padding-top:var(--space-3)}
+    /* ordenação da tabela */
+    .table th.sortable{cursor:pointer;user-select:none;white-space:nowrap}
+    .table th.sortable:hover{color:var(--color-heading)}
+    .table th.sortable:focus-visible{outline:none;box-shadow:var(--ring)}
+    .sortcaret{display:inline-flex;vertical-align:middle;margin-left:var(--space-1);opacity:0;transition:opacity .1s}
+    .sortcaret svg{width:14px;height:14px}
+    .table th[aria-sort="ascending"] .sortcaret,.table th[aria-sort="descending"] .sortcaret{opacity:1}
+    .table th[aria-sort="ascending"] .sortcaret{transform:rotate(180deg)}
+
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    @media(max-width:1000px){.stats{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:560px){.stats{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<style>    #dere-gate .dots{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(2px 2px at 12% 22%,rgba(255,255,255,.06),transparent),radial-gradient(2px 2px at 82% 15%,rgba(255,255,255,.05),transparent),radial-gradient(1.5px 1.5px at 68% 62%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 27% 78%,rgba(255,255,255,.045),transparent),radial-gradient(1.5px 1.5px at 90% 82%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 45% 34%,rgba(255,255,255,.04),transparent),radial-gradient(1.5px 1.5px at 8% 55%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 58% 90%,rgba(255,255,255,.04),transparent)}
+    #dere-gate .card{animation:dereIn .38s cubic-bezier(.2,.7,.2,1) both}
+    @media (prefers-reduced-motion:reduce){#dere-gate .card{animation:none}
+    #dere-gate input:focus{border-color:#1351b4 !important;box-shadow:0 0 0 3px rgba(19,81,180,.18) !important}
+    #dere-gate button:hover{background:#0c326f !important}
+    #dere-gate button:active{transform:translateY(1px)}
+    #dere-gate .dots{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(2px 2px at 12% 22%,rgba(255,255,255,.06),transparent),radial-gradient(2px 2px at 82% 15%,rgba(255,255,255,.05),transparent),radial-gradient(1.5px 1.5px at 68% 62%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 27% 78%,rgba(255,255,255,.045),transparent),radial-gradient(1.5px 1.5px at 90% 82%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 45% 34%,rgba(255,255,255,.04),transparent),radial-gradient(1.5px 1.5px at 8% 55%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 58% 90%,rgba(255,255,255,.04),transparent)}</style>
+<div id="dere-gate" style="position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;padding:24px;font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;background:radial-gradient(120% 120% at 20% 8%,#0c326f 0%,#071d41 55%,#05152e 100%)">
+  <style>
+    #dere-gate .dots{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(2px 2px at 12% 22%,rgba(255,255,255,.06),transparent),radial-gradient(2px 2px at 82% 15%,rgba(255,255,255,.05),transparent),radial-gradient(1.5px 1.5px at 68% 62%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 27% 78%,rgba(255,255,255,.045),transparent),radial-gradient(1.5px 1.5px at 90% 82%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 45% 34%,rgba(255,255,255,.04),transparent),radial-gradient(1.5px 1.5px at 8% 55%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 58% 90%,rgba(255,255,255,.04),transparent)}
+    #dere-gate .card{animation:dereIn .38s cubic-bezier(.2,.7,.2,1) both}
+    @keyframes dereIn{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+    @media (prefers-reduced-motion:reduce){#dere-gate .card{animation:none}}
+    #dere-gate input:focus{border-color:#1351b4 !important;box-shadow:0 0 0 3px rgba(19,81,180,.18) !important}
+    #dere-gate button:hover{background:#0c326f !important}
+    #dere-gate button:active{transform:translateY(1px)}
+  </style>
+  <span class="dots"></span>
+  <form class="card" onsubmit="return dereGate(this)" style="position:relative;background:#fff;padding:38px 34px 26px;border-radius:14px;width:100%;max-width:360px;text-align:center;box-shadow:0 24px 70px -12px rgba(3,17,42,.55)">
+    <div style="font-size:21px;font-weight:800;color:#0b1f3a;letter-spacing:-.01em;font-family:inherit">DeRE</div>
+    <div style="display:inline-flex;align-items:center;gap:6px;color:#5b6b82;font-size:13px;margin:5px 0 22px;font-family:inherit"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Protótipo &middot; acesso restrito</div>
+    <label for="dere-pw" style="display:block;text-align:left;font-size:12.5px;font-weight:600;color:#334155;margin:0 0 6px;font-family:inherit">Senha de acesso</label>
+    <input id="dere-pw" type="password" placeholder="Digite a senha" autofocus autocomplete="off" aria-label="Senha de acesso" style="width:100%;height:44px;border:1px solid #cbd5e1;border-radius:8px;padding:0 14px;font-size:16px;box-sizing:border-box;outline:none;color:#0f172a;background:#fff;font-family:inherit">
+    <div id="dere-err" style="color:#dc2626;font-size:12.5px;min-height:18px;margin-top:8px;text-align:left;display:flex;align-items:center;gap:5px;font-family:inherit"></div>
+    <button type="submit" style="width:100%;height:44px;margin-top:6px;background:#1351b4;color:#fff;border:0;border-radius:8px;font-weight:700;font-size:15px;cursor:pointer;font-family:inherit">Entrar</button>
+    <div style="margin-top:20px;font-size:11.5px;color:#94a3b8;letter-spacing:.02em;font-family:inherit">uma solução Axians</div>
+  </form>
+</div>
+<script>if(localStorage.getItem('dere_ok')==='1'){var _g=document.getElementById('dere-gate');if(_g)_g.remove();}function dereGate(f){var i=f.querySelector('input'),e=document.getElementById('dere-err');if(i.value==='dere123'){localStorage.setItem('dere_ok','1');document.getElementById('dere-gate').remove();}else{e.innerHTML='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 auto"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>Senha incorreta. Tente novamente.';i.select();}return false;}</script>
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  <div class="shell">
+
+    <nav class="sidenav sidenav--navy" data-sidenav aria-label="Navegação principal">
+      <div class="brandrow"><span class="avatar">a</span><span class="sidenav__label wm">a-DeRE</span></div>
+      <div class="navlist">
+        <p class="sidenav__group">Principal</p>
+        <a class="sidenav__item is-active" href="#" aria-current="page" data-tip="Painel de Monitoramento"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg><span class="sidenav__label">Painel de Monitoramento</span></a>
+        <a class="sidenav__item" href="#" data-tip="Minhas empresas"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4M10 10h4M10 14h4M10 18h4"/></svg><span class="sidenav__label">Minhas empresas</span></a>
+        <p class="sidenav__group">Cadastro</p>
+        <a class="sidenav__item" href="info-contribuinte-lista.html" data-tip="Informações do Contribuinte"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg><span class="sidenav__label">Informações do Contribuinte</span></a>
+        <a class="sidenav__item" href="plano-contas-lista.html" data-tip="Plano de contas"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M7 12h14M7 18h14M3 12h.01M3 18h.01"/></svg><span class="sidenav__label">Plano de contas</span></a>
+        <p class="sidenav__group">Declarações</p>
+        <a class="sidenav__item" href="#" data-tip="Declaração mensal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span class="sidenav__label">Declaração mensal</span></a>
+        <a class="sidenav__item" href="#" data-tip="Recibos e envios"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6M16 12h-6M13 16H10"/></svg><span class="sidenav__label">Recibos e envios</span></a>
+        <p class="sidenav__group">Sistema</p>
+        <a class="sidenav__item" href="#" data-tip="Configurações"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg><span class="sidenav__label">Configurações</span></a>
+      </div>
+      <div class="sidenav__foot"><button class="sidenav__item sidenav__toggle" type="button" aria-label="Colapsar menu" data-tip="Colapsar menu" aria-expanded="true" data-sidenav-toggle><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m11 17-5-5 5-5"/><path d="m18 17-5-5 5-5"/></svg><span class="sidenav__label">Colapsar</span></button></div>
+    </nav>
+
+    <div class="col">
+      <header class="topbar">
+        <div class="flex items-center gap-1" style="margin-left:auto">
+          <span class="tooltip"><button class="icon-btn" type="button" aria-label="Buscar"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></button><span class="tooltip__bubble" role="tooltip">Buscar</span></span>
+          <span class="tooltip"><button class="icon-btn" type="button" data-theme-toggle aria-label="Alternar para modo escuro"><svg data-theme-icon width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg></button><span class="tooltip__bubble" role="tooltip" data-theme-tip>Modo escuro</span></span>
+          <span class="tooltip"><button class="icon-btn" aria-label="Notificações" id="bellBtn" style="position:relative"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="badge badge--danger" id="bellBadge" style="position:absolute;top:3px;right:3px">0</span></button><span class="tooltip__bubble" role="tooltip">Notificações</span></span>
+        </div>
+        <span aria-hidden="true" style="width:1px;height:22px;background:var(--color-divider);flex:0 0 auto"></span>
+        <div class="menu" data-menu>
+          <span class="tooltip tooltip--end"><button class="avatar" aria-haspopup="true" aria-expanded="false" aria-label="Ricardo Alves, abrir menu do usuário">RA</button><span class="tooltip__bubble tooltip__bubble--stack" role="tooltip"><strong>Ricardo Alves</strong>Administrador da conta</span></span>
+          <div class="menu__panel" hidden><div class="menu__head"><p class="menu__head-name">Ricardo Alves</p><p class="menu__head-mail">Administrador da conta</p></div><div class="menu__sep"></div><button class="menu__item">Perfil</button><button class="menu__item">Preferências</button><button class="menu__item menu__item--danger">Sair</button></div>
+        </div>
+      </header>
+
+      <main id="conteudo" tabindex="-1" class="content skip-target">
+        <div class="page-h">
+          <div class="wrap">
+            <div class="page-h__row">
+              <h1>Painel de Monitoramento</h1>
+            </div>
+            <p id="pageHint">Acompanhe a situação, as transmissões e os prazos das empresas que você administra.</p>
+          </div>
+        </div>
+
+        <div class="wrap">
+          <div class="stats">
+            <div class="stat">
+              <span class="stat__ic stat__ic--danger"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg></span>
+              <span class="stat__label">Ações com você</span>
+              <span class="stat__value" id="kpiPend">0</span>
+              <span class="stat__foot">Pendências que dependem de você</span>
+            </div>
+            <div class="stat">
+              <span class="stat__ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6M16 12h-6M13 16H10"/></svg></span>
+              <span class="stat__label">Balancetes aceitos</span>
+              <span class="stat__value" id="kpiBal">0 <span class="kpi-sub">de 3</span></span>
+              <span class="stat__foot">out/2026 · prazo 15/nov</span>
+            </div>
+            <div class="stat">
+              <span class="stat__ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>
+              <span class="stat__label">Prazo do balancete</span>
+              <span class="stat__value">15/nov</span>
+              <span class="stat__foot">Competência out/2026</span>
+            </div>
+            <div class="stat">
+              <span class="stat__ic stat__ic--success"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span>
+              <span class="stat__label">Empresas prontas</span>
+              <span class="stat__value" id="kpiConfig">0 <span class="kpi-sub">de 3</span></span>
+              <span class="stat__foot" id="kpiConfigFoot">Ainda há configurações pendentes</span>
+            </div>
+          </div>
+
+          <section class="sec" aria-labelledby="h-pend">
+            <div class="panel">
+              <div class="panel__head">
+                <div class="panel__titles">
+                  <div class="panel__h"><h2 id="h-pend">Ações pendentes</h2><span class="badge badge--danger" id="pendCount" hidden>0</span></div>
+                  <p class="panel__sub">Tarefas que precisam da sua ação para avançar.</p>
+                </div>
+                <button class="icon-btn icon-btn--sm panel__chev" type="button" aria-expanded="true" aria-controls="pendWrap" data-collapse aria-label="Colapsar Ações pendentes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m18 15-6-6-6 6"/></svg></button>
+              </div>
+              <div class="panel__body" id="pendWrap"></div>
+            </div>
+          </section>
+
+          <section class="sec" aria-labelledby="h-ev">
+            <div class="panel">
+              <div class="panel__head panel__head--static">
+                <div class="panel__titles">
+                  <div class="panel__h"><h2 id="h-ev">Eventos</h2></div>
+                  <p class="panel__sub">Acompanhe as ações realizadas, transmissões e retornos das suas empresas.</p>
+                </div>
+              </div>
+              <div class="panel__body" id="evBodyWrap">
+                <div class="evfilters">
+                  <div class="evfilters__search">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                    <input class="input" id="evSearch" type="search" placeholder="Buscar por empresa ou evento" aria-label="Buscar eventos">
+                  </div>
+                  <div class="cselect evfilters__cs" data-cselect data-filter="emp" aria-label="Filtrar por empresa"></div>
+                  <div class="cselect evfilters__cs evfilters__cs--wide" data-cselect data-filter="tipo" aria-label="Filtrar por tipo de evento"></div>
+                  <div class="cselect evfilters__cs" data-cselect data-filter="sit" aria-label="Filtrar por situação"></div>
+                  <button class="btn btn--ghost btn--sm evfilters__clear" id="fClear" type="button" hidden>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                    Limpar
+                  </button>
+                </div>
+                <div class="tbl-scroll">
+                  <table class="table" id="evTable">
+                    <thead>
+                      <tr>
+                        <th scope="col" class="sortable" data-sort="emp" aria-sort="none" tabindex="0">Empresa</th>
+                        <th scope="col" class="sortable" data-sort="ev" aria-sort="none" tabindex="0">Evento</th>
+                        <th scope="col" class="sortable" data-sort="sit" aria-sort="none" tabindex="0">Situação</th>
+                        <th scope="col" class="sortable" data-sort="resp" aria-sort="none" tabindex="0">Responsável</th>
+                        <th scope="col" class="sortable" data-sort="at" aria-sort="descending" tabindex="0">Atualizado</th>
+                        <th scope="col">Comprovante</th>
+                        <th scope="col">Ação</th>
+                      </tr>
+                    </thead>
+                    <tbody id="evBody"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Detalhe do evento (histórico): mostra situação, motivo e próximo passo; a ação de resolver vive aqui e em Ações pendentes -->
+  <div class="scrim" id="detailModal" hidden data-scrim>
+    <div class="modal modal--lg" role="dialog" aria-modal="true" aria-labelledby="dTitle">
+      <div class="modal__header">
+        <h3 class="modal__title" id="dTitle"></h3>
+        <button class="icon-btn" type="button" data-close-btn aria-label="Fechar detalhe"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="modal__body" id="dBody"></div>
+      <div class="modal__footer" id="dFoot"></div>
+    </div>
+  </div>
+
+<script>
+  var $=function(id){return document.getElementById(id);};
+  function code(n){return (n||'?').replace(/[^A-Za-zÀ-ú ]/g,'').trim().split(/\s+/)[0].slice(0,3).toUpperCase();}
+  function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
+  function initials(n){return (n||'').trim().split(/\s+/).map(function(x){return x[0];}).slice(0,2).join('').toUpperCase();}
+  var CK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
+  var ARROW='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>';
+  var ALERT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>';
+  var CHEV='<span class="sortcaret" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>';
+  /* logos reais fornecidas (Seguros/Finanças); demais empresas usam o monograma */
+  var LOGOS={seg:'../Logos/MAG%20seguros.png', fin:'../Logos/mag%20financas.jpeg', cap:'../Logos/mag%20capitalizacoes.jpeg', sic:'../Logos/sicoob.svg', s2u:'../Logos/simple2u.svg', sim:'../Logos/simple2u.svg'};
+  function logoHtml(e, small){
+    var base='co-logo'+(small?' co-logo--sm':'');
+    var url=LOGOS[e.id];
+    if(url) return '<span class="'+base+' co-logo--img"><img src="'+url+'" alt="Logo '+esc(e.nome)+'"></span>';
+    return '<span class="'+base+' co-logo--code" aria-hidden="true">'+code(e.nome)+'</span>';
+  }
+
+  /* Estados — 2 trilhas */
+  var STATE={
+    apreencher: {label:'Não iniciada',            pill:'status--neutral', track:'adere', ord:0},
+    revisao:    {label:'Em revisão',             pill:'status--info',    track:'adere', ord:2},
+    ajuste:     {label:'Ajustes solicitados',    pill:'status--warning', track:'adere', ord:1},
+    processando:{label:'Em processamento',       pill:'status--warning', track:'receita', ord:3},
+    avisos:     {label:'Processado com avisos',  pill:'status--warning', track:'receita', ord:4},
+    sucesso:    {label:'Processado com sucesso', pill:'status--success', track:'receita', ord:5},
+    rejeitado:  {label:'Rejeitado',              pill:'status--danger',  track:'receita', ord:0},
+    reenviar:   {label:'Pronto para reenviar',   pill:'status--warning', track:'adere',   ord:1}
+  };
+  function pill(k){var s=STATE[k];return '<span class="status '+s.pill+'"><span class="status__dot"></span>'+s.label+'</span>';}
+  function ttag(k){var t=STATE[k].track;return '<span class="tracktag tracktag--'+(t==='receita'?'receita':'adere')+'">'+(t==='receita'?'Receita':'a-DeRE')+'</span>';}
+
+  /* Cenários */
+  var SCENARIOS={
+    novo:{
+      hint:'Conta ativada. Comece preenchendo as Informações do Contribuinte de cada empresa. O Plano de contas pode ser preenchido em paralelo, mas só é transmitido depois que a Receita processar o D-1001.',
+      empresas:[
+        {id:'seg',nome:'MAG Seguros',      cnpj:'33.608.308/0001-73',d1001:'apreencher',pgcc:'todo',mensal:null},
+        {id:'fin',nome:'MAG Finanças',     cnpj:'21.995.256/0001-56',d1001:'apreencher',pgcc:'todo',mensal:null},
+        {id:'sim',nome:'Simple2u',         cnpj:'40.997.879/0001-02',d1001:'apreencher',pgcc:'todo',mensal:null}
+      ]
+    },
+    operando:{
+      hint:'Empresas em estágios diferentes: umas começando, outras já declarando. Acompanhe as transmissões e resolva o que a Receita rejeitou.',
+      empresas:[
+        /* declarando · balancete transmitido, aguardando processamento (protocolo visível) */
+        {id:'seg',nome:'MAG Seguros',      cnpj:'33.608.308/0001-73',
+          d1001:{st:'sucesso',by:'Ricardo Alves',at:'12/ago, 10:20',ts:120,recibo:'RC-2026.08.41007'},
+          pgcc:{st:'sucesso',by:'Ana Prado',at:'12/ago, 15:02',ts:130,recibo:'RC-2026.08.41190'},
+          mensal:{ev:'Balancete out/2026',st:'processando',by:'Ana Prado',at:'hoje, 09:12',ts:912,protocolo:'PT-2026.11.44210'}},
+        /* declarando · balancete rejeitado pela Receita (ação a partir de evento: corrigir) */
+        {id:'fin',nome:'MAG Finanças',     cnpj:'21.995.256/0001-56',
+          d1001:{st:'sucesso',by:'Ana Prado',at:'11/ago, 16:41',ts:110,recibo:'RC-2026.08.41011'},
+          pgcc:{st:'sucesso',by:'Ricardo Alves',at:'12/ago, 09:30',ts:125,recibo:'RC-2026.08.41320'},
+          mensal:{ev:'Balancete out/2026',st:'rejeitado',causa:'pgcc',by:'Ricardo Alves',at:'ontem, 15:10',ts:850,erro:'A conta 3.1.01.001 existe no Plano de Contas, mas sua vigência não cobre a competência out/2026 (venceu entre o preenchimento e o processamento). Ajuste a vigência da conta no Plano de Contas (D-1011) e reenvie o balancete.',ocorr:'MS1080',bloco:'cCta · infoContas'}},
+        /* D-1001 transmitido à Receita, aguardando processamento (protocolo, sem recibo ainda) */
+        {id:'cap',nome:'MAG Capitalização',cnpj:'52.780.551/0001-19',
+          d1001:{st:'processando',by:'Ricardo Alves',at:'hoje, 11:20',ts:1120,protocolo:'PT-2026.08.45120'},
+          pgcc:'todo', mensal:null},
+        /* D-1001 rejeitado pela Receita (ação a partir de evento: corrigir e reenviar) */
+        {id:'sic',nome:'Sicoob Seguradora',cnpj:'26.314.512/0001-16',
+          d1001:{st:'rejeitado',by:'Ana Prado',at:'hoje, 08:40',ts:840,erro:'A natureza da tributação informada é incompatível com o regime declarado. Ajuste a informação do contribuinte e reenvie.'},
+          pgcc:'todo', mensal:null},
+        /* começando · ainda preenchendo o D-1001 (ação que vira evento: preencher) */
+        {id:'sim',nome:'Simple2u',         cnpj:'40.997.879/0001-02',
+          d1001:'apreencher', pgcc:'todo', mensal:null}
+      ]
+    }
+  };
+  /* ?demo=fresh: zera todo o estado da jornada (D-1001, plano, decisões da Ana) para percorrer do início */
+  if(/[?&]demo=fresh/.test(location.search)){
+    try{
+      Object.keys(localStorage).filter(function(k){return k.indexOf('adere.')===0;}).forEach(function(k){ localStorage.removeItem(k); });
+      Object.keys(sessionStorage).filter(function(k){return k.indexOf('adere.')===0;}).forEach(function(k){ sessionStorage.removeItem(k); });
+    }catch(e){}
+  }
+  var scKey=((/[?&]scn=(novo|operando)/.exec(location.search)||[])[1])||'novo', empresas=SCENARIOS[scKey].empresas;
+  /* Fluxo: enviei o D-1001 (info do contribuinte). A MAG Seguros passa a "em revisão" e a próxima
+     ação dela vira "Preencher plano de contas". O estado fica no sessionStorage pra sobreviver à
+     navegação pelo menu (o ?sent=d1001 só existe no link de volta do detalhe). */
+  var sentD1001=/[?&]sent=d1001/.test(location.search);
+  try{ if(localStorage.getItem('adere.sent.d1001')==='seg' || sessionStorage.getItem('adere.sent.d1001')==='seg') sentD1001=true; }catch(e){}
+  if(sentD1001){
+    try{ localStorage.setItem('adere.sent.d1001','seg'); }catch(e){}
+    var segSent=empresas.filter(function(e){return e.id==='seg';})[0];
+    if(segSent && segSent.d1001==='apreencher') segSent.d1001={st:'revisao',by:'Ricardo Alves',at:'agora mesmo',ts:9999};
+  }
+  /* D-1011 (plano de contas) enviado para revisão: entra nos Eventos e sai das pendências */
+  var sentD1011=/[?&]sent=d1011/.test(location.search);
+  try{ if(localStorage.getItem('adere.sent.d1011') || sessionStorage.getItem('adere.sent.d1011')) sentD1011=true; }catch(e){}
+  if(sentD1011){
+    try{ localStorage.setItem('adere.sent.d1011','seg'); }catch(e){}
+    var segPg=empresas.filter(function(e){return e.id==='seg';})[0];
+    if(segPg && (segPg.pgcc==='todo'||!segPg.pgcc)){
+      var pgDec=null, pgRec=null;
+      try{ pgDec=JSON.parse(localStorage.getItem('adere.d1011.decision.seg')||'null'); pgRec=localStorage.getItem('adere.d1011.receita.seg'); }catch(e){}
+      if(pgDec && pgDec.st==='ajuste') segPg.pgcc={st:'ajuste',by:'Ana Prado',at:'hoje, 16:05',ts:9998};
+      else if(pgDec && pgDec.st==='aprovado'){
+        if(pgRec==='vigente') segPg.pgcc={st:'sucesso',by:'Ana Prado',at:'hoje, 16:20',ts:9998,recibo:'RC-2026.09.51344'};
+        else if(pgRec==='rejeitado') segPg.pgcc={st:'rejeitado',by:'Ana Prado',at:'hoje, 16:20',ts:9998,erro:'A conta contábil informada em [cCtaRef] para a conta 32101001 não existe no Plano de Contas Referencial SUSEP (MS1077). Corrija no plano e reenvie.'};
+        else if(pgRec==='advertencias') segPg.pgcc={st:'avisos',by:'Ana Prado',at:'hoje, 16:20',ts:9998,recibo:'RC-2026.09.51344'};
+        else segPg.pgcc={st:'processando',by:'Ana Prado',at:'hoje, 16:05',ts:9998,protocolo:'PT-2026.09.51001'};
+      }
+      else segPg.pgcc={st:'revisao',by:'Ricardo Alves',at:'agora mesmo',ts:9998};
+    }
+  }
+
+  /* normaliza um evento (string simples no cenário novo, objeto no operando) */
+  var EVNOME={'D-1001':'Informações do Contribuinte','D-1011':'Plano de contas','D-1101':'Balancete out/2026'};
+  function ev(e, tipo){
+    var raw = tipo==='D-1001'?e.d1001 : tipo==='D-1011'?e.pgcc : e.mensal;
+    if(!raw) return null;
+    var r;
+    if(typeof raw==='string'){ if(raw==='todo') return null; r={tipo:tipo,st:raw,by:'Ricardo Alves',at:'—',ts:10}; }
+    else r={tipo:tipo,st:raw.st,causa:raw.causa,by:raw.by,at:raw.at,ts:raw.ts,recibo:raw.recibo,protocolo:raw.protocolo,erro:raw.erro,ocorr:raw.ocorr,bloco:raw.bloco,nome:raw.ev};
+    r.emp=e; r.nome=r.nome||EVNOME[tipo];
+    return r;
+  }
+  /* eventos = só o que já foi submetido (a preencher fica só em Ações pendentes) */
+  function evList(e){ var out=[]; ['D-1001','D-1011','D-1101'].forEach(function(t){ var x=ev(e,t); if(x && x.st!=='apreencher') out.push(x); }); return out; }
+  function isDone(x){return x==='sucesso'||x==='avisos';}
+  /* evento em foco (próximo da jornada) — governa a pendência */
+  function focoEmp(e){
+    var d1=ev(e,'D-1001');
+    /* 'revisao' = enviado, aguardando o aprovador. Para o preparador não é mais pendência dele;
+       a jornada segue pro plano de contas. (A revisão aparece em Eventos.) */
+    if(d1 && !isDone(d1.st) && d1.st!=='revisao') return d1;
+    var pg=ev(e,'D-1011');
+    if(!pg) return {tipo:'D-1011',st:'apreencher',nome:'Plano de contas',emp:e}; // D-1001 ok, PGCC ainda não começou
+    if(!isDone(pg.st) && pg.st==='revisao') return null; // com o aprovador; o balancete espera o PGCC ficar vigente
+    if(!isDone(pg.st)) return pg;
+    if(e.pgccVence) return {tipo:'D-1011',st:'pgcc_vence',nome:EVNOME['D-1011'],emp:e}; // plano de contas com vigência perto de vencer
+    var mn=ev(e,'D-1101');
+    if(mn) return mn;
+    return {tipo:'D-1101',st:'aenviar',nome:EVNOME['D-1101'],emp:e}; // configurada, balancete do período ainda não enviado
+  }
+
+  /* Ação por estado.
+     from='preparo' = ação que ainda vai VIRAR evento (preencher/enviar).
+     from='evento'  = ação que VEM de um evento existente (revisar/corrigir/ajustar). */
+  var FORM_D1001='info-contribuinte.html';
+  /* Cada ação pendente responde: empresa (título) · situação (sit) · o que aconteceu (exp) ·
+     próximo passo (next) · botão (act). from='preparo' vira evento; from='evento' vem de um. */
+  function acao(x){
+    switch(x.st){
+      case 'apreencher':
+        if(x.tipo==='D-1011'){
+          var pgDraft=null; try{ pgDraft=localStorage.getItem('adere.pgcc.seed.'+(x.emp&&x.emp.id||'seg')); }catch(er){}
+          return pgDraft
+            ? {pend:true, from:'preparo', sev:'', sit:{label:'Em andamento',tone:'info'}, desc:'O preenchimento do Plano de Contas (D-1011) foi iniciado e está salvo como rascunho.', act:'Continuar preenchendo', kind:'primary', href:'plano-contas-classificar.html?modo=nova'}
+            : {pend:true, from:'preparo', sev:'', sit:{label:'Não iniciada',tone:'neutral'}, desc:'O Plano de Contas (D-1011) ainda não foi preenchido.', act:'Preencher plano de contas', kind:'primary', href:'plano-contas-classificar.html?modo=nova'};
+        }
+        return {pend:true, from:'preparo', sev:'', sit:{label:'Não iniciada',tone:'neutral'}, desc:'As informações do contribuinte (D-1001) ainda não foram preenchidas.', act:'Preencher informações', kind:'primary', href:FORM_D1001};
+      case 'aenviar':    return {pend:true, from:'preparo', sev:'warning', sit:{label:'Prazo em 15/nov',tone:'warning'}, desc:'O balancete de out/2026 ainda não foi enviado.', dias:8, diasFor:'para o prazo de envio (15/nov).', act:'Enviar balancete', kind:'primary'};
+      case 'pgcc_vence': return {pend:true, from:'preparo', sev:'warning', sit:{label:'Vigência até 30/nov',tone:'warning'}, desc:'As contas do Plano de Contas precisam ter a vigência renovada.', dias:23, diasFor:'para a vigência atual acabar (30/nov).', act:'Atualizar plano de contas', kind:'primary'};
+      case 'ajuste':     return {pend:true, from:'evento', sev:'warning', sit:{label:'Ajustes solicitados',tone:'warning'}, desc:'O aprovador devolveu a etapa com pedidos de ajuste. Faça os ajustes e reenvie para revisão.', act:'Ajustar e reenviar', kind:'primary'};
+      case 'rejeitado':  return x.causa==='pgcc'
+        ? {pend:true, from:'evento', sev:'danger', sit:{label:'Rejeitado pela Receita',tone:'danger'}, desc:'A conta 3.1.01.001 existe no Plano de Contas, mas sua vigência não cobre out/2026. Ajuste a vigência da conta e reenvie o balancete.', act:'Ajustar plano de contas', kind:'primary', href:'plano-contas-assistente.html?emp=fin&fix=vig&conta=3.1.01.001'}
+        : {pend:true, from:'evento', sev:'danger', sit:{label:'Rejeitado pela Receita',tone:'danger'}, desc:'A Receita rejeitou o envio. Corrija os dados apontados e reenvie.', act:'Corrigir e reenviar', kind:'primary'};
+      case 'reenviar':   return {pend:true, from:'evento', sev:'warning', sit:{label:'Pronto para reenviar',tone:'warning'}, desc:'O Plano de Contas foi atualizado. Você já pode reenviar o balancete de out/2026.', act:'Reenviar balancete', kind:'primary'};
+      case 'revisao':    return {pend:true, from:'evento', sev:'', sit:{label:'Aguardando revisão',tone:'info'}, desc:'A etapa foi enviada e aguarda sua revisão. Revise e aprove, ou devolva para ajustes.', act:'Revisar', kind:'primary'};
+      case 'processando':return {pend:false, act:'Acompanhar', kind:'ghost'};
+      case 'avisos':     return {pend:false, act:'Ver avisos', kind:'secondary'};
+      case 'sucesso':    return {pend:false, act:'Ver comprovante', kind:'secondary'};
+    }
+    return {pend:false, act:'', kind:'ghost'};
+  }
+  function btnCls(k){return k==='primary'?'btn--primary':(k==='ghost'?'btn--ghost':'btn--secondary');}
+  function comprovante(x){
+    if(x.st==='processando'&&x.protocolo) return {t:'Protocolo',v:x.protocolo};
+    if((x.st==='sucesso'||x.st==='avisos')&&x.recibo) return {t:'Recibo',v:x.recibo};
+    return null;
+  }
+
+  /* ===== Ações pendentes (tasklist) =====
+     Cada linha responde: empresa·etapa · situação · o que aconteceu · próximo passo · botão. */
+  var SITCLS={danger:'status--danger',warning:'status--warning',info:'status--info',neutral:'status--neutral'};
+  function descHtml(a){
+    var s=esc(a.desc||'');
+    if(a.dias!=null) s+=' <strong class="cdays">Faltam '+a.dias+(a.dias===1?' dia':' dias')+'</strong> '+esc(a.diasFor||'');
+    return s;
+  }
+  function taskrowHtml(o){
+    var x=o.x, e=x.emp, a=o.a;
+    var side = a.href
+      ? '<a class="btn btn--primary btn--sm" href="'+a.href+'">'+a.act+ARROW+'</a>'
+      : '<button class="btn '+btnCls(a.kind)+' btn--sm" type="button" data-step="'+x.st+'" data-id="'+e.id+'">'+a.act+ARROW+'</button>';
+    var sit = a.sit ? '<span class="status '+(SITCLS[a.sit.tone]||'status--neutral')+' taskrow__sit"><span class="status__dot"></span>'+esc(a.sit.label)+'</span>' : '';
+    var desc = a.desc ? '<p class="taskrow__exp">'+descHtml(a)+'</p>' : '';
+    return '<div class="taskrow'+(a.sev?' taskrow--'+a.sev:'')+'">'+
+      logoHtml(e)+
+      '<div class="taskrow__b"><p class="taskrow__t">'+esc(e.nome)+' · '+esc(x.nome)+'</p>'+desc+sit+'</div>'+
+      '<div class="taskrow__side">'+side+'</div>'+
+    '</div>';
+  }
+  function renderPend(){
+    var all=empresas.map(function(e){var x=focoEmp(e);return x?{x:x,a:acao(x)}:null;}).filter(Boolean).filter(function(o){return o.a.pend;});
+    var n=all.length;
+    var pc=$('pendCount'); pc.textContent=n; pc.hidden=(n===0);
+    $('kpiPend').textContent=n;
+    $('bellBadge').textContent=n;
+    $('bellBtn').setAttribute('aria-label','Notificações, '+n+' pendências');
+    var wrap=$('pendWrap');
+    if(n===0){
+      var flight=empresas.map(focoEmp).filter(Boolean).filter(function(x){return x.st==='processando';}).length;
+      var extra=flight?flight+' em processamento na Receita. Acompanhe na tabela de eventos.':'Acompanhe o andamento na tabela de eventos.';
+      wrap.innerHTML='<div class="allclear">'+CK+'<div><b>Nada depende de você agora.</b><span>'+extra+'</span></div></div>';
+      return;
+    }
+    function sevOrd(s){return s==='danger'?0:(s==='warning'?1:2);}
+    all.sort(function(a,b){return sevOrd(a.a.sev)-sevOrd(b.a.sev);});
+    var html='<div class="tasklist">';
+    all.forEach(function(o){ html+=taskrowHtml(o); });
+    html+='</div>';
+    wrap.innerHTML=html;
+    wire(wrap);
+  }
+
+  /* ===== Tabela de eventos ===== */
+  function allEvents(){
+    var list=[];
+    empresas.forEach(function(e){ evList(e).forEach(function(x){ list.push(x); }); });
+    return list;
+  }
+  var evSort={key:'at', dir:'desc'};
+  var evFilters={emp:'', tipo:'', sit:''};
+  var curEvents=[];
+  function evVal(x){
+    switch(evSort.key){
+      case 'emp':  return x.emp.nome.toLowerCase();
+      case 'ev':   return (x.tipo+' '+x.nome).toLowerCase();
+      case 'sit':  return (STATE[x.st]?STATE[x.st].ord:99);
+      case 'resp': return (x.by||'').toLowerCase();
+      default:     return (x.ts||0);
+    }
+  }
+  function renderEventos(){
+    var base=allEvents();
+    var fe=evFilters.emp, ft=evFilters.tipo, fs=evFilters.sit;
+    var q=($('evSearch')?$('evSearch').value:'').trim().toLowerCase();
+    var filtrando=!!(fe||ft||fs||q);
+    /* filtros só aparecem quando há dados; botão Limpar só quando há filtro ativo */
+    var filtersEl=document.querySelector('.evfilters');
+    if(filtersEl) filtersEl.hidden = !base.length;
+    var clearBtn=$('fClear'); if(clearBtn) clearBtn.hidden = !filtrando;
+    /* sem dados: não faz sentido colapsar — esconde o chevron e garante a seção aberta */
+    var evChev=document.querySelector('[aria-label="Colapsar Eventos"]');
+    if(evChev){ evChev.hidden=!base.length; if(!base.length){ var evP=evChev.closest('.panel'); if(evP){ evP.classList.remove('is-collapsed'); var evB=evP.querySelector('.panel__body'); if(evB) evB.style.height='auto'; } } }
+    var list=base.slice();
+    if(fe) list=list.filter(function(x){return x.emp.id===fe;});
+    if(ft) list=list.filter(function(x){return x.tipo===ft;});
+    if(fs) list=list.filter(function(x){return x.st===fs;});
+    if(q)  list=list.filter(function(x){return (x.emp.nome+' '+x.emp.cnpj+' '+x.nome+' '+x.tipo).toLowerCase().indexOf(q)>=0;});
+    var dir=evSort.dir==='asc'?1:-1;
+    list.sort(function(a,b){ var va=evVal(a),vb=evVal(b); if(va<vb)return -1*dir; if(va>vb)return 1*dir; return (b.ts||0)-(a.ts||0); });
+    curEvents=list;
+    var body=$('evBody'); body.innerHTML='';
+    var thead=document.querySelector('#evTable thead'); if(thead) thead.hidden=!list.length;
+    if(!list.length){
+      var eIc, eTit, eDesc, eExtra='';
+      if(filtrando){
+        eIc='<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>';
+        eTit='Nenhum evento corresponde aos filtros';
+        eDesc='Ajuste os filtros ou limpe para ver todos os eventos.';
+        eExtra='<button class="btn btn--secondary btn--sm" type="button" data-clear-empty style="margin-top:var(--space-2)">Limpar filtros</button>';
+      } else {
+        eIc='<path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>';
+        eTit='Nenhum evento ainda';
+        eDesc='Os eventos aparecem aqui conforme você preenche e transmite as declarações.';
+      }
+      body.innerHTML='<tr class="evempty"><td colspan="7" style="padding:0"><div class="empty"><div class="empty__icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+eIc+'</svg></div><p class="empty__title">'+eTit+'</p><p style="margin:0">'+eDesc+'</p>'+eExtra+'</div></td></tr>';
+      var ce=body.querySelector('[data-clear-empty]'); if(ce) ce.addEventListener('click',function(){ var c=$('fClear'); if(c) c.click(); });
+      return;
+    }
+    list.forEach(function(x,i){
+      var cp=comprovante(x);
+      /* Eventos = histórico. "Ver detalhes" abrirá a tela de detalhe (acessível também pelo menu).
+         Ainda sem essa tela: botão presente porém sem ação linkada (placeholder). */
+      var arrow='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>';
+      var side = x.tipo==='D-1001'
+        ? '<a class="icon-btn icon-btn--sm evact" href="info-contribuinte-detalhe.html?emp='+x.emp.id+'&v=1&st='+(x.st==='sucesso'?'aprovado':'revisao')+'&from=painel" aria-label="Ver detalhes de '+esc(x.emp.nome)+'">'+arrow+'</a>'
+        : x.tipo==='D-1011'
+        ? '<a class="icon-btn icon-btn--sm evact" href="plano-contas-detalhe.html?emp='+x.emp.id+'&v=1&st='+(x.st==='sucesso'?'aprovado':x.st==='avisos'?'advertencias':x.st==='processando'?'processando':x.st==='rejeitado'?'rejeitado':x.st==='ajuste'?'ajuste':'revisao')+'&from=painel" aria-label="Ver detalhes de '+esc(x.emp.nome)+'">'+arrow+'</a>'
+        : '<button class="icon-btn icon-btn--sm evact" type="button" disabled aria-disabled="true" aria-label="Detalhe em breve" title="Tela de detalhe em breve">'+arrow+'</button>';
+      var tr=document.createElement('tr');
+      tr.innerHTML=
+        '<td><div class="evemp">'+logoHtml(x.emp,true)+'<div><div class="celltitle">'+esc(x.emp.nome)+'</div><div class="cellsub">'+esc(x.emp.cnpj)+'</div></div></div></td>'+
+        '<td><div class="celltitle">'+esc(x.nome)+'</div><div class="cellsub">'+x.tipo+'</div></td>'+
+        '<td>'+pill(x.st)+'</td>'+
+        '<td>'+(x.by?'<span class="who"><span class="avatar">'+initials(x.by)+'</span><span>'+esc(x.by)+'</span></span>':'<span class="muted">—</span>')+'</td>'+
+        '<td class="num">'+esc(x.at||'—')+'</td>'+
+        '<td>'+(cp?'<span class="num" title="'+cp.t+'">'+esc(cp.v)+'</span>':'<span class="muted">—</span>')+'</td>'+
+        '<td>'+side+'</td>';
+      body.appendChild(tr);
+    });
+    wire(body);
+  }
+  function updateSortHeaders(){
+    document.querySelectorAll('#evTable th.sortable').forEach(function(th){
+      var on=(th.getAttribute('data-sort')===evSort.key);
+      th.setAttribute('aria-sort', on?(evSort.dir==='asc'?'ascending':'descending'):'none');
+    });
+  }
+
+  /* ===== Detalhe do evento (histórico) ===== */
+  function openDetail(x){
+    if(!x) return;
+    var a=acao(x), cp=comprovante(x);
+    $('dTitle').textContent = x.emp.nome+' · '+x.nome;
+    var rows='';
+    rows+='<div class="dv__row"><span class="dv__k">Situação</span><span>'+pill(x.st)+'</span></div>';
+    rows+='<div class="dv__row"><span class="dv__k">Etapa</span><span>'+esc(x.tipo)+'</span></div>';
+    rows+='<div class="dv__row"><span class="dv__k">Responsável</span><span>'+esc(x.by||'—')+'</span></div>';
+    rows+='<div class="dv__row"><span class="dv__k">Atualizado</span><span class="num">'+esc(x.at||'—')+'</span></div>';
+    if(cp) rows+='<div class="dv__row"><span class="dv__k">'+cp.t+'</span><span class="num">'+esc(cp.v)+'</span></div>';
+    var blocks='';
+    if(x.erro){
+      var meta='';
+      if(x.ocorr) meta+='<span class="erro-tag">Código '+esc(x.ocorr)+'</span>';
+      if(x.bloco) meta+='<span class="erro-tag">Localização '+esc(x.bloco)+'</span>';
+      blocks+='<div class="dv__block"><h4>Motivo da rejeição</h4><p>'+esc(x.erro)+'</p>'+(meta?'<div class="erro-meta" style="margin-top:var(--space-2)">'+meta+'</div>':'')+'</div>';
+    }
+    if(a.pend && a.desc){ blocks+='<div class="dv__block"><h4>Próximo passo</h4><p>'+descHtml(a)+'</p></div>'; }
+    $('dBody').innerHTML='<div class="dv">'+rows+'</div>'+blocks;
+    var foot=$('dFoot');
+    if(a.pend && a.act){
+      foot.innerHTML = a.href
+        ? '<a class="btn btn--secondary" type="button" data-close-btn>Fechar</a><a class="btn btn--primary" href="'+a.href+'">'+esc(a.act)+ARROW+'</a>'
+        : '<button class="btn btn--secondary" type="button" data-close-btn>Fechar</button><button class="btn btn--primary" type="button" data-step="'+x.st+'" data-id="'+x.emp.id+'" data-close>'+esc(a.act)+ARROW+'</button>';
+    } else {
+      foot.innerHTML='<button class="btn btn--secondary" type="button" data-close-btn>Fechar</button>';
+    }
+    wire(foot);
+    foot.querySelectorAll('[data-close-btn]').forEach(function(b){b.addEventListener('click',closeDetail);});
+    $('detailModal').hidden=false;
+  }
+  function closeDetail(){ $('detailModal').hidden=true; }
+  $('detailModal').addEventListener('click',function(e){ if(e.target===this) closeDetail(); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape' && !$('detailModal').hidden) closeDetail(); });
+
+  /* ===== KPIs + hint ===== */
+  function renderKpis(){
+    var prontas=empresas.filter(function(e){var d=ev(e,'D-1001'),p=ev(e,'D-1011');return d&&isDone(d.st)&&p&&isDone(p.st);}).length;
+    $('kpiConfig').innerHTML=prontas+' <span class="kpi-sub">de '+empresas.length+'</span>';
+    $('kpiConfigFoot').textContent = prontas>=empresas.length ? 'Todas as empresas estão prontas' : 'Ainda há configurações pendentes';
+    var bal=empresas.filter(function(e){var m=ev(e,'D-1101');return m&&isDone(m.st);}).length;
+    $('kpiBal').innerHTML=bal+' <span class="kpi-sub">de '+empresas.length+'</span>';
+  }
+
+  /* ===== Interações ===== */
+  function setStr(e,tipo,ns){ if(tipo==='D-1001') e.d1001=ns; else if(tipo==='D-1011') e.pgcc=ns; }
+  function idHash(s){var h=0;for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))%1000;return h;}
+  function doStep(id,st){
+    var e=empresas.filter(function(x){return x.id===id;})[0]; if(!e) return;
+    var x=focoEmp(e); if(!x) return;
+    function apply(ns,extra){
+      if(x.tipo==='D-1101'&&e.mensal){ e.mensal.st=ns; if(extra) for(var k in extra)e.mensal[k]=extra[k]; e.mensal.by='Ricardo Alves'; e.mensal.at='agora'; e.mensal.ts=999; }
+      else { // D-1001/D-1011: viram objeto pra guardar dados
+        var o={st:ns,by:'Ricardo Alves',at:'agora',ts:999}; if(extra) for(var k in extra)o[k]=extra[k];
+        if(x.tipo==='D-1001') e.d1001=o; else e.pgcc=o;
+      }
+    }
+    if(st==='pgcc_vence'){ delete e.pgccVence; renderAll(); return; }
+    if(st==='aenviar'){ e.mensal={st:'processando',ev:EVNOME['D-1101'],by:'Ricardo Alves',at:'agora',ts:999,protocolo:'PT-2026.11.'+(44000+idHash(id))}; }
+    else if(st==='rejeitado'&&e.mensal&&e.mensal.causa==='pgcc'){ e.mensal.st='reenviar'; e.mensal.by='Ricardo Alves'; e.mensal.at='agora'; e.mensal.ts=999; } // atualizou o PGCC → pronto para reenviar
+    else if(st==='reenviar'){ apply('processando',{protocolo:'PT-2026.11.'+(44000+idHash(id))}); }
+    else if(st==='apreencher'||st==='ajuste'){ apply('revisao'); }
+    else if(st==='revisao'){ apply('processando',{protocolo:'PT-2026.11.'+(44000+idHash(id))}); }
+    else if(st==='rejeitado'){ apply('revisao'); }
+    renderAll();
+  }
+  function wire(scope){
+    scope.querySelectorAll('[data-step]').forEach(function(b){ b.addEventListener('click',function(){ if(b.hasAttribute('data-close'))closeDetail(); doStep(b.getAttribute('data-id'), b.getAttribute('data-step')); }); });
+    scope.querySelectorAll('[data-ev]').forEach(function(b){ b.addEventListener('click',function(){ openDetail(curEvents[+b.getAttribute('data-ev')]); }); });
+  }
+
+  function setScenario(k){ scKey=k; empresas=SCENARIOS[k].empresas; document.querySelectorAll('[data-sc]').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-sc')===k); }); renderAll(); }
+  /* delegation: o demobar é renderizado depois deste script, então bind direto não pegava o clique */
+  document.addEventListener('click',function(e){ var b=e.target.closest('[data-sc]'); if(b) setScenario(b.getAttribute('data-sc')); });
+  document.addEventListener('DOMContentLoaded',function(){ document.querySelectorAll('[data-sc]').forEach(function(x){ x.classList.toggle('on', x.getAttribute('data-sc')===scKey); }); });
+  function renderAll(){ renderKpis(); renderPend(); renderEventos(); }
+  renderAll();
+
+  /* Ordenação da tabela de eventos */
+  (function(){
+    var ths=document.querySelectorAll('#evTable th.sortable');
+    ths.forEach(function(th){
+      th.insertAdjacentHTML('beforeend', CHEV);
+      function toggle(){
+        var k=th.getAttribute('data-sort');
+        if(evSort.key===k){ evSort.dir=evSort.dir==='asc'?'desc':'asc'; }
+        else { evSort.key=k; evSort.dir=(k==='at')?'desc':'asc'; }
+        renderEventos(); updateSortHeaders();
+      }
+      th.addEventListener('click', toggle);
+      th.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggle(); } });
+    });
+    updateSortHeaders();
+  })();
+
+  /* Filtros da tabela de eventos — cselect do ds (dropdown personalizado) */
+  (function(){
+    var OPTS={
+      emp:[['','Todas as empresas'],['seg','MAG Seguros'],['fin','MAG Finanças'],['cap','MAG Capitalização'],['sic','Sicoob Seguradora'],['sim','Simple2u']],
+      tipo:[['','Todos os eventos'],['D-1001','Informações do Contribuinte'],['D-1011','Plano de contas'],['D-1101','Balancete']],
+      sit:[['','Todas as situações'],['processando','Em processamento'],['sucesso','Processado com sucesso'],['avisos','Processado com avisos'],['rejeitado','Rejeitado'],['revisao','Em revisão']]
+    };
+    var CHEVI='<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
+    var CHECKI='<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+    var apis={};
+    function closeAll(){ document.querySelectorAll('[data-cselect-panel]').forEach(function(p){ if(p.hidden) return; p.hidden=true; var t=p.parentElement.querySelector('.cselect__trigger'); if(t) t.setAttribute('aria-expanded','false'); }); }
+    document.addEventListener('click', closeAll);
+    document.querySelectorAll('[data-cselect]').forEach(function(root){
+      var key=root.getAttribute('data-filter'), opts=OPTS[key];
+      root.innerHTML='<button class="cselect__trigger" type="button" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-label="'+esc(root.getAttribute('aria-label')||'')+'"><span class="cselect__value">'+esc(opts[0][1])+'</span><span class="cselect__chev">'+CHEVI+'</span></button>'+
+        '<div class="combo__panel" role="listbox" hidden data-cselect-panel>'+opts.map(function(o,i){ return '<button class="combo__opt'+(i===0?' is-selected':'')+'" role="option" type="button" data-value="'+esc(o[0])+'" aria-selected="'+(i===0?'true':'false')+'"><span class="combo__main"><span class="combo__label">'+esc(o[1])+'</span></span><span class="combo__check">'+CHECKI+'</span></button>'; }).join('')+'</div>';
+      var trigger=root.querySelector('.cselect__trigger'), panel=root.querySelector('[data-cselect-panel]'), valEl=root.querySelector('.cselect__value'),
+          els=[].slice.call(panel.querySelectorAll('[role="option"]')), active=-1;
+      function open(){ if(!panel.hidden) return; closeAll(); panel.hidden=false; trigger.setAttribute('aria-expanded','true'); var s=-1; els.forEach(function(o,i){ if(o.getAttribute('aria-selected')==='true') s=i; }); setActive(s<0?0:s); }
+      function close(){ panel.hidden=true; trigger.setAttribute('aria-expanded','false'); }
+      function setActive(i){ active=i; els.forEach(function(o,j){ o.classList.toggle('is-active',j===i); }); if(els[i]) els[i].scrollIntoView({block:'nearest'}); }
+      function choose(i, skip){ els.forEach(function(o,j){ var s=j===i; o.setAttribute('aria-selected',s?'true':'false'); o.classList.toggle('is-selected',s); }); valEl.textContent=els[i].querySelector('.combo__label').textContent; evFilters[key]=els[i].getAttribute('data-value'); close(); if(!skip) renderEventos(); }
+      trigger.addEventListener('click',function(e){ e.stopPropagation(); panel.hidden?open():close(); });
+      els.forEach(function(o,i){ o.addEventListener('click',function(e){ e.stopPropagation(); choose(i); }); o.addEventListener('mousemove',function(){ setActive(i); }); });
+      root.addEventListener('keydown',function(e){
+        if(panel.hidden){ if(e.key==='ArrowDown'||e.key==='Enter'||e.key===' '){ e.preventDefault(); open(); } return; }
+        if(e.key==='Escape'){ e.preventDefault(); close(); trigger.focus(); }
+        else if(e.key==='ArrowDown'){ e.preventDefault(); setActive(Math.min(active+1,els.length-1)); }
+        else if(e.key==='ArrowUp'){ e.preventDefault(); setActive(Math.max(active-1,0)); }
+        else if(e.key==='Home'){ e.preventDefault(); setActive(0); }
+        else if(e.key==='End'){ e.preventDefault(); setActive(els.length-1); }
+        else if(e.key==='Enter'||e.key===' '){ e.preventDefault(); if(active>=0) choose(active); }
+      });
+      apis[key]=function(){ choose(0, true); };
+    });
+    var s=$('evSearch'); if(s) s.addEventListener('input', renderEventos);
+    var c=$('fClear'); if(c) c.addEventListener('click', function(){ Object.keys(apis).forEach(function(k){ apis[k](); }); if(s) s.value=''; renderEventos(); });
+  })();
+
+  /* Colapsar painéis com animação de altura (título e subtítulo continuam visíveis) */
+  function togglePanel(panel, btn){
+    var body=panel.querySelector('.panel__body'); if(!body) return;
+    var willCollapse=!panel.classList.contains('is-collapsed');
+    var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+    btn.setAttribute('aria-expanded', String(!willCollapse));
+    if(reduce){ panel.classList.toggle('is-collapsed', willCollapse); body.style.height=willCollapse?'0px':'auto'; return; }
+    if(willCollapse){
+      body.style.height=body.scrollHeight+'px';
+      body.getBoundingClientRect(); // reflow
+      panel.classList.add('is-collapsed');
+      body.style.height='0px';
+    } else {
+      panel.classList.remove('is-collapsed');
+      body.style.height=body.scrollHeight+'px';
+      body.addEventListener('transitionend', function te(ev){ if(ev.propertyName!=='height') return; body.style.height='auto'; body.removeEventListener('transitionend', te); });
+    }
+  }
+  document.querySelectorAll('[data-collapse]').forEach(function(btn){
+    btn.addEventListener('click', function(e){ e.stopPropagation(); togglePanel(btn.closest('.panel'), btn); });
+  });
+  document.querySelectorAll('.panel__head:not(.panel__head--static)').forEach(function(head){
+    head.addEventListener('click', function(e){
+      if(e.target.closest('[data-collapse]')) return;
+      var btn=head.querySelector('[data-collapse]'); if(btn) togglePanel(head.closest('.panel'), btn);
+    });
+  });
+
+  /* Shell (menus, sidenav, tema) */
+  document.querySelectorAll('[data-menu]').forEach(function(menu){
+    var b=menu.querySelector('button'), p=menu.querySelector('.menu__panel'); if(!b||!p) return;
+    b.addEventListener('click',function(e){ e.stopPropagation(); var o=p.hidden; document.querySelectorAll('.menu__panel').forEach(function(x){x.hidden=true;}); p.hidden=!o; b.setAttribute('aria-expanded',String(o)); });
+    document.addEventListener('click',function(e){ if(!menu.contains(e.target)){ p.hidden=true; b.setAttribute('aria-expanded','false'); } });
+  });
+  document.querySelectorAll('[data-sidenav-toggle]').forEach(function(btn){ var nav=btn.closest('[data-sidenav]'); btn.addEventListener('click',function(){ var c=nav.classList.toggle('is-collapsed'); btn.setAttribute('aria-expanded',String(!c)); btn.setAttribute('aria-label', c?'Expandir menu':'Colapsar menu'); btn.setAttribute('data-tip', c?'Expandir menu':'Colapsar menu'); }); });
+  (function(){ var btn=document.querySelector('[data-theme-toggle]'); if(!btn) return; var icon=btn.querySelector('[data-theme-icon]'), tip=document.querySelector('[data-theme-tip]'); var MOON='<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>'; var SUN='<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>'; function sync(){ var d=document.documentElement.classList.contains('dark'); icon.innerHTML=d?SUN:MOON; btn.setAttribute('aria-label',d?'Alternar para modo claro':'Alternar para modo escuro'); if(tip) tip.textContent=d?'Modo claro':'Modo escuro'; } btn.addEventListener('click',function(){ document.documentElement.classList.toggle('dark'); sync(); }); sync(); })();
+</script>
+
+  <!-- Ferramenta de DEMONSTRAÇÃO (não faz parte do produto): alterna o cenário do painel -->
+  <div class="demobar" role="group" aria-label="Demonstração: alternar cenário">
+    <span class="demobar__lbl">Demo</span>
+    <span class="demobar__sep" aria-hidden="true"></span>
+    <button type="button" data-sc="novo" class="on">Primeiro acesso</button>
+    <button type="button" data-sc="operando">Em operação</button>
+  </div>
+</body>
+</html>

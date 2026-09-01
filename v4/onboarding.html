@@ -1,0 +1,855 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>a-DeRE · Primeiro acesso</title>
+<link rel="stylesheet" href="../design-system/ds.css?v=14">
+<style>
+  body{margin:0;font-family:var(--font-sans);color:var(--color-text)}
+  [hidden]{display:none !important}
+  body.preload *,body.preload *::before,body.preload *::after{transition:none !important;animation:none !important}
+  .wrap{height:100vh;display:grid;grid-template-columns:minmax(340px,42%) 1fr}
+
+  /* ===== Painel esquerdo (navy + prédio) ===== */
+  .aside{position:relative;display:flex;flex-direction:column;overflow:hidden;padding:var(--space-12);color:#fff;
+    background:linear-gradient(rgba(17,62,140,.93),rgba(10,40,96,.96)), url('img/fazenda.png') center bottom/cover no-repeat, var(--color-primary-hover)}
+  .aside__wm{font-size:var(--text-xl);font-weight:800;letter-spacing:-.01em}
+  .aside__mid{flex:1;display:flex;flex-direction:column;justify-content:center}
+  .steps{display:flex;flex-direction:column}
+  .step{display:flex;gap:14px;position:relative;align-items:flex-start}
+  .step:not(:last-child){padding-bottom:24px}
+  .step:not(:last-child)::before{content:"";position:absolute;left:16px;transform:translateX(-50%);top:36px;bottom:6px;width:2px;background:rgba(255,255,255,.25);transition:background .25s}
+  .step--done:not(:last-child)::before{background:rgba(255,255,255,.55)}
+  .step__n{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:var(--text-sm);line-height:1;flex:0 0 auto;position:relative;z-index:1;transition:background .25s,border-color .25s,color .25s}
+  .step--active .step__n,.step--done .step__n{background:#fff;color:var(--color-primary-darker)}
+  .step--todo .step__n{background:transparent;border:2px solid rgba(255,255,255,.45);color:rgba(255,255,255,.7)}
+  .step__t{padding-top:5px}
+  .step__t b{display:block;color:#fff;font-size:var(--text-lg);font-weight:700;line-height:1.3}
+  .step--todo .step__t b{color:rgba(255,255,255,.85);font-weight:600}
+  .step__t span{display:block;color:rgba(255,255,255,.6);font-size:var(--text-sm);line-height:1.35;margin-top:var(--space-1)}
+  .aside__foot{color:rgba(255,255,255,.6);font-size:var(--text-xs)}
+
+  /* ===== Painel direito ===== */
+  .panel{display:flex;flex-direction:column;align-items:center;padding:var(--space-14) var(--space-6) var(--space-10);background:var(--color-surface);overflow:auto}
+  .view{width:100%;display:flex;flex-direction:column;align-items:center;gap:var(--space-6);margin:0;transition:opacity .17s ease}
+  .view--senha{max-width:460px}
+  .view--empresas{max-width:540px}
+  .view--cert{max-width:540px}
+  .view--done{max-width:460px;margin:auto 0}/* essa tela final fica centralizada verticalmente */
+  .view .btn{width:100%;justify-content:center}
+  .sp{height:var(--space-2);width:100%}
+
+  .form__ic{width:84px;height:84px}
+  .form__ic svg{width:84px;height:84px;display:block}
+
+  .head{display:flex;flex-direction:column;align-items:center;gap:var(--space-1)}
+  .head h1{font-size:var(--text-3xl);font-weight:700 !important;line-height:1.26;color:var(--color-heading);margin:0;text-align:center}
+  .head .lead{font-size:var(--text-lg);font-weight:400;line-height:1.5;color:var(--color-text-muted);text-align:center;margin:0}
+  .view--senha .head h1,.view--senha .head .lead{white-space:nowrap}
+  .view--empresas .head h1{max-width:380px}
+
+  /* ---- senha ---- */
+  .roemail{width:100%;display:flex;align-items:center;gap:10px;background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:8px;padding:var(--space-3) 14px;box-sizing:border-box}
+  .roemail .ic{width:34px;height:34px;border-radius:50%;background:var(--color-border);display:grid;place-items:center;color:var(--color-text-muted);flex:0 0 auto}
+  .roemail .ic svg{width:18px;height:18px}
+  .roemail .m{min-width:0;display:flex;flex-direction:column;gap:2px}
+  .roemail .m label{font-size:var(--text-xs);color:var(--color-text-muted);font-weight:600}
+  .roemail .m .v{color:var(--color-heading);font-size:var(--text-sm);font-weight:400;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .f{width:100%;display:flex;flex-direction:column;gap:var(--space-1-5)}
+  .f > label{font-size:var(--text-sm);font-weight:600;color:var(--color-heading);line-height:1.5}
+  .pw{position:relative}
+  .pw .input{padding-right:var(--space-10)}
+  .pw .eye{position:absolute;right:var(--space-2);top:50%;transform:translateY(-50%);background:none;border:0;padding:var(--space-1-5);cursor:pointer;color:var(--color-text-muted);display:grid;place-items:center;border-radius:var(--radius-base)}
+  .pw .eye:hover{color:var(--color-text)}
+  .pw .eye svg{width:18px;height:18px}
+  .pw .eye .ic-eyeoff{display:none}
+  .pw .eye.showing .ic-eye{display:none}
+  .pw .eye.showing .ic-eyeoff{display:block}
+  .input.is-error{border-color:var(--color-danger);box-shadow:0 0 0 3px color-mix(in srgb,var(--color-danger) 20%,transparent)}
+  .reqs{list-style:none;margin:0;padding:4px 0 0;display:flex;flex-direction:column;gap:5px}
+  .req{display:flex;align-items:center;gap:7px;font-size:var(--text-sm);color:var(--color-text-onmuted);line-height:1.5;transition:color .15s}
+  .req .rico{width:16px;height:16px;border-radius:50%;border:1.5px solid var(--color-field-border);display:grid;place-items:center;color:transparent;flex:0 0 auto;transition:all .15s}
+  .req .rico svg{width:11px;height:11px}
+  .req.ok{color:var(--green-700);font-weight:600}
+  .req.ok .rico{background:var(--green-600);border-color:var(--green-600);color:#fff}
+  .fieldmsg{display:flex;align-items:center;gap:var(--space-1-5);margin:0;color:var(--color-danger);font-size:var(--text-xs);max-height:0;opacity:0;overflow:hidden;transition:opacity .2s ease,max-height .2s ease,margin-top .2s ease}
+  .fieldmsg.show{max-height:3rem;opacity:1}
+  .fieldmsg svg{width:14px;height:14px;flex:0 0 auto}
+  .termsblock{width:100%}
+  .termsblock .fieldmsg.show{margin-top:var(--space-1-5)}
+  .terms{width:100%;display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:var(--text-sm);color:var(--color-text);line-height:1.45}
+  .terms input{position:absolute;opacity:0;width:0;height:0}
+  .terms .box{width:18px;height:18px;border:1px solid var(--color-field-border);border-radius:var(--radius-base);display:grid;place-items:center;color:transparent;flex:0 0 auto;margin-top:1px;transition:all .15s}
+  .terms .box svg{width:12px;height:12px}
+  .terms input:checked + .box{background:var(--color-primary);border-color:var(--color-primary);color:#fff}
+  .terms:hover input:not(:checked) + .box{border-color:var(--color-text-muted)}
+  .terms:hover input:checked + .box{background:var(--color-primary-hover);border-color:var(--color-primary-hover)}
+  .terms input:focus-visible + .box{box-shadow:0 0 0 3px color-mix(in srgb,var(--color-primary) 25%,transparent)}
+  .terms.is-error .box{border-color:var(--color-danger)}
+  .terms a{color:var(--color-primary);font-weight:600;text-decoration:none}
+  .terms a:hover{text-decoration:underline}
+  .secure{width:100%;display:flex;align-items:center;justify-content:center;gap:7px;color:var(--color-text-muted);font-size:var(--text-xs);line-height:1.45}
+  .secure svg{width:14px;height:14px;flex:0 0 auto}
+
+  /* ---- empresas ---- */
+  .card{width:100%;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-2xl);box-shadow:var(--shadow-sm);box-sizing:border-box;padding:var(--space-6);display:flex;flex-direction:column;gap:var(--space-6)}
+  .evazio{display:flex;flex-direction:column;align-items:center;gap:var(--space-4)}
+  .evazio__ic{width:56px;height:56px;border-radius:50%;background:var(--color-border);display:grid;place-items:center;color:var(--color-text-muted)}
+  .evazio__ic svg{width:26px;height:26px}
+  .evazio__t{text-align:center;display:flex;flex-direction:column;gap:var(--space-1)}
+  .evazio__t b{font-size:var(--text-lg);font-weight:600;color:var(--color-text)}
+  .evazio__t span{font-size:var(--text-sm);color:var(--color-text-muted);line-height:1.5}
+  .adddash{width:100%;justify-content:center;gap:var(--space-2)}
+  .adddash svg{width:16px;height:16px}
+  .card__count{font-size:var(--text-xs);color:var(--color-text-onmuted);font-weight:600}
+  .filled{display:flex;flex-direction:column;gap:var(--space-4)}
+  .colist{display:flex;flex-direction:column;gap:var(--space-4)}
+  .co{display:flex;align-items:center;gap:var(--space-3)}
+  .co__logo{width:44px;height:44px;border-radius:var(--radius-base);background:var(--color-primary);color:#fff;display:grid;place-items:center;font-weight:800;font-size:var(--text-sm);letter-spacing:.02em;flex:0 0 auto;overflow:hidden}
+  .co__logo img{width:100%;height:100%;object-fit:cover}
+  .co__b{flex:1;min-width:0}
+  .co__name{font-size:var(--text-base);font-weight:600;color:var(--color-heading);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .co__meta{font-size:var(--text-sm);color:var(--color-text-muted);font-variant-numeric:tabular-nums}
+  .co__act{display:flex;gap:var(--space-4);flex:0 0 auto}
+  .certlist{display:flex;flex-direction:column}
+  .certlist .co{padding:var(--space-4) 0}
+  .certlist .co:first-child{padding-top:0}
+  .certlist .co:last-child{padding-bottom:0}
+  .certlist .co + .co{border-top:1px solid var(--color-border)}
+  .certdone{display:inline-flex;align-items:center;gap:var(--space-1-5);min-width:0}
+  .certdone > svg{width:16px;height:16px;color:var(--color-success);flex:0 0 auto}
+  .certfile{font-size:var(--text-sm);font-weight:500;color:var(--color-text);max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .certicons{display:flex;align-items:center;gap:var(--space-1)}
+  .cform{display:flex;flex-direction:column;gap:var(--space-6)}
+  .cinfo{display:flex;gap:var(--space-3);background:var(--color-primary-subtle);border-radius:var(--radius-base);padding:var(--space-4)}
+  .cinfo__ic{flex:0 0 auto;color:var(--color-primary);display:flex}
+  .cinfo__ic svg{width:20px;height:20px}
+  .cinfo__d{font-size:var(--text-sm);color:var(--color-text-onmuted);line-height:1.5;margin:0}
+  .filecard{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-4);border:1px solid var(--color-border);border-radius:var(--radius-base);background:var(--color-surface)}
+  .filecard__ic{flex:0 0 auto;width:40px;height:40px;border-radius:var(--radius-base);background:var(--color-primary-subtle);color:var(--color-primary);display:grid;place-items:center}
+  .filecard__ic svg{width:20px;height:20px}
+  .filecard__b{flex:1;min-width:0}
+  .filecard__name{font-size:var(--text-sm);font-weight:600;color:var(--color-heading);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .filecard__meta{font-size:var(--text-xs);color:var(--color-text-onmuted);font-variant-numeric:tabular-nums}
+  .filecard__act{display:flex;align-items:center;gap:var(--space-4);flex:0 0 auto}
+  .filecard__act button{background:none;border:0;font-family:inherit;font-size:var(--text-sm);font-weight:600;cursor:pointer;padding:0}
+  .filecard__act .edit{color:var(--color-primary)}
+  .filecard__act .edit:hover{text-decoration:underline}
+  .filecard__act .rm{color:var(--color-danger)}
+  .filecard__act .rm:hover{text-decoration:underline}
+  .co__act button:not(.btn){background:none;border:0;font-family:inherit;font-size:var(--text-sm);font-weight:600;cursor:pointer;padding:0}
+  .co__act .edit{color:var(--color-primary)}
+  .co__act .edit:hover{text-decoration:underline}
+  .co__act .rm{color:var(--color-danger)}
+  .co__act .rm:hover{text-decoration:underline}
+  .actions{width:100%;display:flex;flex-direction:column;gap:var(--space-1)}
+  .voltar{width:100%;padding:var(--space-3);background:none;border:0;font-family:inherit;font-size:var(--text-sm);font-weight:600;color:var(--color-heading);cursor:pointer;border-radius:var(--radius-base)}
+  .voltar:hover{background:var(--color-surface-2)}
+
+  /* ---- drawer ---- */
+  .scrim{position:fixed;inset:0;background:rgba(15,23,42,.46);opacity:0;visibility:hidden;transition:opacity .2s ease,visibility .2s ease;z-index:40}
+  .scrim.open{opacity:1;visibility:visible}
+  /* largura padronizada pelo DS: --drawer-md=560 (M). Trocar p/ drawer--lg (760, G) ou drawer--sm (440, P) na classe do elemento. */
+  .drawer{position:fixed;top:0;right:0;height:100vh;width:min(var(--drawer-w,560px),94vw);background:var(--color-surface);box-shadow:-8px 0 24px rgba(15,23,42,.14);display:flex;flex-direction:column;transform:translateX(100%);visibility:hidden;transition:transform .24s ease,visibility 0s linear .24s;z-index:50}
+  .drawer.open{transform:translateX(0);visibility:visible;transition:transform .24s ease}
+  .drawer__head{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--space-3);padding:var(--space-6);border-bottom:1px solid var(--color-border)}
+  .drawer__head h2{font-size:var(--text-xl);font-weight:700 !important;color:var(--color-heading);margin:0}
+  .drawer__head p{margin:var(--space-1) 0 0;font-size:var(--text-sm);color:var(--color-text-muted)}
+  .drawer__x{flex:0 0 auto}
+  .drawer__x svg{width:20px;height:20px}
+  .drawer__body{flex:1;overflow:auto;padding:var(--space-6);display:flex;flex-direction:column;gap:var(--space-8)}
+  .drawer__foot{display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);padding:var(--space-4) var(--space-6);border-top:1px solid var(--color-border)}
+  .dz{display:flex;align-items:center;gap:var(--space-4)}
+  .dz__thumb{width:64px;height:64px;border-radius:var(--radius-base);background:var(--color-surface-2);border:1px dashed var(--color-border-strong);display:grid;place-items:center;color:var(--color-text-onmuted);flex:0 0 auto;overflow:hidden}
+  .dz__thumb img{width:100%;height:100%;object-fit:cover}
+  .dz__thumb svg{width:24px;height:24px}
+  .dz__t b{display:block;font-size:var(--text-sm);color:var(--color-heading);font-weight:600}
+  .dz__t span{font-size:var(--text-xs);color:var(--color-text-onmuted)}
+  .dz__btn{margin-top:var(--space-1-5);font-size:var(--text-sm);color:var(--color-primary);font-weight:600;background:none;border:0;padding:0;cursor:pointer;font-family:inherit}
+  .fld{display:flex;flex-direction:column;gap:var(--space-1-5)}
+  .fld > label{font-size:var(--text-sm);font-weight:600;color:var(--color-heading)}
+  .fldmsg{display:none;align-items:center;gap:var(--space-1-5);margin:0;color:var(--color-danger);font-size:var(--text-xs)}
+  .fldmsg.show{display:flex}
+  .fldmsg svg{width:14px;height:14px}
+  .ro{background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-base);padding:var(--space-4);display:none;grid-template-columns:1fr 1fr;gap:var(--space-4)}
+  .ro.show{display:grid}
+  .ro__row{display:flex;flex-direction:column;gap:2px;min-width:0}
+  .ro__row--full{grid-column:1 / -1}
+  .ro__row label{font-size:var(--text-xs);color:var(--color-text-onmuted);font-weight:600}
+  .ro__row .v{font-size:var(--text-sm);color:var(--color-text);font-weight:400;word-break:break-word}
+  .sec__h{display:flex;align-items:center;justify-content:space-between;gap:var(--space-2)}
+  .sec__h b{font-size:var(--text-sm);font-weight:700;color:var(--color-heading)}
+  .sec__h span{font-size:var(--text-xs);color:var(--color-text-onmuted)}
+  .divider{height:1px;background:var(--color-border);margin:0}
+  .resplist{display:flex;flex-direction:column;gap:var(--space-2)}
+  .resp{display:flex;align-items:flex-start;gap:var(--space-3);padding:var(--space-4);border:1px solid var(--color-border);border-radius:var(--radius-lg);transition:border-color .12s,background-color .12s}
+  .resp:not(.resp--edit):hover{border-color:var(--color-border-strong);background:var(--color-surface-2)}
+  .resp--leaving{opacity:0;transform:translateX(10px);padding-top:0;padding-bottom:0;border-width:0;overflow:hidden;pointer-events:none;transition:height .24s ease,opacity .18s ease,transform .2s ease,padding .24s ease,border-width .24s ease}
+  .resp__av{width:40px;height:40px;border-radius:50%;background:var(--blue-100);color:var(--color-primary-darker);display:grid;place-items:center;font-weight:700;font-size:var(--text-xs);flex:0 0 auto}
+  .resp__b{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+  .resp__name{display:flex;align-items:center;gap:var(--space-2);min-width:0}
+  .resp__name b{font-size:var(--text-base);color:var(--color-heading);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .resp__mail{font-size:var(--text-sm);color:var(--color-text-onmuted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .resp__perfis{display:flex;flex-wrap:wrap;gap:var(--space-1-5);margin-top:var(--space-1-5)}
+  .pchip{font-size:var(--text-xs);font-weight:600;color:var(--color-text-onmuted);background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-pill);padding:2px var(--space-2)}
+  .pchip--none{color:var(--color-text-muted);border-style:dashed}
+  .resp__act{display:flex;gap:var(--space-4);flex:0 0 auto;align-self:center}
+  .resp__act button{background:none;border:0;font-family:inherit;font-size:var(--text-sm);font-weight:600;cursor:pointer;padding:0}
+  .resp__act .edit{color:var(--color-primary)}
+  .resp__act .edit:hover{text-decoration:underline}
+  .resp__act .rm{color:var(--color-danger)}
+  .resp__act .rm:hover{text-decoration:underline}
+  .resp--edit{flex-direction:column;align-items:stretch;gap:var(--space-4);padding:var(--space-6);background:var(--color-surface-2)}
+  .rf-head{display:flex;align-items:center;justify-content:space-between;gap:var(--space-2)}
+  .rf-title{font-size:var(--text-base);font-weight:600;color:var(--color-heading)}
+  .rf-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:var(--space-3)}
+  .rf-perfis{display:flex;flex-wrap:wrap;gap:var(--space-4);padding-top:2px}
+  .rf__act{display:flex;justify-content:flex-end;margin-top:var(--space-1)}
+  .seg{display:flex;gap:var(--space-2)}
+  .seg label{flex:1;position:relative}
+  .seg input{position:absolute;opacity:0}
+  .seg .opt{display:flex;align-items:center;justify-content:center;gap:var(--space-2);padding:var(--space-2) var(--space-3);border:1px solid var(--color-field-border);border-radius:var(--radius-base);font-size:var(--text-sm);color:var(--color-text);cursor:pointer;font-weight:600}
+  .seg input:checked + .opt{border-color:var(--color-primary);background:var(--color-primary-subtle);color:var(--color-primary)}
+  .seg input:focus-visible + .opt{box-shadow:0 0 0 3px color-mix(in srgb,var(--color-primary) 25%,transparent)}
+  .addself{width:100%;display:flex;align-items:center;justify-content:center;gap:var(--space-2);padding:var(--space-3);background:var(--color-surface-2);border:1px dashed var(--color-border-strong);border-radius:var(--radius-base);color:var(--color-heading);font-family:inherit;font-size:var(--text-sm);font-weight:600;cursor:pointer}
+  .addself:hover{background:color-mix(in srgb,var(--color-primary) 5%,var(--color-surface))}
+  .addself svg{width:16px;height:16px}
+  .addself[disabled]{opacity:.5;cursor:not-allowed}
+  .invite{display:flex;flex-direction:column;gap:var(--space-3);padding:var(--space-4);border:1px solid var(--color-border);border-radius:var(--radius-base);background:var(--color-surface-2)}
+  .invite__h{font-size:var(--text-xs);font-weight:700;color:var(--color-text-onmuted);text-transform:uppercase;letter-spacing:.04em}
+  .dsec{display:flex;flex-direction:column;gap:var(--space-4)}
+  .dsec__hd{display:flex;flex-direction:column;gap:2px}
+  .dsec__h{font-size:var(--text-lg);font-weight:600;color:var(--color-heading);margin:0}
+  .dsec__sub{font-size:var(--text-sm);color:var(--color-text-muted);line-height:1.45;margin:2px 0 0}
+  .logo{display:flex;align-items:center;gap:var(--space-4)}
+  .logo__thumb{width:72px;height:72px;border-radius:var(--radius-base);background:var(--color-surface-2);border:1px dashed var(--color-border-strong);display:grid;place-items:center;color:var(--color-text-onmuted);flex:0 0 auto;overflow:hidden}
+  .logo__thumb img{width:100%;height:100%;object-fit:cover}
+  .logo__thumb svg{width:26px;height:26px}
+  .logo__side{flex:1;min-width:0;display:flex;flex-direction:column;gap:var(--space-3);align-items:flex-start}
+  .logo__txt{display:flex;flex-direction:column;gap:2px}
+  .logo__label{font-size:var(--text-sm);font-weight:600;color:var(--color-heading);margin:0}
+  .logo__rules{font-size:var(--text-xs);color:var(--color-text-onmuted);line-height:1.5;margin:0}
+  .logo__act{display:flex;gap:var(--space-2)}
+  .logo__thumb.has-img{border-style:solid;border-color:var(--color-border)}
+  .dsec__rule{border:0;border-top:1px solid var(--color-divider);margin:0}
+  .fld__help{font-size:var(--text-xs);color:var(--color-text-onmuted);line-height:1.4;margin:0}
+  .dsec__n{color:var(--color-text-onmuted);font-weight:600}
+  .ro__hint{font-size:var(--text-xs);color:var(--color-text-onmuted);margin:0}
+  .dsec__htop{display:flex;align-items:baseline;justify-content:space-between;gap:var(--space-2)}
+  .dsec__meta{font-size:var(--text-xs);color:var(--color-text-onmuted);font-weight:600}
+  .linkbtn{align-self:flex-start;background:none;border:0;color:var(--color-primary);font-weight:600;font-size:var(--text-sm);cursor:pointer;padding:0;display:inline-flex;align-items:center;gap:var(--space-1-5);font-family:inherit}
+  .linkbtn:hover{text-decoration:underline}
+  .linkbtn svg{width:16px;height:16px}
+  .linkbtn[disabled]{color:var(--color-text-onmuted);cursor:not-allowed;text-decoration:none}
+
+  @media(max-width:860px){.wrap{grid-template-columns:1fr}.aside{display:none}}
+</style>
+</head>
+<body class="preload">
+<style>    #dere-gate .dots{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(2px 2px at 12% 22%,rgba(255,255,255,.06),transparent),radial-gradient(2px 2px at 82% 15%,rgba(255,255,255,.05),transparent),radial-gradient(1.5px 1.5px at 68% 62%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 27% 78%,rgba(255,255,255,.045),transparent),radial-gradient(1.5px 1.5px at 90% 82%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 45% 34%,rgba(255,255,255,.04),transparent),radial-gradient(1.5px 1.5px at 8% 55%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 58% 90%,rgba(255,255,255,.04),transparent)}
+    #dere-gate .card{animation:dereIn .38s cubic-bezier(.2,.7,.2,1) both}
+    @media (prefers-reduced-motion:reduce){#dere-gate .card{animation:none}
+    #dere-gate input:focus{border-color:#1351b4 !important;box-shadow:0 0 0 3px rgba(19,81,180,.18) !important}
+    #dere-gate button:hover{background:#0c326f !important}
+    #dere-gate button:active{transform:translateY(1px)}
+    #dere-gate .dots{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(2px 2px at 12% 22%,rgba(255,255,255,.06),transparent),radial-gradient(2px 2px at 82% 15%,rgba(255,255,255,.05),transparent),radial-gradient(1.5px 1.5px at 68% 62%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 27% 78%,rgba(255,255,255,.045),transparent),radial-gradient(1.5px 1.5px at 90% 82%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 45% 34%,rgba(255,255,255,.04),transparent),radial-gradient(1.5px 1.5px at 8% 55%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 58% 90%,rgba(255,255,255,.04),transparent)}</style>
+<div id="dere-gate" style="position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;padding:24px;font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;background:radial-gradient(120% 120% at 20% 8%,#0c326f 0%,#071d41 55%,#05152e 100%)">
+  <style>
+    #dere-gate .dots{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(2px 2px at 12% 22%,rgba(255,255,255,.06),transparent),radial-gradient(2px 2px at 82% 15%,rgba(255,255,255,.05),transparent),radial-gradient(1.5px 1.5px at 68% 62%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 27% 78%,rgba(255,255,255,.045),transparent),radial-gradient(1.5px 1.5px at 90% 82%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 45% 34%,rgba(255,255,255,.04),transparent),radial-gradient(1.5px 1.5px at 8% 55%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 58% 90%,rgba(255,255,255,.04),transparent)}
+    #dere-gate .card{animation:dereIn .38s cubic-bezier(.2,.7,.2,1) both}
+    @keyframes dereIn{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+    @media (prefers-reduced-motion:reduce){#dere-gate .card{animation:none}}
+    #dere-gate input:focus{border-color:#1351b4 !important;box-shadow:0 0 0 3px rgba(19,81,180,.18) !important}
+    #dere-gate button:hover{background:#0c326f !important}
+    #dere-gate button:active{transform:translateY(1px)}
+  </style>
+  <span class="dots"></span>
+  <form class="card" onsubmit="return dereGate(this)" style="position:relative;background:#fff;padding:38px 34px 26px;border-radius:14px;width:100%;max-width:360px;text-align:center;box-shadow:0 24px 70px -12px rgba(3,17,42,.55)">
+    <div style="font-size:21px;font-weight:800;color:#0b1f3a;letter-spacing:-.01em;font-family:inherit">DeRE</div>
+    <div style="display:inline-flex;align-items:center;gap:6px;color:#5b6b82;font-size:13px;margin:5px 0 22px;font-family:inherit"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Protótipo &middot; acesso restrito</div>
+    <label for="dere-pw" style="display:block;text-align:left;font-size:12.5px;font-weight:600;color:#334155;margin:0 0 6px;font-family:inherit">Senha de acesso</label>
+    <input id="dere-pw" type="password" placeholder="Digite a senha" autofocus autocomplete="off" aria-label="Senha de acesso" style="width:100%;height:44px;border:1px solid #cbd5e1;border-radius:8px;padding:0 14px;font-size:16px;box-sizing:border-box;outline:none;color:#0f172a;background:#fff;font-family:inherit">
+    <div id="dere-err" style="color:#dc2626;font-size:12.5px;min-height:18px;margin-top:8px;text-align:left;display:flex;align-items:center;gap:5px;font-family:inherit"></div>
+    <button type="submit" style="width:100%;height:44px;margin-top:6px;background:#1351b4;color:#fff;border:0;border-radius:8px;font-weight:700;font-size:15px;cursor:pointer;font-family:inherit">Entrar</button>
+    <div style="margin-top:20px;font-size:11.5px;color:#94a3b8;letter-spacing:.02em;font-family:inherit">uma solução Axians</div>
+  </form>
+</div>
+<script>if(localStorage.getItem('dere_ok')==='1'){var _g=document.getElementById('dere-gate');if(_g)_g.remove();}function dereGate(f){var i=f.querySelector('input'),e=document.getElementById('dere-err');if(i.value==='dere123'){localStorage.setItem('dere_ok','1');document.getElementById('dere-gate').remove();}else{e.innerHTML='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 auto"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>Senha incorreta. Tente novamente.';i.select();}return false;}</script>
+  <div class="wrap">
+    <aside class="aside">
+      <div class="aside__wm">a-DeRE</div>
+      <div class="aside__mid">
+        <div class="steps">
+          <div class="step step--active">
+            <span class="step__n">1</span>
+            <span class="step__t"><b>Crie sua senha</b><span>Defina uma senha para acessar a plataforma.</span></span>
+          </div>
+          <div class="step step--todo">
+            <span class="step__n">2</span>
+            <span class="step__t"><b>Adicione empresas</b><span>Informe as empresas que farão parte da sua conta.</span></span>
+          </div>
+          <div class="step step--todo">
+            <span class="step__n">3</span>
+            <span class="step__t"><b>Cadastre o certificado digital</b><span>Configure o certificado de cada empresa para transmissão.</span></span>
+          </div>
+        </div>
+      </div>
+      <div class="aside__foot">a-DeRE, uma solução Axians</div>
+    </aside>
+
+    <main class="panel">
+      <!-- ===== View 1: senha ===== -->
+      <form class="view view--senha is-active" id="view1" novalidate>
+        <div class="form__ic">
+          <svg width="84" height="84" viewBox="0 0 84 84" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="42" cy="42" r="42" fill="url(#pgL)"/>
+            <circle cx="42" cy="42" r="30" fill="#1351B4" fill-opacity="0.1"/>
+            <circle cx="42" cy="42" r="29" fill="white" stroke="#EEF4FC" stroke-width="2"/>
+            <path d="M49.5833 40.9165H34.4167C33.22 40.9165 32.25 41.8866 32.25 43.0832V50.6665C32.25 51.8631 33.22 52.8332 34.4167 52.8332H49.5833C50.78 52.8332 51.75 51.8631 51.75 50.6665V43.0832C51.75 41.8866 50.78 40.9165 49.5833 40.9165Z" stroke="#1351B4" stroke-width="2.16667" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M36.5833 40.9165V36.5832C36.5833 35.1466 37.154 33.7688 38.1698 32.753C39.1856 31.7372 40.5634 31.1665 42 31.1665C43.4366 31.1665 44.8143 31.7372 45.8301 32.753C46.846 33.7688 47.4166 35.1466 47.4166 36.5832V40.9165" stroke="#1351B4" stroke-width="2.16667" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M42 47.4167C42.5983 47.4167 43.0834 46.9316 43.0834 46.3333C43.0834 45.735 42.5983 45.25 42 45.25C41.4017 45.25 40.9167 45.735 40.9167 46.3333C40.9167 46.9316 41.4017 47.4167 42 47.4167Z" stroke="#1351B4" stroke-width="2.16667" stroke-linecap="round" stroke-linejoin="round"/>
+            <defs><linearGradient id="pgL" x1="42" y1="61.2382" x2="42" y2="-3.26472" gradientUnits="userSpaceOnUse"><stop offset="0.048" stop-color="white"/><stop offset="0.293" stop-color="#ECF2FB" stop-opacity="0.41"/><stop offset="1" stop-color="#D3E0F5"/></linearGradient></defs>
+          </svg>
+        </div>
+        <div class="head">
+          <h1>Crie sua senha</h1>
+          <p class="lead">Defina uma senha para os seus próximos acessos à a-DeRE.</p>
+        </div>
+        <div class="sp"></div>
+        <div class="roemail">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+          <span class="m"><label>E-mail cadastrado</label><span class="v">ricardo.alves@magseguros.com.br</span></span>
+        </div>
+        <div class="f">
+          <label for="pw">Senha</label>
+          <div class="pw">
+            <input class="input input--lg" id="pw" type="password" placeholder="Digite uma senha forte" autocomplete="new-password" aria-describedby="reqs">
+            <button class="eye" type="button" aria-label="Mostrar senha" data-for="pw"><svg class="ic-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg><svg class="ic-eyeoff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg></button>
+          </div>
+          <p class="fieldmsg" id="pwmsg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> A senha não cumpre todos os requisitos.</p>
+          <ul class="reqs" id="reqs">
+            <li class="req" data-req="len"><span class="rico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>Pelo menos 8 caracteres</li>
+            <li class="req" data-req="upper"><span class="rico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>Pelo menos uma letra maiúscula</li>
+            <li class="req" data-req="num"><span class="rico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>Pelo menos um número</li>
+          </ul>
+        </div>
+        <div class="f">
+          <label for="pw2">Confirmar senha</label>
+          <div class="pw">
+            <input class="input input--lg" id="pw2" type="password" placeholder="Repita a senha" autocomplete="new-password" aria-describedby="pw2msg">
+            <button class="eye" type="button" aria-label="Mostrar senha" data-for="pw2"><svg class="ic-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg><svg class="ic-eyeoff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg></button>
+          </div>
+          <p class="fieldmsg" id="pw2msg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> As senhas não conferem.</p>
+        </div>
+        <div class="termsblock">
+          <label class="terms" id="terms">
+            <input type="checkbox" id="tc">
+            <span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+            <span>Li e aceito os <a href="#">Termos de Uso</a> e a <a href="#">Política de Privacidade</a>.</span>
+          </label>
+          <p class="fieldmsg" id="tcmsg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Este campo é obrigatório.</p>
+        </div>
+        <button class="btn btn--primary btn--lg" type="submit">Continuar</button>
+        <div class="secure"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Conexão segura. A a-DeRE nunca pede sua senha por telefone ou e-mail.</div>
+      </form>
+
+      <!-- ===== View 2: empresas ===== -->
+      <div class="view view--empresas" id="view2" hidden>
+        <div class="form__ic">
+          <svg width="84" height="84" viewBox="0 0 84 84" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="42" cy="42" r="42" fill="url(#pgB)"/>
+            <circle cx="42" cy="42" r="30" fill="#1351B4" fill-opacity="0.1"/>
+            <circle cx="42" cy="42" r="29" fill="white" stroke="#EEF4FC" stroke-width="2"/>
+            <path d="M43 50.5V47.5C43 47.2348 42.8946 46.9805 42.707 46.793C42.5195 46.6054 42.2652 46.5 42 46.5C41.7348 46.5 41.4805 46.6054 41.293 46.793C41.1054 46.9805 41 47.2348 41 47.5V50.5C41 51.0523 40.5523 51.5 40 51.5C39.4477 51.5 39 51.0523 39 50.5V47.5C39 46.7043 39.3163 45.9415 39.8789 45.3789C40.4415 44.8163 41.2043 44.5 42 44.5C42.7957 44.5 43.5585 44.8163 44.1211 45.3789C44.6837 45.9415 45 46.7043 45 47.5V50.5C45 51.0523 44.5523 51.5 44 51.5C43.4477 51.5 43 51.0523 43 50.5Z" fill="#1351B4"/>
+            <path d="M31 48.5V39.5C31 38.7044 31.3163 37.9415 31.8789 37.3789C32.4415 36.8163 33.2044 36.5 34 36.5H36C36.5523 36.5 37 36.9477 37 37.5C37 38.0523 36.5523 38.5 36 38.5H34C33.7348 38.5 33.4805 38.6054 33.293 38.793C33.1054 38.9805 33 39.2348 33 39.5V48.5C33 48.7652 33.1054 49.0195 33.293 49.207C33.4805 49.3946 33.7348 49.5 34 49.5H50C50.2652 49.5 50.5195 49.3946 50.707 49.207C50.8946 49.0195 51 48.7652 51 48.5V42.5C51 42.2348 50.8946 41.9805 50.707 41.793C50.5195 41.6054 50.2652 41.5 50 41.5H48C47.4477 41.5 47 41.0523 47 40.5C47 39.9477 47.4477 39.5 48 39.5H50C50.7957 39.5 51.5585 39.8163 52.1211 40.3789C52.6837 40.9415 53 41.7043 53 42.5V48.5C53 49.2957 52.6837 50.0585 52.1211 50.6211C51.5585 51.1837 50.7957 51.5 50 51.5H34C33.2044 51.5 32.4415 51.1837 31.8789 50.6211C31.3163 50.0585 31 49.2956 31 48.5Z" fill="#1351B4"/>
+            <path d="M47 50.5V34.5C47 34.2348 46.8946 33.9805 46.707 33.793C46.5195 33.6054 46.2652 33.5 46 33.5H38C37.7348 33.5 37.4805 33.6054 37.293 33.793C37.1054 33.9805 37 34.2348 37 34.5V50.5C37 51.0523 36.5523 51.5 36 51.5C35.4477 51.5 35 51.0523 35 50.5V34.5C35 33.7044 35.3163 32.9415 35.8789 32.3789C36.4415 31.8163 37.2044 31.5 38 31.5H46C46.7956 31.5 47.5585 31.8163 48.1211 32.3789C48.6837 32.9415 49 33.7044 49 34.5V50.5C49 51.0523 48.5523 51.5 48 51.5C47.4477 51.5 47 51.0523 47 50.5Z" fill="#1351B4"/>
+            <defs><linearGradient id="pgB" x1="42" y1="61.2382" x2="42" y2="-3.26472" gradientUnits="userSpaceOnUse"><stop offset="0.048" stop-color="white"/><stop offset="0.293" stop-color="#ECF2FB" stop-opacity="0.41"/><stop offset="1" stop-color="#D3E0F5"/></linearGradient></defs>
+          </svg>
+        </div>
+        <div class="head">
+          <h1>Defina as empresas e os responsáveis</h1>
+          <p class="lead">Você pode adicionar até 5 empresas.</p>
+        </div>
+        <div class="sp"></div>
+        <div class="card">
+          <div class="card__count" id="count">0 de 5 empresas adicionadas</div>
+          <div class="evazio" id="empty">
+            <span class="evazio__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg></span>
+            <div class="evazio__t">
+              <b>Nenhuma empresa adicionada</b>
+              <span>Cadastre as empresas que farão as declarações na a-DeRE e indique os responsáveis por cada uma.</span>
+            </div>
+          </div>
+          <div class="filled" id="filled" hidden>
+            <div class="colist" id="colist"></div>
+          </div>
+          <button class="btn btn--dashed btn--lg adddash" id="addBtn" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Adicionar empresa
+          </button>
+        </div>
+        <div class="sp"></div>
+        <div class="actions">
+          <button class="btn btn--primary btn--lg" type="button" id="continuar2">Continuar</button>
+          <p class="fieldmsg" id="emprMsg" style="justify-content:center;align-self:center;text-align:center"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Adicione pelo menos uma empresa para continuar.</p>
+          <button class="btn btn--ghost btn--lg" type="button" id="voltar2">Voltar</button>
+        </div>
+      </div>
+
+      <!-- ===== View 3: certificado digital ===== -->
+      <div class="view view--cert" id="view3" hidden>
+        <div class="form__ic">
+          <svg width="84" height="84" viewBox="0 0 84 84" fill="none" aria-hidden="true">
+            <circle cx="42" cy="42" r="42" fill="url(#pgC)"/>
+            <circle cx="42" cy="42" r="30" fill="#1351B4" fill-opacity="0.1"/>
+            <circle cx="42" cy="42" r="29" fill="white" stroke="#EEF4FC" stroke-width="2"/>
+            <path d="M49.5835 35.5C47.0707 35.5 44.1349 34.0516 42.1196 32.293C42.0864 32.2647 42.0441 32.2491 42.0005 32.249C41.9566 32.249 41.9137 32.2655 41.8804 32.2939L41.8794 32.293C39.8759 34.0397 36.9298 35.5 34.4165 35.5V43.083C34.4165 45.5052 35.2516 47.2661 36.5688 48.6152C37.8314 49.9083 39.5802 50.8656 41.5903 51.6006L41.9966 51.7441L42.02 51.752C44.1923 50.9939 46.0878 49.9965 47.4321 48.6172C48.7487 47.2664 49.5835 45.5052 49.5835 43.083V35.5ZM51.7505 43.083C51.7505 46.0775 50.6898 48.3797 48.9839 50.1299C47.3075 51.8498 45.0558 52.9893 42.7251 53.8018L42.7163 53.8047C42.2523 53.9619 41.7492 53.9565 41.2886 53.791V53.792C38.9517 52.985 36.6973 51.8477 35.019 50.1289C33.3111 48.3797 32.2505 46.0774 32.2505 43.083V35.5C32.2505 34.9255 32.4781 34.3741 32.8843 33.9678C33.2905 33.5615 33.842 33.3331 34.4165 33.333C36.2326 33.333 38.698 32.1973 40.4644 30.6543L40.4731 30.6465C40.8988 30.2828 41.4406 30.083 42.0005 30.083C42.5602 30.0831 43.1013 30.2829 43.5269 30.6465L43.5366 30.6543C45.3128 32.2071 47.7667 33.333 49.5835 33.333C50.1581 33.333 50.7094 33.5614 51.1157 33.9678C51.522 34.3741 51.7505 34.9254 51.7505 35.5V43.083Z" fill="#1351B4"/>
+            <path d="M44.4843 39.0678C44.9074 38.6447 45.5925 38.6447 46.0155 39.0678C46.4386 39.4909 46.4386 40.176 46.0155 40.599L41.6825 44.933C41.2595 45.3559 40.5733 45.356 40.1503 44.933L37.9843 42.766C37.5612 42.343 37.5612 41.6569 37.9843 41.2338C38.4073 40.8112 39.0926 40.8112 39.5155 41.2338L40.9159 42.6342L44.4843 39.0678Z" fill="#1351B4"/>
+            <defs><linearGradient id="pgC" x1="42" y1="61.2382" x2="42" y2="-3.26472" gradientUnits="userSpaceOnUse"><stop offset="0.048" stop-color="white"/><stop offset="0.293" stop-color="#ECF2FB" stop-opacity="0.41"/><stop offset="1" stop-color="#D3E0F5"/></linearGradient></defs>
+          </svg>
+        </div>
+        <div class="head">
+          <h1>Cadastre o certificado por empresa</h1>
+          <p class="lead">Cada empresa utiliza seu próprio certificado digital (ICP-Brasil) para assinar e transmitir as declarações.</p>
+        </div>
+        <div class="sp"></div>
+        <div class="card">
+          <div class="card__count" id="certCount">0 de 3 certificados cadastrados</div>
+          <div class="certlist" id="certlist"></div>
+        </div>
+        <div class="sp"></div>
+        <div class="actions">
+          <button class="btn btn--primary btn--lg" type="button" id="concluir">Concluir ativação da conta</button>
+          <button class="btn btn--ghost btn--lg" type="button" id="voltar3">Voltar</button>
+        </div>
+      </div>
+
+      <!-- ===== View 4: conta ativada ===== -->
+      <div class="view view--done" id="view4" hidden>
+        <div class="form__ic">
+          <svg width="84" height="84" viewBox="0 0 84 84" fill="none" aria-hidden="true">
+            <circle cx="42" cy="42" r="42" fill="url(#pgD)"/>
+            <circle cx="42" cy="42" r="30" fill="#1351B4" fill-opacity="0.1"/>
+            <circle cx="42" cy="42" r="29" fill="white" stroke="#EEF4FC" stroke-width="2"/>
+            <path d="M33.5 42.5 39 48l11.5-11.5" stroke="#1351B4" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <defs><linearGradient id="pgD" x1="42" y1="61.2382" x2="42" y2="-3.26472" gradientUnits="userSpaceOnUse"><stop offset="0.048" stop-color="white"/><stop offset="0.293" stop-color="#ECF2FB" stop-opacity="0.41"/><stop offset="1" stop-color="#D3E0F5"/></linearGradient></defs>
+          </svg>
+        </div>
+        <div class="head">
+          <h1>Conta ativada!</h1>
+          <p class="lead">Sua conta a-DeRE está pronta. Agora você pode começar a preparar as declarações.</p>
+        </div>
+        <div class="sp"></div>
+        <div class="actions">
+          <button class="btn btn--primary btn--lg" type="button" id="irPainel">Fazer login</button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ===== Drawer ===== -->
+  <div class="scrim" id="scrim"></div>
+  <aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
+    <div class="drawer__head">
+      <div>
+        <h2 id="drawerTitle">Adicionar empresa</h2>
+        <p>Preencha os dados da empresa e defina os responsáveis pela declaração.</p>
+      </div>
+      <button class="icon-btn drawer__x" id="drawerX" type="button" aria-label="Fechar" data-tooltip="Fechar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="drawer__body">
+      <section class="dsec">
+        <div class="dsec__hd"><h3 class="dsec__h">Dados da empresa</h3><p class="dsec__sub">Identifique a empresa declarante e, se quiser, adicione um logo.</p></div>
+        <div class="logo">
+          <span class="logo__thumb" id="dzThumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg></span>
+          <div class="logo__act">
+            <button class="btn btn--secondary btn--sm" type="button" id="logoBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Adicionar logo</button>
+            <button class="btn btn--danger-outline btn--sm" type="button" id="logoRemove" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg> Remover logo</button>
+          </div>
+          <input type="file" id="logoInput" accept="image/*" hidden>
+        </div>
+        <div class="fld">
+          <label for="cnpj">CNPJ <span class="field__req">*</span></label>
+          <input class="input input--lg" id="cnpj" inputmode="numeric" placeholder="Ex.: 00.000.000/0000-00" autocomplete="off" required aria-required="true">
+          <p class="fldmsg" id="cnpjmsg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Informe um CNPJ válido (14 dígitos).</p>
+          <p class="fld__help" id="cnpjHelp">Os dados cadastrais da empresa serão preenchidos automaticamente.</p>
+        </div>
+        <div class="ro" id="ro">
+          <div class="ro__row"><label>CNPJ</label><span class="v" id="roCnpj">—</span></div>
+          <div class="ro__row"><label>Razão social</label><span class="v" id="roRazao">—</span></div>
+          <div class="ro__row"><label>Nome fantasia</label><span class="v" id="roFant">—</span></div>
+          <div class="ro__row"><label>Situação cadastral</label><span class="v" id="roSit">Ativa</span></div>
+          <div class="ro__row ro__row--full"><label>Natureza jurídica</label><span class="v" id="roNat">—</span></div>
+        </div>
+      </section>
+
+      <hr class="dsec__rule">
+
+      <section class="dsec">
+        <div class="dsec__hd"><h3 class="dsec__h">Responsáveis <span class="dsec__n" id="respCount">(1)</span></h3><p class="dsec__sub">Pessoas responsáveis por realizar e acompanhar as atividades da empresa no sistema.</p></div>
+        <div class="resplist" id="resplist"></div>
+        <button class="btn btn--link" id="addPersonBtn" type="button" style="align-self:flex-start"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Convidar responsável</button>
+        <p class="fieldmsg" id="respMsg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Defina ao menos um preparador e um aprovador entre os responsáveis.</p>
+      </section>
+    </div>
+    <div class="drawer__foot">
+      <button class="btn btn--ghost btn--lg" type="button" id="cancelDrawer">Cancelar</button>
+      <button class="btn btn--primary btn--lg" type="button" id="saveCompany">Adicionar empresa</button>
+    </div>
+  </aside>
+
+  <!-- ===== Drawer: certificado ===== -->
+  <aside class="drawer" id="certDrawer" role="dialog" aria-modal="true" aria-labelledby="certTitle">
+    <div class="drawer__head">
+      <div>
+        <h2 id="certTitle">Importar certificado</h2>
+        <p id="certSub">Certificado digital da empresa.</p>
+      </div>
+      <button class="icon-btn drawer__x" id="certX" type="button" aria-label="Fechar" data-tooltip="Fechar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="drawer__body">
+      <div class="cform">
+        <div class="cinfo">
+          <span class="cinfo__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span>
+          <p class="cinfo__d">Envie o certificado digital <b>ICP-Brasil válido</b> da empresa, no formato <b>.pfx</b> ou <b>.p12</b> e protegido por senha. Ele assina e transmite as declarações e pode ser da matriz, do representante legal ou de procurador habilitado.</p>
+        </div>
+        <label class="dropzone" id="certDrop" for="certFile">
+          <span class="dropzone__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="28" height="28"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg></span>
+          <span class="dropzone__title">Selecione ou arraste o arquivo do certificado</span>
+          <span class="dropzone__hint">Certificado ICP-Brasil · .pfx ou .p12 · até 5 MB</span>
+        </label>
+        <div class="filecard" id="certFileCard" hidden>
+          <span class="filecard__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6"/></svg></span>
+          <div class="filecard__b">
+            <div class="filecard__name" id="certFileName">arquivo.pfx</div>
+            <div class="filecard__meta" id="certFileMeta">PFX · 0 KB</div>
+          </div>
+          <div class="filecard__act">
+            <button class="rm" type="button" id="certRemoveFile" aria-label="Remover arquivo">Remover</button>
+            <button class="edit" type="button" id="certReplace">Substituir</button>
+          </div>
+        </div>
+        <input type="file" id="certFile" hidden>
+        <div class="fld">
+          <label for="certPw">Senha do certificado</label>
+          <div class="pw">
+            <input class="input" id="certPw" type="password" placeholder="Ex.: senha do arquivo .pfx" autocomplete="off">
+            <button class="eye" type="button" aria-label="Mostrar senha" data-for="certPw"><svg class="ic-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg><svg class="ic-eyeoff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg></button>
+          </div>
+          <p class="fldmsg" id="certPwMsg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Informe o arquivo e a senha do certificado.</p>
+          <p class="fld__help" id="certPwHelp">Informe a senha usada para abrir o arquivo do certificado.</p>
+        </div>
+      </div>
+    </div>
+    <div class="drawer__foot">
+      <button class="btn btn--ghost btn--lg" type="button" id="certCancel">Cancelar</button>
+      <button class="btn btn--primary btn--lg" type="button" id="certConfirm">Importar certificado</button>
+    </div>
+  </aside>
+
+  <script>
+    var $=function(id){return document.getElementById(id)};
+
+    /* ===================== ROTEADOR (wizard sem reload) ===================== */
+    function setStepper(n){
+      var steps=document.querySelectorAll('.steps .step');
+      steps.forEach(function(s,i){
+        var idx=i+1; s.classList.remove('step--active','step--done','step--todo');
+        s.classList.add(idx<n?'step--done':(idx===n?'step--active':'step--todo'));
+      });
+    }
+    function goStep(n){
+      var map={1:'view1',2:'view2',3:'view3',4:'view4'};
+      var next=$(map[n]); if(!next) return;
+      var cur=document.querySelector('.view.is-active');
+      if(cur===next){ return; }
+      if(cur){ cur.style.opacity='0'; }
+      setTimeout(function(){
+        if(cur){ cur.hidden=true; cur.classList.remove('is-active'); cur.style.opacity=''; }
+        next.hidden=false; next.classList.add('is-active'); next.style.opacity='0';
+        requestAnimationFrame(function(){ next.style.opacity='1'; });
+        setStepper(n);
+        var p=document.querySelector('.panel'); if(p) p.scrollTop=0;
+      }, cur?170:0);
+    }
+
+    /* ===================== STEP 1 · SENHA ===================== */
+    var pw=$('pw'), pw2=$('pw2'), tc=$('tc');
+    var reqs={len:function(v){return v.length>=8}, upper:function(v){return /[A-Z]/.test(v)}, num:function(v){return /[0-9]/.test(v)}};
+    function allReqs(v){return reqs.len(v)&&reqs.upper(v)&&reqs.num(v)}
+    function paintReqs(){var v=pw.value;document.querySelectorAll('.req').forEach(function(li){li.classList.toggle('ok', reqs[li.dataset.req](v));});}
+    function showErr(input,msgId){input.classList.add('is-error');input.setAttribute('aria-invalid','true');$(msgId).classList.add('show');}
+    function clearErr(input,msgId){input.classList.remove('is-error');input.setAttribute('aria-invalid','false');$(msgId).classList.remove('show');}
+    function clearAll(){ clearErr(pw,'pwmsg'); clearErr(pw2,'pw2msg'); $('terms').classList.remove('is-error'); $('tcmsg').classList.remove('show'); }
+    pw.addEventListener('input', function(){ paintReqs(); clearAll(); });
+    pw2.addEventListener('input', function(){ clearAll(); });
+    tc.addEventListener('change', clearAll);
+    document.querySelectorAll('.eye').forEach(function(b){
+      b.addEventListener('click', function(){
+        var i=$(b.dataset.for), show=i.type==='password';
+        i.type=show?'text':'password';
+        b.classList.toggle('showing', show);
+        b.setAttribute('aria-label', show?'Ocultar senha':'Mostrar senha');
+      });
+    });
+    $('view1').addEventListener('submit', function(e){
+      e.preventDefault();
+      paintReqs();
+      var okPw=allReqs(pw.value);
+      var okMatch=(pw.value.length>0 && pw.value===pw2.value);
+      var okTerms=tc.checked;
+      if(!okPw) showErr(pw,'pwmsg'); else clearErr(pw,'pwmsg');
+      if(!okMatch) showErr(pw2,'pw2msg'); else clearErr(pw2,'pw2msg');
+      $('terms').classList.toggle('is-error', !okTerms);
+      $('tcmsg').classList.toggle('show', !okTerms);
+      if(!okPw){ pw.focus(); return; }
+      if(!okMatch){ pw2.focus(); return; }
+      if(!okTerms){ return; }
+      goStep(2);
+    });
+
+    /* ===================== STEP 2 · EMPRESAS ===================== */
+    var MAX=5, companies=[], editIndex=-1, logoData=null, resp=[];
+    var CNPJDB={
+      "33608308000173":{razao:"MAG Seguros S.A.",fant:"MAG Seguros",nat:"Sociedade Anônima Aberta",porte:"Demais"},
+      "26314512000116":{razao:"Sicoob Seguradora S.A.",fant:"Sicoob Seguros",nat:"Sociedade Anônima Fechada",porte:"Demais"},
+      "40997879000102":{razao:"Simple2u Ltda.",fant:"Simple2u",nat:"Sociedade Empresária Limitada",porte:"Demais"},
+      "52780551000119":{razao:"MAG Capitalização S.A.",fant:"MAG Capitalização",nat:"Sociedade Anônima Fechada",porte:"Demais"},
+      "21995256000156":{razao:"MAG Finanças (IP)",fant:"MAG Finanças",nat:"Sociedade Anônima Fechada",porte:"Demais"}
+    };
+    function onlyDigits(s){return (s||'').replace(/\D/g,'')}
+    function maskCNPJ(d){d=onlyDigits(d).slice(0,14);var o=d;
+      if(d.length>2)o=d.slice(0,2)+'.'+d.slice(2);
+      if(d.length>5)o=d.slice(0,2)+'.'+d.slice(2,5)+'.'+d.slice(5);
+      if(d.length>8)o=d.slice(0,2)+'.'+d.slice(2,5)+'.'+d.slice(5,8)+'/'+d.slice(8);
+      if(d.length>12)o=d.slice(0,2)+'.'+d.slice(2,5)+'.'+d.slice(5,8)+'/'+d.slice(8,12)+'-'+d.slice(12);
+      return o;}
+    $('cnpj').addEventListener('input',function(){
+      this.value=maskCNPJ(this.value);
+      $('cnpjmsg').classList.remove('show'); this.classList.remove('is-error');
+      var d=onlyDigits(this.value);
+      if(d.length===14){ fillFromCNPJ(d); } else { $('ro').classList.remove('show'); if($('cnpjHelp'))$('cnpjHelp').hidden=false; }
+    });
+    function showRo(){
+      var ro=$('ro'); var was=ro.classList.contains('show');
+      ro.classList.add('show');
+      if(was || matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+      var h=ro.offsetHeight;
+      ro.style.overflow='hidden'; ro.style.height='0px'; ro.style.opacity='0';
+      ro.getBoundingClientRect(); /* reflow */
+      ro.style.transition='height .3s ease, opacity .26s ease';
+      ro.style.height=h+'px'; ro.style.opacity='1';
+      setTimeout(function(){ ro.style.transition=''; ro.style.height=''; ro.style.overflow=''; ro.style.opacity=''; }, 340);
+    }
+    function fillFromCNPJ(d){
+      var rec=CNPJDB[d]||{razao:"Empresa "+d.slice(0,8)+" Ltda.",fant:"—",nat:"Sociedade Empresária Limitada",porte:"Demais"};
+      $('roCnpj').textContent=maskCNPJ(d); $('roRazao').textContent=rec.razao; $('roFant').textContent=rec.fant||'—'; $('roNat').textContent=rec.nat||'—';
+      showRo(); if($('cnpjHelp'))$('cnpjHelp').hidden=true;
+    }
+    var LOGO_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>';
+    var PLUS_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>';
+    var REFRESH_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M3 21v-5h5"/></svg>';
+    function resetLogo(){ logoData=null; $('dzThumb').innerHTML=LOGO_ICON; $('dzThumb').classList.remove('has-img'); $('logoBtn').innerHTML=PLUS_ICON+' Adicionar logo'; $('logoRemove').hidden=true; }
+    function setLogo(data){ logoData=data; $('dzThumb').innerHTML='<img alt="" src="'+data+'">'; $('dzThumb').classList.add('has-img'); $('logoBtn').innerHTML=REFRESH_ICON+' Trocar logo'; $('logoRemove').hidden=false; }
+    $('logoBtn').addEventListener('click',function(){$('logoInput').click()});
+    $('logoInput').addEventListener('change',function(e){ var f=e.target.files&&e.target.files[0]; if(!f)return; var r=new FileReader(); r.onload=function(ev){ setLogo(ev.target.result); }; r.readAsDataURL(f); });
+    $('logoRemove').addEventListener('click',function(){ resetLogo(); $('logoInput').value=''; });
+    var PERFIS=[{k:'Preparador',d:'Prepara e edita as informações da declaração.'},{k:'Aprovador',d:'Revisa e aprova o envio à Receita.'}];
+    function resetResp(){ resp=[{nome:'Ricardo Alves',email:'ricardo.alves@magseguros.com.br',perfis:[],admin:true}]; renderResp(); }
+    function initials(n){ return (n||'').trim().split(/\s+/).filter(Boolean).map(function(x){return x[0]}).slice(0,2).join('').toUpperCase()||'?'; }
+    function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+    function buildResp(p,i){
+        var el=document.createElement('div');
+        if(p._edit){
+          el.className='resp resp--edit';
+          var checks=(p.admin?'<label class="check"><input type="checkbox" checked disabled> Administrador</label>':'')+PERFIS.map(function(pf){var on=p.perfis.indexOf(pf.k)>=0;return '<label class="check"><input type="checkbox" data-k="'+pf.k+'"'+(on?' checked':'')+'> '+pf.k+'</label>';}).join('');
+          el.innerHTML=
+            '<div class="rf-head"><span class="rf-title">'+(p._new?'Novo responsável':'Editar responsável')+'</span><button class="icon-btn icon-btn--sm rf-cancel" type="button" data-tooltip="Cancelar" aria-label="Cancelar edição"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div>'+
+            '<div class="rf-grid"><div class="fld"><label>Nome</label><input class="input rf-nome" value="'+esc(p.nome)+'" placeholder="Ex.: Nome da pessoa"></div><div class="fld"><label>E-mail</label><input class="input rf-mail" type="email" value="'+esc(p.email)+'" placeholder="Ex.: nome@empresa.com"'+(p.admin?' disabled':'')+'></div></div>'+
+            '<div class="fld"><label>Perfis</label><div class="rf-perfis">'+checks+'</div></div>'+
+            '<div class="rf__act"><button class="btn btn--secondary btn--sm rf-save" type="button">Confirmar responsável</button></div>';
+          el.querySelector('.rf-save').addEventListener('click',function(){
+            var nome=el.querySelector('.rf-nome').value.trim();
+            var mail=el.querySelector('.rf-mail').value.trim();
+            var perfis=[].slice.call(el.querySelectorAll('.rf-perfis input[data-k]:checked')).map(function(c){return c.getAttribute('data-k');});
+            if(!nome){ el.querySelector('.rf-nome').focus(); return; }
+            if(!/.+@.+\..+/.test(mail)){ el.querySelector('.rf-mail').focus(); return; }
+            p.nome=nome; p.email=mail; p.perfis=perfis; p._edit=false; p._new=false; swapToCard(el,p,i);
+          });
+          el.querySelector('.rf-cancel').addEventListener('click',function(){ if(p._new){ resp.splice(i,1); } else { p._edit=false; } renderResp(); });
+        } else {
+          el.className='resp';
+          var chips=(p.admin?'<span class="pchip">Admin</span>':'')+p.perfis.map(function(k){return '<span class="pchip">'+k+'</span>';}).join('');
+          if(!chips) chips='<span class="pchip pchip--none">Sem perfil</span>';
+          el.innerHTML=
+            '<span class="resp__av">'+initials(p.nome)+'</span>'+
+            '<div class="resp__b"><div class="resp__name"><b>'+esc(p.nome)+'</b></div><span class="resp__mail">'+esc(p.email)+'</span><div class="resp__perfis">'+chips+'</div></div>'+
+            '<div class="resp__act">'+(p.admin?'':'<button class="rm js-rm" type="button" aria-label="Remover '+esc(p.nome)+'">Remover</button>')+'<button class="edit js-edit" type="button" aria-label="Editar '+esc(p.nome)+'">Editar</button></div>';
+          el.querySelector('.js-edit').addEventListener('click',function(){ p._edit=true; renderResp(); });
+          var rm=el.querySelector('.js-rm'); if(rm){ rm.addEventListener('click',function(){
+            if(matchMedia('(prefers-reduced-motion:reduce)').matches){ resp.splice(i,1); renderResp(); return; }
+            var h=el.offsetHeight; el.style.height=h+'px'; el.getBoundingClientRect();
+            el.classList.add('resp--leaving'); el.style.height='0px';
+            setTimeout(function(){ resp.splice(i,1); renderResp(); }, 240);
+          }); }
+        }
+        return el;
+    }
+    function renderResp(){
+      var wrap=$('resplist'); wrap.innerHTML='';
+      resp.forEach(function(p,i){ wrap.appendChild(buildResp(p,i)); });
+      $('respCount').textContent='('+resp.length+')';
+      if($('respMsg')){ var hp=resp.some(function(p){return (p.perfis||[]).indexOf('Preparador')>=0;}), ha=resp.some(function(p){return (p.perfis||[]).indexOf('Aprovador')>=0;}); if(hp&&ha)$('respMsg').classList.remove('show'); }
+    }
+    /* Confirmar: fecha o form de preenchimento e revela o card com transição (colapsa o form, expande o card). */
+    function swapToCard(el,p,i){
+      if($('respMsg')){ var hp=resp.some(function(x){return (x.perfis||[]).indexOf('Preparador')>=0;}), ha=resp.some(function(x){return (x.perfis||[]).indexOf('Aprovador')>=0;}); if(hp&&ha)$('respMsg').classList.remove('show'); }
+      var card=buildResp(p,i);
+      el.parentNode.replaceChild(card, el);            /* swap instantâneo */
+      if(!matchMedia('(prefers-reduced-motion:reduce)').matches){
+        card.style.opacity='0'; card.style.transition='opacity .15s ease';
+        card.getBoundingClientRect();                  /* reflow */
+        card.style.opacity='1';
+        setTimeout(function(){ card.style.transition=''; card.style.opacity=''; }, 170);
+      }
+    }
+    $('addPersonBtn').addEventListener('click',function(){
+      resp.push({nome:'',email:'',perfis:['Preparador'],admin:false,_edit:true,_new:true});
+      var i=resp.length-1;
+      var el=buildResp(resp[i],i);            /* anexa só o form novo — não reconstrói a lista */
+      $('resplist').appendChild(el);
+      $('respCount').textContent='('+resp.length+')';
+      var reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+      if(!reduce){
+        var h=el.offsetHeight;
+        el.style.overflow='hidden'; el.style.height='0px'; el.style.opacity='0';
+        el.getBoundingClientRect(); /* reflow */
+        el.style.transition='height .26s ease, opacity .24s ease';
+        el.style.height=h+'px'; el.style.opacity='1';
+        setTimeout(function(){ el.style.transition=''; el.style.height=''; el.style.overflow=''; el.style.opacity=''; }, 300);
+      }
+      var inp=el.querySelector('.rf-nome'); if(inp) inp.focus({preventScroll:true});
+      if(!reduce) el.scrollIntoView({behavior:'smooth',block:'nearest'});
+    });
+    function openDrawer(edit){
+      if($('respMsg'))$('respMsg').classList.remove('show');
+      if(!edit){
+        editIndex=-1; resetLogo();
+        $('cnpj').value=''; $('cnpj').classList.remove('is-error'); $('ro').classList.remove('show'); if($('cnpjHelp'))$('cnpjHelp').hidden=false; $('cnpjmsg').classList.remove('show');
+        $('drawerTitle').textContent='Adicionar empresa'; resetResp();
+      }
+      $('scrim').classList.add('open'); $('drawer').classList.add('open');
+    }
+    function closeDrawer(){ $('scrim').classList.remove('open'); $('drawer').classList.remove('open'); }
+    $('addBtn').addEventListener('click',function(){openDrawer(false)});
+    $('drawerX').addEventListener('click',closeDrawer);
+    $('cancelDrawer').addEventListener('click',closeDrawer);
+    $('scrim').addEventListener('click',function(){ closeDrawer(); if(typeof closeCertDrawer==='function') closeCertDrawer(); });
+    $('saveCompany').addEventListener('click',function(){
+      var d=onlyDigits($('cnpj').value);
+      if(d.length!==14){ $('cnpjmsg').classList.add('show'); $('cnpj').classList.add('is-error'); $('cnpj').focus(); return; }
+      var hasPrep=resp.some(function(p){return (p.perfis||[]).indexOf('Preparador')>=0;});
+      var hasAprov=resp.some(function(p){return (p.perfis||[]).indexOf('Aprovador')>=0;});
+      if(!hasPrep||!hasAprov){ $('respMsg').classList.add('show'); return; }
+      var obj={ cnpj:maskCNPJ(d), razao:$('roRazao').textContent, resp:resp.filter(function(p){return !p._new;}).map(function(p){return {nome:p.nome,email:p.email,perfis:(p.perfis||[]).slice(),admin:p.admin};}), logo:logoData };
+      if(editIndex>=0){ companies[editIndex]=obj; } else { companies.push(obj); }
+      closeDrawer(); renderCompanies();
+    });
+    function renderCompanies(){
+      var list=$('colist'), em=$('emprMsg'); if(em && companies.length>0) em.classList.remove('show');
+      $('count').textContent=companies.length+' de '+MAX+' empresas adicionadas';
+      if(companies.length===0){ $('empty').hidden=false; $('filled').hidden=true; $('count').hidden=true; list.innerHTML=''; $('addBtn').style.display=''; return; }
+      $('empty').hidden=true; $('filled').hidden=false; $('count').hidden=false; list.innerHTML='';
+      companies.forEach(function(c,i){
+        var el=document.createElement('div'); el.className='co';
+        var code=(c.razao||'?').replace(/[^A-Za-zÀ-ú ]/g,'').trim().split(/\s+/)[0].slice(0,3).toUpperCase();
+        var logo=c.logo?'<img alt="" src="'+c.logo+'">':code;
+        el.innerHTML='<span class="co__logo">'+logo+'</span>'+
+          '<div class="co__b"><div class="co__name">'+c.razao+'</div><div class="co__meta">'+c.cnpj+'</div></div>'+
+          '<div class="co__act"><button class="edit" type="button">Editar</button><button class="rm" type="button">Remover</button></div>';
+        el.querySelector('.rm').addEventListener('click',function(){ companies.splice(i,1); renderCompanies(); });
+        el.querySelector('.edit').addEventListener('click',function(){ editCompany(i); });
+        list.appendChild(el);
+      });
+      $('addBtn').style.display = companies.length>=MAX ? 'none' : '';
+    }
+    function editCompany(i){
+      var c=companies[i]; editIndex=i;
+      openDrawer(true);
+      $('drawerTitle').textContent='Editar empresa';
+      $('cnpj').value=c.cnpj; var d=onlyDigits(c.cnpj); if(d.length===14) fillFromCNPJ(d);
+      resp=(c.resp||[]).map(function(p){return {nome:p.nome,email:p.email,perfis:(p.perfis||[]).slice(),admin:p.admin};}); renderResp();
+      if(c.logo){ setLogo(c.logo); } else { resetLogo(); }
+    }
+    $('voltar2').addEventListener('click',function(){ goStep(1); });
+    $('continuar2').addEventListener('click',function(){ if(companies.length===0){ $('emprMsg').classList.add('show'); return; } $('emprMsg').classList.remove('show'); goStep(3); });
+
+    /* ===================== STEP 3 · CERTIFICADO (3 empresas fixas) ===================== */
+    var CERTS=[
+      {nome:'MAG Seguros', cnpj:'33.608.308/0001-73'},
+      {nome:'MAG Finanças', cnpj:'21.995.256/0001-56'},
+      {nome:'MAG Capitalização', cnpj:'52.780.551/0001-19'}
+    ];
+    var certTarget=-1;
+    function renderCerts(){
+      var wrap=$('certlist'); if(!wrap) return; wrap.innerHTML='';
+      CERTS.forEach(function(c,i){
+        var el=document.createElement('div'); el.className='co';
+        var act = c.file
+          ? '<span class="certdone" title="'+esc(c.file)+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span class="certfile">'+esc(c.file)+'</span></span><span class="certicons"><button class="icon-btn icon-btn--sm cert-redo" type="button" data-tooltip="Substituir" aria-label="Substituir certificado"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M3 21v-5h5"/></svg></button><button class="icon-btn icon-btn--sm icon-btn--danger cert-del" type="button" data-tooltip="Remover" aria-label="Remover certificado"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></button></span>'
+          : '<button class="btn btn--secondary btn--sm cert-send" type="button" style="gap:var(--space-2)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg> Importar certificado</button>';
+        el.innerHTML='<span class="co__logo">MAG</span>'+
+          '<div class="co__b"><div class="co__name">'+c.nome+'</div><div class="co__meta">'+c.cnpj+'</div></div>'+
+          '<div class="co__act">'+act+'</div>';
+        var open=el.querySelector('.cert-send')||el.querySelector('.cert-redo');
+        if(open){ open.addEventListener('click',function(){ openCertDrawer(i); }); }
+        var del=el.querySelector('.cert-del'); if(del){ del.addEventListener('click',function(){ CERTS[i].file=null; CERTS[i].hasPw=false; renderCerts(); }); }
+        wrap.appendChild(el);
+      });
+      var up=CERTS.filter(function(c){return c.file;}).length;
+      var cc=$('certCount'); if(cc) cc.textContent=up+' de '+CERTS.length+' certificados cadastrados';
+    }
+    /* --- drawer de certificado (por empresa) --- */
+    function fmtSize(b){ if(b<1024) return b+' B'; if(b<1048576) return (b/1024).toFixed(1).replace('.',',')+' KB'; return (b/1048576).toFixed(1).replace('.',',')+' MB'; }
+    function showCertFile(f){
+      if(f){
+        $('certDrop').hidden=true; $('certFileCard').hidden=false;
+        $('certFileName').textContent=f.name;
+        var ext=(f.name.indexOf('.')>=0?f.name.split('.').pop():'').toUpperCase();
+        $('certFileMeta').textContent=(ext?ext+' · ':'')+fmtSize(f.size);
+      } else { $('certDrop').hidden=false; $('certFileCard').hidden=true; }
+    }
+    function openCertDrawer(i){
+      certTarget=i; var c=CERTS[i];
+      $('certTitle').textContent = c.file ? 'Trocar certificado' : 'Importar certificado';
+      $('certSub').textContent = 'Certificado digital (ICP-Brasil) da '+c.nome+'.';
+      $('certFile').value=''; $('certPw').value='';
+      showCertFile(null);
+      $('certPwMsg').classList.remove('show'); $('certPw').classList.remove('is-error');
+      $('scrim').classList.add('open'); $('certDrawer').classList.add('open');
+    }
+    function closeCertDrawer(){ $('scrim').classList.remove('open'); $('certDrawer').classList.remove('open'); }
+    $('certFile').addEventListener('change',function(){ if(this.files && this.files[0]){ showCertFile(this.files[0]); $('certPwMsg').classList.remove('show'); } });
+    $('certReplace').addEventListener('click',function(){ $('certFile').click(); });
+    $('certRemoveFile').addEventListener('click',function(){ $('certFile').value=''; showCertFile(null); });
+    $('certConfirm').addEventListener('click',function(){
+      var f=$('certFile').files[0], pw=$('certPw').value.trim();
+      if(!f || !pw){ $('certPwMsg').classList.add('show'); if(!pw){ $('certPw').classList.add('is-error'); $('certPw').focus(); } return; }
+      CERTS[certTarget].file=f.name; CERTS[certTarget].hasPw=true;
+      closeCertDrawer(); renderCerts();
+    });
+    $('certCancel').addEventListener('click',closeCertDrawer);
+    $('certX').addEventListener('click',closeCertDrawer);
+    $('voltar3').addEventListener('click',function(){ goStep(2); });
+    $('concluir').addEventListener('click',function(){ goStep(4); });
+    $('irPainel').addEventListener('click',function(){ window.location.href='login.html'; });
+
+    /* init */
+    renderCompanies();
+    renderCerts();
+    setStepper(1);
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){ document.body.classList.remove('preload'); }); });
+  </script>
+</body>
+</html>

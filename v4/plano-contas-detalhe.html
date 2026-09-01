@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>a-DeRE · Detalhe do Plano de Contas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=14">
+  <script src="../design-system/ds-tailwind.js"></script>
+  <style>
+    body{margin:0;background:var(--color-bg)}
+    .shell{display:flex;height:100vh;overflow:hidden}
+    .shell > .sidenav{border:0;border-radius:0;padding:0;position:relative!important;transform:none!important;visibility:visible!important;z-index:auto!important;transition:width .18s ease}
+    .brandrow{height:64px;flex:0 0 auto;display:flex;align-items:center;gap:var(--space-3);padding:0 var(--space-4) 0 var(--space-6);border-bottom:1px solid var(--color-border)}
+    .brandrow .wm{font-weight:800;font-size:var(--text-lg);letter-spacing:-.01em;color:var(--color-heading)}
+    .brandrow .avatar{background:rgba(255,255,255,.14);color:#fff;width:34px;height:34px;font-size:var(--text-sm);flex:0 0 auto;font-weight:800}
+    .navlist{flex:1;overflow:auto;min-height:0;padding:var(--space-3) var(--space-3) 0;display:flex;flex-direction:column;gap:2px}
+    .col{flex:1;display:flex;flex-direction:column;min-width:0;min-height:0}
+    .topbar{height:64px;flex:0 0 auto;background:var(--color-surface);border-bottom:1px solid var(--color-border);display:flex;align-items:center;gap:var(--space-4);padding:0 var(--space-6)}
+    .content{flex:1;overflow:auto;min-height:0;background:var(--slate-100);scrollbar-gutter:stable}
+    .dark .content,:root[data-theme="dark"] .content{background:var(--color-bg)}
+    .wrap{padding:var(--space-8);max-width:1480px;width:100%;margin:0 auto;box-sizing:border-box}
+    .page-h{background:var(--color-surface);border-bottom:1px solid var(--color-border)}
+    .page-h .wrap{padding-top:var(--space-6);padding-bottom:var(--space-6)}
+    .page-h__row{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--space-6);flex-wrap:wrap}
+    .page-h__row > div{min-width:0}
+    .eyebrow{margin:0 0 var(--space-1-5)}
+    .evtag{display:inline-flex;align-items:center;font-size:var(--text-xs);font-weight:700;letter-spacing:.02em;padding:2px var(--space-2);border-radius:var(--radius-sm);background:var(--color-surface-2);color:var(--color-text-onmuted);border:1px solid var(--color-border);font-variant-numeric:tabular-nums}
+    .page-h h1{margin:0;font-size:var(--text-4xl)!important;font-weight:700!important;letter-spacing:-.015em;line-height:1.15}
+    .titlerow{display:flex;align-items:center;gap:var(--space-3);flex-wrap:wrap}
+    .titlerow .status{font-size:var(--text-sm)}
+    .page-h p{color:var(--color-text-muted);font-size:var(--text-base);margin:var(--space-2) 0 0}
+    .backlink{display:inline-flex;align-items:center;gap:var(--space-1-5);font-size:var(--text-sm);font-weight:600;color:var(--color-primary);text-decoration:none;margin-bottom:var(--space-3)}
+    .backlink:hover{text-decoration:underline}
+    .backlink svg{width:16px;height:16px}
+    .scenario{display:inline-flex;gap:2px;padding:var(--space-1);background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-pill);flex:0 0 auto}
+    /* Overlay de DEMONSTRAÇÃO (dev) — flutua por cima da interface, não faz parte do produto */
+    .demobar{position:fixed;bottom:var(--space-4);right:var(--space-4);z-index:200;display:flex;align-items:center;gap:var(--space-1);background:var(--slate-900);border:1px solid rgba(255,255,255,.14);border-radius:var(--radius-pill);padding:var(--space-1) var(--space-2);box-shadow:var(--shadow-md);font-size:var(--text-xs)}
+    .demobar__lbl{text-transform:uppercase;letter-spacing:.08em;font-weight:700;color:rgba(255,255,255,.5);padding:0 var(--space-1) 0 var(--space-2);font-size:var(--text-2xs)}
+    .demobar__sep{width:1px;height:16px;background:rgba(255,255,255,.18)}
+    .demobar button{background:none;border:0;color:rgba(255,255,255,.72);font-family:inherit;font-size:var(--text-xs);cursor:pointer;padding:var(--space-1) var(--space-2);border-radius:var(--radius-pill)}
+    .demobar button:hover{color:rgba(255,255,255,1);background:rgba(255,255,255,.08)}
+    .demobar button.on{background:rgba(255,255,255,.16);color:rgba(255,255,255,1);font-weight:600}
+    .scenario button{border:0;background:none;font-family:inherit;font-size:var(--text-sm);font-weight:600;color:var(--color-text-muted);padding:var(--space-1-5) var(--space-4);border-radius:var(--radius-pill);cursor:pointer;white-space:nowrap}
+    .scenario button.on{background:var(--color-surface);color:var(--color-primary);box-shadow:var(--shadow-sm)}
+    .scenario button:focus-visible{outline:none;box-shadow:var(--ring)}
+    .bc{display:flex;align-items:center;gap:var(--space-2);font-size:var(--text-sm);min-width:0;overflow:hidden}
+    .bc a{color:var(--color-primary);text-decoration:none;white-space:nowrap;font-weight:500}
+    .bc a:hover{text-decoration:underline}
+    .bc span{color:var(--color-text);font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .bc svg{width:15px;height:15px;color:var(--color-text-muted);flex:0 0 auto}
+    .bc .bc-hide{display:inline}
+
+    /* banner de status da submissão */
+    .statusbar{display:flex;gap:var(--space-4);align-items:flex-start;background:var(--color-surface);border:1px solid var(--color-border);border-left:4px solid var(--color-border-strong);border-radius:var(--radius-2xl);box-shadow:var(--shadow-sm);padding:var(--space-6);margin-bottom:var(--space-6)}
+    .statusbar--info{border-left-color:var(--color-info-fg)}
+    .statusbar--warning{border-left-color:var(--color-warning)}
+    .statusbar--success{border-left-color:var(--color-success-fg)}
+    .statusbar--danger{border-left-color:var(--color-danger)}
+    .statusbar--danger .statusbar__ic{background:var(--color-danger-bg);color:var(--color-danger-fg)}
+    .statusbar__ic{width:40px;height:40px;border-radius:var(--radius-lg);display:grid;place-items:center;flex:0 0 auto;background:var(--color-surface-2);color:var(--color-text-onmuted)}
+    .statusbar--info .statusbar__ic{background:var(--color-info-bg);color:var(--color-info-fg)}
+    .statusbar--warning .statusbar__ic{background:var(--color-warning-bg);color:var(--color-warning-fg)}
+    .statusbar--success .statusbar__ic{background:var(--color-success-bg);color:var(--color-success-fg)}
+    .statusbar__ic svg{width:20px;height:20px}
+    .statusbar__b{flex:1;min-width:0}
+    .statusbar__title{font-size:var(--text-lg)!important;font-weight:700!important;color:var(--color-heading);margin:0;line-height:1.25}
+    .statusbar__desc{font-size:var(--text-base);color:var(--color-text-onmuted);margin:var(--space-2) 0 0;line-height:1.5}
+    .statusbar__comment{display:flex;gap:var(--space-3);margin-top:var(--space-4);padding:var(--space-4);background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-lg);font-size:var(--text-base);color:var(--color-text);line-height:1.5}
+    .statusbar__comment svg{width:18px;height:18px;flex:0 0 auto;color:var(--color-text-muted);margin-top:1px}
+    .statusbar__actions{display:flex;gap:var(--space-2);flex:0 0 auto;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+    .statusbar__actions .btn{white-space:nowrap}
+    /* ações do topo (Excluir/Editar/etc): 44px, texto 16px, 24px entre elas */
+    #pageActions{gap:var(--space-6)}
+    #pageActions .btn{height:var(--control-h-lg);font-size:var(--text-base);padding:0 var(--space-6)}
+    /* todas as seções num único card branco, bem espaçadas */
+    .tablewrap{overflow-x:auto;scrollbar-width:thin;margin-top:var(--space-6)}
+    .ctmore{margin:var(--space-4) 0 0;font-size:var(--text-sm);color:var(--color-text-muted);display:flex;align-items:center;gap:var(--space-4)}
+    .detbody{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-2xl);box-shadow:var(--shadow-sm);padding:var(--space-10)}
+    .detbody > .card{background:none;border:0;box-shadow:none;border-radius:0;padding:0;overflow:visible}
+    .detbody > .card + .card{margin-top:var(--space-14)}
+
+    /* empresa (topo do cabeçalho) */
+    .idcompany{display:flex;align-items:center;gap:var(--space-3);margin-bottom:var(--space-6)}
+    .idcompany__logo{width:44px;height:44px;border-radius:var(--radius-lg);overflow:hidden;background:var(--color-surface);border:1px solid var(--color-border);flex:0 0 auto}
+    .idcompany__logo img{width:100%;height:100%;object-fit:cover;display:block}
+    .idcompany__name{font-size:var(--text-base);font-weight:600;color:var(--color-heading);margin:0;line-height:1.3}
+    .idcompany__cnpj{font-size:var(--text-sm);color:var(--color-text-muted);margin:0;font-variant-numeric:tabular-nums}
+    /* metadados da submissão (dentro do cabeçalho, separado por linha fina) */
+    .submeta{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:var(--space-6);border-top:1px solid var(--color-divider);padding-top:var(--space-4);margin-top:var(--space-4)}
+    .submeta__k{font-size:var(--text-xs);color:var(--color-text-muted);font-weight:600;margin:0 0 var(--space-1)}
+    .submeta__v{font-size:var(--text-sm);color:var(--color-heading);font-weight:500;display:flex;align-items:center;gap:var(--space-2);min-width:0}
+    .submeta__v .avatar{flex:0 0 auto}
+    .submeta__v .num{font-variant-numeric:tabular-nums}
+    .submeta__logo{width:28px;height:28px;border-radius:var(--radius-base);overflow:hidden;background:var(--color-surface);border:1px solid var(--color-border);flex:0 0 auto}
+    .submeta__logo img{width:100%;height:100%;object-fit:cover;display:block}
+
+    /* lista de versões (vigências do D-1011) */
+    .status--neutral{background:var(--color-surface-2);color:var(--color-text-onmuted)}
+    .verlist{display:flex;flex-direction:column;gap:var(--space-3)}
+    .verrow{display:flex;gap:var(--space-4);align-items:flex-start;padding:var(--space-4);border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-surface)}
+    .verrow--current{border-color:var(--color-primary);background:var(--color-primary-subtle)}
+    .verrow--inativa{opacity:.9}
+    .verrow__badge{flex:0 0 auto;width:40px;height:40px;border-radius:var(--radius-lg);display:grid;place-items:center;font-weight:700;font-size:var(--text-sm);background:var(--color-surface-2);color:var(--color-text-onmuted);font-variant-numeric:tabular-nums}
+    .verrow--current .verrow__badge{background:var(--color-primary-subtle);color:var(--color-primary)}
+    .verrow__main{flex:1;min-width:0}
+    .verrow__top{display:flex;align-items:center;gap:var(--space-2);flex-wrap:wrap}
+    .verrow__title{font-size:var(--text-base);font-weight:600;color:var(--color-heading)}
+    .verrow__meta{font-size:var(--text-sm);color:var(--color-text-muted);margin-top:var(--space-1);line-height:1.5}
+
+    /* cards de dados (leitura) */
+    .card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-2xl);box-shadow:var(--shadow-sm);padding:var(--space-8);margin-bottom:var(--space-6)}
+    .card__h{display:flex;align-items:center;gap:var(--space-3);padding-bottom:var(--space-4);margin-bottom:var(--space-4);border-bottom:1px solid var(--color-divider)}
+    .card__ic{width:34px;height:34px;border-radius:var(--radius-lg);background:var(--color-primary-subtle);color:var(--color-primary);display:grid;place-items:center;flex:0 0 auto}
+    .card__ic svg{width:19px;height:19px}
+    .card__h h2{font-size:var(--text-xl)!important;margin:0;font-weight:700!important}
+    .rogrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-6) var(--space-8)}
+    .rogrid__full{grid-column:1/-1}
+    .roitem dt{font-size:var(--text-sm);font-weight:600;color:var(--color-text-muted);margin:0 0 var(--space-1)}
+    .roitem dd{margin:0;font-size:var(--text-base);color:var(--color-heading);font-weight:500;line-height:1.4}
+    .ronum{display:inline-grid;place-items:center;width:22px;height:22px;font-size:var(--text-xs);font-weight:700;color:var(--color-primary);background:var(--color-primary-subtle);border-radius:var(--radius-base);font-variant-numeric:tabular-nums;margin-right:var(--space-2);vertical-align:middle}
+    .ropicks{display:flex;flex-direction:column;margin-top:var(--space-2)}
+    .ropick{display:flex;gap:var(--space-3);align-items:baseline;padding:var(--space-2) 0;min-width:0}
+    .ropick:first-child{padding-top:0}
+    .ropick + .ropick{border-top:1px solid var(--color-divider)}
+    .ropick__cod{font-size:var(--text-sm);font-weight:700;color:var(--color-primary);font-variant-numeric:tabular-nums;flex:0 0 auto;min-width:2.8em}
+    .ropick__desc{font-size:var(--text-base);color:var(--color-heading);line-height:1.4}
+    .rotab{font-size:var(--text-sm);font-weight:700;color:var(--color-primary);background:var(--color-primary-subtle);border-radius:var(--radius-pill);padding:2px var(--space-2);margin-left:var(--space-2)}
+
+    /* modal de exclusão */
+    .scrim{position:fixed;inset:0;background:var(--color-scrim);display:flex;align-items:center;justify-content:center;padding:var(--space-6);z-index:80}
+    .scrim[hidden]{display:none}
+    .modal__lead{display:flex;gap:var(--space-3);align-items:flex-start;margin:0 0 var(--space-6)}
+    .modal__lead-ic{width:36px;height:36px;border-radius:var(--radius-lg);flex:0 0 auto;display:grid;place-items:center;background:var(--color-danger-bg);color:var(--color-danger-fg)}
+    .modal__lead-ic svg{width:19px;height:19px}
+    .modal__lead p{margin:0;line-height:1.5}
+    .mform{display:flex;flex-direction:column;gap:var(--space-6);margin-top:var(--space-2)}
+    .mnote{display:flex;gap:var(--space-2);align-items:flex-start;font-size:var(--text-base);color:var(--color-text-onmuted);background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-3)}
+    .mnote svg{width:16px;height:16px;flex:0 0 auto;color:var(--color-text-muted);margin-top:2px}
+
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    @media(max-width:820px){.submeta{grid-template-columns:1fr}.rogrid{grid-template-columns:1fr}.statusbar{flex-wrap:wrap}.statusbar__actions{width:100%}}
+    @media(max-width:720px){.bc .bc-hide{display:none}}
+  </style>
+</head>
+<body>
+<style>    #dere-gate .dots{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(2px 2px at 12% 22%,rgba(255,255,255,.06),transparent),radial-gradient(2px 2px at 82% 15%,rgba(255,255,255,.05),transparent),radial-gradient(1.5px 1.5px at 68% 62%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 27% 78%,rgba(255,255,255,.045),transparent),radial-gradient(1.5px 1.5px at 90% 82%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 45% 34%,rgba(255,255,255,.04),transparent),radial-gradient(1.5px 1.5px at 8% 55%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 58% 90%,rgba(255,255,255,.04),transparent)}
+    #dere-gate .card{animation:dereIn .38s cubic-bezier(.2,.7,.2,1) both}
+    @media (prefers-reduced-motion:reduce){#dere-gate .card{animation:none}
+    #dere-gate input:focus{border-color:#1351b4 !important;box-shadow:0 0 0 3px rgba(19,81,180,.18) !important}
+    #dere-gate button:hover{background:#0c326f !important}
+    #dere-gate button:active{transform:translateY(1px)}
+    #dere-gate .dots{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(2px 2px at 12% 22%,rgba(255,255,255,.06),transparent),radial-gradient(2px 2px at 82% 15%,rgba(255,255,255,.05),transparent),radial-gradient(1.5px 1.5px at 68% 62%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 27% 78%,rgba(255,255,255,.045),transparent),radial-gradient(1.5px 1.5px at 90% 82%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 45% 34%,rgba(255,255,255,.04),transparent),radial-gradient(1.5px 1.5px at 8% 55%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 58% 90%,rgba(255,255,255,.04),transparent)}</style>
+<div id="dere-gate" style="position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;padding:24px;font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;background:radial-gradient(120% 120% at 20% 8%,#0c326f 0%,#071d41 55%,#05152e 100%)">
+  <style>
+    #dere-gate .dots{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(2px 2px at 12% 22%,rgba(255,255,255,.06),transparent),radial-gradient(2px 2px at 82% 15%,rgba(255,255,255,.05),transparent),radial-gradient(1.5px 1.5px at 68% 62%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 27% 78%,rgba(255,255,255,.045),transparent),radial-gradient(1.5px 1.5px at 90% 82%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 45% 34%,rgba(255,255,255,.04),transparent),radial-gradient(1.5px 1.5px at 8% 55%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 58% 90%,rgba(255,255,255,.04),transparent)}
+    #dere-gate .card{animation:dereIn .38s cubic-bezier(.2,.7,.2,1) both}
+    @keyframes dereIn{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+    @media (prefers-reduced-motion:reduce){#dere-gate .card{animation:none}}
+    #dere-gate input:focus{border-color:#1351b4 !important;box-shadow:0 0 0 3px rgba(19,81,180,.18) !important}
+    #dere-gate button:hover{background:#0c326f !important}
+    #dere-gate button:active{transform:translateY(1px)}
+  </style>
+  <span class="dots"></span>
+  <form class="card" onsubmit="return dereGate(this)" style="position:relative;background:#fff;padding:38px 34px 26px;border-radius:14px;width:100%;max-width:360px;text-align:center;box-shadow:0 24px 70px -12px rgba(3,17,42,.55)">
+    <div style="font-size:21px;font-weight:800;color:#0b1f3a;letter-spacing:-.01em;font-family:inherit">DeRE</div>
+    <div style="display:inline-flex;align-items:center;gap:6px;color:#5b6b82;font-size:13px;margin:5px 0 22px;font-family:inherit"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Protótipo &middot; acesso restrito</div>
+    <label for="dere-pw" style="display:block;text-align:left;font-size:12.5px;font-weight:600;color:#334155;margin:0 0 6px;font-family:inherit">Senha de acesso</label>
+    <input id="dere-pw" type="password" placeholder="Digite a senha" autofocus autocomplete="off" aria-label="Senha de acesso" style="width:100%;height:44px;border:1px solid #cbd5e1;border-radius:8px;padding:0 14px;font-size:16px;box-sizing:border-box;outline:none;color:#0f172a;background:#fff;font-family:inherit">
+    <div id="dere-err" style="color:#dc2626;font-size:12.5px;min-height:18px;margin-top:8px;text-align:left;display:flex;align-items:center;gap:5px;font-family:inherit"></div>
+    <button type="submit" style="width:100%;height:44px;margin-top:6px;background:#1351b4;color:#fff;border:0;border-radius:8px;font-weight:700;font-size:15px;cursor:pointer;font-family:inherit">Entrar</button>
+    <div style="margin-top:20px;font-size:11.5px;color:#94a3b8;letter-spacing:.02em;font-family:inherit">uma solução Axians</div>
+  </form>
+</div>
+<script>if(localStorage.getItem('dere_ok')==='1'){var _g=document.getElementById('dere-gate');if(_g)_g.remove();}function dereGate(f){var i=f.querySelector('input'),e=document.getElementById('dere-err');if(i.value==='dere123'){localStorage.setItem('dere_ok','1');document.getElementById('dere-gate').remove();}else{e.innerHTML='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 auto"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>Senha incorreta. Tente novamente.';i.select();}return false;}</script>
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  <div class="shell">
+    <nav class="sidenav sidenav--navy" data-sidenav aria-label="Navegação principal">
+      <div class="brandrow"><span class="avatar">a</span><span class="sidenav__label wm">a-DeRE</span></div>
+      <div class="navlist">
+        <p class="sidenav__group">Principal</p>
+        <a class="sidenav__item" href="painel.html" data-tip="Painel de Monitoramento"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg><span class="sidenav__label">Painel de Monitoramento</span></a>
+        <a class="sidenav__item" href="#" data-tip="Minhas empresas"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4M10 10h4M10 14h4M10 18h4"/></svg><span class="sidenav__label">Minhas empresas</span></a>
+        <p class="sidenav__group">Cadastro</p>
+        <a class="sidenav__item" href="info-contribuinte-lista.html" data-tip="Informações do Contribuinte"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg><span class="sidenav__label">Informações do Contribuinte</span></a>
+        <a class="sidenav__item is-active" href="plano-contas-lista.html" data-tip="Plano de contas"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M7 12h14M7 18h14M3 12h.01M3 18h.01"/></svg><span class="sidenav__label">Plano de contas</span></a>
+        <p class="sidenav__group">Declarações</p>
+        <a class="sidenav__item" href="#" data-tip="Declaração mensal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span class="sidenav__label">Declaração mensal</span></a>
+        <a class="sidenav__item" href="#" data-tip="Recibos e envios"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6M16 12h-6M13 16H10"/></svg><span class="sidenav__label">Recibos e envios</span></a>
+        <p class="sidenav__group">Sistema</p>
+        <a class="sidenav__item" href="#" data-tip="Configurações"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg><span class="sidenav__label">Configurações</span></a>
+      </div>
+      <div class="sidenav__foot"><button class="sidenav__item sidenav__toggle" type="button" aria-label="Colapsar menu" data-tip="Colapsar menu" aria-expanded="true" data-sidenav-toggle><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m11 17-5-5 5-5"/><path d="m18 17-5-5 5-5"/></svg><span class="sidenav__label">Colapsar</span></button></div>
+    </nav>
+
+    <div class="col">
+      <header class="topbar">
+        <nav class="bc" aria-label="Trilha de navegação">
+          <a href="plano-contas-lista.html" class="bc-hide">Plano de contas</a>
+          <svg class="bc-hide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+          <a href="plano-contas-empresa.html?emp=seg">MAG Seguros</a>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+          <span id="bcVer">Versão 3</span>
+        </nav>
+        <div class="flex items-center gap-1" style="margin-left:auto">
+          <span class="tooltip"><button class="icon-btn" type="button" aria-label="Buscar"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></button><span class="tooltip__bubble" role="tooltip">Buscar</span></span>
+          <span class="tooltip"><button class="icon-btn" type="button" data-theme-toggle aria-label="Alternar para modo escuro"><svg data-theme-icon width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg></button><span class="tooltip__bubble" role="tooltip" data-theme-tip>Modo escuro</span></span>
+          <span class="tooltip"><button class="icon-btn" aria-label="Notificações, 3 pendências" style="position:relative"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="badge badge--danger" style="position:absolute;top:3px;right:3px">3</span></button><span class="tooltip__bubble" role="tooltip">Notificações</span></span>
+        </div>
+        <span aria-hidden="true" style="width:1px;height:22px;background:var(--color-divider);flex:0 0 auto"></span>
+        <div class="menu" data-menu>
+          <span class="tooltip tooltip--end"><button class="avatar" aria-haspopup="true" aria-expanded="false" aria-label="Ricardo Alves, abrir menu do usuário">RA</button><span class="tooltip__bubble tooltip__bubble--stack" role="tooltip"><strong>Ricardo Alves</strong>Administrador da conta</span></span>
+          <div class="menu__panel" hidden><div class="menu__head"><p class="menu__head-name">Ricardo Alves</p><p class="menu__head-mail">Administrador da conta</p></div><div class="menu__sep"></div><button class="menu__item">Perfil</button><button class="menu__item">Preferências</button><button class="menu__item menu__item--danger">Sair</button></div>
+        </div>
+      </header>
+
+      <main id="conteudo" tabindex="-1" class="content skip-target">
+        <div class="page-h">
+          <div class="wrap">
+            <a class="backlink" id="backLink" href="plano-contas-empresa.html?emp=seg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>Voltar</a>
+            <div class="page-h__row">
+              <div>
+                <div class="titlerow"><h1 id="dTitle">Plano de Contas Comentado</h1><span id="dBadge"></span></div>
+              </div>
+              <!-- ações da versão (variam por estado): Editar, Excluir, etc. -->
+              <div class="statusbar__actions" id="pageActions"></div>
+            </div>
+            <!-- metadados da submissão: dentro do cabeçalho, separado por uma linha fina -->
+            <div class="submeta" id="submeta"></div>
+          </div>
+        </div>
+
+        <div class="wrap">
+          <!-- banner de status (dinâmico) -->
+          <div class="statusbar" id="statusbar"></div>
+
+          <div class="detbody">
+          <!-- Identificação -->
+          <section class="card" aria-labelledby="d-plano">
+            <div class="card__h"><span class="card__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M7 12h14M7 18h14M3 12h.01M3 18h.01"/></svg></span><h2 id="d-plano">Informações do plano</h2></div>
+            <dl class="rogrid">
+              <div class="roitem"><dt>Nome empresarial</dt><dd>MAG Seguros</dd></div>
+              <div class="roitem"><dt>Plano referencial</dt><dd><span class="ronum">3</span>SUSEP</dd></div>
+              <div class="roitem"><dt>Frequência de encerramento</dt><dd>Mensal</dd></div>
+              <div class="roitem"><dt>Início da vigência</dt><dd>01/01/2026</dd></div>
+              <div class="roitem"><dt>Fim da vigência</dt><dd>Sem data de fim</dd></div>
+            </dl>
+          </section>
+
+          <!-- Contas -->
+          <section class="card" aria-labelledby="d-contas">
+            <div class="card__h"><span class="card__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8M13 12h8M13 18h8"/></svg></span><h2 id="d-contas">Contas</h2></div>
+            <dl class="rogrid">
+              <div class="roitem"><dt>Contas analíticas</dt><dd id="ctTot">—</dd></div>
+              <div class="roitem"><dt>Classificadas (codTrib)</dt><dd id="ctOk">—</dd></div>
+              <div class="roitem"><dt>Não tributáveis</dt><dd id="ctNt">—</dd></div>
+            </dl>
+            <div class="tablewrap">
+              <table class="table" aria-label="Contas do plano">
+                <thead><tr>
+                  <th scope="col">Código</th>
+                  <th scope="col">codTrib</th>
+                  <th scope="col">Conta referencial</th>
+                  <th scope="col">Vigência</th>
+                  <th scope="col">Situação</th>
+                </tr></thead>
+                <tbody id="ctRows"></tbody>
+              </table>
+            </div>
+            <p class="ctmore"><span id="ctMoreTxt"></span><a class="btn btn--secondary btn--sm" id="ctLink" href="plano-contas-classificar.html?modo=editar&v=1">Abrir a tabela completa</a></p>
+          </section>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+<script>
+  var $=function(id){return document.getElementById(id);};
+  var CLOCK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>';
+  var ALERT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg>';
+  var CHECK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
+  var ARROW='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>';
+  var COMMENT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>';
+
+  /* Estados da submissão (antes e depois do aprovador) */
+  var STATES={
+    revisao:{
+      tone:'info', ic:CLOCK, pill:'status--info', label:'Em revisão', ver:'Versão 3', sub:'Em revisão',
+      desc:'A submissão está com o aprovador. Assim que for aprovada, é transmitida à Receita. Enquanto não for revisada, você ainda pode cancelar e editar.',
+      meta:[{k:'Enviado por',by:'Ricardo Alves',v:'hoje, 14:32'},{k:'Aprovador',by:'Ana Prado',v:''}],
+      comment:null,
+      topActions:'<button class="btn btn--danger-outline" type="button" data-open-excluir>Excluir versão</button><a class="btn btn--primary" href="plano-contas-classificar.html?modo=editar&v=1">Editar plano</a>',
+      cardActions:''
+    },
+    ajuste:{
+      tone:'warning', ic:ALERT, pill:'status--warning', label:'Ajustes solicitados', ver:'Versão 3', sub:'Ajustes solicitados',
+      desc:'O aprovador devolveu a submissão com pedidos de ajuste. Faça as correções e reenvie para revisão. Nada foi transmitido à Receita.',
+      meta:[{k:'Enviado por',by:'Ricardo Alves',v:'hoje, 14:32'},{k:'Revisado por',by:'Ana Prado',v:'hoje, 15:10'}],
+      comment:'Ana Prado: “O regime secundário não se aplica à MAG Seguros. Remova a marcação e confirme a vigência antes de reenviar.”',
+      topActions:'<button class="btn btn--danger-outline" type="button" data-open-excluir>Excluir versão</button><a class="btn btn--primary" href="plano-contas-classificar.html?modo=editar&v=1">Editar plano</a>',
+      cardActions:''
+    },
+    aprovado:{
+      tone:'success', ic:CHECK, pill:'status--success', label:'Aprovado e transmitido', ver:'Versão 2', sub:'Vigente',
+      desc:'O aprovador aprovou e as informações foram transmitidas à Receita, com recibo. A vigência está ativa. Para mudar, altere os dados (gera uma nova versão) ou exclua a vigência. Toda alteração ou exclusão passa por nova aprovação antes de ir à Receita.',
+      meta:[{k:'Enviado por',by:'Ricardo Alves',v:'hoje, 14:32'},{k:'Aprovado por',by:'Ana Prado',v:'hoje, 15:40'},{k:'Recibo (Receita)',v:'RC-2026.0001'}],
+      comment:null,
+      topActions:'<button class="btn btn--ghost" type="button">Ver comprovante</button><button class="btn btn--danger-outline" type="button" data-open-excluir>Excluir versão</button><a class="btn btn--primary" href="plano-contas-classificar.html?modo=alterar">Alterar (nova versão)</a>',
+      cardActions:''
+    },
+    processando:{
+      tone:'warning', ic:CLOCK, pill:'status--warning', label:'Transmitido · em processamento', ver:'Versão 1', sub:'Em processamento',
+      desc:'Aprovado por Ana Prado, assinado com o e-CNPJ A1 da empresa e transmitido à Receita. O processamento é assíncrono: o resultado (recibo ou rejeição) chega em seguida e aparece aqui e no painel.',
+      meta:[{k:'Enviado por',by:'Ricardo Alves',v:'hoje, 15:40'},{k:'Aprovado por',by:'Ana Prado',v:'hoje, 16:05'},{k:'Protocolo (Receita)',v:'PT-2026.09.51001'}],
+      comment:null,
+      topActions:'<button class="btn btn--ghost" type="button">Acompanhar processamento</button>',
+      cardActions:''
+    },
+    advertencias:{
+      tone:'warning', ic:ALERT, pill:'status--warning', label:'Processado com advertências', ver:'Versão 1', sub:'Vigente · com advertências',
+      desc:'A Receita aceitou o evento e emitiu recibo; a vigência está ativa. Porém o processamento apontou ressalvas que não impedem a aceitação. Revise os pontos abaixo e trate na próxima alteração do plano.',
+      meta:[{k:'Enviado por',by:'Ricardo Alves',v:'hoje, 15:40'},{k:'Aprovado por',by:'Ana Prado',v:'hoje, 16:05'},{k:'Recibo (Receita)',v:'RC-2026.09.51344'}],
+      comment:'Receita (advertências): 1) 12 contas analíticas com descrição (desCta) muito curta; recomenda-se detalhamento da natureza das operações. 2) A conta 41201001 usa codTrib de despesas administrativas com natureza credora; confirme a classificação.',
+      topActions:'<button class="btn btn--ghost" type="button">Ver comprovante</button><a class="btn btn--primary" href="plano-contas-classificar.html?modo=alterar">Alterar (nova versão)</a>',
+      cardActions:''
+    },
+    rejeitado:{
+      tone:'danger', ic:ALERT, pill:'status--danger', label:'Rejeitado pela Receita', ver:'Versão 1', sub:'Rejeitado',
+      desc:'A Receita rejeitou o evento no processamento. Nada ficou vigente. Corrija o apontamento abaixo e reenvie para revisão.',
+      meta:[{k:'Enviado por',by:'Ricardo Alves',v:'hoje, 15:40'},{k:'Aprovado por',by:'Ana Prado',v:'hoje, 16:05'},{k:'Protocolo (Receita)',v:'PT-2026.09.51001'}],
+      comment:'Receita (MS1077): a conta contábil informada em [cCtaRef] para a conta 32101001 não existe no Plano de Contas Referencial SUSEP (Tabela 23).',
+      topActions:'<a class="btn btn--primary" href="plano-contas-classificar.html?modo=editar&v=1&mesa=1">Corrigir e reenviar</a>',
+      cardActions:''
+    }
+  };
+  function initials(n){return n.split(/\s+/).slice(0,2).map(function(w){return w[0];}).join('').toUpperCase();}
+  function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
+  var curDetState='revisao';
+  function render(key){
+    curDetState=key;
+    var s=STATES[key], bar=$('statusbar');
+    bar.className='statusbar statusbar--'+s.tone;
+    bar.style.display=(key==='revisao')?'none':'';  /* em revisão o status já está no badge do título */
+    var comment = s.comment? '<div class="statusbar__comment">'+COMMENT+'<span>'+esc(s.comment)+'</span></div>':'';
+    bar.innerHTML='<span class="statusbar__ic">'+s.ic+'</span>'+
+      '<div class="statusbar__b"><h2 class="statusbar__title">'+esc(s.label)+'</h2>'+
+      '<p class="statusbar__desc">'+esc(s.desc)+'</p>'+comment+'</div>'+
+      (s.cardActions?'<div class="statusbar__actions">'+s.cardActions+'</div>':'');
+    if($('pageActions')) $('pageActions').innerHTML = s.topActions;
+    var company='<div><p class="submeta__k">Empresa</p><div class="submeta__v"><span class="submeta__logo"><img src="../Logos/MAG%20seguros.png" alt=""></span><span>MAG Seguros <span class="num" style="color:var(--color-text-muted);font-weight:400">· 33.608.308/0001-73</span></span></div></div>';
+    $('submeta').innerHTML=company+s.meta.map(function(m){
+      var v = m.by ? '<span class="avatar avatar--sm">'+initials(m.by)+'</span>'+esc(m.by)+(m.v?' <span class="num" style="color:var(--color-text-muted);font-weight:400">· '+esc(m.v)+'</span>':'') : '<span class="num">'+esc(m.v)+'</span>';
+      return '<div><p class="submeta__k">'+esc(m.k)+'</p><div class="submeta__v">'+v+'</div></div>';
+    }).join('');
+    var vnum=dparam('v'); var vlabel=vnum?('Versão '+vnum):s.ver;
+    if($('dTitle')) $('dTitle').textContent = vlabel+' · Plano de Contas Comentado';
+    if($('dBadge')) $('dBadge').innerHTML = '<span class="status '+s.pill+'"><span class="status__dot"></span>'+esc(s.sub)+'</span>';
+    if($('bcVer')) $('bcVer').textContent = vlabel;
+    document.querySelectorAll('[data-sc]').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-sc')===key); });
+  }
+  function dparam(k){ var m=new RegExp('[?&]'+k+'=([^&]+)').exec(location.search); return m?decodeURIComponent(m[1]):''; }
+  var EMPQ=dparam('emp')||'seg';
+  /* o demobar também PERSISTE o estado (o painel e a volta refletem) */
+  document.addEventListener('click',function(e){
+    var b=e.target.closest('[data-sc]'); if(!b) return;
+    var k=b.getAttribute('data-sc'); render(k);
+    try{
+      if(k==='revisao'){ localStorage.removeItem('adere.d1011.decision.'+EMPQ); localStorage.removeItem('adere.d1011.receita.'+EMPQ); }
+      else if(k==='ajuste'){ localStorage.setItem('adere.d1011.decision.'+EMPQ, JSON.stringify({st:'ajuste',by:'Ana Prado',at:'hoje, 16:05'})); localStorage.removeItem('adere.d1011.receita.'+EMPQ); }
+      else { localStorage.setItem('adere.d1011.decision.'+EMPQ, JSON.stringify({st:'aprovado',by:'Ana Prado',at:'hoje, 16:05'})); localStorage.setItem('adere.d1011.receita.'+EMPQ, k==='aprovado'?'vigente':k); }
+    }catch(er){}
+  });
+  (function(){
+    var bl=$('backLink'); if(bl) bl.setAttribute('href', dparam('from')==='painel' ? 'painel.html?sent=d1011' : ('plano-contas-empresa.html?emp='+EMPQ));
+    /* estado real: URL manda; sem URL, vale a decisão persistida da aprovadora */
+    var dec=null, rec=null;
+    try{ dec=JSON.parse(localStorage.getItem('adere.d1011.decision.'+EMPQ)||'null'); rec=localStorage.getItem('adere.d1011.receita.'+EMPQ); }catch(e){}
+    var st=dparam('st');
+    if(!STATES[st]){
+      if(dec&&dec.st==='ajuste') st='ajuste';
+      else if(dec&&dec.st==='aprovado') st=(rec==='vigente')?'aprovado':(rec==='rejeitado')?'rejeitado':(rec==='advertencias')?'advertencias':'processando';
+      else st='revisao';
+    } else if(st==='revisao' && dec){
+      st=(dec.st==='ajuste')?'ajuste':(rec==='vigente')?'aprovado':(rec==='rejeitado')?'rejeitado':'processando';
+    }
+    if(dec&&dec.comment&&STATES.ajuste) STATES.ajuste.comment='Ana Prado: “'+dec.comment+'”';
+    render(STATES[st]?st:'revisao');
+  })();
+
+  /* Shell */
+  document.querySelectorAll('[data-menu]').forEach(function(menu){
+    var b=menu.querySelector('button'), p=menu.querySelector('.menu__panel'); if(!b||!p) return;
+    b.addEventListener('click',function(e){ e.stopPropagation(); var o=p.hidden; document.querySelectorAll('.menu__panel').forEach(function(x){x.hidden=true;}); p.hidden=!o; b.setAttribute('aria-expanded',String(o)); });
+    document.addEventListener('click',function(e){ if(!menu.contains(e.target)){ p.hidden=true; b.setAttribute('aria-expanded','false'); } });
+  });
+  document.querySelectorAll('[data-sidenav-toggle]').forEach(function(btn){ var nav=btn.closest('[data-sidenav]'); btn.addEventListener('click',function(){ var c=nav.classList.toggle('is-collapsed'); btn.setAttribute('aria-expanded',String(!c)); btn.setAttribute('aria-label', c?'Expandir menu':'Colapsar menu'); btn.setAttribute('data-tip', c?'Expandir menu':'Colapsar menu'); }); });
+  (function(){ var btn=document.querySelector('[data-theme-toggle]'); if(!btn) return; var icon=btn.querySelector('[data-theme-icon]'), tip=document.querySelector('[data-theme-tip]'); var MOON='<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>'; var SUN='<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>'; function sync(){ var d=document.documentElement.classList.contains('dark'); icon.innerHTML=d?SUN:MOON; btn.setAttribute('aria-label',d?'Alternar para modo claro':'Alternar para modo escuro'); if(tip) tip.textContent=d?'Modo claro':'Modo escuro'; } btn.addEventListener('click',function(){ document.documentElement.classList.toggle('dark'); sync(); }); sync(); })();
+  /* Fluxo de exclusão (tpOper=3): abre modal, coleta motivo (motExcl) e envia para aprovação */
+  document.addEventListener('DOMContentLoaded',function(){
+    var modal=$('excluirModal'); if(!modal) return;
+    var sel=$('motExcl'), procField=$('nrProcField'), lastFocus=null;
+    if(sel) sel.addEventListener('change',function(){ if(procField) procField.hidden=(sel.value!=='1'); });
+    function open(){
+      lastFocus=document.activeElement; modal.hidden=false; document.body.style.overflow='hidden';
+      var naoTx=(curDetState!=='aprovado'); /* em revisão/ajuste: nada foi transmitido à Receita */
+      $('exTitle').textContent = naoTx ? 'Tem certeza de que deseja excluir esta versão?' : 'Excluir o Plano de Contas Comentado?';
+      $('exLead').innerHTML = naoTx
+        ? 'Esta ação é permanente e não poderá ser desfeita. Todos os dados associados a esta versão serão excluídos.'
+        : 'A exclusão encerra a vigência ativa do D-1011 na Receita. Ela não é imediata: entra como um evento de exclusão que <strong>passa pela aprovação de Ana Prado</strong> antes de ser transmitido.';
+      var motF=sel?sel.closest('.field'):null; if(motF) motF.hidden=naoTx;      /* motivo só na exclusão de vigência */
+      if($('motExclHint')) $('motExclHint').hidden=naoTx;                        /* aviso de lacuna só na vigência */
+      if($('confirmExcluir')) $('confirmExcluir').textContent = naoTx ? 'Excluir versão' : 'Enviar exclusão para aprovação';
+      if(sel){ sel.value=''; sel.removeAttribute('aria-invalid'); }
+      setTimeout(function(){ var f=naoTx?$('confirmExcluir'):(sel||$('confirmExcluir')); if(f) f.focus(); },0);
+    }
+    function close(){ modal.hidden=true; document.body.style.overflow=''; if(lastFocus&&lastFocus.focus) lastFocus.focus(); }
+    document.addEventListener('click',function(e){ if(e.target.closest('[data-open-excluir]')) open(); });
+    modal.querySelectorAll('[data-close-excluir]').forEach(function(b){ b.addEventListener('click',close); });
+    modal.addEventListener('click',function(e){ if(e.target===modal) close(); });
+    document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&!modal.hidden) close(); });
+    var confirmBtn=$('confirmExcluir');
+    if(confirmBtn) confirmBtn.addEventListener('click',function(){
+      var naoTx=(curDetState!=='aprovado');
+      if(!naoTx && sel && !sel.value){ sel.focus(); sel.setAttribute('aria-invalid','true'); return; }
+      if(!naoTx && sel && sel.value==='1' && !($('nrProc')&&$('nrProc').value.trim())){ $('nrProc').focus(); $('nrProc').setAttribute('aria-invalid','true'); return; }
+      close();
+      var bar=$('statusbar'); bar.style.display='';
+      if(naoTx){
+        /* em revisão: exclusão imediata, sem aprovação — a versão é descartada */
+        try{ localStorage.removeItem('adere.sent.d1001'); }catch(e){}
+        bar.className='statusbar statusbar--info';
+        bar.innerHTML='<span class="statusbar__ic">'+CHECK+'</span>'+
+          '<div class="statusbar__b"><h2 class="statusbar__title">Versão excluída</h2>'+
+          '<p class="statusbar__desc">A versão foi descartada. Como ainda não tinha sido transmitida à Receita, nada precisou de aprovação.</p></div>'+
+          '<div class="statusbar__actions"><a class="btn btn--primary" href="painel.html">Voltar ao painel</a></div>';
+        if($('pageActions')) $('pageActions').innerHTML='';
+      } else {
+        /* vigente: a exclusão vira um evento que passa pelo aprovador antes de ir à Receita */
+        bar.className='statusbar statusbar--info';
+        bar.innerHTML='<span class="statusbar__ic">'+CLOCK+'</span>'+
+          '<div class="statusbar__b"><h2 class="statusbar__title">Exclusão em revisão</h2>'+
+          '<p class="statusbar__desc">O pedido de exclusão (tpOper Exclusão) está com Ana Prado. Depois de aprovado, é transmitido à Receita e a vigência é encerrada. Enquanto não for revisado, você pode cancelar.</p></div>'+
+          '<div class="statusbar__actions"><button class="btn btn--ghost" type="button" onclick="render(\'aprovado\')">Cancelar exclusão</button></div>';
+      }
+      bar.scrollIntoView({behavior:'smooth',block:'center'});
+    });
+  });
+</script>
+
+  <div class="scrim" id="excluirModal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="exTitle">
+      <div class="modal__header" style="display:flex;align-items:flex-start;justify-content:space-between;gap:var(--space-3)">
+        <h3 class="modal__title" id="exTitle">Excluir o Plano de Contas Comentado?</h3>
+        <button class="icon-btn" type="button" data-close-excluir aria-label="Fechar" style="flex:0 0 auto;margin:calc(-1 * var(--space-1)) calc(-1 * var(--space-1)) 0 0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg></button>
+      </div>
+      <div class="modal__body">
+        <div class="modal__lead">
+          <span class="modal__lead-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M10 11v6M14 11v6"/></svg></span>
+          <p id="exLead">A exclusão encerra a vigência ativa do D-1011 na Receita. Ela não é imediata: entra como um evento de exclusão que <strong>passa pela aprovação de Ana Prado</strong> antes de ser transmitido.</p>
+        </div>
+        <div class="mform">
+          <div class="field">
+            <label class="field__label" for="motExcl">Motivo da exclusão (motExcl)</label>
+            <select class="select" id="motExcl" aria-describedby="motExclHint">
+              <option value="">Selecione o motivo</option>
+              <option value="1">1 · Determinação judicial ou administrativa</option>
+              <option value="2">2 · Envio indevido (fato inexistente)</option>
+              <option value="3">3 · Erro na identificação (CNPJ ou período incorretos)</option>
+              <option value="9">9 · Outro</option>
+            </select>
+            <div class="field" id="nrProcField" hidden style="margin-top:var(--space-4)">
+              <label class="field__label" for="nrProc">Número do processo administrativo ou judicial (nrProc)</label>
+              <input class="input" id="nrProc" maxlength="21" placeholder="Ex.: 0001234-56.2026.4.01">
+              <p class="field__msg" style="color:var(--color-text-muted)">Obrigatório para determinação judicial ou administrativa. Deve existir no evento D-1021 (Processos).</p>
+            </div>
+          </div>
+          <div class="mnote" id="motExclHint">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+            <span>Excluir sem uma nova vigência que cubra o período pode deixar uma lacuna e travar as declarações mensais.</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal__footer">
+        <button class="btn btn--ghost btn--lg" type="button" data-close-excluir>Cancelar</button>
+        <button class="btn btn--danger btn--lg" type="button" id="confirmExcluir">Enviar exclusão para aprovação</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ferramenta de DEMONSTRAÇÃO (não faz parte do produto): alterna o estado da versão -->
+  <div class="demobar" role="group" aria-label="Demonstração: alternar estado da versão">
+    <span class="demobar__lbl">Demo</span>
+    <span class="demobar__sep" aria-hidden="true"></span>
+    <button type="button" data-sc="revisao" class="on">Em revisão</button>
+    <button type="button" data-sc="ajuste">Ajustes</button>
+    <button type="button" data-sc="processando">Processando</button>
+    <button type="button" data-sc="advertencias">Advertências</button>
+    <button type="button" data-sc="aprovado">Vigente</button>
+    <button type="button" data-sc="rejeitado">Rejeitado</button>
+  </div>
+<script>
+  /* contadores do plano a partir do estado compartilhado (rascunho persistido) */
+  (function(){
+    var empQ=(new RegExp('[?&]emp=([^&]*)').exec(location.search)||[])[1]||'seg';
+    var seed=null, cls={};
+    try{ seed=localStorage.getItem('adere.pgcc.seed.'+empQ); cls=JSON.parse(localStorage.getItem('adere.pgcc.cls.'+empQ)||'{}'); }catch(e){}
+    var tot=(seed==='big')?5400:10, nt=0, okCls=0;
+    for(var k in cls){ if(cls[k]&&cls[k].status==='validada'){ okCls++; if(cls[k].notax) nt++; } }
+    var pre=0; /* importar nunca valida sozinho: validada = decisão humana */
+    var ok=Math.min(tot, pre+okCls);
+    function nf(n){ return (''+n).replace(/\B(?=(\d{3})+(?!\d))/g,'.'); }
+    var el=function(id){return document.getElementById(id);};
+    if(el('ctTot')) el('ctTot').textContent=nf(tot);
+    if(el('ctOk')) el('ctOk').textContent=nf(ok)+' de '+nf(tot);
+    if(el('ctNt')) el('ctNt').textContent=nf(nt||1);
+    if(el('ctLink')) el('ctLink').href='plano-contas-classificar.html?modo=editar&v=1&emp='+empQ+((seed==='big')?'&big=1':'');
+    /* tabela embutida: as contas do rascunho persistido, até 50 linhas */
+    var rowsEl=el('ctRows');
+    if(rowsEl){
+      function esc(x){ return String(x==null?'':x).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+      function br(d){ if(!d) return null; var p=d.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; }
+      var cods=Object.keys(cls).sort();
+      var CAP=50, mostradas=cods.slice(0,CAP);
+      rowsEl.innerHTML=mostradas.map(function(cd){
+        var c=cls[cd]||{};
+        var trib=c.notax
+          ? '<span class="tag">Não tributável</span>'
+          : (c.trib ? ('<b style="font-variant-numeric:tabular-nums">'+esc(c.trib)+'</b>'+(c.tribNome?(' · '+esc(c.tribNome)):'')) : '<span style="color:var(--color-text-muted)">a definir</span>');
+        var vig=(br(c.vigIni)||'01/01/2026')+' · '+(c.vigFim?('até '+br(c.vigFim)):'em aberto');
+        var sit=c.status==='validada'
+          ? '<span class="status status--success"><span class="status__dot"></span> Validada</span>'
+          : (c.status==='semsugestao'
+            ? '<span class="status"><span class="status__dot"></span> Sem sugestão</span>'
+            : '<span class="status status--info"><span class="status__dot"></span> Sugerida pela IA</span>');
+        return '<tr><td class="col--num">'+esc(cd)+'</td><td>'+trib+'</td><td class="col--num">'+esc(c.ref||'')+'</td><td style="white-space:nowrap">'+esc(vig)+'</td><td style="white-space:nowrap">'+sit+'</td></tr>';
+      }).join('');
+      var moreTxt=el('ctMoreTxt');
+      if(!cods.length){
+        rowsEl.innerHTML='<tr><td colspan="5" style="color:var(--color-text-muted);padding:var(--space-6) var(--space-4)">As contas aparecem aqui depois do preenchimento do plano.</td></tr>';
+        if(moreTxt) moreTxt.textContent='';
+      } else if(moreTxt){
+        moreTxt.textContent = cods.length>CAP
+          ? ('Mostrando '+CAP+' de '+nf(cods.length)+' contas com decisão registrada.')
+          : ('Todas as '+nf(cods.length)+' contas com decisão registrada.');
+      }
+    }
+  })();
+</script>
+</body>
+</html>

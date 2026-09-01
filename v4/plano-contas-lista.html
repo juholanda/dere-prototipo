@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>a-DeRE · Plano de Contas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=14">
+  <script src="../design-system/ds-tailwind.js"></script>
+  <style>
+    body{margin:0;background:var(--color-bg)}
+    .shell{display:flex;height:100vh;overflow:hidden}
+    .shell > .sidenav{border:0;border-radius:0;padding:0;position:relative!important;transform:none!important;visibility:visible!important;z-index:auto!important;transition:width .18s ease}
+    .brandrow{height:64px;flex:0 0 auto;display:flex;align-items:center;gap:var(--space-3);padding:0 var(--space-4) 0 var(--space-6);border-bottom:1px solid var(--color-border)}
+    .brandrow .wm{font-weight:800;font-size:var(--text-lg);letter-spacing:-.01em;color:var(--color-heading)}
+    .brandrow .avatar{background:rgba(255,255,255,.14);color:#fff;width:34px;height:34px;font-size:var(--text-sm);flex:0 0 auto;font-weight:800}
+    .navlist{flex:1;overflow:auto;min-height:0;padding:var(--space-3) var(--space-3) 0;display:flex;flex-direction:column;gap:2px}
+    .col{flex:1;display:flex;flex-direction:column;min-width:0;min-height:0}
+    .topbar{height:64px;flex:0 0 auto;background:var(--color-surface);border-bottom:1px solid var(--color-border);display:flex;align-items:center;gap:var(--space-4);padding:0 var(--space-6)}
+    .content{flex:1;overflow:auto;min-height:0;background:var(--slate-100);scrollbar-gutter:stable}
+    .dark .content,:root[data-theme="dark"] .content{background:var(--color-bg)}
+    .wrap{padding:var(--space-8);max-width:1480px;width:100%;margin:0 auto;box-sizing:border-box}
+    .page-h{background:var(--color-surface);border-bottom:1px solid var(--color-border)}
+    .page-h .wrap{padding-top:var(--space-8);padding-bottom:var(--space-8)}
+    .page-h__row{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--space-6);flex-wrap:wrap}
+    .page-h__row > div{min-width:0}
+    .eyebrow{margin:0 0 var(--space-1-5)}
+    .page-h h1{margin:0;font-size:var(--text-4xl)!important;font-weight:700!important;letter-spacing:-.015em;line-height:1.15}
+    .page-h p{color:var(--color-text-muted);font-size:var(--text-base);margin:var(--space-2) 0 0;max-width:none;line-height:1.5}
+    .bc{display:flex;align-items:center;gap:var(--space-2);font-size:var(--text-sm);min-width:0;overflow:hidden}
+    .bc a{color:var(--color-primary);text-decoration:none;white-space:nowrap;font-weight:500}
+    .bc a:hover{text-decoration:underline}
+    .bc span{color:var(--color-text);font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .bc svg{width:15px;height:15px;color:var(--color-text-muted);flex:0 0 auto}
+
+    .page-h__eyebrow{font-size:var(--text-xs);font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--color-text-onmuted);margin:0 0 var(--space-2)}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-4);margin-bottom:var(--space-8)}
+    .stat{border-radius:var(--radius-2xl)}
+    .stat__label{color:var(--color-heading)}
+    .stat__foot{margin-top:2px}
+    .stat__ic--info{background:var(--color-info-bg);color:var(--color-info-fg)}
+    .stat__ic--warning{background:var(--color-warning-bg);color:var(--color-warning-fg)}
+
+    .card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-2xl);box-shadow:var(--shadow-sm);overflow:hidden}
+    .card__h{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-6) var(--space-6) var(--space-4);justify-content:space-between}
+    .card__h h2{font-size:var(--text-lg)!important;margin:0;font-weight:700!important}
+    .card__hint{font-size:var(--text-sm);color:var(--color-text-muted);margin:2px 0 0}
+    .tablewrap{overflow-x:auto}
+    .table{margin:0}
+    .table td{padding-top:var(--space-4);padding-bottom:var(--space-4)}
+    .celltitle{font-size:var(--text-sm);font-weight:600;color:var(--color-heading);white-space:nowrap}
+    .cellsub{font-size:var(--text-xs);color:var(--color-text-muted);font-variant-numeric:tabular-nums;margin-top:2px}
+    .evemp{display:flex;align-items:center;gap:var(--space-3)}
+    .evemp > div{min-width:0}
+    .muted{color:var(--color-text-muted)}
+    .co-logo{width:var(--space-10);height:var(--space-10);border-radius:var(--radius-lg);flex:0 0 auto;display:grid;place-items:center;overflow:hidden}
+    .co-logo--code{background:var(--color-primary-subtle);color:var(--color-primary);font-weight:700;font-size:var(--text-sm)}
+    .co-logo--img{background:var(--color-surface);border:1px solid var(--color-border)}
+    .co-logo--img img{width:100%;height:100%;object-fit:cover;display:block}
+    .status--neutral{background:var(--color-surface-2);color:var(--color-text-onmuted)}
+    .table tbody tr[data-href]{cursor:pointer}
+    .table tbody tr[data-href]:hover{background:var(--color-primary-subtle)}
+    .table td .rowbtn{white-space:nowrap}
+    /* status nunca quebra em duas linhas (local, imune a cache do ds) */
+    .status{white-space:nowrap}
+    /* coluna de ação fixa à direita durante o scroll horizontal */
+    .col-act{text-align:right;width:1%;position:sticky;right:0;background:var(--color-surface);z-index:2;box-shadow:-1px 0 0 var(--color-border)}
+    .table th:last-child{position:sticky;right:0;background:var(--color-surface);z-index:3;box-shadow:-1px 0 0 var(--color-border)}
+    .table tbody tr[data-href]:hover .col-act{background:var(--color-primary-subtle)}
+    .table th.sortable{cursor:pointer;user-select:none;white-space:nowrap}
+    .table th.sortable:hover{color:var(--color-heading)}
+    .table th.sortable:focus-visible{outline:none;box-shadow:var(--ring)}
+    .sortcaret{display:inline-flex;vertical-align:middle;margin-left:var(--space-1);opacity:0;transition:opacity .1s}
+    .sortcaret svg{width:14px;height:14px}
+    .table th[aria-sort="ascending"] .sortcaret,.table th[aria-sort="descending"] .sortcaret{opacity:1}
+    .table th[aria-sort="ascending"] .sortcaret{transform:rotate(180deg)}
+    .card__h{padding:var(--space-6) var(--space-4) var(--space-4)}
+    .table th:first-child,.table td:first-child{padding-left:var(--space-4)}
+    .table th:last-child,.table td:last-child{padding-right:var(--space-4)}
+    .table tbody tr:last-child td{border-bottom:0}
+    .cnpj-col{font-variant-numeric:tabular-nums;color:var(--color-text)}
+    .num{font-variant-numeric:tabular-nums}
+    .ref-tag{display:inline-flex;align-items:center;font-size:var(--text-xs);font-weight:700;letter-spacing:.02em;padding:2px var(--space-2);border-radius:var(--radius-sm);background:var(--color-surface-2);color:var(--color-text-onmuted);border:1px solid var(--color-border)}
+    .contas-n{font-weight:600;color:var(--color-heading);font-variant-numeric:tabular-nums}
+    .rowlock{display:inline-flex;align-items:center;gap:var(--space-1-5);color:var(--color-text-muted);font-size:var(--text-xs);white-space:nowrap}
+    .rowlock svg{width:14px;height:14px}
+    /* Overlay de DEMONSTRAÇÃO (dev) */
+    .demobar{position:fixed;bottom:var(--space-4);right:var(--space-4);z-index:200;display:flex;align-items:center;gap:var(--space-1);background:var(--slate-900);border:1px solid rgba(255,255,255,.14);border-radius:var(--radius-pill);padding:var(--space-1) var(--space-2);box-shadow:var(--shadow-md);font-size:var(--text-xs)}
+    .demobar__lbl{text-transform:uppercase;letter-spacing:.08em;font-weight:700;color:rgba(255,255,255,.5);padding:0 var(--space-1) 0 var(--space-2);font-size:var(--text-2xs)}
+    .demobar__sep{width:1px;height:16px;background:rgba(255,255,255,.18)}
+    .demobar button{background:none;border:0;color:rgba(255,255,255,.72);font-family:inherit;font-size:var(--text-xs);cursor:pointer;padding:var(--space-1) var(--space-2);border-radius:var(--radius-pill)}
+    .demobar button:hover{color:rgba(255,255,255,1);background:rgba(255,255,255,.08)}
+    .demobar button.on{background:rgba(255,255,255,.16);color:rgba(255,255,255,1);font-weight:600}
+    .cnpj-col,.rowbtn{white-space:nowrap}
+    .table th{white-space:normal;vertical-align:bottom}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    @media(max-width:1000px){.stats{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:560px){.stats{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<style>    #dere-gate .dots{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(2px 2px at 12% 22%,rgba(255,255,255,.06),transparent),radial-gradient(2px 2px at 82% 15%,rgba(255,255,255,.05),transparent),radial-gradient(1.5px 1.5px at 68% 62%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 27% 78%,rgba(255,255,255,.045),transparent),radial-gradient(1.5px 1.5px at 90% 82%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 45% 34%,rgba(255,255,255,.04),transparent),radial-gradient(1.5px 1.5px at 8% 55%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 58% 90%,rgba(255,255,255,.04),transparent)}
+    #dere-gate .card{animation:dereIn .38s cubic-bezier(.2,.7,.2,1) both}
+    @media (prefers-reduced-motion:reduce){#dere-gate .card{animation:none}
+    #dere-gate input:focus{border-color:#1351b4 !important;box-shadow:0 0 0 3px rgba(19,81,180,.18) !important}
+    #dere-gate button:hover{background:#0c326f !important}
+    #dere-gate button:active{transform:translateY(1px)}
+    #dere-gate .dots{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(2px 2px at 12% 22%,rgba(255,255,255,.06),transparent),radial-gradient(2px 2px at 82% 15%,rgba(255,255,255,.05),transparent),radial-gradient(1.5px 1.5px at 68% 62%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 27% 78%,rgba(255,255,255,.045),transparent),radial-gradient(1.5px 1.5px at 90% 82%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 45% 34%,rgba(255,255,255,.04),transparent),radial-gradient(1.5px 1.5px at 8% 55%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 58% 90%,rgba(255,255,255,.04),transparent)}</style>
+<div id="dere-gate" style="position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;padding:24px;font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;background:radial-gradient(120% 120% at 20% 8%,#0c326f 0%,#071d41 55%,#05152e 100%)">
+  <style>
+    #dere-gate .dots{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(2px 2px at 12% 22%,rgba(255,255,255,.06),transparent),radial-gradient(2px 2px at 82% 15%,rgba(255,255,255,.05),transparent),radial-gradient(1.5px 1.5px at 68% 62%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 27% 78%,rgba(255,255,255,.045),transparent),radial-gradient(1.5px 1.5px at 90% 82%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 45% 34%,rgba(255,255,255,.04),transparent),radial-gradient(1.5px 1.5px at 8% 55%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 58% 90%,rgba(255,255,255,.04),transparent)}
+    #dere-gate .card{animation:dereIn .38s cubic-bezier(.2,.7,.2,1) both}
+    @keyframes dereIn{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+    @media (prefers-reduced-motion:reduce){#dere-gate .card{animation:none}}
+    #dere-gate input:focus{border-color:#1351b4 !important;box-shadow:0 0 0 3px rgba(19,81,180,.18) !important}
+    #dere-gate button:hover{background:#0c326f !important}
+    #dere-gate button:active{transform:translateY(1px)}
+  </style>
+  <span class="dots"></span>
+  <form class="card" onsubmit="return dereGate(this)" style="position:relative;background:#fff;padding:38px 34px 26px;border-radius:14px;width:100%;max-width:360px;text-align:center;box-shadow:0 24px 70px -12px rgba(3,17,42,.55)">
+    <div style="font-size:21px;font-weight:800;color:#0b1f3a;letter-spacing:-.01em;font-family:inherit">DeRE</div>
+    <div style="display:inline-flex;align-items:center;gap:6px;color:#5b6b82;font-size:13px;margin:5px 0 22px;font-family:inherit"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Protótipo &middot; acesso restrito</div>
+    <label for="dere-pw" style="display:block;text-align:left;font-size:12.5px;font-weight:600;color:#334155;margin:0 0 6px;font-family:inherit">Senha de acesso</label>
+    <input id="dere-pw" type="password" placeholder="Digite a senha" autofocus autocomplete="off" aria-label="Senha de acesso" style="width:100%;height:44px;border:1px solid #cbd5e1;border-radius:8px;padding:0 14px;font-size:16px;box-sizing:border-box;outline:none;color:#0f172a;background:#fff;font-family:inherit">
+    <div id="dere-err" style="color:#dc2626;font-size:12.5px;min-height:18px;margin-top:8px;text-align:left;display:flex;align-items:center;gap:5px;font-family:inherit"></div>
+    <button type="submit" style="width:100%;height:44px;margin-top:6px;background:#1351b4;color:#fff;border:0;border-radius:8px;font-weight:700;font-size:15px;cursor:pointer;font-family:inherit">Entrar</button>
+    <div style="margin-top:20px;font-size:11.5px;color:#94a3b8;letter-spacing:.02em;font-family:inherit">uma solução Axians</div>
+  </form>
+</div>
+<script>if(localStorage.getItem('dere_ok')==='1'){var _g=document.getElementById('dere-gate');if(_g)_g.remove();}function dereGate(f){var i=f.querySelector('input'),e=document.getElementById('dere-err');if(i.value==='dere123'){localStorage.setItem('dere_ok','1');document.getElementById('dere-gate').remove();}else{e.innerHTML='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 auto"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>Senha incorreta. Tente novamente.';i.select();}return false;}</script>
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  <div class="shell">
+    <nav class="sidenav sidenav--navy" data-sidenav aria-label="Navegação principal">
+      <div class="brandrow"><span class="avatar">a</span><span class="sidenav__label wm">a-DeRE</span></div>
+      <div class="navlist">
+        <p class="sidenav__group">Principal</p>
+        <a class="sidenav__item" href="painel.html" data-tip="Painel de Monitoramento"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg><span class="sidenav__label">Painel de Monitoramento</span></a>
+        <a class="sidenav__item" href="#" data-tip="Minhas empresas"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4M10 10h4M10 14h4M10 18h4"/></svg><span class="sidenav__label">Minhas empresas</span></a>
+        <p class="sidenav__group">Cadastro</p>
+        <a class="sidenav__item" href="info-contribuinte-lista.html" data-tip="Informações do Contribuinte"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg><span class="sidenav__label">Informações do Contribuinte</span></a>
+        <a class="sidenav__item is-active" href="plano-contas-lista.html" aria-current="page" data-tip="Plano de contas"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M7 12h14M7 18h14M3 12h.01M3 18h.01"/></svg><span class="sidenav__label">Plano de contas</span></a>
+        <p class="sidenav__group">Declarações</p>
+        <a class="sidenav__item" href="#" data-tip="Declaração mensal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span class="sidenav__label">Declaração mensal</span></a>
+        <a class="sidenav__item" href="#" data-tip="Recibos e envios"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6M16 12h-6M13 16H10"/></svg><span class="sidenav__label">Recibos e envios</span></a>
+        <p class="sidenav__group">Sistema</p>
+        <a class="sidenav__item" href="#" data-tip="Configurações"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg><span class="sidenav__label">Configurações</span></a>
+      </div>
+      <div class="sidenav__foot"><button class="sidenav__item sidenav__toggle" type="button" aria-label="Colapsar menu" data-tip="Colapsar menu" aria-expanded="true" data-sidenav-toggle><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m11 17-5-5 5-5"/><path d="m18 17-5-5 5-5"/></svg><span class="sidenav__label">Colapsar</span></button></div>
+    </nav>
+
+    <div class="col">
+      <header class="topbar">
+        <nav class="bc" aria-label="Trilha de navegação">
+          <span>Plano de contas</span>
+        </nav>
+        <div class="flex items-center gap-1" style="margin-left:auto">
+          <span class="tooltip"><button class="icon-btn" type="button" aria-label="Buscar"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></button><span class="tooltip__bubble" role="tooltip">Buscar</span></span>
+          <span class="tooltip"><button class="icon-btn" type="button" data-theme-toggle aria-label="Alternar para modo escuro"><svg data-theme-icon width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg></button><span class="tooltip__bubble" role="tooltip" data-theme-tip>Modo escuro</span></span>
+          <span class="tooltip"><button class="icon-btn" aria-label="Notificações, 3 pendências" style="position:relative"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="badge badge--danger" style="position:absolute;top:3px;right:3px">3</span></button><span class="tooltip__bubble" role="tooltip">Notificações</span></span>
+        </div>
+        <span aria-hidden="true" style="width:1px;height:22px;background:var(--color-divider);flex:0 0 auto"></span>
+        <div class="menu" data-menu>
+          <span class="tooltip tooltip--end"><button class="avatar" aria-haspopup="true" aria-expanded="false" aria-label="Ricardo Alves, abrir menu do usuário">RA</button><span class="tooltip__bubble tooltip__bubble--stack" role="tooltip"><strong>Ricardo Alves</strong>Administrador da conta</span></span>
+          <div class="menu__panel" hidden><div class="menu__head"><p class="menu__head-name">Ricardo Alves</p><p class="menu__head-mail">Administrador da conta</p></div><div class="menu__sep"></div><button class="menu__item">Perfil</button><button class="menu__item">Preferências</button><button class="menu__item menu__item--danger">Sair</button></div>
+        </div>
+      </header>
+
+      <main class="content" id="conteudo">
+        <div class="page-h">
+          <div class="wrap">
+            <div class="page-h__row">
+              <div>
+                <h1>Plano de contas</h1>
+                <p>Plano de contas comentado (D-1011) de cada empresa, versionado como o D-1001. Só pode ser transmitido depois que o D-1001 da empresa for processado.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="wrap">
+          <div class="stats" id="stats"></div>
+
+          <section class="card" aria-labelledby="lst-h">
+            <div class="card__h">
+              <div>
+                <h2 id="lst-h">Empresas</h2>
+                <p class="card__hint">Situação do plano de contas por empresa.</p>
+              </div>
+            </div>
+            <div class="tablewrap">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col" class="sortable" data-sort="emp" aria-sort="ascending" tabindex="0">Empresa</th>
+                    <th scope="col" class="sortable" data-sort="cnpj" aria-sort="none" tabindex="0">CNPJ</th>
+                    <th scope="col" class="sortable" data-sort="ref" aria-sort="none" tabindex="0">Plano referencial</th>
+                    <th scope="col" class="sortable" data-sort="contas" aria-sort="none" tabindex="0">Contas</th>
+                    <th scope="col" class="sortable" data-sort="ver" aria-sort="none" tabindex="0">Versão vigente</th>
+                    <th scope="col" class="sortable" data-sort="sit" aria-sort="none" tabindex="0">Status</th>
+                    <th scope="col" class="sortable" data-sort="at" aria-sort="none" tabindex="0">Atualizado em</th>
+                    <th scope="col"><span class="sr-only">Ações</span></th>
+                  </tr>
+                </thead>
+                <tbody id="rows"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+  var esc=function(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');};
+  function code(n){return (n||'?').replace(/[^A-Za-zÀ-ú ]/g,'').trim().split(/\s+/)[0].slice(0,3).toUpperCase();}
+  function nf(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,'.');}
+  var LOGOS={seg:'../Logos/MAG%20seguros.png', fin:'../Logos/mag%20financas.jpeg', cap:'../Logos/mag%20capitalizacoes.jpeg', sic:'../Logos/sicoob.svg', s2u:'../Logos/simple2u.svg'};
+  function logoHtml(e){
+    var url=LOGOS[e.id];
+    if(url) return '<span class="co-logo co-logo--img"><img src="'+url+'" alt="Logo '+esc(e.nome)+'"></span>';
+    return '<span class="co-logo co-logo--code" aria-hidden="true">'+code(e.nome)+'</span>';
+  }
+
+  /* Situação do plano = mesmo ciclo de vida do D-1001, mais o estado de bloqueio
+     (o plano não pode nem começar a ser transmitido antes do D-1001 processado). */
+  var LOCK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
+  var PSIT={
+    naoiniciado: {label:'Não iniciado',              pill:'status--neutral'},
+    rascunho:    {label:'Rascunho',                   pill:'status--neutral'},
+    revisao:     {label:'Em revisão',                 pill:'status--info'},
+    sucesso:     {label:'Processado com sucesso',     pill:'status--success'},
+    advertencias:{label:'Processado com adv.',pill:'status--warning'},
+    rejeitado:   {label:'Rejeitado',                  pill:'status--danger'}
+  };
+
+  var PLANOS=[
+    /* plano vigente aceito na Receita */
+    {id:'cap', nome:'MAG Capitalização', cnpj:'52.780.551/0001-19', ref:'SUSEP', contas:986,  vigente:{ver:1, since:'01/01/2026', until:null}, sit:'sucesso',   at:'ontem, 09:40', ts:200},
+    /* primeiro plano ainda em classificação (rascunho), D-1001 já processado */
+    {id:'fin', nome:'MAG Finanças',      cnpj:'21.995.256/0001-56', ref:'COSIF', contas:642,  vigente:null,                     sit:'rascunho',  at:'hoje, 09:40',  ts:940},
+    /* plano vigente + nova versão em revisão */
+    {id:'seg', nome:'MAG Seguros',       cnpj:'33.608.308/0001-73', ref:'SUSEP', contas:1284, vigente:{ver:2, since:'01/01/2026', until:null}, sit:'sucesso',   at:'hoje, 10:12',  ts:1012, draft:'revisao'},
+    /* pode preparar mesmo sem o D-1001 processado (a transmissão é que espera o D-1001) */
+    {id:'sic', nome:'Sicoob Seguradora', cnpj:'26.314.512/0001-16', ref:'SUSEP', contas:320,  vigente:null,                     sit:'rascunho',    at:'hoje, 08:10',  ts:810},
+    /* plano ainda não começado (mas pode começar quando quiser) */
+    {id:'s2u', nome:'Simple2u',          cnpj:'40.997.879/0001-02', ref:'SUSEP', contas:0,    vigente:null,                     sit:'naoiniciado', at:null,           ts:-2}
+  ];
+  /* PRIMEIRO ACESSO (overlay de demonstração): nenhum plano começado ainda */
+  var PLANOS_NEW=PLANOS.map(function(e){ return {id:e.id, nome:e.nome, cnpj:e.cnpj, ref:null, contas:0, vigente:null, sit:'naoiniciado', at:null, ts:-1}; });
+  var scenario=((/[?&]scn=(new|pop)/.exec(location.search)||[])[1])||'new';
+  function cur(){ return scenario==='new'?PLANOS_NEW:PLANOS; }
+
+  function situacaoCell(e){ var s=PSIT[e.sit]; return '<span class="status '+s.pill+'"><span class="status__dot"></span>'+esc(s.label)+'</span>'; }
+  var SITRANK={naoiniciado:0, rejeitado:1, rascunho:2, revisao:3, advertencias:4, sucesso:5};
+  function sitRank(e){ return SITRANK[e.sit]!=null?SITRANK[e.sit]:9; }
+
+  function count(fn){return cur().filter(fn).length;}
+  function buildStats(){ return [
+    {label:'Empresas', value:cur().length, foot:'Contribuintes da conta', ic:'building'},
+    {label:'Planos vigentes', value:count(function(e){return e.vigente&&(e.sit==='sucesso'||e.sit==='advertencias');}), foot:'Aceitos na Receita', ic:'check', tone:'success'},
+    {label:'Em preparação', value:count(function(e){return e.sit==='rascunho'||e.sit==='revisao';}), foot:'Rascunho ou em revisão', ic:'list'},
+    {label:'Não iniciados', value:count(function(e){return e.sit==='naoiniciado';}), foot:'Ainda sem plano', ic:'file'}
+  ]; }
+  var ICONS={
+    building:'<path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4M10 10h4M10 14h4M10 18h4"/>',
+    check:'<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>',
+    list:'<path d="M3 6h18M7 12h14M7 18h14M3 12h.01M3 18h.01"/>',
+    file:'<path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6"/>'
+  };
+  function renderStats(){
+    document.getElementById('stats').innerHTML=buildStats().map(function(s){
+      var icClass='stat__ic'+(s.tone==='success'?' stat__ic--success':s.tone==='info'?' stat__ic--info':s.tone==='danger'?' stat__ic--danger':s.tone==='warning'?' stat__ic--warning':'');
+      return '<div class="stat">'+
+        '<span class="'+icClass+'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+ICONS[s.ic]+'</svg></span>'+
+        '<span class="stat__label">'+esc(s.label)+'</span>'+
+        '<span class="stat__value">'+s.value+'</span>'+
+        '<span class="stat__foot">'+esc(s.foot)+'</span></div>';
+    }).join('');
+  }
+
+  var listSort={key:'emp', dir:'asc'};
+  function sortVal(e){
+    switch(listSort.key){
+      case 'cnpj':   return e.cnpj;
+      case 'ref':    return (e.ref||'zzz');
+      case 'contas': return e.contas||0;
+      case 'ver':    return e.vigente?e.vigente.ver:-1;
+      case 'sit':    return sitRank(e);
+      case 'at':     return e.ts||0;
+      default:       return e.nome.toLowerCase();
+    }
+  }
+  function viewRows(){ var arr=cur().slice(); var dir=listSort.dir==='asc'?1:-1; arr.sort(function(a,b){var va=sortVal(a),vb=sortVal(b); if(va<vb)return -1*dir; if(va>vb)return 1*dir; return a.nome<b.nome?-1:1;}); return arr; }
+  function renderRows(){
+    document.getElementById('rows').innerHTML=viewRows().map(function(e){
+      var href='plano-contas-empresa.html?emp='+e.id;
+      var ref=e.ref?esc(e.ref):'<span class="muted">—</span>';
+      var contas=(e.contas>0)?'<span class="contas-n">'+nf(e.contas)+'</span>':'<span class="muted">—</span>';
+      var periodo=e.vigente ? (e.vigente.until ? 'até '+esc(e.vigente.until) : 'em aberto') : '';
+      var versao=e.vigente
+        ? '<span style="font-weight:600;color:var(--color-heading)">Versão '+e.vigente.ver+'</span><div class="cellsub" style="margin-top:2px">'+periodo+'</div>'
+        : '<span class="muted">—</span>';
+      var at=e.at?esc(e.at):'<span class="muted">—</span>';
+      var btn;
+      if(e.sit==='naoiniciado'){ btn='<a class="btn btn--primary btn--sm rowbtn" href="'+href+'">Preencher</a>'; }
+      else if(e.sit==='rascunho'){ btn='<a class="btn btn--primary btn--sm rowbtn" href="'+href+'">Continuar</a>'; }
+      else { btn='<a class="btn btn--secondary btn--sm rowbtn" href="'+href+'">Ver detalhe</a>'; }
+      return '<tr data-href="'+href+'">'+
+        '<td><div class="evemp">'+logoHtml(e)+'<div><div class="celltitle">'+esc(e.nome)+'</div></div></div></td>'+
+        '<td><span class="cnpj-col">'+esc(e.cnpj)+'</span></td>'+
+        '<td>'+ref+'</td>'+
+        '<td>'+contas+'</td>'+
+        '<td>'+versao+'</td>'+
+        '<td>'+situacaoCell(e)+'</td>'+
+        '<td>'+at+'</td>'+
+        '<td class="col-act">'+btn+'</td>'+
+      '</tr>';
+    }).join('');
+    document.querySelectorAll('#rows tr[data-href]').forEach(function(tr){
+      tr.addEventListener('click', function(ev){ if(ev.target.closest('a')) return; window.location.href=tr.getAttribute('data-href'); });
+    });
+  }
+
+  function renderAll(){ renderStats(); renderRows(); }
+  renderAll();
+
+  /* Cenário (só demonstração) */
+  document.addEventListener('DOMContentLoaded',function(){
+    document.querySelectorAll('[data-scn]').forEach(function(b){
+      b.addEventListener('click',function(){
+        scenario=b.getAttribute('data-scn');
+        document.querySelectorAll('[data-scn]').forEach(function(x){ x.classList.toggle('on', x===b); });
+        renderAll();
+      });
+    });
+  });
+
+  /* Ordenação da tabela */
+  (function(){
+    var CHEV='<span class="sortcaret" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>';
+    var ths=document.querySelectorAll('th.sortable');
+    function updateHeaders(){ ths.forEach(function(th){ var on=th.getAttribute('data-sort')===listSort.key; th.setAttribute('aria-sort', on?(listSort.dir==='asc'?'ascending':'descending'):'none'); }); }
+    ths.forEach(function(th){
+      th.insertAdjacentHTML('beforeend', CHEV);
+      function toggle(){ var k=th.getAttribute('data-sort'); if(listSort.key===k){ listSort.dir=listSort.dir==='asc'?'desc':'asc'; } else { listSort.key=k; listSort.dir='asc'; } renderRows(); updateHeaders(); }
+      th.addEventListener('click', toggle);
+      th.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggle(); } });
+    });
+    updateHeaders();
+  })();
+
+  /* sidenav collapse */
+  document.querySelectorAll('[data-sidenav-toggle]').forEach(function(btn){ var nav=btn.closest('[data-sidenav]'); btn.addEventListener('click',function(){ var c=nav.classList.toggle('is-collapsed'); btn.setAttribute('aria-expanded',String(!c)); btn.setAttribute('aria-label', c?'Expandir menu':'Colapsar menu'); btn.setAttribute('data-tip', c?'Expandir menu':'Colapsar menu'); }); });
+  /* theme toggle */
+  document.querySelectorAll('[data-theme-toggle]').forEach(function(btn){ btn.addEventListener('click',function(){ var dark=document.documentElement.classList.toggle('dark'); document.documentElement.setAttribute('data-theme',dark?'dark':'light'); var tip=btn.parentElement.querySelector('[data-theme-tip]'); if(tip) tip.textContent=dark?'Modo claro':'Modo escuro'; btn.setAttribute('aria-label',dark?'Alternar para modo claro':'Alternar para modo escuro'); }); });
+  /* user menu */
+  document.querySelectorAll('[data-menu]').forEach(function(m){ var b=m.querySelector('.avatar'), p=m.querySelector('.menu__panel'); if(!b||!p) return; b.addEventListener('click',function(){ var open=p.hasAttribute('hidden'); if(open){p.removeAttribute('hidden');b.setAttribute('aria-expanded','true');}else{p.setAttribute('hidden','');b.setAttribute('aria-expanded','false');} }); document.addEventListener('click',function(ev){ if(!m.contains(ev.target)){p.setAttribute('hidden','');b.setAttribute('aria-expanded','false');} }); });
+  </script>
+
+  <!-- Ferramenta de DEMONSTRAÇÃO (não faz parte do produto): alterna o cenário da lista -->
+  <div class="demobar" role="group" aria-label="Demonstração: alternar cenário">
+    <span class="demobar__lbl">Demo</span>
+    <span class="demobar__sep" aria-hidden="true"></span>
+    <button type="button" data-scn="pop">Populado</button>
+    <button type="button" data-scn="new" class="on">Primeiro acesso</button>
+  </div>
+</body>
+</html>

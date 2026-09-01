@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ativação a-DeRE · E-mail</title>
+<link rel="stylesheet" href="../design-system/ds.css?v=14">
+<style>
+  /* ===================== SIMULAÇÃO FIEL DO GMAIL =====================
+     Cores/medidas do Gmail (app de terceiro) são propositalmente literais
+     para bater com o real. O CORPO do e-mail (.mail) segue os tokens do ds. */
+  .gmail{
+    --g-bg:#f6f8fc; --g-white:#fff; --g-text:#202124; --g-sec:#5f6368;
+    --g-line:#e0e3e7; --g-hover:#eceff1; --g-search:#eaf1fb; --g-search-ico:#5f6368;
+    --g-blue:#1a73e8; --g-red:#d93025; --g-redbg:#fce8e6; --g-green:#188038;
+    font-family:'Roboto','Helvetica Neue',Arial,sans-serif;
+    color:var(--g-text); background:var(--g-white);
+    min-height:100vh; display:flex; flex-direction:column;
+    font-size:14px; -webkit-font-smoothing:antialiased;
+  }
+  .gmail *{box-sizing:border-box}
+  .g-ico{width:24px;height:24px;display:block}
+  .g-btn{border:0;background:none;padding:8px;border-radius:50%;color:var(--g-sec);cursor:pointer;display:grid;place-items:center;line-height:0}
+  .g-btn:hover{background:var(--g-hover)}
+
+  /* Topo */
+  .g-top{height:64px;display:flex;align-items:center;gap:16px;padding:0 16px;flex:0 0 auto}
+  .g-top__l{display:flex;align-items:center;gap:8px;min-width:200px}
+  .g-logo{display:flex;align-items:center;gap:6px}
+  .g-logo svg{width:36px;height:26px;display:block}
+  .g-logo span{font-size:22px;color:#5f6368;font-weight:400;letter-spacing:-.5px;font-family:'Product Sans','Google Sans','Roboto',Arial,sans-serif}
+  .g-search{flex:1;max-width:720px;height:48px;display:flex;align-items:center;gap:8px;background:var(--g-search);border-radius:8px;padding:0 8px;color:var(--g-search-ico)}
+  .g-search:focus-within{background:#fff;box-shadow:0 1px 1px rgba(0,0,0,.1),0 2px 6px rgba(0,0,0,.08);border-radius:8px}
+  .g-search input{flex:1;border:0;background:none;outline:none;font-size:16px;color:var(--g-text);font-family:inherit}
+  .g-top__r{display:flex;align-items:center;gap:4px;margin-left:auto}
+  .g-apps-dots{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);gap:2px;width:20px;height:20px}
+  .g-apps-dots i{width:4px;height:4px;border-radius:50%;background:var(--g-sec)}
+  .g-me{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#b06ab3,#4568dc);color:#fff;display:grid;place-items:center;font-weight:600;font-size:15px;margin-left:8px;cursor:pointer}
+
+  /* Corpo (3 colunas: sidebar / thread / apps) */
+  .g-main{flex:1;display:grid;grid-template-columns:256px 1fr 56px;min-height:0}
+
+  /* Sidebar */
+  .g-side{padding:8px 0 8px 8px;overflow:auto}
+  .g-compose{display:inline-flex;align-items:center;gap:14px;height:48px;padding:0 22px 0 16px;margin:4px 12px 12px 4px;border:0;border-radius:16px;background:#fff;box-shadow:0 1px 3px rgba(60,64,67,.3);color:#3c4043;font-size:14px;font-weight:500;font-family:inherit;cursor:pointer}
+  .g-compose:hover{box-shadow:0 2px 6px rgba(60,64,67,.35);background:#fafafb}
+  .g-compose svg{width:20px;height:20px}
+  .g-nav{list-style:none;margin:0 0 8px;padding:0}
+  .g-nav li{display:flex;align-items:center;gap:18px;height:32px;padding:0 12px 0 26px;border-radius:0 16px 16px 0;color:#202124;font-size:14px;font-weight:500;cursor:pointer;white-space:nowrap}
+  .g-nav li:hover{background:var(--g-hover)}
+  .g-nav li svg{width:20px;height:20px;color:#5f6368;flex:0 0 auto}
+  .g-nav li .c{margin-left:auto;font-size:12px;color:#5f6368;font-weight:400}
+  .g-nav li.on{background:var(--g-redbg);color:var(--g-red);font-weight:700}
+  .g-nav li.on svg{color:var(--g-red)}
+  .g-nav li.on .c{color:var(--g-red);font-weight:700}
+  .g-side-h{font-size:14px;font-weight:500;color:#202124;padding:8px 12px 4px 26px}
+
+  /* Thread */
+  .g-thread{background:#fff;border-radius:16px 0 0 0;display:flex;flex-direction:column;min-width:0;margin-top:0}
+  .g-toolbar{height:48px;display:flex;align-items:center;gap:2px;padding:0 8px;color:var(--g-sec)}
+  .g-sep{width:1px;height:24px;background:var(--g-line);margin:0 6px}
+  .g-tb-r{margin-left:auto;display:flex;align-items:center;gap:4px;font-size:12px;color:var(--g-sec);white-space:nowrap}
+  .g-scroll{flex:1;overflow:auto;background:#fff}
+  .g-subject{display:flex;align-items:center;gap:12px;padding:8px 24px 8px 24px;flex-wrap:wrap}
+  .g-subject h1{font-size:22px;font-weight:400;color:#202124;margin:0}
+  .g-emoji{font-size:20px}
+  .g-lbl{display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 8px;border-radius:4px;background:#ddd;color:#3c4043;font-size:12px}
+  .g-lbl svg{width:14px;height:14px}
+  .g-lbl--promo{background:#e6f4ea;color:#188038}
+  .g-subject__r{margin-left:auto;display:flex;gap:2px}
+  .g-sender{display:flex;align-items:flex-start;gap:16px;padding:4px 24px 12px}
+  .g-av{width:40px;height:40px;border-radius:50%;background:#c9cdd3;color:#fff;display:grid;place-items:center;flex:0 0 auto}
+  .g-av svg{width:26px;height:26px}
+  .g-sender__m{flex:1;min-width:0;padding-top:2px}
+  .g-sender__m .r1{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:14px}
+  .g-sender__m .r1 b{color:#202124}
+  .g-sender__m .r1 .addr{color:#5f6368;font-size:12px}
+  .g-sender__m .r1 a{color:#1a73e8;font-size:12px;text-decoration:none}
+  .g-sender__m .r2{display:flex;align-items:center;gap:4px;color:#5f6368;font-size:12px;margin-top:2px}
+  .g-sender__m .r2 svg{width:16px;height:16px}
+  .g-sender__r{display:flex;align-items:center;gap:2px;color:#5f6368;flex:0 0 auto}
+  .g-sender__r .time{font-size:12px;white-space:nowrap;margin-right:6px}
+  .g-emailwrap{background:var(--g-bg);padding:24px;min-height:200px}
+
+  /* Coluna de apps à direita */
+  .g-apps{border-left:1px solid var(--g-line);padding:12px 0;display:flex;flex-direction:column;align-items:center;gap:12px}
+  .g-apps button{width:20px;height:20px;padding:0;border:0;background:none;cursor:pointer;line-height:0}
+  .g-apps svg{width:20px;height:20px}
+
+  @media(max-width:920px){.g-main{grid-template-columns:1fr}.g-side,.g-apps{display:none}.g-thread{border-radius:0}}
+
+  /* ===================== E-MAIL a-DeRE (tokens do ds) ===================== */
+  .mail{max-width:600px;margin:0 auto;font-family:var(--font-sans);color:var(--color-text);font-size:var(--text-sm);line-height:1.6}
+  .mail__card{border:1px solid var(--color-border);border-radius:var(--radius-lg);overflow:hidden;background:var(--color-surface);box-shadow:var(--shadow-sm)}
+  .mail__top{background:var(--color-primary-darker);padding:var(--space-6) var(--space-10);display:flex;align-items:center;justify-content:center;gap:var(--space-3)}
+  .mail__av{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.16);color:#fff;display:grid;place-items:center;font-weight:800;font-size:var(--text-base);flex:0 0 auto}
+  .mail__wm{font-family:var(--font-sans);color:#fff;font-size:var(--text-xl);font-weight:800;letter-spacing:-.01em}
+  .mail__body{padding:var(--space-8) var(--space-10)}
+  .mail__greet{color:var(--color-heading);font-size:var(--text-xl);font-weight:700;margin:0 0 var(--space-6)}
+  .mail__body p{margin:0 0 var(--space-6)}
+  .mail__body b{color:var(--color-heading)}
+  .mail__who{display:flex;align-items:center;gap:var(--space-3);background:color-mix(in srgb, var(--color-primary) 4%, var(--color-surface));border-radius:var(--radius-base);padding:var(--space-4);margin:var(--space-8) 0}
+  .mail__who .av{width:44px;height:44px;border-radius:var(--radius-base);background:var(--blue-100);color:var(--color-primary-darker);display:grid;place-items:center;flex:0 0 auto}
+  .mail__who .av svg{width:26px;height:26px}
+  .mail__who .t b{color:var(--color-heading);font-size:var(--text-lg);display:block}
+  .mail__who .t span{color:var(--color-text-onmuted);font-size:var(--text-sm);font-variant-numeric:tabular-nums}
+  .mail__steps{list-style:none;margin:0 0 var(--space-3);padding:0;display:flex;flex-direction:column;gap:var(--space-3)}
+  .mail__steps li{display:flex;gap:var(--space-3);align-items:flex-start}
+  .mail__steps .n{width:24px;height:24px;border-radius:50%;background:var(--color-primary-subtle);color:var(--color-primary);font-weight:700;font-size:var(--text-xs);display:grid;place-items:center;flex:0 0 auto}
+  .mail__steps .s b{color:var(--color-text);font-size:var(--text-sm);font-weight:400;display:block}
+  .mail__after{display:flex;gap:var(--space-3);align-items:flex-start;margin:0 0 var(--space-4);color:var(--color-text);font-size:var(--text-sm);line-height:1.5}
+  .mail__after .n--rocket{width:24px;height:24px;border-radius:50%;background:var(--color-primary);color:#fff;display:grid;place-items:center;flex:0 0 auto}
+  .mail__after .n--rocket svg{width:14px;height:14px}
+  .mail__cta{text-align:center;margin:var(--space-8) 0 0}
+  .mail__cta .btn{text-decoration:none;display:inline-flex;justify-content:center;width:320px;max-width:100%;padding:0}
+  .mail__rule{border:0;border-top:1px solid var(--color-border);margin:var(--space-6) 0}
+  .mail__sec{display:flex;gap:var(--space-2);align-items:flex-start;margin-top:0;color:var(--color-text-muted);font-size:var(--text-xs);line-height:1.5}
+  .mail__sec__ic{flex:0 0 auto;line-height:0}
+  .mail__sec__ic svg{width:16px;height:16px;display:block;margin-top:2px}
+  .mail__sec p{margin:0}
+  .mail__foot{padding:var(--space-6) var(--space-10);border-top:1px solid var(--color-border);background:var(--color-surface-2);color:var(--color-text-onmuted);font-size:var(--text-xs);line-height:var(--leading-snug);text-align:left}
+  .mail__foot p{margin:0}
+  .mail__foot p + p{margin-top:var(--space-1-5)}
+  .mail__foot b{color:var(--color-heading)}
+  .mail__foot a{color:var(--color-primary);text-decoration:none}
+</style>
+</head>
+<body>
+<style>    #dere-gate .dots{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(2px 2px at 12% 22%,rgba(255,255,255,.06),transparent),radial-gradient(2px 2px at 82% 15%,rgba(255,255,255,.05),transparent),radial-gradient(1.5px 1.5px at 68% 62%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 27% 78%,rgba(255,255,255,.045),transparent),radial-gradient(1.5px 1.5px at 90% 82%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 45% 34%,rgba(255,255,255,.04),transparent),radial-gradient(1.5px 1.5px at 8% 55%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 58% 90%,rgba(255,255,255,.04),transparent)}
+    #dere-gate .card{animation:dereIn .38s cubic-bezier(.2,.7,.2,1) both}
+    @media (prefers-reduced-motion:reduce){#dere-gate .card{animation:none}
+    #dere-gate input:focus{border-color:#1351b4 !important;box-shadow:0 0 0 3px rgba(19,81,180,.18) !important}
+    #dere-gate button:hover{background:#0c326f !important}
+    #dere-gate button:active{transform:translateY(1px)}
+    #dere-gate .dots{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(2px 2px at 12% 22%,rgba(255,255,255,.06),transparent),radial-gradient(2px 2px at 82% 15%,rgba(255,255,255,.05),transparent),radial-gradient(1.5px 1.5px at 68% 62%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 27% 78%,rgba(255,255,255,.045),transparent),radial-gradient(1.5px 1.5px at 90% 82%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 45% 34%,rgba(255,255,255,.04),transparent),radial-gradient(1.5px 1.5px at 8% 55%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 58% 90%,rgba(255,255,255,.04),transparent)}</style>
+<div id="dere-gate" style="position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;padding:24px;font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;background:radial-gradient(120% 120% at 20% 8%,#0c326f 0%,#071d41 55%,#05152e 100%)">
+  <style>
+    #dere-gate .dots{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(2px 2px at 12% 22%,rgba(255,255,255,.06),transparent),radial-gradient(2px 2px at 82% 15%,rgba(255,255,255,.05),transparent),radial-gradient(1.5px 1.5px at 68% 62%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 27% 78%,rgba(255,255,255,.045),transparent),radial-gradient(1.5px 1.5px at 90% 82%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 45% 34%,rgba(255,255,255,.04),transparent),radial-gradient(1.5px 1.5px at 8% 55%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 58% 90%,rgba(255,255,255,.04),transparent)}
+    #dere-gate .card{animation:dereIn .38s cubic-bezier(.2,.7,.2,1) both}
+    @keyframes dereIn{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+    @media (prefers-reduced-motion:reduce){#dere-gate .card{animation:none}}
+    #dere-gate input:focus{border-color:#1351b4 !important;box-shadow:0 0 0 3px rgba(19,81,180,.18) !important}
+    #dere-gate button:hover{background:#0c326f !important}
+    #dere-gate button:active{transform:translateY(1px)}
+  </style>
+  <span class="dots"></span>
+  <form class="card" onsubmit="return dereGate(this)" style="position:relative;background:#fff;padding:38px 34px 26px;border-radius:14px;width:100%;max-width:360px;text-align:center;box-shadow:0 24px 70px -12px rgba(3,17,42,.55)">
+    <div style="font-size:21px;font-weight:800;color:#0b1f3a;letter-spacing:-.01em;font-family:inherit">DeRE</div>
+    <div style="display:inline-flex;align-items:center;gap:6px;color:#5b6b82;font-size:13px;margin:5px 0 22px;font-family:inherit"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Protótipo &middot; acesso restrito</div>
+    <label for="dere-pw" style="display:block;text-align:left;font-size:12.5px;font-weight:600;color:#334155;margin:0 0 6px;font-family:inherit">Senha de acesso</label>
+    <input id="dere-pw" type="password" placeholder="Digite a senha" autofocus autocomplete="off" aria-label="Senha de acesso" style="width:100%;height:44px;border:1px solid #cbd5e1;border-radius:8px;padding:0 14px;font-size:16px;box-sizing:border-box;outline:none;color:#0f172a;background:#fff;font-family:inherit">
+    <div id="dere-err" style="color:#dc2626;font-size:12.5px;min-height:18px;margin-top:8px;text-align:left;display:flex;align-items:center;gap:5px;font-family:inherit"></div>
+    <button type="submit" style="width:100%;height:44px;margin-top:6px;background:#1351b4;color:#fff;border:0;border-radius:8px;font-weight:700;font-size:15px;cursor:pointer;font-family:inherit">Entrar</button>
+    <div style="margin-top:20px;font-size:11.5px;color:#94a3b8;letter-spacing:.02em;font-family:inherit">uma solução Axians</div>
+  </form>
+</div>
+<script>if(localStorage.getItem('dere_ok')==='1'){var _g=document.getElementById('dere-gate');if(_g)_g.remove();}function dereGate(f){var i=f.querySelector('input'),e=document.getElementById('dere-err');if(i.value==='dere123'){localStorage.setItem('dere_ok','1');document.getElementById('dere-gate').remove();}else{e.innerHTML='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 auto"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>Senha incorreta. Tente novamente.';i.select();}return false;}</script>
+  <div class="gmail">
+    <!-- ===== Topo ===== -->
+    <header class="g-top">
+      <div class="g-top__l">
+        <button class="g-btn" aria-label="Menu principal"><svg class="g-ico" viewBox="0 0 24 24" fill="currentColor"><path d="M3 18h18v-2H3v2Zm0-5h18v-2H3v2Zm0-7v2h18V6H3Z"/></svg></button>
+        <div class="g-logo">
+          <svg viewBox="0 0 52 40" aria-hidden="true"><path fill="#4285F4" d="M3.6 40h6.9V23.3L0 15.5v21A3.5 3.5 0 0 0 3.6 40Z"/><path fill="#34A853" d="M41.5 40h6.9a3.5 3.5 0 0 0 3.6-3.5v-21l-10.5 7.8Z"/><path fill="#FBBC04" d="M41.5 8.4v14.9L52 15.5V10.2c0-4.9-5.6-7.7-9.5-4.8Z"/><path fill="#EA4335" d="M10.5 23.3V9.3L26 20.9 41.5 9.3v14L26 34.9Z"/><path fill="#C5221F" d="M0 10.2v5.3l10.5 7.8V9.3L9.5 5.4C5.6 2.5 0 5.3 0 10.2Z"/></svg>
+          <span>Gmail</span>
+        </div>
+      </div>
+      <div class="g-search">
+        <button class="g-btn" aria-label="Pesquisar"><svg class="g-ico" viewBox="0 0 24 24" fill="currentColor"><path d="M20.49 19 15.5 14a7 7 0 1 0-1.5 1.5l5 4.99L20.49 19ZM5 10a5 5 0 1 1 5 5 5 5 0 0 1-5-5Z"/></svg></button>
+        <input placeholder="Search mail" aria-label="Search mail">
+        <button class="g-btn" aria-label="Mostrar opções de pesquisa"><svg class="g-ico" viewBox="0 0 24 24" fill="currentColor"><path d="M6 10h12v2H6zM3 6h18v2H3zm6 8h6v2H9z"/></svg></button>
+      </div>
+      <div class="g-top__r">
+        <button class="g-btn" aria-label="Suporte"><svg class="g-ico" viewBox="0 0 24 24" fill="currentColor"><path d="M11 18h2v-2h-2v2Zm1-16A10 10 0 1 0 22 12 10 10 0 0 0 12 2Zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8ZM12 6a4 4 0 0 0-4 4h2a2 2 0 1 1 4 0c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5a4 4 0 0 0-4-4Z"/></svg></button>
+        <button class="g-btn" aria-label="Configurações"><svg class="g-ico" viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94a7.49 7.49 0 0 0 0-1.88l2-1.58a.5.5 0 0 0 .12-.61l-1.9-3.28a.5.5 0 0 0-.6-.22l-2.39.96a7 7 0 0 0-1.62-.94l-.36-2.54a.5.5 0 0 0-.5-.42h-3.8a.5.5 0 0 0-.5.42l-.36 2.54a7 7 0 0 0-1.62.94l-2.39-.96a.5.5 0 0 0-.6.22L1.74 8.87a.5.5 0 0 0 .12.61l2 1.58a7.49 7.49 0 0 0 0 1.88l-2 1.58a.5.5 0 0 0-.12.61l1.9 3.28a.5.5 0 0 0 .6.22l2.39-.96a7 7 0 0 0 1.62.94l.36 2.54a.5.5 0 0 0 .5.42h3.8a.5.5 0 0 0 .5-.42l.36-2.54a7 7 0 0 0 1.62-.94l2.39.96a.5.5 0 0 0 .6-.22l1.9-3.28a.5.5 0 0 0-.12-.61ZM12 15.5A3.5 3.5 0 1 1 15.5 12 3.5 3.5 0 0 1 12 15.5Z"/></svg></button>
+        <button class="g-btn" aria-label="Apps do Google"><span class="g-apps-dots"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></button>
+        <div class="g-me" title="Conta Google">R</div>
+      </div>
+    </header>
+
+    <!-- ===== Corpo ===== -->
+    <div class="g-main">
+      <!-- Sidebar -->
+      <aside class="g-side" aria-label="Pastas">
+        <button class="g-compose"><svg viewBox="0 0 24 24" fill="none"><path d="M6 18 18.5 5.5a2.12 2.12 0 0 0-3-3L3 15v3h3Z" fill="#f9ab00"/><path d="M18.5 2.5 21 5" stroke="#e37400" stroke-width="2" stroke-linecap="round"/><path d="M3 15v3h3" stroke="#1e8e3e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 18 18.5 5.5" stroke="#1a73e8" stroke-width="2" stroke-linecap="round"/></svg> Compose</button>
+        <ul class="g-nav">
+          <li class="on"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Zm0 12h-4a3 3 0 0 1-6 0H5V5h14Z"/></svg> Inbox <span class="c">3</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> Starred</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 7 12 12 15 14"/></svg> Snoozed</li>
+          <li><svg viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21 23 12 2.01 3 2 10l15 2-15 2Z"/></svg> Sent</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/></svg> Drafts <span class="c">1</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.86 2h8.28L22 7.86v8.28L16.14 22H7.86L2 16.14V7.86L7.86 2z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Spam <span class="c">3</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Trash</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41 13.42 20.6a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg> Categories <svg viewBox="0 0 24 24" fill="currentColor" style="margin-left:auto;width:18px;height:18px"><path d="m7 10 5 5 5-5z"/></svg></li>
+          <li><svg viewBox="0 0 24 24" fill="currentColor"><path d="m7 10 5 5 5-5z"/></svg> More</li>
+        </ul>
+        <div class="g-side-h">Meet</div>
+        <ul class="g-nav">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m23 7-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg> New meeting</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M7 16h10"/></svg> Join a meeting</li>
+        </ul>
+      </aside>
+
+      <!-- Thread -->
+      <section class="g-thread">
+        <div class="g-toolbar">
+          <button class="g-btn" aria-label="Voltar"><svg class="g-ico" viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2Z"/></svg></button>
+          <button class="g-btn" aria-label="Arquivar"><svg class="g-ico" viewBox="0 0 24 24" fill="currentColor"><path d="M20.54 5.23 19.15 3.55A1.49 1.49 0 0 0 18 3H6a1.49 1.49 0 0 0-1.15.55L3.46 5.23A2 2 0 0 0 3 6.5V19a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6.5a2 2 0 0 0-.46-1.27ZM12 17.5 6.5 12H10v-2h4v2h3.5ZM5.12 5l.82-1h12l.93 1Z"/></svg></button>
+          <button class="g-btn" aria-label="Marcar como spam"><svg class="g-ico" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 1 21h22ZM13 18h-2v-2h2Zm0-4h-2v-4h2Z"/></svg></button>
+          <button class="g-btn" aria-label="Excluir"><svg class="g-ico" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6Zm2.46-7.12 1.41-1.41L12 12.59l2.12-2.12 1.41 1.41L13.41 14l2.12 2.12-1.41 1.41L12 15.41l-2.12 2.12-1.41-1.41L10.59 14ZM15.5 4l-1-1h-5l-1 1H5v2h14V4Z"/></svg></button>
+          <span class="g-sep"></span>
+          <button class="g-btn" aria-label="Marcar como não lida"><svg class="g-ico" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 4-8 5-8-5V6l8 5 8-5Z"/></svg></button>
+          <button class="g-btn" aria-label="Adiar"><svg class="g-ico" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8Zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67Z"/></svg></button>
+          <button class="g-btn" aria-label="Adicionar às tarefas"><svg class="g-ico" viewBox="0 0 24 24" fill="currentColor"><path d="M22 5.18 10.59 16.6l-4.24-4.24 1.41-1.41 2.83 2.83 10-10Zm-2.21 5.04c.13.57.21 1.17.21 1.78a8 8 0 1 1-8-8c1.58 0 3.04.46 4.28 1.25l1.44-1.44A9.9 9.9 0 0 0 12 2a10 10 0 1 0 10 10c0-1.19-.22-2.33-.6-3.39Z"/></svg></button>
+          <span class="g-sep"></span>
+          <button class="g-btn" aria-label="Mover para"><svg class="g-ico" viewBox="0 0 24 24" fill="currentColor"><path d="M20 6h-8l-2-2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2Zm-9 10-4-4h2.5V9h3v3H18Z"/></svg></button>
+          <button class="g-btn" aria-label="Marcadores"><svg class="g-ico" viewBox="0 0 24 24" fill="currentColor"><path d="M20.41 12.41 11 3H3v8l9.41 9.41a2 2 0 0 0 2.83 0l5.17-5.17a2 2 0 0 0 0-2.83ZM6.5 8A1.5 1.5 0 1 1 8 6.5 1.5 1.5 0 0 1 6.5 8Z"/></svg></button>
+          <button class="g-btn" aria-label="Mais"><svg class="g-ico" viewBox="0 0 24 24" fill="currentColor"><path d="M12 8a2 2 0 1 0-2-2 2 2 0 0 0 2 2Zm0 2a2 2 0 1 0 2 2 2 2 0 0 0-2-2Zm0 6a2 2 0 1 0 2 2 2 2 0 0 0-2-2Z"/></svg></button>
+          <div class="g-tb-r"><span>1–50 of 2,619</span>
+            <button class="g-btn" aria-label="Mais recentes"><svg class="g-ico" viewBox="0 0 24 24" fill="currentColor"><path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12l4.58-4.59Z"/></svg></button>
+            <button class="g-btn" aria-label="Mais antigos"><svg class="g-ico" viewBox="0 0 24 24" fill="currentColor"><path d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6-6-6Z"/></svg></button>
+          </div>
+        </div>
+
+        <div class="g-scroll">
+          <div class="g-subject">
+            <span class="g-emoji">🚀</span>
+            <h1>Ative seu acesso à a-DeRE</h1>
+            <span class="g-lbl">Inbox <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.3 5.71 12 12l6.3 6.29-1.42 1.42L12 14.83l-6.29 6.3-1.42-1.42L10.83 12 4.71 5.71 6.12 4.29 12 10.59l5.88-5.88Z"/></svg></span>
+            <span class="g-lbl g-lbl--promo">Promotions <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.3 5.71 12 12l6.3 6.29-1.42 1.42L12 14.83l-6.29 6.3-1.42-1.42L10.83 12 4.71 5.71 6.12 4.29 12 10.59l5.88-5.88Z"/></svg></span>
+            <span class="g-subject__r">
+              <button class="g-btn" aria-label="Imprimir"><svg class="g-ico" viewBox="0 0 24 24" fill="currentColor"><path d="M19 8H5a3 3 0 0 0-3 3v6h4v4h12v-4h4v-6a3 3 0 0 0-3-3Zm-3 11H8v-5h8Zm3-7a1 1 0 1 1 1-1 1 1 0 0 1-1 1Zm-1-9H6v4h12Z"/></svg></button>
+              <button class="g-btn" aria-label="Abrir em nova janela"><svg class="g-ico" viewBox="0 0 24 24" fill="currentColor"><path d="M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7h-2ZM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3Z"/></svg></button>
+            </span>
+          </div>
+
+          <div class="g-sender">
+            <div class="g-av"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-3.33 0-10 1.67-10 5v3h20v-3c0-3.33-6.67-5-10-5Z"/></svg></div>
+            <div class="g-sender__m">
+              <div class="r1"><b>a-DeRE</b> <span class="addr">&lt;nao-responder@a-dere.com.br&gt;</span> <a href="#">Cancelar inscrição</a></div>
+              <div class="r2">para mim <svg viewBox="0 0 24 24" fill="currentColor"><path d="m7 10 5 5 5-5z"/></svg></div>
+            </div>
+            <div class="g-sender__r">
+              <span class="time">09:14 (há 8 horas)</span>
+              <button class="g-btn" aria-label="Com estrela"><svg class="g-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+              <button class="g-btn" aria-label="Responder"><svg class="g-ico" viewBox="0 0 24 24" fill="currentColor"><path d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11Z"/></svg></button>
+              <button class="g-btn" aria-label="Mais"><svg class="g-ico" viewBox="0 0 24 24" fill="currentColor"><path d="M12 8a2 2 0 1 0-2-2 2 2 0 0 0 2 2Zm0 2a2 2 0 1 0 2 2 2 2 0 0 0-2-2Zm0 6a2 2 0 1 0 2 2 2 2 0 0 0-2-2Z"/></svg></button>
+            </div>
+          </div>
+
+          <!-- ===== CORPO DO E-MAIL a-DeRE ===== -->
+          <div class="g-emailwrap">
+            <div class="mail">
+              <div class="mail__card">
+                <div class="mail__top"><span class="mail__av">a</span><span class="mail__wm">a-DeRE</span></div>
+
+                <div class="mail__body">
+                  <p class="mail__greet">Olá, Ricardo</p>
+                  <p>Você foi indicado como <b>Administrador</b> da conta da <b>MAG Seguros</b> na a-DeRE, a plataforma usada pelas empresas para preparar, validar e enviar as informações da Declaração de Regimes Específicos (DeRE).</p>
+                  <p>Como Administrador, você será responsável por configurar o acesso inicial da empresa e gerenciar as principais definições da conta.</p>
+
+                  <div class="mail__who">
+                    <div class="av"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M9 22v-4h6v4M8 6h.01M16 6h.01M8 10h.01M16 10h.01M8 14h.01M16 14h.01"/></svg></div>
+                    <div class="t"><b>MAG Seguros</b><span>CNPJ 33.608.308/0001-73</span></div>
+                  </div>
+
+                  <p>Para ativar seu acesso, você precisará:</p>
+                  <ul class="mail__steps">
+                    <li><span class="n">1</span><span class="s"><b>Criar sua senha</b></span></li>
+                    <li><span class="n">2</span><span class="s"><b>Adicionar as empresas declarantes</b></span></li>
+                    <li><span class="n">3</span><span class="s"><b>Cadastrar os certificados digitais</b></span></li>
+                  </ul>
+
+                  <div class="mail__after"><span class="n--rocket"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></span><span>Depois disso, seu acesso estará ativo e você poderá acessar a plataforma.</span></div>
+
+                  <div class="mail__cta"><a class="btn btn--primary btn--lg" href="onboarding.html">Ativar meu acesso</a></div>
+
+                  <hr class="mail__rule">
+
+                  <div class="mail__sec" role="note">
+                    <span class="mail__sec__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+                    <p>Este link é pessoal e não deve ser compartilhado. Ele ficará disponível até <b>28/08/2026</b>, às 23h59 (horário de Brasília). Se o prazo expirar, solicite um novo link de acesso.</p>
+                  </div>
+                </div>
+
+                <div class="mail__foot">
+                  <p>Precisa de ajuda? Fale com o suporte em <a href="#">suporte@a-dere.com.br</a>.</p>
+                  <p>Saiba como tratamos seus dados na <a href="#">Política de Privacidade</a>.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Coluna de apps -->
+      <aside class="g-apps" aria-label="Apps laterais">
+        <button aria-label="Agenda"><svg viewBox="0 0 24 24" fill="none" stroke="#5f6368" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></button>
+        <button aria-label="Keep"><svg viewBox="0 0 24 24" fill="none" stroke="#f9ab00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2Z"/></svg></button>
+        <button aria-label="Tasks"><svg viewBox="0 0 24 24" fill="none" stroke="#1a73e8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></button>
+        <button aria-label="Contatos"><svg viewBox="0 0 24 24" fill="none" stroke="#5f6368" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg></button>
+        <button aria-label="Adicionar"><svg viewBox="0 0 24 24" fill="none" stroke="#5f6368" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>

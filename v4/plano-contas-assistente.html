@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>a-DeRE · Assistente de classificação</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=14">
+  <script src="../design-system/ds-tailwind.js"></script>
+  <style>
+    html,body{height:100%}
+    body{margin:0;font-family:var(--font-sans);background:var(--color-bg);color:var(--color-text);font-size:var(--text-base)}
+    .shell{display:flex;height:100vh;overflow:hidden}
+    .shell > .sidenav{border:0;border-radius:0;padding:0;position:relative!important;transform:none!important;visibility:visible!important;z-index:auto!important;transition:width .18s ease}
+    .brandrow{height:64px;flex:0 0 auto;display:flex;align-items:center;gap:var(--space-3);padding:0 var(--space-4) 0 var(--space-6);border-bottom:1px solid var(--color-border)}
+    .brandrow .wm{font-weight:800;font-size:var(--text-lg);letter-spacing:-.01em;color:var(--color-heading)}
+    .brandrow .avatar{background:rgba(255,255,255,.14);color:#fff;width:34px;height:34px;font-size:var(--text-sm);flex:0 0 auto;font-weight:800}
+    .navlist{flex:1;overflow:auto;min-height:0;padding:var(--space-3) var(--space-3) 0;display:flex;flex-direction:column;gap:2px}
+    .col{flex:1;display:flex;flex-direction:column;min-width:0;min-height:0}
+    .topbar{height:64px;flex:0 0 auto;background:var(--color-surface);border-bottom:1px solid var(--color-border);display:flex;align-items:center;gap:var(--space-4);padding:0 var(--space-6)}
+    .bc{display:flex;align-items:center;gap:var(--space-2);font-size:var(--text-sm);min-width:0;overflow:hidden}
+    .bc a{color:var(--color-primary);text-decoration:none;white-space:nowrap;font-weight:500}
+    .bc a:hover{text-decoration:underline}
+    .bc span{color:var(--color-text);font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .bc svg{width:15px;height:15px;color:var(--color-text-muted);flex:0 0 auto}
+    .content{flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden;background:var(--slate-100)}
+    .dark .content,:root[data-theme="dark"] .content{background:var(--color-bg)}
+    .cadscroll{flex:1;overflow:auto;min-height:0;scrollbar-gutter:stable}
+    .cadfoot{flex:0 0 auto;background:var(--color-surface);border-top:1px solid var(--color-border)}
+    .cadfoot__inner{max-width:1480px;margin:0 auto;padding:var(--space-4) var(--space-8);display:flex;align-items:center;justify-content:space-between;gap:var(--space-4)}
+    .cadfoot__right{display:flex;align-items:center;gap:var(--space-3)}
+    .wrap{padding:var(--space-8);max-width:1480px;width:100%;margin:0 auto;box-sizing:border-box}
+    .page-h{background:var(--color-surface);border-bottom:1px solid var(--color-border)}
+    .page-h .wrap{padding-top:var(--space-8);padding-bottom:var(--space-8)}
+    .page-h h1{margin:0;font-size:var(--text-4xl)!important;font-weight:700!important;letter-spacing:-.015em;line-height:1.15}
+    .page-h p{color:var(--color-text-muted);font-size:var(--text-base);margin:var(--space-2) 0 0}
+    .ctxrow{display:flex;gap:var(--space-2);flex-wrap:wrap;margin-top:var(--space-6)}
+    .ctxtag{display:inline-flex;align-items:center;gap:var(--space-1-5);font-size:var(--text-xs);font-weight:600;padding:var(--space-1) var(--space-2);border-radius:var(--radius-pill);background:var(--color-surface-2);color:var(--color-text-onmuted);border:1px solid var(--color-border);font-variant-numeric:tabular-nums}
+    /* ==== grade de 3 painéis ==== */
+    .assist{display:grid;grid-template-columns:300px minmax(0,1fr) 380px;gap:var(--space-6);align-items:start}
+    @media(max-width:1180px){.assist{grid-template-columns:260px minmax(0,1fr)} .pane--sug{grid-column:1/-1}}
+    @media(max-width:820px){.assist{grid-template-columns:1fr} .pane--foco{order:-1} .fila{max-height:280px}}
+    /* rolagem interna discreta (barra fina, sem trilho aparente) */
+    .fila,.foco,.sug,.t11list{scrollbar-width:thin;scrollbar-color:var(--color-border-strong) transparent}
+    .fila::-webkit-scrollbar,.foco::-webkit-scrollbar,.sug::-webkit-scrollbar,.t11list::-webkit-scrollbar{width:8px}
+    .fila::-webkit-scrollbar-track,.foco::-webkit-scrollbar-track,.sug::-webkit-scrollbar-track,.t11list::-webkit-scrollbar-track{background:transparent}
+    .fila::-webkit-scrollbar-thumb,.foco::-webkit-scrollbar-thumb,.sug::-webkit-scrollbar-thumb,.t11list::-webkit-scrollbar-thumb{background:var(--color-border-strong);border-radius:var(--radius-pill)}
+    @keyframes selpulse{from{box-shadow:0 0 0 0 color-mix(in srgb,var(--color-primary) 45%,transparent)}to{box-shadow:0 0 0 12px transparent}}
+    .is-justsel{animation:selpulse .55s ease-out}
+    @media(prefers-reduced-motion:reduce){.is-justsel{animation:none}}
+    /* os 3 painéis têm SEMPRE a mesma altura; cada um rola por dentro */
+    .pane{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-2xl);box-shadow:var(--shadow-sm);display:flex;flex-direction:column;min-height:0;height:clamp(560px, calc(100vh - 330px), 920px);overflow:hidden}
+    @media(max-width:1180px){.pane{height:auto;overflow:visible}}
+    .pane__h{padding:var(--space-4) var(--space-6);border-bottom:1px solid var(--color-divider);display:flex;align-items:baseline;justify-content:space-between;gap:var(--space-3)}
+    .pane__t{font-size:var(--text-sm);font-weight:700;color:var(--color-heading);text-transform:uppercase;letter-spacing:.04em}
+    .pane__n{font-size:var(--text-xs);color:var(--color-text-muted);font-variant-numeric:tabular-nums}
+    /* fila */
+    .fila{flex:1;min-height:0;overflow:auto;padding:var(--space-2)}
+    @media(max-width:1180px){.fila{flex:none;max-height:420px}}
+    .fitem{display:flex;align-items:center;gap:var(--space-3);width:100%;text-align:left;background:none;border:0;border-radius:var(--radius-base);padding:var(--space-2) var(--space-3);cursor:pointer;font-family:inherit}
+    .fitem:hover{background:var(--color-surface-2)}
+    .fitem.is-cur{background:var(--color-primary-subtle)}
+    .fitem__b{min-width:0;flex:1}
+    .fitem__cod{font-size:var(--text-xs);color:var(--color-text-muted);font-variant-numeric:tabular-nums}
+    .fitem__nm{font-size:var(--text-sm);color:var(--color-heading);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .fitem__st{flex:0 0 auto;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--color-border);color:var(--color-text-muted);font-size:var(--text-2xs)}
+    .fitem.is-done .fitem__st{border-color:var(--color-success-fg);color:var(--color-success-fg)}
+    .fitem.is-skip .fitem__st{border-color:var(--color-warning-fg);color:var(--color-warning-fg)}
+    .fitem__st svg{width:11px;height:11px}
+    .fmore{padding:var(--space-3) var(--space-4);font-size:var(--text-xs);color:var(--color-text-muted)}
+    .fcat{padding:var(--space-4) var(--space-3) var(--space-1);margin:0;font-size:var(--text-2xs);font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--color-text-muted)}
+    /* Tabela 11 sempre visível (665 códigos na tabela real) */
+    .t11list{border:1px solid var(--color-border);border-radius:var(--radius-base);max-height:250px;overflow:auto;margin-top:var(--space-2)}
+    .t11item{display:flex;align-items:center;gap:var(--space-2);width:100%;text-align:left;padding:var(--space-2) var(--space-3);border:0;border-bottom:1px solid var(--color-divider);background:none;font-family:inherit;font-size:var(--text-sm);cursor:pointer}
+    .t11item:last-child{border-bottom:0}
+    .t11item:hover{background:var(--color-surface-2)}
+    .t11item.is-sel{background:var(--color-primary-subtle)}
+    .t11item .cbo__n{flex:1}
+    /* foco */
+    .foco{flex:1;min-height:0;overflow:auto;padding:var(--space-8)}
+    @keyframes focoin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+    .foco.is-adv{animation:focoin .32s ease}
+    @media(prefers-reduced-motion:reduce){.foco.is-adv{animation:none}}
+    .fpath{font-size:var(--text-xs);color:var(--color-text-muted);text-transform:uppercase;letter-spacing:.04em;margin:0 0 var(--space-3)}
+    .foco h2{margin:0;font-size:var(--text-2xl);font-weight:700;color:var(--color-heading)}
+    .fchips{display:flex;gap:var(--space-2);flex-wrap:wrap;margin:var(--space-4) 0 var(--space-8)}
+    .fld{margin-bottom:var(--space-8)}
+    .fld label,.fld .lb{display:flex;align-items:center;justify-content:space-between;font-size:var(--text-sm);font-weight:600;color:var(--color-heading);margin-bottom:var(--space-2)}
+    .charcount{font-size:var(--text-xs);color:var(--color-text-muted);font-weight:400;font-variant-numeric:tabular-nums}
+    .hint{font-size:var(--text-xs);color:var(--color-text-muted);margin-top:var(--space-2);line-height:1.45}
+    .hint--ia{color:var(--color-primary);display:flex;align-items:center;gap:var(--space-1-5)}
+    .hint--ia svg{width:13px;height:13px;flex:0 0 auto}
+    textarea.input{height:auto;min-height:96px;padding:var(--space-3);line-height:1.5;resize:vertical}
+    .subsec{border-top:1px solid var(--color-divider);padding-top:var(--space-6);margin-top:var(--space-6)}
+    .subsec__toggle{display:inline-flex;align-items:center;gap:var(--space-2);background:none;border:0;font-family:inherit;font-size:var(--text-sm);font-weight:600;color:var(--color-primary);cursor:pointer;padding:0}
+    .subsec__toggle svg{width:15px;height:15px;transition:transform .15s}
+    .subsec__toggle[aria-expanded="true"] svg{transform:rotate(90deg)}
+    .subsec__body{margin-top:var(--space-4)}
+    .vigline{font-size:var(--text-sm);color:var(--color-text-onmuted)}
+    .vigfields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-6);margin-top:var(--space-4);max-width:480px}
+    .vigfields .vf{display:flex;flex-direction:column;gap:var(--space-2)}
+    .vigfields .vf > span{font-size:var(--text-sm);font-weight:600;color:var(--color-heading)}
+    .vigfields input[type="date"]{width:100%}
+    .desrow{display:grid;grid-template-columns:56px 1fr 190px;gap:var(--space-3);align-items:center;margin-top:var(--space-3)}
+    .desrow .cbo{position:relative;display:block}
+    .desrow .cbo .input{width:100%}
+    .desrow .seq{font-variant-numeric:tabular-nums;font-weight:700;color:var(--color-heading);font-size:var(--text-sm)}
+    /* candidatos */
+    .sug{flex:1;min-height:0;padding:var(--space-4);display:flex;flex-direction:column;gap:var(--space-4);overflow:auto}
+    @media(max-width:1180px){.sug{flex:none;max-height:520px}}
+    .cand{border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-4)}
+    .cand.is-sel{border-color:var(--color-primary);box-shadow:0 0 0 3px color-mix(in srgb,var(--color-primary) 18%,transparent)}
+    .cand__top{display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);margin-bottom:var(--space-1)}
+    .cand__code{font-weight:700;color:var(--color-heading);font-variant-numeric:tabular-nums}
+    .cand__conf{font-size:var(--text-2xs);font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:2px var(--space-2);border-radius:var(--radius-pill)}
+    .cand__conf--alta{background:var(--color-success-bg);color:var(--color-success-fg)}
+    .cand__conf--alt{background:var(--color-surface-2);color:var(--color-text-onmuted)}
+    .cand__nm{font-size:var(--text-sm);color:var(--color-text);line-height:1.4;margin:0 0 var(--space-3)}
+    .cand__meter{height:5px;border-radius:var(--radius-pill);background:var(--color-surface-2);overflow:hidden;margin-bottom:var(--space-2)}
+    .cand__meter i{display:block;height:100%;background:var(--color-primary)}
+    .cand__meta{display:flex;align-items:center;gap:var(--space-2);font-size:var(--text-xs);color:var(--color-text-muted);flex-wrap:wrap;margin-bottom:var(--space-3)}
+    .cand__meta b{color:var(--color-text-onmuted);font-weight:600}
+    .cand__why{font-size:var(--text-xs);color:var(--color-text-onmuted);background:var(--color-surface-2);border-radius:var(--radius-base);padding:var(--space-3);line-height:1.5;margin-bottom:var(--space-3)}
+    .cand .btn{width:100%}
+    .cand__sel{display:flex;align-items:center;justify-content:center;gap:var(--space-2);height:var(--control-h);font-size:var(--text-sm);font-weight:600;color:var(--color-success-fg);background:var(--color-success-bg);border-radius:var(--radius-base)}
+    .sug__none{font-size:var(--text-sm);color:var(--color-text-onmuted);background:var(--color-warning-bg);border:1px solid color-mix(in srgb,var(--color-warning-fg) 30%,transparent);border-radius:var(--radius-lg);padding:var(--space-4);line-height:1.5}
+    .sug__search{border-top:1px solid var(--color-divider);padding-top:var(--space-4)}
+    .cbo{position:relative}
+    .cbo__panel{position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:50;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-base);box-shadow:var(--shadow-lg);padding:var(--space-1);max-height:240px;overflow:auto}
+    .cbo__panel[hidden]{display:none}
+    .cbo__panel button{display:flex;gap:var(--space-2);width:100%;text-align:left;padding:var(--space-2) var(--space-3);border:0;background:none;font-family:inherit;font-size:var(--text-sm);border-radius:var(--radius-sm);cursor:pointer}
+    .cbo__panel button:hover{background:var(--color-surface-2)}
+    .cbo__c{font-variant-numeric:tabular-nums;font-weight:600;color:var(--color-heading)}
+    .cbo__n{color:var(--color-text-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .refline{display:flex;align-items:center;gap:var(--space-2);font-size:var(--text-sm);color:var(--color-text-onmuted);flex-wrap:wrap}
+    .refline b{color:var(--color-heading);font-variant-numeric:tabular-nums}
+    /* rodapé */
+    .footstat{font-size:var(--text-sm);color:var(--color-text-muted)}
+    .footstat b{color:var(--color-heading);font-variant-numeric:tabular-nums}
+    .kbd{font-size:var(--text-2xs);border:1px solid var(--color-border);border-bottom-width:2px;border-radius:var(--radius-sm);padding:0 var(--space-1-5);color:var(--color-text-muted);background:var(--color-surface-2)}
+    @media(max-width:1100px){.kbdhint{display:none}}
+    @media(max-width:900px){.footstat{display:none}}
+    /* done */
+    .done{padding:var(--space-14) var(--space-8);text-align:center}
+    .done__ic{width:56px;height:56px;border-radius:50%;background:var(--color-success-bg);color:var(--color-success-fg);display:grid;place-items:center;margin:0 auto var(--space-6)}
+    .done__ic svg{width:28px;height:28px}
+    .done h2{margin:0 0 var(--space-2);font-size:var(--text-2xl);color:var(--color-heading)}
+    .done p{margin:0 0 var(--space-8);color:var(--color-text-muted)}
+    .toast-wrap{position:fixed;bottom:var(--space-6);left:50%;transform:translateX(-50%);z-index:200;display:flex;flex-direction:column;gap:var(--space-2);align-items:center}
+  </style>
+</head>
+<body>
+<style>    #dere-gate .dots{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(2px 2px at 12% 22%,rgba(255,255,255,.06),transparent),radial-gradient(2px 2px at 82% 15%,rgba(255,255,255,.05),transparent),radial-gradient(1.5px 1.5px at 68% 62%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 27% 78%,rgba(255,255,255,.045),transparent),radial-gradient(1.5px 1.5px at 90% 82%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 45% 34%,rgba(255,255,255,.04),transparent),radial-gradient(1.5px 1.5px at 8% 55%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 58% 90%,rgba(255,255,255,.04),transparent)}
+    #dere-gate .card{animation:dereIn .38s cubic-bezier(.2,.7,.2,1) both}
+    @media (prefers-reduced-motion:reduce){#dere-gate .card{animation:none}
+    #dere-gate input:focus{border-color:#1351b4 !important;box-shadow:0 0 0 3px rgba(19,81,180,.18) !important}
+    #dere-gate button:hover{background:#0c326f !important}
+    #dere-gate button:active{transform:translateY(1px)}
+    #dere-gate .dots{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(2px 2px at 12% 22%,rgba(255,255,255,.06),transparent),radial-gradient(2px 2px at 82% 15%,rgba(255,255,255,.05),transparent),radial-gradient(1.5px 1.5px at 68% 62%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 27% 78%,rgba(255,255,255,.045),transparent),radial-gradient(1.5px 1.5px at 90% 82%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 45% 34%,rgba(255,255,255,.04),transparent),radial-gradient(1.5px 1.5px at 8% 55%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 58% 90%,rgba(255,255,255,.04),transparent)}</style>
+<div id="dere-gate" style="position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;padding:24px;font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;background:radial-gradient(120% 120% at 20% 8%,#0c326f 0%,#071d41 55%,#05152e 100%)">
+  <style>
+    #dere-gate .dots{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(2px 2px at 12% 22%,rgba(255,255,255,.06),transparent),radial-gradient(2px 2px at 82% 15%,rgba(255,255,255,.05),transparent),radial-gradient(1.5px 1.5px at 68% 62%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 27% 78%,rgba(255,255,255,.045),transparent),radial-gradient(1.5px 1.5px at 90% 82%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 45% 34%,rgba(255,255,255,.04),transparent),radial-gradient(1.5px 1.5px at 8% 55%,rgba(255,255,255,.05),transparent),radial-gradient(2px 2px at 58% 90%,rgba(255,255,255,.04),transparent)}
+    #dere-gate .card{animation:dereIn .38s cubic-bezier(.2,.7,.2,1) both}
+    @keyframes dereIn{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+    @media (prefers-reduced-motion:reduce){#dere-gate .card{animation:none}}
+    #dere-gate input:focus{border-color:#1351b4 !important;box-shadow:0 0 0 3px rgba(19,81,180,.18) !important}
+    #dere-gate button:hover{background:#0c326f !important}
+    #dere-gate button:active{transform:translateY(1px)}
+  </style>
+  <span class="dots"></span>
+  <form class="card" onsubmit="return dereGate(this)" style="position:relative;background:#fff;padding:38px 34px 26px;border-radius:14px;width:100%;max-width:360px;text-align:center;box-shadow:0 24px 70px -12px rgba(3,17,42,.55)">
+    <div style="font-size:21px;font-weight:800;color:#0b1f3a;letter-spacing:-.01em;font-family:inherit">DeRE</div>
+    <div style="display:inline-flex;align-items:center;gap:6px;color:#5b6b82;font-size:13px;margin:5px 0 22px;font-family:inherit"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Protótipo &middot; acesso restrito</div>
+    <label for="dere-pw" style="display:block;text-align:left;font-size:12.5px;font-weight:600;color:#334155;margin:0 0 6px;font-family:inherit">Senha de acesso</label>
+    <input id="dere-pw" type="password" placeholder="Digite a senha" autofocus autocomplete="off" aria-label="Senha de acesso" style="width:100%;height:44px;border:1px solid #cbd5e1;border-radius:8px;padding:0 14px;font-size:16px;box-sizing:border-box;outline:none;color:#0f172a;background:#fff;font-family:inherit">
+    <div id="dere-err" style="color:#dc2626;font-size:12.5px;min-height:18px;margin-top:8px;text-align:left;display:flex;align-items:center;gap:5px;font-family:inherit"></div>
+    <button type="submit" style="width:100%;height:44px;margin-top:6px;background:#1351b4;color:#fff;border:0;border-radius:8px;font-weight:700;font-size:15px;cursor:pointer;font-family:inherit">Entrar</button>
+    <div style="margin-top:20px;font-size:11.5px;color:#94a3b8;letter-spacing:.02em;font-family:inherit">uma solução Axians</div>
+  </form>
+</div>
+<script>if(localStorage.getItem('dere_ok')==='1'){var _g=document.getElementById('dere-gate');if(_g)_g.remove();}function dereGate(f){var i=f.querySelector('input'),e=document.getElementById('dere-err');if(i.value==='dere123'){localStorage.setItem('dere_ok','1');document.getElementById('dere-gate').remove();}else{e.innerHTML='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 auto"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>Senha incorreta. Tente novamente.';i.select();}return false;}</script>
+  <a class="skip-link" href="#conteudo">Ir para o conteúdo</a>
+  <div class="shell">
+    <nav class="sidenav sidenav--navy" data-sidenav aria-label="Navegação principal">
+      <div class="brandrow"><span class="avatar">a</span><span class="sidenav__label wm">a-DeRE</span></div>
+      <div class="navlist">
+        <p class="sidenav__group">Principal</p>
+        <a class="sidenav__item" href="painel.html" data-tip="Painel de Monitoramento"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg><span class="sidenav__label">Painel de Monitoramento</span></a>
+        <a class="sidenav__item" href="#" data-tip="Minhas empresas"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4M10 10h4M10 14h4M10 18h4"/></svg><span class="sidenav__label">Minhas empresas</span></a>
+        <p class="sidenav__group">Cadastro</p>
+        <a class="sidenav__item" href="info-contribuinte-lista.html" data-tip="Informações do Contribuinte"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg><span class="sidenav__label">Informações do Contribuinte</span></a>
+        <a class="sidenav__item is-active" href="plano-contas-lista.html" data-tip="Plano de contas"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M7 12h14M7 18h14M3 12h.01M3 18h.01"/></svg><span class="sidenav__label">Plano de contas</span></a>
+        <p class="sidenav__group">Declarações</p>
+        <a class="sidenav__item" href="#" data-tip="Declaração mensal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span class="sidenav__label">Declaração mensal</span></a>
+        <a class="sidenav__item" href="#" data-tip="Recibos e envios"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6M16 12h-6M13 16H10"/></svg><span class="sidenav__label">Recibos e envios</span></a>
+        <p class="sidenav__group">Sistema</p>
+        <a class="sidenav__item" href="#" data-tip="Configurações"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg><span class="sidenav__label">Configurações</span></a>
+      </div>
+      <div class="sidenav__foot"><button class="sidenav__item sidenav__toggle" type="button" aria-label="Colapsar menu" data-tip="Colapsar menu" aria-expanded="true" data-sidenav-toggle><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m11 17-5-5 5-5"/><path d="m18 17-5-5 5-5"/></svg><span class="sidenav__label">Colapsar</span></button></div>
+    </nav>
+
+    <div class="col">
+      <header class="topbar">
+        <nav class="bc" aria-label="Trilha de navegação">
+          <a href="plano-contas-lista.html">Plano de contas</a>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+          <a id="bcEmp" href="plano-contas-classificar.html?modo=nova">MAG Seguros</a>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+          <span>Assistente de classificação</span>
+        </nav>
+        <div class="flex items-center gap-1" style="margin-left:auto">
+          <span class="tooltip"><button class="icon-btn" type="button" data-theme-toggle aria-label="Alternar para modo escuro"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg></button><span class="tooltip__bubble" role="tooltip" data-theme-tip>Modo escuro</span></span>
+        </div>
+        <span aria-hidden="true" style="width:1px;height:22px;background:var(--color-divider);flex:0 0 auto"></span>
+        <div class="menu" data-menu>
+          <span class="tooltip tooltip--end"><button class="avatar" aria-haspopup="true" aria-expanded="false" aria-label="Ricardo Alves, abrir menu do usuário">RA</button><span class="tooltip__bubble tooltip__bubble--stack" role="tooltip"><strong>Ricardo Alves</strong>Administrador da conta</span></span>
+          <div class="menu__panel" hidden><div class="menu__head"><p class="menu__head-name">Ricardo Alves</p><p class="menu__head-mail">Administrador da conta</p></div><div class="menu__sep"></div><button class="menu__item">Perfil</button><button class="menu__item">Preferências</button><button class="menu__item menu__item--danger">Sair</button></div>
+        </div>
+      </header>
+
+      <main id="conteudo" tabindex="-1" class="content skip-target">
+        <div class="cadscroll" id="cadscroll">
+          <div class="page-h">
+            <div class="wrap">
+              <div class="titlerow"><h1>Assistente de classificação</h1></div>
+              <p>Sugestão inteligente de codTrib, decisão do analista. Uma conta por vez.</p>
+              <div class="ctxrow" id="ctxRow"></div>
+            </div>
+          </div>
+
+          <div class="wrap">
+            <div class="alert alert--danger" id="fixBanner" hidden style="margin-bottom:var(--space-6)">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+              <div><b>Balancete de out/2026 rejeitado pela Receita (MS1080).</b> A vigência desta conta no PGCC não cobre o período apurado. Ajuste a vigência abaixo e reenvie o balancete.</div>
+            </div>
+
+            <div class="assist" id="assistGrid">
+              <!-- fila -->
+              <aside class="pane pane--fila">
+                <div class="pane__h"><span class="pane__t">Fila de classificação</span><span class="pane__n" id="filaN">—</span></div>
+                <div class="fila" id="fila"></div>
+              </aside>
+
+              <!-- conta em foco -->
+              <section class="pane pane--foco" aria-live="polite">
+                <div class="foco" id="foco"></div>
+              </section>
+
+              <!-- candidatos -->
+              <aside class="pane pane--sug">
+                <div class="pane__h"><span class="pane__t">Sugestão de codTrib</span><span class="pane__n">Tabela 11 · por aderência</span></div>
+                <div class="sug" id="sug"></div>
+              </aside>
+            </div>
+          </div>
+        </div>
+
+        <div class="cadfoot">
+          <div class="cadfoot__inner">
+            <div style="display:flex;align-items:center;gap:var(--space-6)">
+              <a class="btn btn--ghost btn--lg" id="backBtn" href="plano-contas-classificar.html?modo=nova">Voltar ao plano</a>
+              <span class="footstat" id="footStat">—</span>
+            </div>
+            <div class="cadfoot__right">
+              <span class="footstat kbdhint" style="margin-right:var(--space-3)"><span class="kbd">Enter</span> confirma · <span class="kbd">P</span> pula</span>
+              <button class="btn btn--secondary btn--lg" type="button" id="skipBtn">Pular</button>
+              <button class="btn btn--primary btn--lg" type="button" id="okBtn" disabled>Confirmar e avançar</button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div class="toast-wrap" id="toasts" aria-live="polite"></div>
+
+<script>
+  var $=function(id){return document.getElementById(id);};
+  function esc(s){return (''+(s==null?'':s)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
+  function param(k){ var m=new RegExp('[?&]'+k+'=([^&]*)').exec(location.search); return m?decodeURIComponent(m[1]):null; }
+  function nf(n){ return (''+n).replace(/\B(?=(\d{3})+(?!\d))/g,'.'); }
+  function pulse(el){ if(!el) return; el.classList.remove('is-justsel'); void el.offsetWidth; el.classList.add('is-justsel'); setTimeout(function(){ el.classList.remove('is-justsel'); },650); }
+
+  /* ===== dados (idênticos ao classificar, para o estado casar por cCta) ===== */
+  var EMPRESAS={ seg:{nome:'MAG Seguros', ref:'SUSEP'}, fin:{nome:'MAG Finanças', ref:'SUSEP'} };
+  var empId=param('emp')||'seg', EMP=EMPRESAS[empId]||EMPRESAS.seg;
+  var isBig=(param('big')==='1');
+  var CONTAS_SEG=[
+    {cod:'1', nome:'Ativo', nivel:1, tipo:'S'},
+    {cod:'1.1', nome:'Circulante', nivel:2, tipo:'S'},
+    {cod:'1.1.1', nome:'Disponível', nivel:3, tipo:'S'},
+    {cod:'1.1.1.01.001', nome:'Caixa', nivel:4, tipo:'A', nat:'Devedora', status:'sugerida', notax:true, trib:null, tribNome:'Conta não tributável', desc:'Conta patrimonial de disponibilidades, sem incidência tributária.'},
+    {cod:'1.1.2', nome:'Aplicações', nivel:3, tipo:'S'},
+    {cod:'1.1.2.03.001', nome:'Aplicações financeiras · renda fixa', nivel:4, tipo:'A', nat:'Devedora', status:'sugerida', trib:'218010301', tribNome:'Rendimentos de aplicações financeiras', desc:'Aplicações em títulos de renda fixa vinculadas às reservas técnicas.'},
+    {cod:'2', nome:'Passivo', nivel:1, tipo:'S'},
+    {cod:'2.1', nome:'Provisões técnicas', nivel:2, tipo:'S'},
+    {cod:'2.1.3.01.001', nome:'Provisões técnicas · prêmios', nivel:3, tipo:'A', nat:'Credora', status:'semsugestao'},
+    {cod:'3', nome:'Contas de resultado', nivel:1, tipo:'S'},
+    {cod:'3.1', nome:'Prêmios', nivel:2, tipo:'S'},
+    {cod:'3.1.1', nome:'Prêmios emitidos', nivel:3, tipo:'S'},
+    {cod:'3.1.1.01.001', nome:'Prêmios de seguros emitidos', nivel:4, tipo:'A', nat:'Credora', status:'sugerida', trib:'110010101', tribNome:'Prêmios de seguros diretos', desc:'Receita de prêmios de seguros emitidos no ramo de danos.'},
+    {cod:'3.1.1.02.001', nome:'Prêmios de cosseguro aceito', nivel:4, tipo:'A', nat:'Credora', status:'sugerida', trib:'110010101', tribNome:'Prêmios de seguros diretos', desc:'Receita de prêmios recebidos na condição de cosseguradora aceitante.'},
+    {cod:'3.1.2', nome:'Cosseguro cedido', nivel:3, tipo:'S'},
+    {cod:'3.1.2.01.001', nome:'Prêmios de cosseguro cedidos', nivel:4, tipo:'A', nat:'Devedora', status:'sugerida', trib:'110020101', tribNome:'Prêmios de cosseguro cedidos', desc:'Redução de receita pela cessão de prêmios em cosseguro.'},
+    {cod:'3.2', nome:'Receitas financeiras', nivel:2, tipo:'S'},
+    {cod:'3.2.1.01.001', nome:'Receitas financeiras', nivel:3, tipo:'A', nat:'Credora', status:'sugerida', trib:'218010301', tribNome:'Rendimentos de aplicações financeiras', desc:'Receitas de juros e variações de aplicações não vinculadas.'},
+    {cod:'4', nome:'Despesas', nivel:1, tipo:'S'},
+    {cod:'4.1', nome:'Sinistros e comercialização', nivel:2, tipo:'S'},
+    {cod:'4.1.1.01.001', nome:'Sinistros de seguros pagos', nivel:3, tipo:'A', nat:'Devedora', status:'sugerida', trib:'310010101', tribNome:'Sinistros de seguros diretos', desc:'Despesa com indenizações pagas de seguros diretos.'},
+    {cod:'4.1.2.01.001', nome:'Despesas de comercialização', nivel:3, tipo:'A', nat:'Devedora', status:'sugerida', trib:'320010101', tribNome:'Despesas de comercialização de seguros', desc:'Comissões e agenciamento na comercialização de apólices.', aiWhy:'Conta de despesa de comercialização vinculada a prêmios do ramo de danos; padrão de contas SUSEP e natureza devedora de resultado.'},
+    {cod:'4.2', nome:'Administrativas', nivel:2, tipo:'S'},
+    {cod:'4.2.1.03.001', nome:'Despesas administrativas · pessoal', nivel:3, tipo:'A', nat:'Devedora', status:'sugerida', trib:'910010101', tribNome:'Despesas administrativas', desc:'Despesas com pessoal da administração, não vinculadas diretamente ao risco.', aiWhy:'Despesa administrativa geral, por eliminação das contas de risco e comercialização.'}
+  ];
+  var TRIB11=[
+    {c:'110010101', n:'Prêmios de seguros diretos', f:'LC 214/2025, Art. 224, I, a'},
+    {c:'110010203', n:'Prêmios de cosseguro aceito', f:'LC 214/2025, Art. 224, I, b'},
+    {c:'110010301', n:'Prêmios de resseguro aceito', f:'LC 214/2025, Art. 224, I, c'},
+    {c:'110020101', n:'Prêmios de cosseguro cedidos', f:'LC 214/2025, Art. 224, II, a'},
+    {c:'218010101', n:'Receitas financeiras', f:'LC 214/2025, Art. 183, I'},
+    {c:'218010301', n:'Rendimentos de aplicações financeiras', f:'LC 214/2025, Art. 183, II'},
+    {c:'218020101', n:'Variação cambial ativa', f:'LC 214/2025, Art. 183, IV'},
+    {c:'310010101', n:'Sinistros de seguros diretos', f:'LC 214/2025, Art. 228, I'},
+    {c:'310020101', n:'Sinistros de cosseguro', f:'LC 214/2025, Art. 228, II'},
+    {c:'320010101', n:'Despesas de comercialização de seguros', f:'LC 214/2025, Art. 229'},
+    {c:'910010101', n:'Despesas administrativas', f:'LC 214/2025, Art. 231'},
+    {c:'920010101', n:'Despesas tributárias', f:'LC 214/2025, Art. 231, § 2º'}
+  ];
+  var REFPLAN=[
+    {c:'1.01.1.01', n:'Disponível · Caixa e bancos'},
+    {c:'1.02.3.01', n:'Aplicações · Títulos de renda fixa'},
+    {c:'2.02.1.01', n:'Receitas financeiras a apropriar'},
+    {c:'2.03.1.01', n:'Provisões técnicas · prêmios'},
+    {c:'3.01.1.01', n:'Prêmios emitidos'},
+    {c:'3.01.2.01', n:'Prêmios de cosseguro'},
+    {c:'4.01.1.01', n:'Sinistros ocorridos'},
+    {c:'4.02.1.01', n:'Despesas de comercialização'},
+    {c:'4.03.1.01', n:'Despesas administrativas'}
+  ];
+  var REFMAP={'1.1.1.01.001':'1.01.1.01','1.1.2.03.001':'1.02.3.01','2.1.3.01.001':'2.03.1.01','3.1.1.01.001':'3.01.1.01','3.1.1.02.001':'3.01.2.01','3.1.2.01.001':'3.01.2.01','3.2.1.01.001':'2.02.1.01','4.1.1.01.001':'4.01.1.01','4.1.2.01.001':'4.02.1.01','4.2.1.03.001':'4.03.1.01'};
+  function nameOf(list,c){ for(var j=0;j<list.length;j++){ if(list[j].c===c) return list[j].n; } return ''; }
+  function fundOf(c){ for(var j=0;j<TRIB11.length;j++){ if(TRIB11[j].c===c) return TRIB11[j].f; } return 'LC 214/2025'; }
+  function refOf(c){ return c.ref || REFMAP[c.cod] || ''; }
+  function pad(n,w){ var s=''+n; while(s.length<w) s='0'+s; return s; }
+  function buildBig(){
+    var out=[], NAT=['Devedora','Credora'];
+    var L1=[['1','Ativo',0],['2','Passivo',1],['3','Patrimônio líquido',1],['4','Contas de resultado · Receitas',1],['5','Contas de resultado · Despesas',0]];
+    var S2=['Circulante','Não circulante','Operacional','Técnico','Financeiro','Administrativo'];
+    var S3=['Seguros','Cosseguro','Resseguro','Aplicações','Provisões','Comissões'];
+    var RAMO=['Automóvel','Vida','Residencial','Empresarial','Saúde','Rural','Transporte','Fiança','Prestamista','Viagem','RC Geral','Patrimonial','Marítimo','Aeronáutico','Crédito','Garantia estendida','Habitacional','Riscos diversos'];
+    var idx=0;
+    L1.forEach(function(l1){
+      out.push({cod:l1[0],nome:l1[1],nivel:1,tipo:'S'});
+      for(var b=0;b<6;b++){
+        var c2=l1[0]+'.'+(b+1); out.push({cod:c2,nome:S2[b],nivel:2,tipo:'S'});
+        for(var d=0;d<6;d++){
+          var c3=c2+'.'+pad(d+1,2); out.push({cod:c3,nome:S3[d],nivel:3,tipo:'S'});
+          for(var e=0;e<30;e++){
+            idx++; var c4=c3+'.'+pad(e+1,3);
+            var st=(idx%10<8)?'sugerida':'semsugestao';
+            var ramo=RAMO[idx%RAMO.length];
+            var o={cod:c4,nome:S3[d]+' · '+ramo,nivel:4,tipo:'A',nat:NAT[l1[2]],status:st};
+            if(st!=='semsugestao'){ var tr=TRIB11[idx%TRIB11.length]; o.trib=tr.c; o.tribNome=tr.n; o.desc='Conta de '+S3[d].toLowerCase()+' do ramo '+ramo.toLowerCase()+'.'; o.ref=REFPLAN[idx%REFPLAN.length].c; }
+            out.push(o);
+          }
+        }
+      }
+    });
+    return out;
+  }
+
+  /* ===== estado compartilhado ===== */
+  var PSTORE=window.localStorage; var CLS_KEY='adere.pgcc.cls.'+empId, SEED_KEY='adere.pgcc.seed.'+empId, POS_KEY='adere.pgcc.pos.'+empId;
+  /* ?demo=fresh: começa limpo, com o plano recém-importado e pendências reais */
+  if(param('demo')==='fresh'){
+    try{
+      PSTORE.removeItem(CLS_KEY); PSTORE.removeItem(POS_KEY); PSTORE.removeItem('adere.pgcc.extra.'+empId);
+      localStorage.removeItem('adere.d1011.decision.'+empId); localStorage.removeItem('adere.d1011.receita.'+empId);
+      PSTORE.setItem(SEED_KEY, isBig?'big':'small');
+    }catch(e){}
+  }
+  function clsLoad(){ try{ return JSON.parse(PSTORE.getItem(CLS_KEY)||'{}'); }catch(e){ return {}; } }
+  function clsSet(cod,patch){ var m=clsLoad(); m[cod]=Object.assign(m[cod]||{},patch); try{ PSTORE.setItem(CLS_KEY, JSON.stringify(m)); }catch(e){} }
+  var sf=null; try{ sf=PSTORE.getItem(SEED_KEY); }catch(e){}
+  if(sf) isBig=(sf==='big');
+  var DATA = isBig ? buildBig() : CONTAS_SEG.map(function(c){return Object.assign({},c);});
+  (function(){ var m=clsLoad(); DATA.forEach(function(c){ if(m[c.cod]) Object.assign(c,m[c.cod]); }); })();
+
+  /* modo correção (deep-link do painel: rejeição MS1080 de vigência) */
+  var fixMode=(param('fix')==='vig'), fixConta=param('conta');
+  if(fixMode){
+    var found=DATA.filter(function(c){return c.cod===fixConta;})[0];
+    if(!found){ found={cod:fixConta||'3.1.01.001', nome:'Prêmios de seguros emitidos', nivel:4, tipo:'A', nat:'Credora', status:'sugerida', trib:'110010101', tribNome:'Prêmios de seguros diretos', desc:'Receita de prêmios de seguros emitidos.', vigIni:'2026-01-01', vigFim:'2026-09-30'}; DATA.push(found); }
+    else { found.vigFim=found.vigFim||'2026-09-30'; }
+    found._fix=true;
+  }
+
+  /* fila = analíticas pendentes (ou, no modo correção, a conta rejeitada) */
+  var QUEUE = fixMode
+    ? DATA.filter(function(c){ return c._fix; })
+    : DATA.filter(function(c){ return c.tipo==='A' && c.status!=='validada'; });
+  /* com sugestão primeiro (a maioria); as sem sugestão ficam ao final da fila */
+  QUEUE.sort(function(a,b){ var pa=(a.status==='semsugestao')?1:0, pb=(b.status==='semsugestao')?1:0; return pa-pb || (a.cod<b.cod?-1:1); });
+  var TOTAL_Q=QUEUE.length;
+  var pos=0; try{ pos=Math.min(parseInt(PSTORE.getItem(POS_KEY)||'0',10)||0, Math.max(0,QUEUE.length-1)); }catch(e){}
+  var doneSet={}, skipSet={};
+
+  /* contexto (chips) */
+  $('ctxRow').innerHTML=
+    '<span class="ctxtag">Regime · Serviços Financeiros</span>'+
+    '<span class="ctxtag">Plano referencial · '+esc(EMP.ref)+'</span>'+
+    '<span class="ctxtag">Vigência · 01/01/2026 · em aberto</span>'+
+    '<span class="ctxtag">'+esc(EMP.nome)+'</span>';
+  $('bcEmp').textContent=EMP.nome;
+  $('bcEmp').setAttribute('href','plano-contas-classificar.html?modo=nova&emp='+empId+(isBig?'&big=1':''));
+  $('backBtn').setAttribute('href','plano-contas-classificar.html?modo=nova&emp='+empId+(isBig?'&big=1':''));
+  if(fixMode) $('fixBanner').hidden=false;
+  document.title='a-DeRE · '+EMP.nome+' · Assistente de classificação';
+
+  /* ===== estado da conta em foco ===== */
+  var cur=null, sel=null, notax=false, iss=false, vigCustom=false;
+
+  function pathOf(c){
+    var parts=c.cod.split('.'), out=[], acc='';
+    for(var i=0;i<parts.length-1;i++){ acc=acc?(acc+'.'+parts[i]):parts[i];
+      var p=DATA.filter(function(x){return x.cod===acc;})[0]; if(p) out.push(p.nome); }
+    return out.join(' › ');
+  }
+  function candidates(c){
+    if(!c) return [];
+    var out=[], main=c.trib?TRIB11.filter(function(t){return t.c===c.trib;})[0]:null;
+    if(main) out.push({t:main, conf:'alta', score:.43+((c.cod.length*7)%40)/100, why:c.aiWhy||('Classificar neste código as rubricas de '+main.n.toLowerCase()+', conforme o padrão de contas '+EMP.ref+' da atividade preponderante.')});
+    var start=main?TRIB11.indexOf(main):((c.cod.length*3)%TRIB11.length);
+    var nAlt=main?4:5; /* 5 candidatos rankeados no total */
+    for(var k=1;k<=nAlt;k++){
+      var alt=TRIB11[(start+k)%TRIB11.length];
+      var whys=[
+        'Aplicável se as operações desta conta forem de '+alt.n.toLowerCase()+(main?(', e não de '+main.n.toLowerCase()):'')+'.',
+        'Considere este código se houver parcela de '+alt.n.toLowerCase()+' escriturada nesta conta.',
+        'Mesma família na Tabela 11; vale quando a conta registra '+alt.n.toLowerCase()+'.',
+        'Aderência menor pela descrição atual. Confira no dispositivo se ele cobre '+alt.n.toLowerCase()+'.',
+        'Candidato mais distante; use apenas se a natureza real da conta for '+alt.n.toLowerCase()+'.'
+      ];
+      out.push({t:alt, conf:'alt', score:Math.max(.06,(out[0]?out[0].score:.55)-.11*k), why:whys[(k-1)%whys.length]});
+    }
+    /* a descrição refina a ordem: se citar termos de uma alternativa, ela sobe */
+    var d=($('descTa')?$('descTa').value:c.desc||'').toLowerCase();
+    if(d.length>8){ out.sort(function(a,b){ var sa=d.indexOf(a.t.n.split(' ')[0].toLowerCase())>=0?1:0, sb=d.indexOf(b.t.n.split(' ')[0].toLowerCase())>=0?1:0; return (sb-sa)||(b.score-a.score); }); }
+    return out;
+  }
+
+  function renderFila(){
+    var LIMIT=200, items=QUEUE.slice(0,LIMIT);
+    $('filaN').textContent=nf(TOTAL_Q);
+    var CHK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+    var lastCat=null;
+    $('fila').innerHTML=items.map(function(c,i){
+      var st=doneSet[c.cod]?' is-done':(skipSet[c.cod]?' is-skip':'');
+      var cat=(c.status==='semsugestao')?'Sem sugestão da IA':'Com sugestão da IA';
+      var head=(cat!==lastCat)?('<p class="fcat">'+cat+'</p>'):''; lastCat=cat;
+      return head+'<button type="button" class="fitem'+st+(i===pos?' is-cur':'')+'" data-fi="'+i+'" aria-label="'+esc(c.nome)+(doneSet[c.cod]?', classificada':', pendente')+'">'+
+        '<span class="fitem__st" aria-hidden="true">'+(doneSet[c.cod]?CHK:'')+'</span>'+
+        '<span class="fitem__b"><span class="fitem__cod num">'+esc(c.cod)+'</span><br><span class="fitem__nm">'+esc(c.nome)+'</span></span></button>';
+    }).join('') + (QUEUE.length>LIMIT?'<p class="fmore">Mostrando '+LIMIT+' de '+nf(QUEUE.length)+' contas. Use a busca da tabela para saltar direto a uma conta.</p>':'');
+  }
+
+  function renderFoco(){
+    cur=QUEUE[pos]||null;
+    if(!cur){ renderDone(); return; }
+    sel = cur.trib?{c:cur.trib,n:cur.tribNome||nameOf(TRIB11,cur.trib)}:null;
+    notax=!!cur.notax; iss=!!cur.iss; vigCustom=!!(cur.vigIni||cur.vigFim)||!!cur._fix;
+    var chips='<span class="ctxtag">cCta '+esc(cur.cod.replace(/\./g,''))+'</span>'+
+      '<span class="ctxtag">Analítica · '+esc(cur.nat||'')+'</span>'+
+      '<span class="ctxtag">Nível '+esc(cur.nivel)+'</span>'+
+      '<span class="ctxtag">cCtaRef '+esc(refOf(cur)||'a definir')+'</span>'+
+      (cur.trib
+        ? '<span class="ctxtag" style="background:var(--color-primary-subtle);color:var(--color-primary);border-color:transparent">Sugestão da IA · '+esc(cur.trib)+'</span>'
+        : '<span class="ctxtag" style="background:var(--color-warning-bg);color:var(--color-warning-fg);border-color:transparent">Sem sugestão da IA</span>');
+    $('foco').innerHTML=
+      '<p class="fpath">'+esc(pathOf(cur)||EMP.nome)+'</p>'+
+      '<h2>'+esc(cur.nome)+'</h2>'+
+      '<div class="fchips">'+chips+'</div>'+
+      '<div class="fld"><label for="descTa">Descrição da conta (desCta) <span style="display:inline-flex;align-items:center;gap:var(--space-3)"><button class="btn btn--ghost btn--sm" type="button" id="sugDescBtn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg>Sugerir com IA</button><span class="charcount"><span id="descN">0</span>/600</span></span></label>'+
+        '<textarea class="input" id="descTa" maxlength="600" placeholder="Descreva a natureza exata das operações contabilizadas nesta conta.">'+esc(cur.desc||'')+'</textarea>'+
+        '<p class="hint hint--ia"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg>Descrições mais específicas refinam a ordem das sugestões ao lado. Obrigatória em analíticas.</p></div>'+
+      '<label class="check"><input type="checkbox" id="issCk"'+(iss?' checked':'')+'><span>Sujeita a ISSQN (indTribISS). Marque se os valores sofrem incidência de ISS.</span></label>'+
+      '<label class="check" style="margin-top:var(--space-3)"><input type="checkbox" id="notaxCk"'+(notax?' checked':'')+'><span>Conta não tributável (patrimonial, sem codTrib)</span></label>'+
+      '<div class="subsec"><button type="button" class="subsec__toggle" id="vigTg" aria-expanded="'+(vigCustom?'true':'false')+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>Vigência da conta</button>'+
+        '<div class="subsec__body" id="vigBody"'+(vigCustom?'':' hidden')+'>'+
+          '<p class="vigline" id="vigLine"></p>'+
+          '<div class="vigfields">'+
+            '<div class="vf"><span>Início da vigência</span><input class="input" type="date" id="vigIni" aria-label="Início da vigência" value="'+esc(cur.vigIni||'2026-01-01')+'"></div>'+
+            '<div class="vf"><span>Fim da vigência</span><input class="input" type="date" id="vigFim" aria-label="Fim da vigência" value="'+esc(cur.vigFim||'')+'">'+
+              '<label class="check" style="margin-top:var(--space-2)"><input type="checkbox" id="vigOpen"'+(cur.vigFim?'':' checked')+'><span>Vigência em aberto (sem data de fim)</span></label>'+
+            '</div>'+
+          '</div>'+
+        '</div></div>'+
+      '<div class="subsec"><button type="button" class="subsec__toggle" id="mixTg" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>Desdobrar conta mista (cDbrMista)</button>'+
+        '<div class="subsec__body" id="mixBody" hidden>'+
+          '<p class="hint" style="margin:0 0 var(--space-3)">Se esta conta agrega naturezas fiscais distintas (ex.: receitas tributáveis e isentas), desdobre-a. A conta original vira sintética [000] e cada desdobramento vira analítico, herdando a mesma conta referencial.</p>'+
+          '<button class="btn btn--ghost btn--sm" type="button" id="mixSug" style="margin-bottom:var(--space-3)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg>Sugerir desdobramento com IA</button>'+
+          '<div class="desrow" style="font-size:var(--text-xs);color:var(--color-text-muted)"><span>Seq.</span><span>Nome do desdobramento</span><span>codTrib (9 dígitos)</span></div>'+
+          '<div class="desrow"><span class="seq">001</span><input class="input" id="mx1n" placeholder="Ex.: parcela tributável"><span class="cbo"><input class="input num" id="mx1t" maxlength="9" placeholder="Ex.: 110010101" autocomplete="off" role="combobox" aria-expanded="false"><span class="cbo__panel" id="mx1p" hidden></span></span></div>'+
+          '<div class="desrow"><span class="seq">002</span><input class="input" id="mx2n" placeholder="Ex.: parcela isenta"><span class="cbo"><input class="input num" id="mx2t" maxlength="9" placeholder="Ex.: 910010101" autocomplete="off" role="combobox" aria-expanded="false"><span class="cbo__panel" id="mx2p" hidden></span></span></div>'+
+          '<button class="btn btn--secondary btn--sm" type="button" id="mixApply" style="margin-top:var(--space-4)">Aplicar desdobramento</button>'+
+        '</div></div>';
+    syncVigLine();
+    renderSug();
+    renderFila();
+    updateFoot();
+    /* eventos do foco */
+    var ta=$('descTa'); $('descN').textContent=ta.value.length;
+    ta.addEventListener('input',function(){ $('descN').textContent=ta.value.length; renderSug(); updateFoot(); });
+    var sdb=$('sugDescBtn'); if(sdb) sdb.addEventListener('click',function(){
+      var base=(cur.tribNome||nameOf(TRIB11,cur.trib||'')||cur.nome).toLowerCase();
+      ta.value=cur.desc||('Registra as operações de '+base+' da atividade de seguros, conforme o padrão de contas '+EMP.ref+'. Lançamentos de natureza '+(cur.nat||'').toLowerCase()+'.');
+      $('descN').textContent=ta.value.length; renderSug(); updateFoot(); ta.focus();
+      toast('Descrição sugerida pela IA. Revise antes de confirmar.','ok');
+    });
+    $('notaxCk').addEventListener('change',function(){ notax=this.checked; if(notax) sel=null; renderSug(); updateFoot(); });
+    $('issCk').addEventListener('change',function(){ iss=this.checked; });
+    $('vigTg').addEventListener('click',function(){ var open=$('vigBody').hidden; $('vigBody').hidden=!open; this.setAttribute('aria-expanded',String(open)); });
+    $('mixTg').addEventListener('click',function(){ var open=$('mixBody').hidden; $('mixBody').hidden=!open; this.setAttribute('aria-expanded',String(open)); });
+    $('vigOpen').addEventListener('change',function(){ $('vigFim').disabled=this.checked; if(this.checked) $('vigFim').value=''; syncVigLine(); });
+    $('vigFim').disabled=$('vigOpen').checked;
+    $('vigIni').addEventListener('change',syncVigLine); $('vigFim').addEventListener('change',syncVigLine);
+    $('mixApply').addEventListener('click',applyMix);
+    function wireMx(inpId,panelId){
+      var inp=$(inpId), pan=$(panelId); if(!inp||!pan) return;
+      function rend(){
+        var q=(inp.value||'').toLowerCase();
+        pan.innerHTML=TRIB11.filter(function(o){return !q||o.c.indexOf(q)>=0||o.n.toLowerCase().indexOf(q)>=0;}).map(function(o){
+          return '<button type="button" data-mx="'+esc(o.c)+'"><span class="cbo__c">'+esc(o.c)+'</span><span class="cbo__n">'+esc(o.n)+'</span></button>';
+        }).join('')||'<div style="padding:var(--space-2) var(--space-3);font-size:var(--text-sm);color:var(--color-text-muted)">Nenhum código</div>';
+      }
+      inp.addEventListener('focus',function(){ rend(); pan.hidden=false; inp.setAttribute('aria-expanded','true'); });
+      inp.addEventListener('input',function(){ rend(); pan.hidden=false; });
+      inp.addEventListener('blur',function(){ setTimeout(function(){ pan.hidden=true; inp.setAttribute('aria-expanded','false'); },160); });
+      pan.addEventListener('mousedown',function(e){ var b=e.target.closest('[data-mx]'); if(!b) return; e.preventDefault(); inp.value=b.getAttribute('data-mx'); pan.hidden=true; });
+    }
+    wireMx('mx1t','mx1p'); wireMx('mx2t','mx2p');
+    var ms=$('mixSug'); if(ms) ms.addEventListener('click',function(){
+      var cd=candidates(cur);
+      if(cd.length<2){ toast('Sem candidatos suficientes; busque os códigos na Tabela 11.','warn'); return; }
+      $('mx1n').value=cd[0].t.n; $('mx1t').value=cd[0].t.c;
+      $('mx2n').value=cd[1].t.n; $('mx2t').value=cd[1].t.c;
+      toast('Desdobramento sugerido com os dois codTrib mais aderentes. Ajuste nomes e códigos se precisar.','ok');
+    });
+    if(cur._fix){ $('vigBody').hidden=false; $('vigTg').setAttribute('aria-expanded','true'); $('vigOpen').checked=false; $('vigFim').disabled=false; }
+  }
+  function syncVigLine(){
+    var i=$('vigIni')?$('vigIni').value:'2026-01-01', f=$('vigFim')?$('vigFim').value:'';
+    var herd=(i==='2026-01-01' && !f);
+    $('vigLine').innerHTML=herd
+      ? 'Herdada do plano: <b>01/01/2026 · em aberto</b>. Altere apenas se esta conta tiver vigência própria (conta extinta ou criada no meio do período).'
+      : 'Vigência específica desta conta. O balancete só aceita a conta em períodos cobertos por ela (regra MS1080).';
+  }
+  function applyMix(){
+    var n1=$('mx1n').value.trim(), t1=$('mx1t').value.trim(), n2=$('mx2n').value.trim(), t2=$('mx2t').value.trim();
+    if(!n1||!/^\d{9}$/.test(t1)||!n2||!/^\d{9}$/.test(t2)){ toast('Preencha os dois desdobramentos com nome e codTrib de 9 dígitos.','warn'); return; }
+    var ref=refOf(cur)||REFPLAN[0].c, base=cur.cod, desc=($('descTa').value||'Desdobramento de conta mista.');
+    var extra=[]; try{ extra=JSON.parse(PSTORE.getItem('adere.pgcc.extra.'+empId)||'[]'); }catch(e){}
+    extra.push({cod:base+'.001', nome:cur.nome+' · '+n1, nivel:(cur.nivel||4)+1, tipo:'A', nat:cur.nat, status:'validada', trib:t1, tribNome:nameOf(TRIB11,t1)||'codTrib '+t1, desc:desc, ref:ref, sup:base});
+    extra.push({cod:base+'.002', nome:cur.nome+' · '+n2, nivel:(cur.nivel||4)+1, tipo:'A', nat:cur.nat, status:'validada', trib:t2, tribNome:nameOf(TRIB11,t2)||'codTrib '+t2, desc:desc, ref:ref, sup:base});
+    try{ PSTORE.setItem('adere.pgcc.extra.'+empId, JSON.stringify(extra)); }catch(e){}
+    clsSet(cur.cod,{status:'validada', tipo:'S', mista:true, trib:null, desc:desc, ref:ref});
+    doneSet[cur.cod]=1; toast('Conta desdobrada: [000] vira sintética; 001 e 002 entram como analíticas com a mesma conta referencial.','ok');
+    advance();
+  }
+  function renderSug(){
+    var list=candidates(cur);
+    if(notax){
+      $('sug').innerHTML='<div class="sug__none"><b>Conta marcada como não tributável.</b> Sem codTrib; a conta segue no PGCC como patrimonial. Desmarque para voltar às sugestões.</div>';
+      return;
+    }
+    var html='';
+    if(!list.length || (cur && cur.status==='semsugestao' && !sel)){
+      html+='<div class="sug__none"><b>Sem candidato com confiança suficiente.</b> Não encontramos correspondência no de-para '+esc(EMP.ref)+' × Tabela 11. Escreva a descrição e busque o código manualmente abaixo.</div>';
+    }
+    html+=list.map(function(cd,i){
+      var isSel=sel && sel.c===cd.t.c;
+      return '<div class="cand'+(isSel?' is-sel':'')+'" data-c="'+esc(cd.t.c)+'">'+
+        '<div class="cand__top"><span class="cand__code num">'+esc(cd.t.c)+'</span><span class="cand__conf cand__conf--'+(cd.conf==='alta'?'alta':'alt')+'">'+(cd.conf==='alta'?'Alta':'Alternativa')+'</span></div>'+
+        '<p class="cand__nm">'+esc(cd.t.n)+'</p>'+
+        '<div class="cand__meter" role="img" aria-label="Aderência '+Math.round(cd.score*100)+'%"><i style="width:'+Math.round(cd.score*100)+'%"></i></div>'+
+        '<div class="cand__meta"><span>Aderência '+cd.score.toFixed(2)+'</span><span>·</span><span>Fund.: <b>'+esc(cd.t.f)+'</b></span></div>'+
+        '<div class="cand__why">'+esc(cd.why)+'</div>'+
+        (isSel
+          ? '<div class="cand__sel" role="status"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Selecionado</div>'
+          : '<button class="btn btn--secondary" type="button" data-pick="'+esc(cd.t.c)+'">Selecionar este codTrib</button>')+'</div>';
+    }).join('');
+    html+='<div class="sug__search"><div class="fld" style="margin:0"><label for="findTrib">Tabela 11 · todos os códigos <span class="charcount">665 na tabela oficial</span></label>'+
+      '<input class="input" id="findTrib" placeholder="Filtrar por código ou descrição" autocomplete="off">'+
+      '<div class="t11list" id="t11List"></div></div>'+
+      '<div class="refline" style="margin-top:var(--space-4)">Conta referencial ('+esc(EMP.ref)+'): <b>'+esc(refOf(cur)||REFPLAN[0].c)+'</b> · <span style="color:var(--color-text-muted)">'+esc(nameOf(REFPLAN,refOf(cur)||REFPLAN[0].c))+'</span></div></div>';
+    $('sug').innerHTML=html;
+    $('sug').querySelectorAll('[data-pick]').forEach(function(b){ b.addEventListener('click',function(){ sel={c:b.getAttribute('data-pick'), n:nameOf(TRIB11,b.getAttribute('data-pick'))}; notax=false; if($('notaxCk')) $('notaxCk').checked=false; renderSug(); updateFoot(); pulse(document.querySelector('.cand.is-sel')||document.querySelector('.t11item.is-sel')); }); });
+    /* lista completa da Tabela 11, sempre visível (não escondida atrás da busca) */
+    var fi=$('findTrib'), fl=$('t11List');
+    function rendT11(){
+      var q=(fi.value||'').toLowerCase();
+      var m=TRIB11.filter(function(o){ return !q || o.c.indexOf(q)>=0 || o.n.toLowerCase().indexOf(q)>=0; });
+      fl.innerHTML=m.map(function(o){
+        var isSel=sel&&sel.c===o.c;
+        return '<button type="button" class="t11item'+(isSel?' is-sel':'')+'" data-fc="'+esc(o.c)+'"><span class="cbo__c">'+esc(o.c)+'</span><span class="cbo__n">'+esc(o.n)+'</span>'+(isSel?'<span class="xmeta" style="color:var(--color-primary);font-weight:700">Selecionado</span>':'')+'</button>';
+      }).join('')||'<div style="padding:var(--space-3);font-size:var(--text-sm);color:var(--color-text-muted)">Nenhum código encontrado com esse filtro.</div>';
+    }
+    if(fi){
+      rendT11();
+      fi.addEventListener('input',rendT11);
+      fl.addEventListener('click',function(e){ var b=e.target.closest('[data-fc]'); if(!b) return; sel={c:b.getAttribute('data-fc'), n:nameOf(TRIB11,b.getAttribute('data-fc'))}; notax=false; if($('notaxCk')) $('notaxCk').checked=false; renderSug(); updateFoot(); var nf2=$('findTrib'); if(nf2){ nf2.value=fi.value; } pulse(document.querySelector('.t11item.is-sel')); });
+    }
+  }
+  function valid(){
+    if(!cur) return false;
+    var d=($('descTa')?$('descTa').value:'').trim();
+    return d.length>0 && (notax || !!sel);
+  }
+  function updateFoot(){
+    var ok=$('okBtn'); ok.disabled=!valid();
+    $('footStat').innerHTML = cur
+      ? (sel?('Selecionado: <b>'+esc(sel.c)+'</b> · '+esc(sel.n)):(notax?'<b>Não tributável</b> (sem codTrib)':'Nenhum codTrib definido'))+' · <b>'+nf(Object.keys(doneSet).length)+'</b> de '+nf(TOTAL_Q)+' nesta sessão'
+      : '';
+  }
+  function advance(){
+    QUEUE.splice(pos,1);
+    if(pos>=QUEUE.length) pos=0;
+    try{ PSTORE.setItem(POS_KEY, String(pos)); }catch(e){}
+    renderFoco();
+  }
+  var lastConfirmTs=0;
+  function confirmCur(){
+    var nowTs=Date.now(); if(nowTs-lastConfirmTs<600) return; lastConfirmTs=nowTs;
+    if(!valid()) return;
+    var d=$('descTa').value.trim(), vi=$('vigIni').value, vf=$('vigOpen').checked?'':$('vigFim').value;
+    if(vf && vf<vi){ toast('O fim da vigência não pode ser anterior ao início (MS1078).','warn'); return; }
+    clsSet(cur.cod,{status:'validada', trib:notax?null:sel.c, tribNome:notax?'Conta não tributável':sel.n, notax:notax, iss:iss, desc:d, ref:refOf(cur)||REFPLAN[0].c, vigIni:(vi!=='2026-01-01'||vf)?vi:null, vigFim:vf||null});
+    doneSet[cur.cod]=1;
+    if(cur._fix){ toast('Vigência ajustada. Reenvie o balancete de out/2026.','ok'); setTimeout(function(){ window.location.href='painel.html'; }, 900); return; }
+    var prevCod=cur.cod;
+    advance();
+    var novo=QUEUE[pos];
+    toast(novo ? ('Conta '+prevCod+' validada. Agora: '+novo.cod+' · '+novo.nome+'.') : ('Conta '+prevCod+' validada. Fila concluída.'),'ok');
+    var f=$('foco'); if(f){ f.classList.remove('is-adv'); void f.offsetWidth; f.classList.add('is-adv'); }
+    var curEl=document.querySelector('.fitem.is-cur'); if(curEl) pulse(curEl);
+  }
+  function renderDone(){
+    /* fila vazia: volta sempre para a tabela do plano (visão de conferência) */
+    try{ PSTORE.setItem('adere.pgcc.step.'+empId,'tabela'); }catch(e){}
+    $('foco').innerHTML='<div class="done"><span class="done__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span>'+
+      '<h2>Tudo classificado</h2><p>Todas as contas da fila foram tratadas. Abrindo a tabela do plano para a conferência final…</p></div>';
+    $('sug').innerHTML='<p class="fmore" style="padding:var(--space-4)">Nada a sugerir. A fila está vazia.</p>';
+    $('okBtn').disabled=true; $('skipBtn').disabled=true; $('footStat').innerHTML='<b>'+nf(Object.keys(doneSet).length)+'</b> contas classificadas nesta sessão';
+    renderFila();
+    setTimeout(function(){ window.location.href='plano-contas-classificar.html?modo=nova&emp='+empId+(isBig?'&big=1':''); }, 900);
+  }
+
+  $('skipBtn').addEventListener('click',function(){ if(!cur) return; skipSet[cur.cod]=1; QUEUE.push(QUEUE.splice(pos,1)[0]); renderFoco(); toast('Conta pulada. Ela volta ao fim da fila.','ok'); });
+  $('okBtn').addEventListener('click',confirmCur);
+  document.addEventListener('keydown',function(e){
+    if(e.target && /TEXTAREA|INPUT/.test(e.target.tagName) && e.key!=='Enter') return;
+    if(e.key==='Enter' && !e.shiftKey && valid()){ e.preventDefault(); confirmCur(); }
+    if((e.key==='p'||e.key==='P') && !/TEXTAREA|INPUT/.test((e.target&&e.target.tagName)||'')){ $('skipBtn').click(); }
+  });
+  document.addEventListener('click',function(e){ var f=e.target.closest('[data-fi]'); if(f){ pos=+f.getAttribute('data-fi'); try{ PSTORE.setItem(POS_KEY,String(pos)); }catch(er){} renderFoco(); } });
+
+  function toast(msg,kind){
+    var box=$('toasts');
+    /* um toast por vez: o novo substitui o anterior (não empilha) */
+    while(box.firstChild) box.firstChild.remove();
+    var el=document.createElement('div');
+    el.className='toast '+(kind==='ok'?'toast--success':'toast--warning'); el.setAttribute('role','status');
+    el.innerHTML='<span>'+esc(msg)+'</span>';
+    $('toasts').appendChild(el);
+    setTimeout(function(){ el.remove(); }, 2800);
+  }
+
+  /* shell */
+  document.querySelectorAll('[data-sidenav-toggle]').forEach(function(btn){ var nav=btn.closest('[data-sidenav]'); btn.addEventListener('click',function(){ var c=nav.classList.toggle('is-collapsed'); btn.setAttribute('aria-expanded',String(!c)); }); });
+  document.querySelectorAll('[data-theme-toggle]').forEach(function(btn){ btn.addEventListener('click',function(){ var dark=document.documentElement.classList.toggle('dark'); document.documentElement.setAttribute('data-theme',dark?'dark':'light'); }); });
+  document.querySelectorAll('[data-menu]').forEach(function(m){ var b=m.querySelector('.avatar'), p=m.querySelector('.menu__panel'); if(!b||!p) return; b.addEventListener('click',function(){ var open=p.hasAttribute('hidden'); if(open){p.removeAttribute('hidden');b.setAttribute('aria-expanded','true');}else{p.setAttribute('hidden','');b.setAttribute('aria-expanded','false');} }); document.addEventListener('click',function(ev){ if(!m.contains(ev.target)){p.setAttribute('hidden','');b.setAttribute('aria-expanded','false');} }); });
+
+  renderFoco();
+</script>
+</body>
+</html>
