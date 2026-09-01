@@ -641,6 +641,11 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 .cselect__chev{flex:0 0 auto;display:grid;place-items:center;line-height:0;color:var(--color-text-muted);transition:transform .18s}
 .cselect__trigger[aria-expanded="true"] .cselect__chev{transform:rotate(180deg)}
 .cselect .combo__media{color:var(--color-text-muted)}
+.cselect__panel{position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:40;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-base);box-shadow:var(--shadow-lg);padding:var(--space-1);max-height:280px;overflow:auto}
+.cselect__panel[hidden]{display:none}
+.cselect__panel [role=option]{display:block;width:100%;text-align:left;padding:var(--space-2) var(--space-3);border:0;background:none;font-family:inherit;font-size:var(--text-sm);color:var(--color-text);cursor:pointer;border-radius:var(--radius-sm)}
+.cselect__panel [role=option]:hover{background:var(--color-surface-2)}
+.cselect__panel [role=option].is-selected{background:var(--color-primary-subtle);color:var(--color-primary);font-weight:600}
 
 /* Multiselect (busca + chips + opções com checkbox) — ex.: escolher vários codTrib */
 .ms{position:relative;max-width:460px}

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Informações do Contribuinte</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=17">
+  <link rel="stylesheet" href="../design-system/ds.css?v=18">
   <script src="../design-system/ds-tailwind.js"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
@@ -49,7 +49,8 @@
     .tablewrap{overflow-x:auto}
     .table{margin:0}
     .table td{padding-top:var(--space-4);padding-bottom:var(--space-4)}
-    .celltitle{font-size:var(--text-sm);font-weight:600;color:var(--color-heading);white-space:nowrap}
+    .celltitle{font-size:var(--text-base);font-weight:600;color:var(--color-heading);white-space:nowrap}
+    .cellcnpj{font-size:var(--text-sm);color:var(--color-text-muted);font-variant-numeric:tabular-nums;margin-top:2px;white-space:nowrap}
     .cellsub{font-size:var(--text-xs);color:var(--color-text-muted);font-variant-numeric:tabular-nums;margin-top:2px}
     .evemp{display:flex;align-items:center;gap:var(--space-3)}
     .evemp > div{min-width:0}
@@ -71,9 +72,8 @@
     .table th:last-child{position:sticky;right:0;background:var(--color-surface);z-index:3;box-shadow:-1px 0 0 var(--color-border)}
     .table tbody tr[data-href]:hover .col-act{background:var(--color-primary-subtle)}
     .table th.sortable{white-space:nowrap}
-    /* texto base da tabela a 16px e cabeçalhos a 14px (nesta tela) */
+    /* texto base da tabela a 16px; cabeçalhos ficam nos 12px do DS (--text-xs) */
     .table td{font-size:var(--text-base)}
-    .table th{font-size:var(--text-sm)}
     /* barra de filtros: busca + status */
     .filters{display:flex;align-items:center;gap:var(--space-3);padding:0 var(--space-6) var(--space-6);flex-wrap:wrap}
     .filters__search{position:relative;flex:1;min-width:240px;max-width:440px}
@@ -189,8 +189,6 @@
         </div>
 
         <div class="wrap">
-          <div class="stats" id="stats"></div>
-
           <section class="card" aria-labelledby="lst-h">
             <div class="card__h">
               <div>
@@ -221,7 +219,6 @@
                 <thead>
                   <tr>
                     <th scope="col" class="sortable is-sorted" data-sort="emp" aria-sort="ascending" tabindex="0" role="button">Empresa <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></th>
-                    <th scope="col" class="sortable" data-sort="cnpj" aria-sort="none" tabindex="0" role="button">CNPJ <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></th>
                     <th scope="col" class="sortable" data-sort="regime" aria-sort="none" tabindex="0" role="button">Regime principal <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></th>
                     <th scope="col" class="sortable" data-sort="ver" aria-sort="none" tabindex="0" role="button">Versão vigente <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></th>
                     <th scope="col" class="sortable" data-sort="sit" aria-sort="none" tabindex="0" role="button">Status <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></th>
@@ -332,7 +329,7 @@
   function renderRows(){
     var rows=viewRows();
     if(!rows.length){
-      document.getElementById('rows').innerHTML='<tr class="rows-empty"><td colspan="7">Nenhuma empresa encontrada com os filtros atuais.</td></tr>';
+      document.getElementById('rows').innerHTML='<tr class="rows-empty"><td colspan="6">Nenhuma empresa encontrada com os filtros atuais.</td></tr>';
       return;
     }
     document.getElementById('rows').innerHTML=rows.map(function(e){
@@ -351,8 +348,7 @@
         ? '<a class="btn btn--primary rowbtn" href="'+href+'">Preencher</a>'
         : '<a class="btn btn--secondary rowbtn" href="'+href+'">Ver detalhe</a>';
       return '<tr data-href="'+href+'">'+
-        '<td><div class="evemp">'+logoHtml(e)+'<div><div class="celltitle">'+esc(e.nome)+'</div></div></div></td>'+
-        '<td><span class="cnpj-col">'+esc(e.cnpj)+'</span></td>'+
+        '<td><div class="evemp">'+logoHtml(e)+'<div><div class="celltitle">'+esc(e.nome)+'</div><div class="cellcnpj">'+esc(e.cnpj)+'</div></div></div></td>'+
         '<td>'+regime+'</td>'+
         '<td>'+versao+'</td>'+
         '<td>'+situacaoCell(e)+'</td>'+
@@ -369,7 +365,7 @@
     });
   }
 
-  function renderAll(){ renderStats(); renderRows(); }
+  function renderAll(){ renderRows(); }
   renderAll();
 
   /* Cenário (só demonstração): Populado x Primeiro acesso — overlay flutuante, fora da interface */
