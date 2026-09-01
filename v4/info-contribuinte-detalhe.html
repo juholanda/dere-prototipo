@@ -349,7 +349,8 @@
   function dparam(k){ var m=new RegExp('[?&]'+k+'=([^&]+)').exec(location.search); return m?decodeURIComponent(m[1]):''; }
   (function(){
     var emp=dparam('emp')||'seg';
-    var bl=$('backLink'); if(bl) bl.setAttribute('href', dparam('from')==='painel' ? 'painel.html?sent=d1001' : ('info-contribuinte-empresa.html?emp='+emp));
+    /* painel fechado por ora: o retorno do fluxo é sempre a lista de Informações do Contribuinte */
+    var bl=$('backLink'); if(bl){ var _from=dparam('from'); bl.setAttribute('href', _from==='empresa' ? ('info-contribuinte-empresa.html?emp='+emp) : 'info-contribuinte-lista.html'); }
     /* abre no estado real da versão clicada (não sempre "Em revisão") */
     var st=dparam('st'); render(STATES[st]?st:'revisao');
   })();

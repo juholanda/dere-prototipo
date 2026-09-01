@@ -51,8 +51,9 @@
     .tablewrap{overflow-x:auto}
     .table{margin:0}
     /* larguras estáveis: colunas não pulam ao trocar de cenário */
-    .table--fixed{table-layout:fixed;min-width:860px}
-    .table--fixed td{overflow:hidden;text-overflow:ellipsis}
+    .table--fixed{table-layout:fixed;min-width:920px}
+    /* só as células de texto truncam; a coluna de ação nunca clipa o botão */
+    .table--fixed td:not(.col-act){overflow:hidden;text-overflow:ellipsis}
     .table td{padding-top:var(--space-4);padding-bottom:var(--space-4)}
     .celltitle{font-size:var(--text-base);font-weight:600;color:var(--color-heading);white-space:nowrap}
     .cellcnpj{font-size:var(--text-sm);color:var(--color-text-muted);font-variant-numeric:tabular-nums;margin-top:2px;white-space:nowrap}
@@ -201,7 +202,7 @@
             <div class="tablewrap">
               <table class="table table--fixed">
                 <colgroup>
-                  <col style="width:30%"><col style="width:20%"><col style="width:16%"><col style="width:16%"><col style="width:12%"><col style="width:6%">
+                  <col style="width:28%"><col style="width:18%"><col style="width:15%"><col style="width:15%"><col style="width:12%"><col style="width:12%">
                 </colgroup>
                 <thead>
                   <tr>
