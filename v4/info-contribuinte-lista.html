@@ -75,7 +75,8 @@
     /* texto base da tabela a 16px; cabeçalhos ficam nos 12px do DS (--text-xs) */
     .table td{font-size:var(--text-base)}
     /* barra de filtros: busca + status */
-    .filters{display:flex;align-items:center;gap:var(--space-3);padding:0 var(--space-6) var(--space-6);flex-wrap:wrap}
+    .filters{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-4) var(--space-6) var(--space-8);flex-wrap:wrap}
+    .filters__clear{margin-left:auto}
     .filters__search{position:relative;flex:1;min-width:240px;max-width:440px}
     .filters__search .input{padding-left:var(--space-10)}
     .filters__search-ic{position:absolute;left:var(--space-3);top:50%;transform:translateY(-50%);color:var(--color-text-muted);display:flex;pointer-events:none}
@@ -212,7 +213,7 @@
                   <button type="button" role="option" data-val="rejeitado">Rejeitado</button>
                 </div>
               </div>
-              <button class="btn btn--ghost btn--sm" type="button" id="btnClear" hidden>Limpar filtros</button>
+              <button class="btn btn--ghost btn--sm filters__clear" type="button" id="btnClear" disabled>Limpar filtros</button>
             </div>
             <div class="tablewrap">
               <table class="table">
@@ -395,7 +396,7 @@
   /* Filtros: busca + status (cselect do DS) */
   (function(){
     var qEl=document.getElementById('q'), clearEl=document.getElementById('btnClear');
-    function syncClear(){ if(clearEl) clearEl.hidden=!(query||filterSit); }
+    function syncClear(){ if(clearEl) clearEl.disabled=!(query||filterSit); }
     if(qEl) qEl.addEventListener('input',function(){ query=this.value.trim(); syncClear(); renderRows(); });
     function initCselect(cs, onSelect){
       if(!cs) return;
