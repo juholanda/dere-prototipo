@@ -476,7 +476,7 @@
         </div>
         <div class="fld">
           <label for="cnpj">CNPJ <span class="field__req">*</span></label>
-          <input class="input input--lg" id="cnpj" inputmode="numeric" placeholder="Ex.: 00.000.000/0000-00" autocomplete="off" required aria-required="true">
+          <input class="input input--lg" id="cnpj" inputmode="numeric" placeholder="Ex.: 33.608.308/0001-73" autocomplete="off" required aria-required="true">
           <p class="fldmsg" id="cnpjmsg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Informe um CNPJ válido (14 dígitos).</p>
           <p class="fld__help" id="cnpjHelp">Os dados cadastrais da empresa serão preenchidos automaticamente.</p>
         </div>
@@ -648,8 +648,16 @@
       setTimeout(function(){ ro.style.transition=''; ro.style.height=''; ro.style.overflow=''; ro.style.opacity=''; }, 340);
     }
     function fillFromCNPJ(d){
-      var rec=CNPJDB[d]||{razao:"Empresa "+d.slice(0,8)+" Ltda.",fant:"—",nat:"Sociedade Empresária Limitada",porte:"Demais"};
-      $('roCnpj').textContent=maskCNPJ(d); $('roRazao').textContent=rec.razao; $('roFant').textContent=rec.fant||'—'; $('roNat').textContent=rec.nat||'—';
+      /* Protótipo: a consulta à Receita devolve sempre uma empresa real.
+         CNPJ conhecido → seus dados; CNPJ qualquer → a próxima empresa MAG ainda não adicionada. */
+      var rec=CNPJDB[d], shownCnpj=d;
+      if(!rec){
+        var usados={}; companies.forEach(function(c){ usados[onlyDigits(c.cnpj)]=1; });
+        var livre=Object.keys(CNPJDB).filter(function(k){ return !usados[k]; });
+        var pick=(livre[0]||Object.keys(CNPJDB)[0]);
+        rec=CNPJDB[pick]; shownCnpj=pick;
+      }
+      $('roCnpj').textContent=maskCNPJ(shownCnpj); $('roRazao').textContent=rec.razao; $('roFant').textContent=rec.fant||'—'; $('roNat').textContent=rec.nat||'—';
       showRo(); if($('cnpjHelp'))$('cnpjHelp').hidden=true;
     }
     var LOGO_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>';
@@ -757,7 +765,7 @@
       var hasPrep=resp.some(function(p){return (p.perfis||[]).indexOf('Preparador')>=0;});
       var hasAprov=resp.some(function(p){return (p.perfis||[]).indexOf('Aprovador')>=0;});
       if(!hasPrep||!hasAprov){ $('respMsg').classList.add('show'); return; }
-      var obj={ cnpj:maskCNPJ(d), razao:$('roRazao').textContent, resp:resp.filter(function(p){return !p._new;}).map(function(p){return {nome:p.nome,email:p.email,perfis:(p.perfis||[]).slice(),admin:p.admin};}), logo:logoData };
+      var obj={ cnpj:$('roCnpj').textContent||maskCNPJ(d), razao:$('roRazao').textContent, resp:resp.filter(function(p){return !p._new;}).map(function(p){return {nome:p.nome,email:p.email,perfis:(p.perfis||[]).slice(),admin:p.admin};}), logo:logoData };
       if(editIndex>=0){ companies[editIndex]=obj; } else { companies.push(obj); }
       closeDrawer(); renderCompanies();
     });
