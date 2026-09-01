@@ -74,6 +74,14 @@
     /* texto base da tabela a 16px e cabeçalhos a 14px (nesta tela) */
     .table td{font-size:var(--text-base)}
     .table th{font-size:var(--text-sm)}
+    /* barra de filtros: busca + status */
+    .filters{display:flex;align-items:center;gap:var(--space-3);padding:0 var(--space-6) var(--space-6);flex-wrap:wrap}
+    .filters__search{position:relative;flex:1;min-width:240px;max-width:440px}
+    .filters__search .input{padding-left:var(--space-10)}
+    .filters__search-ic{position:absolute;left:var(--space-3);top:50%;transform:translateY(-50%);color:var(--color-text-muted);display:flex;pointer-events:none}
+    .filters__search-ic svg{width:18px;height:18px}
+    .filters__sit{min-width:220px}
+    .rows-empty td{padding:var(--space-10) var(--space-4);text-align:center;color:var(--color-text-muted);font-size:var(--text-base)}
     /* mesmas margens do cabeçalho do card (space-6) nas extremidades da tabela */
     .card__h{padding:var(--space-6) var(--space-4) var(--space-6)}
     .table th:first-child,.table td:first-child{padding-left:var(--space-4)}
@@ -190,6 +198,24 @@
                 <p class="card__hint">Situação da informação do contribuinte por empresa.</p>
               </div>
             </div>
+            <div class="filters">
+              <div class="filters__search">
+                <span class="filters__search-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span>
+                <input class="input" id="q" type="search" placeholder="Buscar empresa ou CNPJ" autocomplete="off" aria-label="Buscar empresa ou CNPJ">
+              </div>
+              <div class="cselect filters__sit" data-cselect>
+                <button class="cselect__trigger" type="button" data-cselect-btn aria-haspopup="listbox" aria-expanded="false" aria-label="Filtrar por status"><span class="cselect__value" data-cselect-label>Todos os status</span><span class="cselect__chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span></button>
+                <div class="cselect__panel" data-cselect-panel hidden role="listbox">
+                  <button type="button" role="option" data-val="" class="is-selected">Todos os status</button>
+                  <button type="button" role="option" data-val="naoenviada">Não iniciada</button>
+                  <button type="button" role="option" data-val="revisao">Em revisão</button>
+                  <button type="button" role="option" data-val="sucesso">Processado com sucesso</button>
+                  <button type="button" role="option" data-val="avisos">Processado com adv.</button>
+                  <button type="button" role="option" data-val="rejeitado">Rejeitado</button>
+                </div>
+              </div>
+              <button class="btn btn--ghost btn--sm" type="button" id="btnClear" hidden>Limpar filtros</button>
+            </div>
             <div class="tablewrap">
               <table class="table">
                 <thead>
@@ -295,9 +321,21 @@
       default:       return e.nome.toLowerCase();
     }
   }
-  function viewRows(){ var arr=curEmp().slice(); var dir=listSort.dir==='asc'?1:-1; arr.sort(function(a,b){var va=sortVal(a),vb=sortVal(b); if(va<vb)return -1*dir; if(va>vb)return 1*dir; return a.nome<b.nome?-1:1;}); return arr; }
+  /* filtros: busca (nome/CNPJ) + status */
+  var query='', filterSit='';
+  function matchFilters(e){
+    if(filterSit && e.sit!==filterSit) return false;
+    if(query){ var q=query.toLowerCase(); if((e.nome||'').toLowerCase().indexOf(q)<0 && (e.cnpj||'').toLowerCase().indexOf(q)<0) return false; }
+    return true;
+  }
+  function viewRows(){ var arr=curEmp().filter(matchFilters); var dir=listSort.dir==='asc'?1:-1; arr.sort(function(a,b){var va=sortVal(a),vb=sortVal(b); if(va<vb)return -1*dir; if(va>vb)return 1*dir; return a.nome<b.nome?-1:1;}); return arr; }
   function renderRows(){
-    document.getElementById('rows').innerHTML=viewRows().map(function(e){
+    var rows=viewRows();
+    if(!rows.length){
+      document.getElementById('rows').innerHTML='<tr class="rows-empty"><td colspan="7">Nenhuma empresa encontrada com os filtros atuais.</td></tr>';
+      return;
+    }
+    document.getElementById('rows').innerHTML=rows.map(function(e){
       var semversao=(e.sit==='naoenviada');
       var href=e.emrev?('info-contribuinte-detalhe.html?v='+e.emrev.ver+'&st=revisao&from=lista')
         :(semversao?'info-contribuinte.html?modo=nova':('info-contribuinte-empresa.html?emp='+e.id));
@@ -346,18 +384,38 @@
     document.querySelectorAll('[data-scn]').forEach(function(x){ x.classList.toggle('on', x.getAttribute('data-scn')===scenario); });
   });
 
-  /* Ordenação da tabela */
+  /* Ordenação da tabela (o chevron .th-sort já está no markup, padrão do DS) */
   (function(){
-    var CHEV='<span class="sortcaret" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>';
     var ths=document.querySelectorAll('th.sortable');
     function updateHeaders(){ ths.forEach(function(th){ var on=th.getAttribute('data-sort')===listSort.key; th.setAttribute('aria-sort', on?(listSort.dir==='asc'?'ascending':'descending'):'none'); th.classList.toggle('is-sorted', on); }); }
     ths.forEach(function(th){
-      th.insertAdjacentHTML('beforeend', CHEV);
       function toggle(){ var k=th.getAttribute('data-sort'); if(listSort.key===k){ listSort.dir=listSort.dir==='asc'?'desc':'asc'; } else { listSort.key=k; listSort.dir='asc'; } renderRows(); updateHeaders(); }
       th.addEventListener('click', toggle);
       th.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggle(); } });
     });
     updateHeaders();
+  })();
+
+  /* Filtros: busca + status (cselect do DS) */
+  (function(){
+    var qEl=document.getElementById('q'), clearEl=document.getElementById('btnClear');
+    function syncClear(){ if(clearEl) clearEl.hidden=!(query||filterSit); }
+    if(qEl) qEl.addEventListener('input',function(){ query=this.value.trim(); syncClear(); renderRows(); });
+    function initCselect(cs, onSelect){
+      if(!cs) return;
+      var btn=cs.querySelector('[data-cselect-btn]'), panel=cs.querySelector('[data-cselect-panel]'), label=cs.querySelector('[data-cselect-label]');
+      btn.addEventListener('click',function(e){ e.stopPropagation(); var open=panel.hidden; panel.hidden=!open; btn.setAttribute('aria-expanded',String(open)); });
+      panel.querySelectorAll('[role=option]').forEach(function(op){ op.addEventListener('click',function(){ label.textContent=op.textContent; panel.querySelectorAll('[role=option]').forEach(function(x){x.classList.remove('is-selected');}); op.classList.add('is-selected'); panel.hidden=true; btn.setAttribute('aria-expanded','false'); if(onSelect) onSelect(op.getAttribute('data-val')); }); });
+      document.addEventListener('click',function(e){ if(!cs.contains(e.target)){ panel.hidden=true; btn.setAttribute('aria-expanded','false'); } });
+    }
+    var sitCs=document.querySelector('.filters__sit');
+    initCselect(sitCs, function(val){ filterSit=val; syncClear(); renderRows(); });
+    if(clearEl) clearEl.addEventListener('click',function(){
+      query=''; filterSit=''; if(qEl) qEl.value='';
+      var lbl=sitCs&&sitCs.querySelector('[data-cselect-label]'); if(lbl) lbl.textContent='Todos os status';
+      if(sitCs){ sitCs.querySelectorAll('[role=option]').forEach(function(x){ x.classList.toggle('is-selected', x.getAttribute('data-val')===''); }); }
+      syncClear(); renderRows();
+    });
   })();
 
   /* sidenav collapse */
