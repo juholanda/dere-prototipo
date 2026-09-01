@@ -29,7 +29,7 @@
     .page-h h1{margin:0;font-size:var(--text-4xl)!important;font-weight:700!important;letter-spacing:-.015em;line-height:1.15}
     .page-h__title{display:flex;align-items:center;gap:var(--space-3);flex-wrap:wrap}
     .page-h__code{font-size:var(--text-sm)}
-    .page-h p{color:var(--color-text-muted);font-size:var(--text-base);margin:var(--space-2) 0 0;max-width:none;line-height:1.5}
+    .page-h p{color:var(--color-text-muted);font-size:var(--text-base);margin:var(--space-1) 0 0;max-width:none;line-height:1.5}
     .bc{display:flex;align-items:center;gap:var(--space-2);font-size:var(--text-sm);min-width:0;overflow:hidden}
     .bc a{color:var(--color-primary);text-decoration:none;white-space:nowrap;font-weight:500}
     .bc a:hover{text-decoration:underline}
@@ -47,9 +47,12 @@
     .card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-2xl);box-shadow:var(--shadow-sm);overflow:hidden}
     .card__h{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-6) var(--space-6) var(--space-6);justify-content:space-between}
     .card__h h2{font-size:var(--text-xl)!important;margin:0;font-weight:700!important}
-    .card__hint{font-size:var(--text-base);color:var(--color-text-muted);margin:var(--space-2) 0 0}
+    .card__hint{font-size:var(--text-sm);color:var(--color-text-muted);margin:var(--space-2) 0 0}
     .tablewrap{overflow-x:auto}
     .table{margin:0}
+    /* larguras estáveis: colunas não pulam ao trocar de cenário */
+    .table--fixed{table-layout:fixed;min-width:860px}
+    .table--fixed td{overflow:hidden;text-overflow:ellipsis}
     .table td{padding-top:var(--space-4);padding-bottom:var(--space-4)}
     .celltitle{font-size:var(--text-base);font-weight:600;color:var(--color-heading);white-space:nowrap}
     .cellcnpj{font-size:var(--text-sm);color:var(--color-text-muted);font-variant-numeric:tabular-nums;margin-top:2px;white-space:nowrap}
@@ -76,9 +79,11 @@
     .table th.sortable{white-space:nowrap}
     /* texto base da tabela a 16px; cabeçalhos ficam nos 12px do DS (--text-xs) */
     .table td{font-size:var(--text-base)}
-    /* rodapé da tabela: contagem (estilo paginação) */
-    .tablefoot{display:flex;justify-content:flex-end;align-items:center;padding:var(--space-4) var(--space-6);border-top:1px solid var(--color-border);font-size:var(--text-sm);color:var(--color-text-muted)}
+    /* rodapé da tabela: contagem + paginador (padrão do app) */
+    .tablefoot{display:flex;justify-content:space-between;align-items:center;gap:var(--space-3);padding:var(--space-4) var(--space-6);border-top:1px solid var(--color-border);font-size:var(--text-sm);color:var(--color-text-muted);flex-wrap:wrap}
     .tablefoot b{color:var(--color-heading);font-variant-numeric:tabular-nums}
+    .tpager{display:inline-flex;align-items:center;gap:var(--space-2)}
+    .tpager button:disabled{opacity:.4;cursor:default}
     /* mesmas margens do cabeçalho do card (space-6) nas extremidades da tabela */
     .card__h{padding:var(--space-6) var(--space-4) var(--space-6)}
     .table th:first-child,.table td:first-child{padding-left:var(--space-4)}
@@ -194,7 +199,10 @@
               </div>
             </div>
             <div class="tablewrap">
-              <table class="table">
+              <table class="table table--fixed">
+                <colgroup>
+                  <col style="width:30%"><col style="width:20%"><col style="width:16%"><col style="width:16%"><col style="width:12%"><col style="width:6%">
+                </colgroup>
                 <thead>
                   <tr>
                     <th scope="col" class="sortable is-sorted" data-sort="emp" aria-sort="ascending" tabindex="0" role="button">Empresa <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></th>
@@ -208,7 +216,14 @@
                 <tbody id="rows"></tbody>
               </table>
             </div>
-            <div class="tablefoot"><span id="tcount"></span></div>
+            <div class="tablefoot">
+              <span id="tcount"></span>
+              <span class="tpager">
+                <button class="icon-btn icon-btn--sm" id="tprev" type="button" aria-label="Página anterior" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
+                <span id="tpage">Página 1 de 1</span>
+                <button class="icon-btn icon-btn--sm" id="tnext" type="button" aria-label="Próxima página" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+              </span>
+            </div>
           </section>
         </div>
       </main>
