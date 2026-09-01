@@ -269,7 +269,7 @@
   var EMP_NEW=EMP_POP.map(function(e){ return {id:e.id, nome:e.nome, cnpj:e.cnpj, regime:null, vigente:null, sit:'naoenviada', draft:null, at:null, ts:0}; });
   var scenario=((/[?&]scn=(new|pop)/.exec(location.search)||[])[1])||'new';
   /* persistência do fluxo: enviei o D-1001 da MAG Seguros → ela aparece com a 1ª versão em revisão */
-  try{ if(localStorage.getItem('adere.sent.d1001')==='seg'){ var _s=EMP_NEW.filter(function(e){return e.id==='seg';})[0]; if(_s){ _s.sit='revisao'; _s.emrev={ver:1}; _s.at='agora mesmo'; _s.ts=9999; } } }catch(e){}
+  try{ if(localStorage.getItem('adere.sent.d1001')==='seg'){ var _s=EMP_NEW.filter(function(e){return e.id==='seg';})[0]; if(_s){ _s.sit='revisao'; _s.emrev={ver:1}; _s.at='01/09/2026, 14:32'; _s.ts=9999; } } }catch(e){}
   function curEmp(){ return scenario==='new'?EMP_NEW:EMP_POP; }
   /* a empresa é contexto; o status é sempre da VERSÃO vigente (não um "estado da empresa") */
   function situacaoCell(e){
