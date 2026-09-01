@@ -322,14 +322,13 @@
     if(tc) tc.innerHTML='<b>'+rows.length+'</b> de <b>'+curEmp().length+'</b> empresas';
     document.getElementById('rows').innerHTML=rows.map(function(e){
       var semversao=(e.sit==='naoenviada');
-      var href=e.emrev?('info-contribuinte-detalhe.html?v='+e.emrev.ver+'&st=revisao&from=lista')
-        :(semversao?'info-contribuinte.html?modo=nova':('info-contribuinte-empresa.html?emp='+e.id));
+      /* "Ver detalhe" abre a página da empresa (lista de versões); sem versão nenhuma, abre o preenchimento */
+      var href=semversao?'info-contribuinte.html?modo=nova':('info-contribuinte-empresa.html?emp='+e.id);
       var regime=e.regime?esc(e.regime):'<span class="muted">—</span>';
       var periodo=e.vigente ? (e.vigente.until ? 'até '+esc(e.vigente.until) : 'em aberto') : '';
+      /* só há "versão vigente" quando alguma versão foi processada com sucesso; em revisão NÃO é vigente */
       var versao=e.vigente
         ? '<span style="font-weight:600;color:var(--color-heading)">Versão '+e.vigente.ver+'</span><div class="cellsub" style="margin-top:2px">'+periodo+'</div>'
-        : e.emrev
-        ? '<span style="font-weight:600;color:var(--color-heading)">Versão '+e.emrev.ver+'</span><div class="cellsub" style="margin-top:2px">em revisão</div>'
         : '<span class="muted">—</span>';
       var at=e.at?esc(e.at):'<span class="muted">—</span>';
       var btn=semversao
