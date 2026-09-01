@@ -301,7 +301,8 @@
   function viewRows(){ var arr=cur().slice(); var dir=listSort.dir==='asc'?1:-1; arr.sort(function(a,b){var va=sortVal(a),vb=sortVal(b); if(va<vb)return -1*dir; if(va>vb)return 1*dir; return a.nome<b.nome?-1:1;}); return arr; }
   function renderRows(){
     document.getElementById('rows').innerHTML=viewRows().map(function(e){
-      var href='plano-contas-empresa.html?emp='+e.id;
+      var hrefVersoes='plano-contas-empresa.html?emp='+e.id;
+      var hrefCriar='plano-contas-classificar.html?emp='+e.id+'&modo=nova';
       var ref=e.ref?esc(e.ref):'<span class="muted">—</span>';
       var contas=(e.contas>0)?'<span class="contas-n">'+nf(e.contas)+'</span>':'<span class="muted">—</span>';
       var periodo=e.vigente ? (e.vigente.until ? 'até '+esc(e.vigente.until) : 'em aberto') : '';
@@ -309,10 +310,10 @@
         ? '<span style="font-weight:600;color:var(--color-heading)">Versão '+e.vigente.ver+'</span><div class="cellsub" style="margin-top:2px">'+periodo+'</div>'
         : '<span class="muted">—</span>';
       var at=e.at?esc(e.at):'<span class="muted">—</span>';
-      var btn;
-      if(e.sit==='naoiniciado'){ btn='<a class="btn btn--primary btn--sm rowbtn" href="'+href+'">Preencher</a>'; }
-      else if(e.sit==='rascunho'){ btn='<a class="btn btn--primary btn--sm rowbtn" href="'+href+'">Continuar</a>'; }
-      else { btn='<a class="btn btn--secondary btn--sm rowbtn" href="'+href+'">Ver detalhe</a>'; }
+      var btn, href;
+      if(e.sit==='naoiniciado'){ href=hrefCriar; btn='<a class="btn btn--primary btn--sm rowbtn" href="'+href+'">Preencher</a>'; }
+      else if(e.sit==='rascunho'){ href=hrefCriar; btn='<a class="btn btn--primary btn--sm rowbtn" href="'+href+'">Continuar</a>'; }
+      else { href=hrefVersoes; btn='<a class="btn btn--secondary btn--sm rowbtn" href="'+href+'">Ver detalhe</a>'; }
       return '<tr data-href="'+href+'">'+
         '<td><div class="evemp">'+logoHtml(e)+'<div><div class="celltitle">'+esc(e.nome)+'</div></div></div></td>'+
         '<td><span class="cnpj-col">'+esc(e.cnpj)+'</span></td>'+

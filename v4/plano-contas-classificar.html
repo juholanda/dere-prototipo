@@ -107,7 +107,9 @@
     .bulkbar{display:flex;align-items:center;gap:var(--space-4);padding:var(--space-4) var(--space-6);background:var(--color-primary-subtle);border-bottom:1px solid var(--color-border);font-size:var(--text-sm);color:var(--color-heading);flex-wrap:wrap}
     .bulkbar .input[type="date"]{background:var(--color-surface)}
     .bulkbar b{font-variant-numeric:tabular-nums}
-    .exprow>td{background:var(--color-surface-2)!important;padding:var(--space-6)!important;border-bottom:1px solid var(--color-border);cursor:default}
+    .exprow>td{background:var(--color-surface-2)!important;padding:var(--space-6)!important;border-bottom:1px solid var(--color-border);cursor:default;position:sticky;left:0}
+    /* conteúdo do editor não estica com a tabela larga: cabe na área visível, sem cortar */
+    .exprow__inner{max-width:min(1000px, calc(100vw - var(--space-14)))}
     .xgrid{display:grid;grid-template-columns:minmax(280px,1fr) minmax(320px,1.2fr);gap:var(--space-8)}
     @media(max-width:1100px){.xgrid{grid-template-columns:1fr}}
     .xlbl{display:flex;justify-content:space-between;gap:var(--space-3);font-size:var(--text-sm);font-weight:600;color:var(--color-heading);margin-bottom:var(--space-2)}
@@ -962,7 +964,7 @@
     }).join('');
     var r=refOf(c)||REFPLAN[0].c;
     var xpend=count(function(x){return x.status!=='validada';});
-    return '<tr class="exprow" id="exprow"><td colspan="8">'+
+    return '<tr class="exprow" id="exprow"><td colspan="8"><div class="exprow__inner">'+
       '<p class="xhead">Classificando: <b>'+esc(c.cod)+' · '+esc(c.nome)+'</b><span class="xhead__n"> · '+nf(xpend)+' pendentes no plano</span></p>'+
       '<div class="xgrid">'+
       '<div><div class="xlbl"><span>Descrição da conta (desCta)</span><span style="display:inline-flex;align-items:center;gap:var(--space-3)"><button class="btn btn--ghost btn--sm" type="button" id="xSugDesc"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg>Sugerir com IA</button><span class="charcount"><span id="xN">'+((c.desc||'').length)+'</span>/600</span></span></div>'+
@@ -978,7 +980,7 @@
       '<div class="xfoot"><button class="btn btn--primary btn--sm" type="button" id="xOk">Confirmar</button>'+
       '<button class="btn btn--ghost btn--sm" type="button" id="xClose">'+(fromTriage?'Voltar à triagem':'Fechar')+'</button>'+
       '<a class="xmeta" style="margin-left:auto" href="plano-contas-assistente.html?emp='+empId+(isBig?'&big=1':'')+'">Mais contexto? Abrir no assistente</a></div></div>'+
-    '</div></td></tr>';
+    '</div></div></td></tr>';
   }
   function syncPathBar(which){
     var id = which==='triageState' ? 'pathTriage' : which==='listState' ? 'pathTable' : null;
@@ -1054,22 +1056,14 @@
     var d=$('xDesc').value.trim();
     if(!d){ toast('A descrição é obrigatória na analítica (MS1075).','warn'); $('xDesc').focus(); return; }
     if(!xSel && !xNotax){ toast('Escolha um codTrib ou marque não tributável (MS1103).','warn'); return; }
-    /* próxima pendente na ordem visível, antes de mudar o status */
-    var pend=visible().filter(function(x){return x.tipo==='A' && x.status!=='validada';});
-    var at=pend.indexOf(c), nxt=pend[at+1]||pend[0]; if(nxt===c) nxt=null;
     c.status='validada'; c.desc=d; c.notax=xNotax; c.iss=xIss; c.trib=xNotax?null:xSel;
     c.tribNome=xNotax?'Conta não tributável':nameOf(TRIB11,xSel); c.ref=refOf(c)||REFPLAN[0].c;
     clsSet(c.cod,{status:'validada',desc:d,notax:xNotax,iss:xIss,trib:c.trib,tribNome:c.tribNome,ref:c.ref});
     if(fromTriage&&backToTriageImpl){ toast('Conta '+c.cod+' validada.','ok'); backToTriageImpl(); return; }
-    if(nxt){ toast('Conta '+c.cod+' validada. Agora classificando: '+nxt.cod+' · '+nxt.nome+'.','ok'); }
-    else { toast('Conta '+c.cod+' validada. Não restam pendentes neste filtro.','ok'); }
-    if(nxt){
-      var all=visible(); if(!(filterSit||query)) all=all.filter(function(x){return !isHidden(x);});
-      var idx=all.indexOf(nxt); if(idx>=0) page=Math.floor(idx/PAGE)+1;
-      expandCod=nxt.cod; xSel=nxt.trib||null; xNotax=!!nxt.notax;
-    } else expandCod=null;
+    /* na tabela, confirmar fecha a linha (volta à linha fechada) — sem auto-abrir a próxima */
+    toast('Conta '+c.cod+' validada.','ok');
+    expandCod=null;
     renderAll();
-    var er=document.querySelector('.exprow'); if(er){ er.scrollIntoView({block:'center',behavior:'smooth'}); pulse(er); }
   }
   function bulkCount(){ var n=0; for(var k in selSet){ if(selSet[k]) n++; } return n; }
   function renderBulk(){ var n=bulkCount(); $('bulkbar').hidden=(n===0); $('bulkN').textContent=n; }
