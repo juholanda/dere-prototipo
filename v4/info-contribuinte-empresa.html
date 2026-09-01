@@ -87,6 +87,10 @@
     /* lista de versões (vigências do D-1001) */
     .status--neutral{background:var(--color-surface-2);color:var(--color-text-onmuted)}
     .verlist{display:flex;flex-direction:column;gap:var(--space-3)}
+    .tablefoot{display:flex;justify-content:space-between;align-items:center;gap:var(--space-3);padding:var(--space-4) var(--space-6);border-top:1px solid var(--color-border);font-size:var(--text-sm);color:var(--color-text-muted);flex-wrap:wrap}
+    .tablefoot b{color:var(--color-heading);font-variant-numeric:tabular-nums}
+    .tpager{display:inline-flex;align-items:center;gap:var(--space-2)}
+    .tpager button:disabled{opacity:.4;cursor:default}
     .verrow{display:flex;gap:var(--space-4);align-items:flex-start;padding:var(--space-4);border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-surface)}
     .verrow--current{border-color:var(--color-primary);background:var(--color-primary-subtle)}
     .verrow--inativa{opacity:.9}
@@ -294,6 +298,14 @@
                   <tbody id="verlist"></tbody>
                 </table>
               </div>
+              <div class="tablefoot" id="verfoot">
+                <span id="vercount"></span>
+                <span class="tpager">
+                  <button class="icon-btn icon-btn--sm" id="vprev" type="button" aria-label="Página anterior" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
+                  <span id="vpage">Página 1 de 1</span>
+                  <button class="icon-btn icon-btn--sm" id="vnext" type="button" aria-label="Próxima página" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+                </span>
+              </div>
             </div>
             <div class="tabs__panel" id="vp-tl" role="tabpanel" aria-labelledby="vt-tl" tabindex="0" hidden>
               <div class="tl" id="tl"></div>
@@ -423,6 +435,7 @@
     if(hAct) hAct.hidden=!has;
     if(pTl) pTl.hidden=true;
     if(pTab) pTab.hidden=!has;
+    var vc=$('vercount'); if(vc) vc.innerHTML='<b>'+VERSIONS.length+'</b> de <b>'+VERSIONS.length+'</b> '+(VERSIONS.length===1?'versão':'versões');
     if(!has){ if(tw) tw.hidden=true; return; }
     if(tw) tw.hidden=false;
     var emp=param('emp')||'seg';

@@ -1340,8 +1340,7 @@
     $('bcEmp').textContent=EMP.nome; $('bcEmp').setAttribute('href','plano-contas-empresa.html?emp='+empId);
     var _cb=$('cancelBtn'); if(_cb) _cb.setAttribute('href',
       modo==='editar' ? ('plano-contas-detalhe.html?emp='+empId+'&v='+(param('v')||'1')) :
-      modo==='alterar' ? ('plano-contas-empresa.html?emp='+empId) :
-      'painel.html');
+      'info-contribuinte-lista.html');
     $('gateLink').setAttribute('href','info-contribuinte-empresa.html?emp='+empId);
     var st=VSTATE[sit]||VSTATE.rascunho;
     var editable=(modo==='nova'||modo==='alterar'||modo==='editar'||sit==='rascunho'||sit==='revisao'||sit==='rejeitado');
