@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Versões · MAG Seguros</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=25">
+  <link rel="stylesheet" href="../design-system/ds.css?v=26">
   <script src="../design-system/ds-tailwind.js"></script>
   <script src="../design-system/ds-dialog.js"></script>
   <style>
@@ -54,6 +54,8 @@
     .cocard__logo .co-code{font-size:var(--text-sm);font-weight:700;color:var(--color-primary)}
     .cocard__name{font-size:var(--text-base);font-weight:600;color:var(--color-heading);margin:0;line-height:1.3}
     .cocard__cnpj{font-size:var(--text-sm);color:var(--color-text-muted);margin:2px 0 0;font-variant-numeric:tabular-nums}
+    /* dados-chave da empresa a 16px (alinha com o nome) */
+    .cocard .kv__v{font-size:var(--text-base)}
     .kv{min-width:0}
     .kv__k{font-size:var(--text-xs);color:var(--color-text-muted);font-weight:600;margin:0 0 var(--space-1);white-space:nowrap}
     .kv__v{font-size:var(--text-sm);color:var(--color-heading);font-weight:500;margin:0;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -76,7 +78,7 @@
     /* entre uma seção e a próxima: 48px (24 de padding + 24 de margem), pra cada bloco respirar */
     .versec + .versec{margin-top:var(--space-6)}
     /* título da seção (18px) + subtítulo de uma linha (14px), 16px entre eles e 16px até as linhas */
-    .versec__h{display:flex;align-items:center;gap:var(--space-2);margin:0 0 var(--space-2)}
+    .versec__h{display:flex;align-items:center;gap:var(--space-2);margin:0 0 var(--space-1)}
     .versec__h h2{font-size:var(--text-xl)!important;font-weight:700!important;color:var(--color-heading);margin:0}
     .versec__hint{font-size:var(--text-sm);color:var(--color-text-muted);margin:0 0 var(--space-4);line-height:1.5}
     .versec__empty{display:flex;gap:var(--space-3);align-items:center;font-size:var(--text-sm);color:var(--color-text-muted);padding:var(--space-4);border:1px dashed var(--color-border-strong);border-radius:var(--radius-lg)}
@@ -115,7 +117,7 @@
        largura fixa (alinham entre linhas e seções); o que não existe leva traço. */
     .verrow__main{display:contents}
     .verrow__top{display:flex;align-items:center;gap:var(--space-3);flex-wrap:wrap}
-    .verrow__title{font-size:var(--text-base);font-weight:700;color:var(--color-heading)}
+    .verrow__title{font-size:var(--text-base);font-weight:600;color:var(--color-heading)}
     .verrow__kvs{display:grid;grid-template-columns:150px 130px 84px minmax(84px,1fr);gap:var(--space-6)}
     .verrow__act{display:flex;align-items:center;gap:var(--space-2)}
     .verrow__act .btn{white-space:nowrap}
@@ -426,6 +428,8 @@
   function stOf(v){ return (v.sit==='revisao')?'revisao':(v.sit==='ajustes')?'ajuste':'aprovado'; }
   function hrefOf(v){ return 'info-contribuinte-detalhe.html?emp='+EMP+'&v='+v.n+'&st='+stOf(v)+Q(false); }
   function hrefNova(){ return 'info-contribuinte.html?modo=nova&emp='+EMP+Q(false); }
+  /* rascunho continua no FORMULÁRIO; versões já enviadas abrem o detalhe */
+  function goOf(v){ return (v.sit==='rascunho') ? hrefNova() : hrefOf(v); }
   function kv(k,v){ v=v||'—'; return '<div class="kv"><p class="kv__k">'+esc(k)+'</p><p class="kv__v" title="'+esc(v)+'">'+esc(v)+'</p></div>'; }
   /* regime da versão: nas processadas é o da empresa; em rascunho/revisão do primeiro acesso vem do que foi escolhido no formulário */
   function regimeOf(v){ if(v.vigrole==='now'||v.vigrole==='past') return CO.regime; if(SCN==='new') return (_d1Sent&&_sentRegime)||(_draft&&_draftRegime)||null; return (v.sit==='rascunho'&&_draftRegime)||CO.regime; }
@@ -487,11 +491,11 @@
     else if(prog){
       /* botão habilitado: ao clicar, a modal explica por que não dá pra criar outra agora */
       slot.innerHTML='<button class="btn btn--primary btn--lg" type="button" id="headerAct">'+I.plus+'Registrar nova versão</button>';
-      var lbl=(prog.sit==='ajustes')?'Ver ajustes':(prog.sit==='rascunho')?'Continuar a versão':'Ver a versão';
+      var lbl='Ir para a versão em andamento';
       var pill=(SIT[prog.sit]||{}).label||'em andamento';
       $('headerAct').addEventListener('click',function(){
         $('blockText').textContent='A Versão '+prog.n+' está \u201c'+pill+'\u201d e ainda não foi concluída. Só pode haver uma versão em andamento por vez. Conclua ou cancele essa versão antes de registrar uma nova.';
-        var go=$('blockGo'); go.textContent=lbl; go.setAttribute('href',hrefOf(prog));
+        var go=$('blockGo'); go.textContent=lbl; go.setAttribute('href',goOf(prog));
         dsDialog.open($('blockModal'));
       });
     } else {
@@ -519,7 +523,7 @@
 
     /* em andamento (0 ou 1): a ação que o usuário precisa tomar é primária; só consultar é secundária */
     $('secProg').innerHTML = prog
-      ? row(prog,{cta:(prog.sit==='ajustes')?'Ver ajustes':(prog.sit==='rascunho')?'Continuar':null, primary:(prog.sit==='rascunho'||prog.sit==='ajustes')})
+      ? row(prog,{cta:(prog.sit==='ajustes')?'Ver ajustes':(prog.sit==='rascunho')?'Continuar':null, href:goOf(prog), primary:(prog.sit==='rascunho'||prog.sit==='ajustes')})
       : emptyBox('Nenhuma versão em andamento. Só pode haver uma por vez: ao registrar uma nova versão, ela aparece aqui até ser processada.');
 
     /* encerradas */

@@ -840,7 +840,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 
 /* Tabs / abas */
 .tabs{display:flex;gap:var(--space-1);border-bottom:1px solid var(--color-border)}
-.tab{appearance:none;display:inline-flex;align-items:center;gap:var(--space-2);background:transparent;border:0;padding:var(--space-2) var(--space-4);font:600 14px/1 var(--font-sans);
+.tab{appearance:none;display:inline-flex;align-items:center;gap:var(--space-2);background:transparent;border:0;padding:var(--space-2) var(--space-4) var(--space-4);font:600 var(--text-base)/1 var(--font-sans);
   color:var(--color-text-muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
 .tab:hover{color:var(--color-heading)}
 /* Estado selecionado: a fonte da verdade é aria-selected (APG); .is-active mantém compat */
