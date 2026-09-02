@@ -81,8 +81,8 @@
     .versec__hint{font-size:var(--text-sm);color:var(--color-text-muted);margin:0 0 var(--space-4);line-height:1.5}
     .versec__empty{display:flex;gap:var(--space-3);align-items:flex-start;font-size:var(--text-sm);color:var(--color-text-muted);padding:var(--space-4);border:1px dashed var(--color-border-strong);border-radius:var(--radius-lg)}
     .versec__empty svg{width:18px;height:18px;flex:0 0 auto;color:var(--color-text-muted);margin-top:1px}
-    .versec__empty b{color:var(--color-heading);font-weight:600}
-    .versec__empty-sub{display:block;color:var(--color-text-muted);margin-top:2px}
+    .versec__empty b{color:var(--color-heading);font-weight:600;font-size:var(--text-base)}
+    .versec__empty-sub{display:block;color:var(--color-text-muted);font-size:var(--text-sm);margin-top:2px}
 
     /* linha de versão: grid. Quando a seção tem largura (≥1000px), os campos ficam AO LADO do título;
        quando não tem, descem para baixo do título. Nunca cortam nem quebram texto. */
@@ -391,13 +391,13 @@
   };
   /* Ciclo de vida único (interno → Receita). A pílula mostra o estágio; "vigente" é a seção, não um estado. */
   var SIT={
-    rascunho:    {label:'Em andamento',           pill:'status--draft',   tone:'draft',   ic:I.pen,   lead:'Última alteração em'},
+    rascunho:    {label:'Rascunho',               pill:'status--draft',   tone:'draft',   ic:I.pen,   lead:'Última alteração em'},
     revisao:     {label:'Em revisão',             pill:'status--info',    tone:'info',    ic:I.clock, lead:'Enviada para revisão em'},
     ajustes:     {label:'Ajustes solicitados',    pill:'status--warning', tone:'warning', ic:I.alert, lead:'Devolvida em'},
     processando: {label:'Em processamento',       pill:'status--info',    tone:'info',    ic:I.clock, lead:'Transmitida em'},
     sucesso:     {label:'Processado com sucesso', pill:'status--success', tone:'success', ic:I.check, lead:'Processada em'},
-    advertencias:{label:'Processado com adv.',    pill:'status--warning', tone:'success', ic:I.check, lead:'Processada em'},
-    rejeitado:   {label:'Rejeitado',              pill:'status--danger',  tone:'danger',  ic:I.x,     lead:'Rejeitada em'}
+    advertencias:{label:'Processado com advertências', pill:'status--warning', tone:'success', ic:I.check, lead:'Processada em'},
+    rejeitado:   {label:'Rejeitada',              pill:'status--danger',  tone:'danger',  ic:I.x,     lead:'Rejeitada em'}
   };
   var ENC={label:'Encerrada', pill:'status--neutral'};
 

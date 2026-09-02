@@ -53,7 +53,7 @@
     .card__hint{font-size:var(--text-sm);color:var(--color-text-muted);margin:var(--space-2) 0 0}
     .table{margin:0}
     /* larguras estáveis: colunas não pulam ao trocar de cenário */
-    .table--fixed{table-layout:fixed;min-width:1112px}
+    .table--fixed{table-layout:fixed;min-width:1140px}
     /* só as células de texto truncam; a coluna de ação nunca clipa o botão */
     .table--fixed td:not(.col-act){overflow:hidden;text-overflow:ellipsis}
     .table td{padding-top:var(--space-4);padding-bottom:var(--space-4)}
@@ -203,7 +203,7 @@
             <div class="table-wrap">
               <table class="table table--fixed table--stickyactions">
                 <colgroup>
-                  <col><col style="width:190px"><col style="width:140px"><col style="width:216px"><col style="width:200px"><col style="width:142px">
+                  <col><col style="width:190px"><col style="width:140px"><col style="width:244px"><col style="width:200px"><col style="width:142px">
                 </colgroup>
                 <thead>
                   <tr>
@@ -248,10 +248,10 @@
   /* estados oficiais do retorno da Receita (cdRetorno) + estado interno "não enviada" */
   var SIT={
     sucesso:   {label:'Processado com sucesso', pill:'status--success'},
-    avisos:    {label:'Processado com adv.', pill:'status--warning'},
-    rejeitado: {label:'Rejeitado',              pill:'status--danger'},
+    avisos:    {label:'Processado com advertências', pill:'status--warning'},
+    rejeitado: {label:'Rejeitada',              pill:'status--danger'},
     revisao:   {label:'Em revisão',              pill:'status--info'},
-    rascunho:  {label:'Em andamento',            pill:'status--draft'},
+    rascunho:  {label:'Rascunho',                pill:'status--draft'},
     naoenviada:{label:'Não iniciada',            pill:'status--neutral'}
   };
   /* pendência = nova versão em andamento sobre um cadastro que já tem versão aceita */
