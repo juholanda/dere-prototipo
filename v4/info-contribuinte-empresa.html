@@ -106,7 +106,7 @@
     }
     .verrow--current{border-color:var(--color-primary);background:var(--color-primary-subtle)}
     /* quadrado da linha: número da versão (v1, v4). Só a vigente leva o check. O estado fica por conta da pílula. */
-    .verrow__badge{flex:0 0 auto;width:var(--space-10);height:var(--space-10);border-radius:var(--radius-lg);display:grid;place-items:center;background:var(--color-surface-2);color:var(--color-text-onmuted);font-size:var(--text-sm);font-weight:700;font-variant-numeric:tabular-nums}
+    .verrow__badge{flex:0 0 auto;width:var(--space-10);height:var(--space-10);border-radius:var(--radius-lg);display:grid;place-items:center;background:color-mix(in srgb, var(--color-surface-2) 45%, var(--color-border));color:var(--color-text-onmuted);font-size:var(--text-sm);font-weight:700;font-variant-numeric:tabular-nums}
     .verrow__badge svg{width:20px;height:20px}
     .verrow__badge--success{background:var(--color-success-bg);color:var(--color-success-fg)}
     /* na linha destacada (fundo azul-claro) o quadrado verde-claro perdia contraste: quadrado branco, ícone verde (AA sobre branco) */
