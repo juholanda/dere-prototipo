@@ -63,8 +63,8 @@
     .alert__act{flex:0 0 auto}
     .alert__act .btn{white-space:nowrap}
 
-    /* abas no topo do card de versões */
-    .card .tabs{padding:0 var(--space-6)}
+    /* abas no topo do card de versões: com respiro em cima e nas laterais (a linha das abas fica dentro da margem do card) */
+    .card .tabs{margin:var(--space-6) var(--space-6) 0}
     .tabs__panel{padding-top:0}
 
     /* seções: vigente · em andamento · encerradas */
@@ -87,6 +87,8 @@
     .verrow__badge--warning{background:var(--color-warning-bg);color:var(--color-warning-fg)}
     .verrow__badge--danger{background:var(--color-danger-bg);color:var(--color-danger-fg)}
     .verrow__badge--draft{background:var(--color-draft-bg);color:var(--color-draft-fg)}
+    /* na linha destacada (fundo azul-claro) o quadrado verde-claro perdia contraste: quadrado branco, ícone verde (AA sobre branco) */
+    .verrow--current .verrow__badge{background:var(--color-surface);border:1px solid var(--color-border)}
     .verrow__main{flex:1 1 260px;min-width:0}
     .verrow__top{display:flex;align-items:center;gap:var(--space-3);flex-wrap:wrap}
     .verrow__title{font-size:var(--text-base);font-weight:700;color:var(--color-heading)}
@@ -98,15 +100,23 @@
     .status--neutral{background:var(--color-surface-2);color:var(--color-text-onmuted)}
     @media(max-width:1100px){.verrow{flex-wrap:wrap}.verrow__kvs{width:100%;padding-left:calc(var(--space-10) + var(--space-4))}.verrow__act{margin-left:auto}}
 
-    /* tabela das encerradas (dentro da seção, com moldura própria) */
-    .versec .table-wrap{border:1px solid var(--color-border);border-radius:var(--radius-lg)}
-    #enctable tbody tr{cursor:pointer}
-    #enctable tbody tr:hover{background:var(--color-surface-2)}
-    #enctable td{vertical-align:middle;font-size:var(--text-base)}
+    /* tabela das encerradas: MESMO tratamento da tabela da lista (full-bleed no card, cabeçalho ordenável do DS,
+       células a 16px com respiro space-4, botão de 40px, rodapé padrão contagem + paginador) */
+    .versec--table{padding-left:0;padding-right:0;padding-bottom:0}
+    .versec--table .versec__h{padding:0 var(--space-6)}
+    #enctable{margin:0}
+    #enctable th.sortable{white-space:nowrap}
+    #enctable th:first-child,#enctable td:first-child{padding-left:var(--space-6)}
+    #enctable th:last-child,#enctable td:last-child{padding-right:var(--space-6)}
+    #enctable td{padding-top:var(--space-4);padding-bottom:var(--space-4);vertical-align:middle;font-size:var(--text-base)}
+    #enctable tbody tr:last-child td{border-bottom:0}
+    #enctable tbody tr[data-href]{cursor:pointer}
+    #enctable tbody tr[data-href]:hover{background:var(--color-primary-subtle)}
     #enctable td .num{font-variant-numeric:tabular-nums}
-    #enctable .celltitle{font-weight:600;color:var(--color-heading)}
+    #enctable .celltitle{font-size:var(--text-base);font-weight:600;color:var(--color-heading);white-space:nowrap}
     .ver-act{text-align:right;white-space:nowrap;width:1%}
-    .tablefoot{display:flex;justify-content:space-between;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-4);border-top:1px solid var(--color-border);font-size:var(--text-sm);color:var(--color-text-muted);flex-wrap:wrap}
+    .ver-act .btn{white-space:nowrap}
+    .tablefoot{display:flex;justify-content:space-between;align-items:center;gap:var(--space-3);padding:var(--space-4) var(--space-6);border-top:1px solid var(--color-border);font-size:var(--text-sm);color:var(--color-text-muted);flex-wrap:wrap}
     .tablefoot b{color:var(--color-heading);font-variant-numeric:tabular-nums}
     .tpager{display:inline-flex;align-items:center;gap:var(--space-2)}
     .tpager button:disabled{opacity:.4;cursor:default}
@@ -273,7 +283,7 @@
                 <div class="versec__h"><h3 id="h-prog">Em andamento</h3></div>
                 <div id="secProg"></div>
               </section>
-              <section class="versec" aria-labelledby="h-enc">
+              <section class="versec versec--table" aria-labelledby="h-enc">
                 <div class="versec__h"><h3 id="h-enc">Versões encerradas</h3></div>
                 <div id="secEnc"></div>
               </section>
@@ -396,6 +406,45 @@
     '</div>';
   }
 
+  var SORTIC='<span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span>';
+  var ENC_COLS=[['n','Versão'],['vig','Vigência'],['sit','Situação'],['enc','Encerrada em'],['recibo','Recibo']];
+  var encSort={key:'n',dir:'desc'};
+  function dkey(s){ var m=/(\d{2})\/(\d{2})\/(\d{4})/.exec(s||''); return m?(m[3]+m[2]+m[1]):''; }
+  function renderEnc(enc){
+    var box=$('secEnc');
+    if(!enc.length){ box.innerHTML='<div style="padding:0 var(--space-6) var(--space-6)">'+emptyBox('Nenhuma versão encerrada. Quando uma nova versão entra em vigor, a anterior passa para cá.')+'</div>'; return; }
+    var rows=enc.slice().sort(function(a,b){
+      var k=encSort.key, x, y;
+      if(k==='n'){ x=a.n; y=b.n; } else if(k==='vig'){ x=dkey(a.vig); y=dkey(b.vig); } else if(k==='enc'){ x=dkey(endOf(a.vig)); y=dkey(endOf(b.vig)); } else if(k==='sit'){ x=y=0; } else { x=a.recibo; y=b.recibo; }
+      var r=(x<y)?-1:(x>y)?1:0; return encSort.dir==='asc'?r:-r;
+    });
+    box.innerHTML='<div class="table-wrap"><table class="table table--stickyactions" id="enctable">'+
+      '<thead><tr>'+ENC_COLS.map(function(c){ var on=c[0]===encSort.key; return '<th scope="col" class="sortable'+(on?' is-sorted':'')+'" data-sort="'+c[0]+'" aria-sort="'+(on?(encSort.dir==='asc'?'ascending':'descending'):'none')+'" tabindex="0" role="button">'+c[1]+' '+SORTIC+'</th>'; }).join('')+
+      '<th scope="col"><span class="sr-only">Ações</span></th></tr></thead><tbody>'+
+      rows.map(function(v){
+        return '<tr data-href="'+hrefOf(v)+'">'+
+          '<td><span class="celltitle">Versão '+v.n+'</span></td>'+
+          '<td><span class="num">'+esc(v.vig)+'</span></td>'+
+          '<td><span class="status '+ENC.pill+'"><span class="status__dot"></span>'+ENC.label+'</span></td>'+
+          '<td><span class="num">'+esc(endOf(v.vig))+'</span></td>'+
+          '<td><span class="num">'+esc(v.recibo)+'</span></td>'+
+          '<td class="ver-act"><a class="btn btn--secondary" href="'+hrefOf(v)+'">Ver versão</a></td>'+
+        '</tr>';
+      }).join('')+
+      '</tbody></table></div>'+
+      '<div class="tablefoot"><span><b>'+enc.length+'</b> de <b>'+enc.length+'</b> '+(enc.length===1?'versão encerrada':'versões encerradas')+'</span>'+
+      '<span class="tpager"><button class="icon-btn icon-btn--sm" type="button" aria-label="Página anterior" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><span>Página 1 de 1</span><button class="icon-btn icon-btn--sm" type="button" aria-label="Próxima página" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button></span></div>';
+    box.querySelectorAll('th.sortable').forEach(function(th){
+      var go=function(){ var k=th.getAttribute('data-sort'); encSort.dir=(encSort.key===k&&encSort.dir==='desc')?'asc':(encSort.key===k?'desc':'asc'); encSort.key=k; renderEnc(enc); bindRows(); };
+      th.addEventListener('click',go); th.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); go(); } });
+    });
+  }
+  function bindRows(){
+    document.querySelectorAll('[data-href]').forEach(function(el){
+      if(el._bound) return; el._bound=true;
+      el.addEventListener('click',function(ev){ if(ev.target.closest('a,button')) return; window.location.href=el.getAttribute('data-href'); });
+    });
+  }
   function renderVersions(){
     var has=VERSIONS.length>0;
     var vig=VERSIONS.filter(function(v){ return v.vigrole==='now'; })[0]||null;
@@ -444,30 +493,10 @@
       ? row(prog,{current:false, meta:(SIT[prog.sit]||{}).lead+' '+prog.quando, kvs:[['Última atualização',prog.quando],['Responsável',prog.resp||'Ricardo Alves']], cta:(prog.sit==='ajustes')?'Ver ajustes':(prog.sit==='rascunho')?'Continuar':'Ver versão'})
       : emptyBox('Nenhuma versão em andamento. Só pode haver uma por vez: ao registrar uma nova versão, ela aparece aqui até ser processada.');
 
-    /* encerradas (tabela + rodapé padrão) */
-    if(!enc.length){ $('secEnc').innerHTML=emptyBox('Nenhuma versão encerrada. Quando uma nova versão entra em vigor, a anterior passa para cá.'); }
-    else {
-      $('secEnc').innerHTML='<div class="table-wrap"><table class="table table--stickyactions" id="enctable">'+
-        '<thead><tr><th scope="col">Versão</th><th scope="col">Vigência</th><th scope="col">Situação</th><th scope="col">Encerrada em</th><th scope="col">Recibo</th><th scope="col"><span class="sr-only">Ações</span></th></tr></thead><tbody>'+
-        enc.map(function(v){
-          return '<tr data-href="'+hrefOf(v)+'">'+
-            '<td><span class="celltitle">Versão '+v.n+'</span></td>'+
-            '<td><span class="num">'+esc(v.vig)+'</span></td>'+
-            '<td><span class="status '+ENC.pill+'"><span class="status__dot"></span>'+ENC.label+'</span></td>'+
-            '<td><span class="num">'+esc(endOf(v.vig))+'</span></td>'+
-            '<td><span class="num">'+esc(v.recibo)+'</span></td>'+
-            '<td class="ver-act"><a class="btn btn--secondary btn--sm" href="'+hrefOf(v)+'">Ver versão'+I.chev+'</a></td>'+
-          '</tr>';
-        }).join('')+
-        '</tbody></table>'+
-        '<div class="tablefoot"><span><b>'+enc.length+'</b> de <b>'+enc.length+'</b> '+(enc.length===1?'versão encerrada':'versões encerradas')+'</span>'+
-        '<span class="tpager"><button class="icon-btn icon-btn--sm" type="button" aria-label="Página anterior" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><span>Página 1 de 1</span><button class="icon-btn icon-btn--sm" type="button" aria-label="Próxima página" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button></span></div>'+
-      '</div>';
-    }
+    /* encerradas (tabela + rodapé padrão, igual à lista) */
+    renderEnc(enc);
     /* linha e cartão inteiros clicáveis (o botão continua sendo o controle acessível) */
-    document.querySelectorAll('[data-href]').forEach(function(el){
-      el.addEventListener('click',function(ev){ if(ev.target.closest('a,button')) return; window.location.href=el.getAttribute('data-href'); });
-    });
+    bindRows();
   }
   renderVersions();
 
