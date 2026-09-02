@@ -374,6 +374,17 @@
       });
     });
     document.querySelectorAll('[data-scn]').forEach(function(x){ x.classList.toggle('on', x.getAttribute('data-scn')===scenario); });
+    /* Resetar (só demonstração): zera as ações do primeiro acesso e recarrega limpo */
+    var rst=document.getElementById('demoReset');
+    if(rst) rst.addEventListener('click',function(){
+      try{
+        Object.keys(localStorage).forEach(function(k){
+          if(k==='adere.sent.d1001' || k.indexOf('adere.d1001.')===0){ localStorage.removeItem(k); }
+        });
+        Object.keys(sessionStorage).forEach(function(k){ if(k.indexOf('adere.')===0) sessionStorage.removeItem(k); });
+      }catch(e){}
+      window.location.href='info-contribuinte-lista.html?scn=new';
+    });
   });
 
   /* Ordenação da tabela (o chevron .th-sort já está no markup, padrão do DS) */
@@ -402,6 +413,8 @@
     <span class="demobar__sep" aria-hidden="true"></span>
     <button type="button" data-scn="pop">Populado</button>
     <button type="button" data-scn="new" class="on">Primeiro acesso</button>
+    <span class="demobar__sep" aria-hidden="true"></span>
+    <button type="button" id="demoReset" title="Zera as ações feitas no primeiro acesso (enviado, rascunho, exclusão)">Resetar</button>
   </div>
 </body>
 </html>
