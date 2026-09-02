@@ -79,8 +79,26 @@
     .versec__empty{display:flex;gap:var(--space-3);align-items:center;font-size:var(--text-sm);color:var(--color-text-muted);padding:var(--space-4);border:1px dashed var(--color-border-strong);border-radius:var(--radius-lg)}
     .versec__empty svg{width:18px;height:18px;flex:0 0 auto;color:var(--color-text-muted)}
 
-    /* linha de versão (vigente / em andamento) */
-    .verrow{display:flex;gap:var(--space-4);align-items:center;padding:var(--space-4) var(--space-6);border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-surface)}
+    /* linha de versão: grid. Quando a seção tem largura (≥1000px), os campos ficam AO LADO do título;
+       quando não tem, descem para baixo do título. Nunca cortam nem quebram texto. */
+    .versec{container-type:inline-size}
+    .verrow{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;grid-template-rows:auto auto;column-gap:var(--space-4);row-gap:var(--space-3);align-items:center;padding:var(--space-4) var(--space-6);border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-surface)}
+    .verrow__badge{grid-row:1/3;grid-column:1}
+    .verrow__top{grid-row:1;grid-column:2;min-width:0}
+    .verrow__kvs{grid-row:2;grid-column:2}
+    .verrow__sep{grid-row:1/3;grid-column:3}
+    .verrow__act{grid-row:1/3;grid-column:4}
+    @container (min-width:1000px){
+      .verrow{grid-template-columns:auto minmax(0,1fr) auto auto auto;grid-template-rows:auto}
+      .verrow__badge,.verrow__top,.verrow__sep,.verrow__act{grid-row:1}
+      .verrow__kvs{grid-row:1;grid-column:3;grid-template-columns:150px 130px 84px 84px}
+      .verrow__sep{grid-column:4}
+      .verrow__act{grid-column:5}
+    }
+    @container (max-width:640px){
+      .verrow__kvs{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .verrow__sep{display:none}
+    }
     .verrow--current{border-color:var(--color-primary);background:var(--color-primary-subtle)}
     /* quadrado da linha: número da versão (v1, v4). Só a vigente leva o check. O estado fica por conta da pílula. */
     .verrow__badge{flex:0 0 auto;width:var(--space-10);height:var(--space-10);border-radius:var(--radius-lg);display:grid;place-items:center;background:var(--color-surface-2);color:var(--color-text-onmuted);font-size:var(--text-sm);font-weight:700;font-variant-numeric:tabular-nums}
@@ -92,19 +110,18 @@
     .verrow--current .kv__k{color:var(--color-text-onmuted)}
     /* MESMA estrutura nas três seções: título + pílula em cima; embaixo os mesmos cinco campos em colunas de
        largura fixa (alinham entre linhas e seções); o que não existe leva traço. */
-    .verrow__main{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:var(--space-3)}
+    .verrow__main{display:contents}
     .verrow__top{display:flex;align-items:center;gap:var(--space-3);flex-wrap:wrap}
     .verrow__title{font-size:var(--text-base);font-weight:700;color:var(--color-heading)}
-    .verrow__kvs{display:grid;grid-template-columns:150px 130px 80px 80px minmax(84px,1fr);gap:var(--space-6)}
-    .verrow__act{flex:0 0 auto;display:flex;align-items:center;gap:var(--space-2)}
+    .verrow__kvs{display:grid;grid-template-columns:150px 130px 84px minmax(84px,1fr);gap:var(--space-6)}
+    .verrow__act{display:flex;align-items:center;gap:var(--space-2)}
     .verrow__act .btn{white-space:nowrap}
     .verrow__act .icon-btn{color:var(--color-primary)}
     .verrow__act .icon-btn svg{width:18px;height:18px}
-    .verrow__sep{width:1px;align-self:stretch;background:var(--color-border);flex:0 0 auto;margin:0 var(--space-2)}
+    .verrow__sep{width:1px;align-self:stretch;background:var(--color-border);margin:0 var(--space-2)}
     .verlist{display:flex;flex-direction:column;gap:var(--space-3)}
     .status{white-space:nowrap;font-size:var(--text-sm)}
     .status--neutral{background:var(--color-surface-2);color:var(--color-text-onmuted)}
-    @media(max-width:1100px){.verrow{flex-wrap:wrap}.verrow__kvs{grid-template-columns:repeat(2,minmax(0,1fr))}.verrow__sep{display:none}.verrow__act{margin-left:auto}}
 
     /* rodapé padrão (contagem + paginador) embaixo da lista de encerradas */
     .tablefoot{display:flex;justify-content:space-between;align-items:center;gap:var(--space-3);padding:var(--space-4) 0 0;margin-top:var(--space-4);border-top:1px solid var(--color-border);font-size:var(--text-sm);color:var(--color-text-muted);flex-wrap:wrap}
@@ -399,7 +416,7 @@
       : '<span class="verrow__badge" aria-hidden="true">v'+v.n+'</span>';
     /* o que importa numa lista de versões: quando vale, o que diz, quando foi e a prova da Receita (quem fez fica no detalhe) */
     var day=function(d){ return d?String(d).split(',')[0]:d; };
-    var kvs=[['Vigência',v.vig],['Regime principal',v.regime||regimeOf(v)],['Enviada em',day(v.env)],['Processada em',day(v.proc)],['Recibo',v.recibo]]
+    var kvs=[['Vigência',v.vig],['Regime principal',v.regime||regimeOf(v)],['Processada em',day(v.proc)],['Recibo',v.recibo]]
       .map(function(p){ return kv(p[0],(p[1]&&p[1]!=='—')?p[1]:'—'); }).join('');
     return '<div class="verrow'+(opts.current?' verrow--current':'')+'" data-href="'+hrefOf(v)+'">'+badge+
       '<div class="verrow__main"><div class="verrow__top"><span class="verrow__title">Versão '+v.n+'</span><span class="status '+s.pill+'"><span class="status__dot"></span>'+esc(s.label)+'</span></div>'+
