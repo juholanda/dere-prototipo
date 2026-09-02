@@ -427,7 +427,7 @@
   function hrefOf(v){ return 'info-contribuinte-detalhe.html?emp='+EMP+'&v='+v.n+'&st='+stOf(v)+Q(false); }
   function hrefNova(){ return 'info-contribuinte.html?modo=nova&emp='+EMP+Q(false); }
   /* rascunho continua no FORMULÁRIO; versões já enviadas abrem o detalhe */
-  function goOf(v){ return (v.sit==='rascunho') ? hrefNova() : hrefOf(v); }
+  function goOf(v){ return (v.sit==='rascunho') ? (hrefNova()+'&v='+v.n+'&st=rascunho') : hrefOf(v); }
   function kv(k,v){ v=v||'—'; return '<div class="kv"><p class="kv__k">'+esc(k)+'</p><p class="kv__v" title="'+esc(v)+'">'+esc(v)+'</p></div>'; }
   /* regime da versão: nas processadas é o da empresa; em rascunho/revisão do primeiro acesso vem do que foi escolhido no formulário */
   function regimeOf(v){ if(v.vigrole==='now'||v.vigrole==='past') return CO.regime; if(SCN==='new') return (_d1Sent&&_sentRegime)||(_draft&&_draftRegime)||null; return (v.sit==='rascunho'&&_draftRegime)||CO.regime; }

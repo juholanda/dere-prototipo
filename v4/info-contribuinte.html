@@ -462,14 +462,23 @@
       if($('cancelBtn')) $('cancelBtn').setAttribute('href','info-contribuinte-detalhe.html?v='+(param('v')||'1')+'&st=revisao&from=lista'+(param('scn')?('&scn='+param('scn')):'')+(param('emp')?('&emp='+param('emp')):''));
       document.title='a-DeRE · Editar informações do contribuinte';
     } else {
-      /* nova versão, mas se já existe um rascunho salvo desta empresa é uma CONTINUAÇÃO, não um começo do zero */
+      /* rascunho salvo desta empresa = EDIÇÃO de uma versão em andamento (mesma estrutura de editar, só o estado muda);
+         começar do zero (sem rascunho) é que é "Nova versão". */
       var _hasDraft=false; try{ _hasDraft=!!localStorage.getItem('adere.d1001.draft.'+(param('emp')||'seg')); }catch(e){}
-      if($('bcAcao')) $('bcAcao').textContent = _hasDraft ? 'Continuar rascunho' : 'Nova versão';
-      if($('formTitle')) $('formTitle').textContent = _hasDraft ? 'Continuar rascunho · Informações do contribuinte' : 'Nova versão · Preencher informações do contribuinte';
+      var _vN=param('v')||'1', _scn=param('scn')?('&scn='+param('scn')):'', _emp=param('emp')?('&emp='+param('emp')):'';
+      if(_hasDraft){
+        if($('bcAcao')) $('bcAcao').textContent='Editar Versão '+_vN;
+        if($('formTitle')) $('formTitle').textContent='Editar Versão '+_vN+' · Informações do contribuinte';
+        document.title='a-DeRE · Editar Versão '+_vN;
+        /* veio das versões da empresa: cancelar volta pra lá */
+        if($('cancelBtn')) $('cancelBtn').setAttribute('href','info-contribuinte-empresa.html?emp='+(param('emp')||'seg')+_scn);
+      } else {
+        if($('bcAcao')) $('bcAcao').textContent='Nova versão';
+        if($('formTitle')) $('formTitle').textContent='Nova versão · Preencher informações do contribuinte';
+        /* criar do zero: cancelar volta para a lista de Informações do Contribuinte, preservando o cenário */
+        if($('cancelBtn')) $('cancelBtn').setAttribute('href','info-contribuinte-lista.html'+(param('scn')?('?scn='+param('scn')):''));
+      }
       if($('formSub')) $('formSub').textContent=DESC;
-      if(_hasDraft) document.title='a-DeRE · Continuar rascunho';
-      /* criar: cancelar volta para a lista de Informações do Contribuinte (painel fechado), preservando o cenário */
-      if($('cancelBtn')) $('cancelBtn').setAttribute('href','info-contribuinte-lista.html'+(param('scn')?('?scn='+param('scn')):''));
     }
   })();
 
