@@ -462,9 +462,12 @@
       if($('cancelBtn')) $('cancelBtn').setAttribute('href','info-contribuinte-detalhe.html?v='+(param('v')||'1')+'&st=revisao&from=lista'+(param('scn')?('&scn='+param('scn')):'')+(param('emp')?('&emp='+param('emp')):''));
       document.title='a-DeRE · Editar informações do contribuinte';
     } else {
-      if($('bcAcao')) $('bcAcao').textContent='Nova versão';
-      if($('formTitle')) $('formTitle').textContent='Nova versão · Preencher informações do contribuinte';
+      /* nova versão, mas se já existe um rascunho salvo desta empresa é uma CONTINUAÇÃO, não um começo do zero */
+      var _hasDraft=false; try{ _hasDraft=!!localStorage.getItem('adere.d1001.draft.'+(param('emp')||'seg')); }catch(e){}
+      if($('bcAcao')) $('bcAcao').textContent = _hasDraft ? 'Continuar rascunho' : 'Nova versão';
+      if($('formTitle')) $('formTitle').textContent = _hasDraft ? 'Continuar rascunho · Informações do contribuinte' : 'Nova versão · Preencher informações do contribuinte';
       if($('formSub')) $('formSub').textContent=DESC;
+      if(_hasDraft) document.title='a-DeRE · Continuar rascunho';
       /* criar: cancelar volta para a lista de Informações do Contribuinte (painel fechado), preservando o cenário */
       if($('cancelBtn')) $('cancelBtn').setAttribute('href','info-contribuinte-lista.html'+(param('scn')?('?scn='+param('scn')):''));
     }
