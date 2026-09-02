@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Informações do Contribuinte</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=23">
+  <link rel="stylesheet" href="../design-system/ds.css?v=24">
   <script src="../design-system/ds-tailwind.js"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
@@ -251,7 +251,7 @@
     avisos:    {label:'Processado com adv.', pill:'status--warning'},
     rejeitado: {label:'Rejeitado',              pill:'status--danger'},
     revisao:   {label:'Em revisão',              pill:'status--info'},
-    rascunho:  {label:'Rascunho',                pill:'status--neutral'},
+    rascunho:  {label:'Rascunho',                pill:'status--draft'},
     naoenviada:{label:'Não iniciada',            pill:'status--neutral'}
   };
   /* pendência = nova versão em andamento sobre um cadastro que já tem versão aceita */
@@ -274,15 +274,20 @@
   var scenario=((/[?&]scn=(new|pop)/.exec(location.search)||[])[1])||'new';
   /* persistência do fluxo: enviei o D-1001 da MAG Seguros → ela aparece com a 1ª versão em revisão */
   /* primeiro acesso: o flag guarda o id da empresa enviada; rascunho é por empresa */
+  /* rascunho/envio guardados no navegador: a linha mostra o que já foi preenchido (regime) e quando */
+  var REGNOME=['Serviços Financeiros','Plano de Assistência à Saúde','Concursos de Prognósticos','Outros regimes'];
+  function fmtDT(ms){ var d=new Date(+ms); if(!ms||isNaN(d)) return null; var p=function(n){return ('0'+n).slice(-2);}; return p(d.getDate())+'/'+p(d.getMonth()+1)+'/'+d.getFullYear()+', '+p(d.getHours())+':'+p(d.getMinutes()); }
+  function draftInfo(id){ var r={regime:null,at:null}; try{ var d=JSON.parse(localStorage.getItem('adere.d1001.draft.'+id)||'null'); if(!d) return r; r.at=fmtDT(d.t); for(var i=1;i<=4;i++){ var f=d.f&&d.f['regprin#'+i]; if(f&&f.c){ r.regime=REGNOME[i-1]; break; } } }catch(e){} return r; }
+  var _sent={regime:null,at:null}; try{ _sent.regime=localStorage.getItem('adere.sent.d1001.regime'); _sent.at=fmtDT(localStorage.getItem('adere.sent.d1001.t')); }catch(e){}
   try{
     var _sentId=localStorage.getItem('adere.sent.d1001');
     EMP_NEW.forEach(function(e){
-      if(_sentId===e.id){ e.sit='revisao'; e.emrev={ver:1}; e.regime='Serviços Financeiros'; e.at='01/09/2026, 14:32'; e.ts=9999; }
-      else if(localStorage.getItem('adere.d1001.draft.'+e.id)){ e.sit='rascunho'; e.rascunho=true; e.at='01/09/2026, 14:32'; e.ts=9998; }
+      if(_sentId===e.id){ e.sit='revisao'; e.emrev={ver:1}; e.regime=_sent.regime||'Serviços Financeiros'; e.at=_sent.at||'01/09/2026, 14:32'; e.ts=9999; }
+      else if(localStorage.getItem('adere.d1001.draft.'+e.id)){ var _d=draftInfo(e.id); e.sit='rascunho'; e.rascunho=true; if(_d.regime) e.regime=_d.regime; e.at=_d.at||'01/09/2026, 14:32'; e.ts=9998; }
     });
     /* populado: só quem ainda não tem versão vira "Rascunho" (quem já tem versão mantém o status da vigente) */
     EMP_POP.forEach(function(e){
-      if(e.sit==='naoenviada' && localStorage.getItem('adere.d1001.draft.'+e.id)){ e.sit='rascunho'; e.rascunho=true; e.at='01/09/2026, 14:32'; e.ts=9998; }
+      if(e.sit==='naoenviada' && localStorage.getItem('adere.d1001.draft.'+e.id)){ var _d=draftInfo(e.id); e.sit='rascunho'; e.rascunho=true; if(_d.regime) e.regime=_d.regime; e.at=_d.at||'01/09/2026, 14:32'; e.ts=9998; }
     });
   }catch(e){}
   function curEmp(){ return scenario==='new'?EMP_NEW:EMP_POP; }
@@ -402,7 +407,7 @@
     if(rst) rst.addEventListener('click',function(){
       try{
         Object.keys(localStorage).forEach(function(k){
-          if(k==='adere.sent.d1001' || k.indexOf('adere.d1001.')===0){ localStorage.removeItem(k); }
+          if(k.indexOf('adere.sent.d1001')===0 || k.indexOf('adere.d1001.')===0){ localStorage.removeItem(k); }
         });
         Object.keys(sessionStorage).forEach(function(k){ if(k.indexOf('adere.')===0) sessionStorage.removeItem(k); });
       }catch(e){}
