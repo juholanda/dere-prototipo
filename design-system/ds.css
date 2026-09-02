@@ -277,11 +277,15 @@ textarea.input{height:auto;padding:var(--space-2) var(--space-3);min-height:84px
 .field__msg{display:flex;align-items:center;gap:var(--space-1);margin:0;font-size:var(--text-xs);color:var(--color-text-muted)}
 .field__msg svg{flex:0 0 auto}
 .field__msg--error{color:var(--color-danger)}
+@keyframes ds-field-msg-in{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}
+.field__msg--error:not([hidden]){animation:ds-field-msg-in .18s ease}
+@media(prefers-reduced-motion:reduce){.field__msg--error:not([hidden]){animation:none}}
 .field__msg--ok{color:var(--color-success-fg)}
 /* Campo somente leitura: dado confirmado (ex.: vindo da Receita), exibição sem cara de campo editável */
 .readonly-field{display:flex;flex-direction:column;gap:var(--space-1)}
 .readonly-field__label{font-size:var(--text-sm);font-weight:600;color:var(--color-heading)}
 .readonly-field__value{font-size:var(--text-base);color:var(--color-heading)}
+.readonly-field--boxed{background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-2xl);padding:var(--space-4)}
 .select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right var(--space-3) center;padding-right:2rem}
 
 /* Check / radio / switch */
@@ -452,8 +456,8 @@ textarea.input{height:auto;padding:var(--space-2) var(--space-3);min-height:84px
 .cell-progress__v{font-size:var(--text-xs);color:var(--color-text-onmuted);font-variant-numeric:tabular-nums;min-width:34px;text-align:right;font-weight:600}
 
 /* Estado vazio */
-.empty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:var(--space-2);padding:var(--space-10) var(--space-6);color:var(--color-text-muted)}
-.empty__icon{width:48px;height:48px;display:grid;place-items:center;border-radius:50%;background:var(--color-surface-2);color:var(--color-text-muted)}
+.empty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:var(--space-2);padding:var(--space-8) var(--space-6);color:var(--color-text-muted)}
+.empty__icon{width:48px;height:48px;display:grid;place-items:center;border-radius:50%;background:var(--color-border);color:var(--color-text-onmuted)}
 .empty__title{font-weight:600;color:var(--color-heading)}
 
 /* Skeleton */

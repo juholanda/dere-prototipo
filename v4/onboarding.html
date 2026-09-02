@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>a-DeRE · Primeiro acesso</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="../design-system/ds.css?v=38">
+<link rel="stylesheet" href="../design-system/ds.css?v=39">
 <script src="../design-system/ds-tailwind.js"></script>
 <style>
   body{margin:0;font-family:var(--font-sans);color:var(--color-text)}
@@ -103,7 +103,7 @@
   .co__act .edit:hover{text-decoration:underline}
   .co__act .rm{color:var(--color-danger)}
   .co__act .rm:hover{text-decoration:underline}
-  .actions{width:100%;display:flex;flex-direction:column;gap:var(--space-1)}
+  .actions{width:100%;display:flex;flex-direction:column;gap:var(--space-2)}
 
   /* ---- drawer: shell 100% do DS (.drawer-backdrop / .drawer / .drawer__header · __body · __footer, tamanho .drawer--md, foco via ds-dialog.js). Aqui só o que o DS não cobre. ---- */
   .drawer__header p{margin:var(--space-1) 0 0;font-size:var(--text-sm);color:var(--color-text-muted)}
@@ -111,7 +111,7 @@
   .drawer__x svg{width:20px;height:20px}
   .drawer__body{display:flex;flex-direction:column;gap:var(--space-8)}
   /* Dados da Receita (somente leitura) — grade que revela/anima; as linhas usam .readonly-field do DS */
-  .ro{background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-base);padding:var(--space-4);display:none;grid-template-columns:1fr 1fr;gap:var(--space-4)}
+  .ro{background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-2xl);padding:var(--space-4);display:none;grid-template-columns:1fr 1fr;gap:var(--space-4)}
   .ro.show{display:grid}
   .ro__full{grid-column:1 / -1}
   .resplist{display:flex;flex-direction:column;gap:var(--space-2)}
@@ -237,7 +237,7 @@
           <p class="lead">Defina uma senha para os seus próximos acessos à a-DeRE.</p>
         </div>
         <div class="sp"></div>
-        <div class="readonly-field" style="width:100%">
+        <div class="readonly-field readonly-field--boxed" style="width:100%">
           <span class="readonly-field__label">E-mail cadastrado</span>
           <span class="readonly-field__value" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">ricardo.alves@magseguros.com.br</span>
         </div>
@@ -573,15 +573,15 @@
       if(d.length>8)o=d.slice(0,2)+'.'+d.slice(2,5)+'.'+d.slice(5,8)+'/'+d.slice(8);
       if(d.length>12)o=d.slice(0,2)+'.'+d.slice(2,5)+'.'+d.slice(5,8)+'/'+d.slice(8,12)+'-'+d.slice(12);
       return o;}
-    function setCnpjError(txt){ if($('cnpjmsgTxt'))$('cnpjmsgTxt').textContent=txt; $('cnpjmsg').hidden=false; $('cnpj').classList.add('is-error'); $('cnpj').setAttribute('aria-invalid','true'); }
-    function clearCnpjError(){ $('cnpjmsg').hidden=true; $('cnpj').classList.remove('is-error'); $('cnpj').setAttribute('aria-invalid','false'); }
+    function setCnpjError(txt){ if($('cnpjmsgTxt'))$('cnpjmsgTxt').textContent=txt; $('cnpjmsg').hidden=false; if($('cnpjHelp'))$('cnpjHelp').hidden=true; $('cnpj').classList.add('is-error'); $('cnpj').setAttribute('aria-invalid','true'); }
+    function clearCnpjError(){ $('cnpjmsg').hidden=true; if($('cnpjHelp'))$('cnpjHelp').hidden=false; $('cnpj').classList.remove('is-error'); $('cnpj').setAttribute('aria-invalid','false'); }
     $('cnpj').addEventListener('input',function(){
       this.value=maskCNPJ(this.value);
       clearCnpjError();
       var d=onlyDigits(this.value);
       if(d.length===14){
         if(CNPJDB[d]){ fillFromCNPJ(d); }
-        else { $('ro').classList.remove('show'); if($('cnpjHelp'))$('cnpjHelp').hidden=false; setCnpjError('CNPJ não encontrado. Confira o número e tente novamente.'); }
+        else { $('ro').classList.remove('show'); setCnpjError('CNPJ não encontrado. Confira o número e tente novamente.'); }
       } else { $('ro').classList.remove('show'); if($('cnpjHelp'))$('cnpjHelp').hidden=false; }
     });
     function showRo(){
@@ -782,7 +782,7 @@
       CERTS.forEach(function(c,i){
         var el=document.createElement('div'); el.className='co';
         var importBtn = '<div class="co__act"><button class="btn btn--secondary btn--sm cert-send" type="button" style="gap:var(--space-2)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg> Importar certificado</button></div>';
-        var certBlock = '<div class="filecard"><span class="filecard__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v5h5"/><path d="M9 13h6"/><path d="M9 17h6"/></svg></span><div class="filecard__body"><div class="filecard__name" title="'+esc(c.file||'')+'">'+esc(c.file||'')+'</div><div class="filecard__meta">Certificado importado</div></div><div class="filecard__actions"><button class="filecard__link cert-redo" type="button">Substituir</button><button class="filecard__link filecard__link--danger cert-del" type="button">Remover</button></div></div>';
+        var certBlock = '<div class="filecard"><span class="filecard__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v5h5"/><path d="M9 13h6"/><path d="M9 17h6"/></svg></span><div class="filecard__body"><div class="filecard__name" title="'+esc(c.file||'')+'">'+esc(c.file||'')+'</div><div class="filecard__meta">'+esc((c.ext?c.ext+' · ':'')+(c.size!=null?fmtSize(c.size):'') || 'Certificado importado')+'</div></div><div class="filecard__actions"><button class="filecard__link cert-redo" type="button">Substituir</button><button class="filecard__link filecard__link--danger cert-del" type="button">Remover</button></div></div>';
         el.innerHTML='<div class="co__top"><span class="co__logo">MAG</span>'+
           '<div class="co__b"><div class="co__name">'+esc(c.nome)+'</div><div class="co__meta">'+esc(c.cnpj)+'</div></div>'+
           (c.file ? '' : importBtn)+
@@ -824,7 +824,7 @@
     $('certConfirm').addEventListener('click',function(){
       var f=$('certFile').files[0], pw=$('certPw').value.trim();
       if(!f || !pw){ $('certPwMsg').hidden=false; if(!pw){ $('certPw').classList.add('is-error'); $('certPw').setAttribute('aria-invalid','true'); $('certPw').focus(); } return; }
-      CERTS[certTarget].file=f.name; CERTS[certTarget].hasPw=true;
+      CERTS[certTarget].file=f.name; CERTS[certTarget].hasPw=true; CERTS[certTarget].size=f.size; CERTS[certTarget].ext=(f.name.indexOf('.')>=0?f.name.split('.').pop():'').toUpperCase();
       closeCertDrawer(); renderCerts();
     });
     $('certCancel').addEventListener('click',requestCloseCertDrawer);
