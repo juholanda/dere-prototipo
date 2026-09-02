@@ -428,15 +428,16 @@
   /* Eventos do ciclo de vida (Manual RFB: interno a-DeRE -> Receita; situações oficiais sucesso/advertências/rejeitado; advertência = aceito) */
   /* Cada passo: ação (título) + status REAL resultante (badge) + quem fez + data. Papéis: Preparador/Aprovador (perfis do produto). */
   /* Cada passo: título (ação) + Status REAL + Responsável (perfil) + Comentário/Recibo/Motivo quando houver. */
+  var REC='1001202601'+Array(21).join('0')+'1'; /* recibo ilustrativo: 31 posições (1001+AAAAMM+sequencial); máscara oficial no Anexo II */
   var EV={
     criada:      {t:'02/09/2026 · 10:47', title:'Versão criada',                 status:['Rascunho','status--draft'],                 who:'Ricardo Alves', role:'Preparador'},
     enviada:     {t:'02/09/2026 · 11:15', title:'Enviada para revisão',          status:['Em revisão','status--info'],                who:'Ricardo Alves', role:'Preparador'},
-    ajustes:     {t:'02/09/2026 · 14:32', title:'Ajustes solicitados',           status:['Ajustes solicitados','status--warning'],    who:'Ana Prado', role:'Aprovadora', extra:['Comentário','O regime secundário não se aplica a esta empresa. Remova a marcação e confirme a vigência antes de reenviar.']},
+    ajustes:     {t:'02/09/2026 · 14:32', title:'Ajustes solicitados',           status:['Ajustes solicitados','status--warning'],    who:'Ana Prado', role:'Aprovadora', extras:[['Comentário','O regime secundário não se aplica a esta empresa. Remova a marcação e confirme a vigência antes de reenviar.']]},
     reenviada:   {t:'03/09/2026 · 09:10', title:'Reenviada para revisão',        status:['Em revisão','status--info'],                who:'Ricardo Alves', role:'Preparador'},
     aprovada:    {t:'03/09/2026 · 11:20', title:'Aprovada e transmitida à Receita Federal', status:['Em processamento','status--info'], who:'Ana Prado', role:'Aprovadora'},
-    processada:  {t:'03/09/2026 · 11:27', title:'Processada pela Receita Federal', status:['Processado com sucesso','status--success'], who:'Receita Federal', role:'Sistema', extra:['Recibo','1.1.2026.0000000000000000001']},
-    processada_adv:{t:'03/09/2026 · 11:27', title:'Processada pela Receita Federal', status:['Processado com advertências','status--warning'], who:'Receita Federal', role:'Sistema', extra:['Recibo','1.1.2026.0000000000000000001 (advertências não impeditivas; vigência ativa)']},
-    rejeitada:   {t:'03/09/2026 · 11:27', title:'Processada pela Receita Federal', status:['Rejeitada','status--danger'], who:'Receita Federal', role:'Sistema', extra:['Motivo','A transmissão foi rejeitada. Corrija os erros apontados e reenvie.']}
+    processada:  {t:'03/09/2026 · 11:27', title:'Processada pela Receita Federal', status:['Processado com sucesso','status--success'], who:'Receita Federal', role:'Sistema', extras:[['Recibo',REC]]},
+    processada_adv:{t:'03/09/2026 · 11:27', title:'Processada pela Receita Federal', status:['Processado com advertências','status--warning'], who:'Receita Federal', role:'Sistema', extras:[['Advertência','MS1094 · A data de início da validade é anterior ao início da DeRE (aviso, não impeditivo).'],['Recibo',REC]]},
+    rejeitada:   {t:'03/09/2026 · 11:27', title:'Processada pela Receita Federal', status:['Rejeitada','status--danger'], who:'Receita Federal', role:'Sistema', extras:[['Erro','MS1097 · A validade informada se sobrepõe a um período já existente. Ajuste as datas e reenvie.']]}
   };
   var TL={
     rascunho:     ['criada'],
@@ -458,10 +459,10 @@
   /* retorno da Receita por situação (o número de recibo e o código de erro são ILUSTRATIVOS: confirmar formato na doc oficial) */
   function receitaVal(sit){
     if(sit==='processando') return rfVal('info', LOADER, 'Em processamento', 'Desde 03/09/2026, 11:25');
-    if(sit==='sucesso')     return rfVal('success', CHECK, 'Processada com sucesso', '03/09/2026, 11:27 · Recibo 1.1.2026.0000000000000000001');
-    if(sit==='advertencias')return rfVal('warning', CHECK, 'Processada com advertências', '03/09/2026, 11:27 · Recibo 1.1.2026.0000000000000000001');
-    if(sit==='encerrada')   return rfVal('success', CHECK, 'Processada com sucesso', '03/09/2026, 11:27 · Recibo 1.1.2026.0000000000000000001');
-    if(sit==='rejeitado')   return rfVal('danger', XMARK, 'Rejeitada pela Receita', '03/09/2026, 11:27 · Cód. 217 (exemplo)');
+    if(sit==='sucesso')     return rfVal('success', CHECK, 'Processada com sucesso', '03/09/2026, 11:27 · Recibo '+REC);
+    if(sit==='advertencias')return rfVal('warning', CHECK, 'Processada com advertências', '03/09/2026, 11:27 · Recibo '+REC);
+    if(sit==='encerrada')   return rfVal('success', CHECK, 'Processada com sucesso', '03/09/2026, 11:27 · Recibo '+REC);
+    if(sit==='rejeitado')   return rfVal('danger', XMARK, 'Rejeitada pela Receita', '03/09/2026, 11:27 · Cód. MS1097');
     return waitVal();
   }
   function renderPeople(sit){
@@ -477,9 +478,9 @@
   function renderAlert(sit){
     var el=$('alertSlot'); if(!el) return;
     if(sit==='ajustes'){
-      el.innerHTML='<div class="dalert dalert--warning" role="status"><span class="dalert__ic">'+ALERT+'</span><div><p class="dalert__title">Ajustes solicitados por Ana Prado</p><p class="dalert__text">'+esc(EV.ajustes.extra?EV.ajustes.extra[1]:'')+'</p></div></div>';
+      el.innerHTML='<div class="dalert dalert--warning" role="status"><span class="dalert__ic">'+ALERT+'</span><div><p class="dalert__title">Ajustes solicitados por Ana Prado</p><p class="dalert__text">'+esc(EV.ajustes.extras?EV.ajustes.extras[0][1]:'')+'</p></div></div>';
     } else if(sit==='rejeitado'){
-      el.innerHTML='<div class="dalert dalert--danger" role="status"><span class="dalert__ic">'+ALERT+'</span><div><p class="dalert__title">Versão rejeitada pela Receita Federal</p><p class="dalert__text">'+esc(EV.rejeitada.extra?EV.rejeitada.extra[1]:'')+'</p></div></div>';
+      el.innerHTML='<div class="dalert dalert--danger" role="status"><span class="dalert__ic">'+ALERT+'</span><div><p class="dalert__title">Versão rejeitada pela Receita Federal</p><p class="dalert__text">'+esc(EV.rejeitada.extras?EV.rejeitada.extras[0][1]:'')+'</p></div></div>';
     } else { el.innerHTML=''; }
   }
   function renderTimeline(sit){
@@ -494,7 +495,7 @@
       var badge='<span class="status status--sm '+st[1]+'"><span class="status__dot"></span>'+esc(st[0])+'</span>';
       var av=(e.role==='Sistema')?'<span class="avatar avatar--sm avatar--sys">'+RECEITA+'</span>':'<span class="avatar avatar--sm">'+initials(e.who)+'</span>';
       var who='<span class="tl__who">'+av+'<span class="tl__whotx"><strong>'+esc(e.who)+'</strong><span class="tl__role"> · '+esc(e.role)+'</span></span></span>';
-      var extra=e.extra?'<div class="tl__field"><dt>'+esc(e.extra[0])+'</dt><dd>'+esc(e.extra[1])+'</dd></div>':'';
+      var extra=(e.extras||[]).map(function(x){return '<div class="tl__field"><dt>'+esc(x[0])+'</dt><dd>'+esc(x[1])+'</dd></div>';}).join('');
       return '<li class="timeline__item"><span class="timeline__dot timeline__dot--muted"></span><div class="tl__body">'+
         '<div class="tl__head"><p class="tl__title">'+esc(e.title)+'</p><span class="tl__time">'+esc(e.t)+'</span></div>'+
         '<dl class="tl__fields">'+
