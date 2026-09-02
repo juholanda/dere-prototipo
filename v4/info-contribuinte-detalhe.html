@@ -135,6 +135,56 @@
     .mnote{display:flex;gap:var(--space-2);align-items:flex-start;font-size:var(--text-base);color:var(--color-text-onmuted);background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-3)}
     .mnote svg{width:16px;height:16px;flex:0 0 auto;color:var(--color-text-muted);margin-top:2px}
 
+    /* ===== contexto: empresa (cocard) e pessoas do processo ===== */
+    .cocard{display:flex;align-items:center;gap:var(--space-10);padding:var(--space-6);flex-wrap:wrap;margin-bottom:var(--space-6)}
+    .cocard__id{display:flex;align-items:center;gap:var(--space-3);min-width:0;flex:1 1 260px}
+    .cocard__logo{width:var(--space-12);height:var(--space-12);border-radius:var(--radius-lg);overflow:hidden;background:var(--color-surface);border:1px solid var(--color-border);flex:0 0 auto;display:grid;place-items:center}
+    .cocard__logo img{width:100%;height:100%;object-fit:cover;display:block}
+    .cocard__name{font-size:var(--text-base);font-weight:600;color:var(--color-heading);margin:0;line-height:1.3}
+    .cocard__cnpj{font-size:var(--text-sm);color:var(--color-text-muted);margin:2px 0 0;font-variant-numeric:tabular-nums}
+    .kv{min-width:0}
+    .kv__k{font-size:var(--text-xs);color:var(--color-text-muted);font-weight:600;margin:0 0 var(--space-1);white-space:nowrap}
+    .kv__v{font-size:var(--text-sm);color:var(--color-heading);font-weight:500;margin:0;font-variant-numeric:tabular-nums}
+    .peoplecard{display:flex;gap:var(--space-10) var(--space-14);flex-wrap:wrap;padding:var(--space-6);margin-bottom:var(--space-6)}
+    .person{min-width:0}
+    .person__k{display:flex;align-items:center;gap:var(--space-1-5);font-size:var(--text-xs);color:var(--color-text-muted);font-weight:600;margin:0 0 var(--space-3)}
+    .person__k svg{width:14px;height:14px}
+    .person__v{display:flex;align-items:center;gap:var(--space-2)}
+    .person__name{font-size:var(--text-sm);font-weight:600;color:var(--color-heading);line-height:1.3}
+    .person__date{font-size:var(--text-xs);color:var(--color-text-muted);font-variant-numeric:tabular-nums;margin-top:1px}
+
+    /* ===== alerta de pendência (ajustes/rejeição) ===== */
+    .alert{margin-bottom:var(--space-6);align-items:center}
+    .alert__body{flex:1}
+    .alert__act{flex:0 0 auto}
+    .alert__act .btn{white-space:nowrap}
+
+    /* ===== card com abas ===== */
+    .dcard{padding:0;overflow:hidden}
+    .dcard .tabs{margin:var(--space-6) var(--space-6) 0}
+    .dcard .tabs__panel{padding:var(--space-6)}
+    /* acordeão de informações da versão */
+    .accicon{width:30px;height:30px;border-radius:var(--radius-lg);background:var(--color-primary-subtle);color:var(--color-primary);display:grid;place-items:center;flex:0 0 auto}
+    .accicon svg{width:17px;height:17px}
+    .accordion__head{font-size:var(--text-base);font-weight:600;color:var(--color-heading)}
+    .acchd{display:flex;align-items:center;gap:var(--space-3);min-width:0}
+    .seelink{display:inline-flex;align-items:center;gap:var(--space-1-5);margin-top:var(--space-4);font-size:var(--text-sm);font-weight:600;color:var(--color-primary);background:none;border:0;cursor:pointer;padding:0}
+    .seelink:hover{text-decoration:underline}
+    .seelink svg{width:16px;height:16px}
+
+    /* ===== histórico / linha do tempo do ciclo de vida ===== */
+    .histhead{display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);flex-wrap:wrap;margin-bottom:var(--space-6)}
+    .histhead h3{font-size:var(--text-base)!important;font-weight:700!important;color:var(--color-heading);margin:0}
+    .timeline__dot--info{border-color:var(--color-info)}
+    .timeline__dot--warning{border-color:var(--color-warning)}
+    .tlrow{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--space-6)}
+    .tlrow__main{min-width:0}
+    .tl__detail{font-size:var(--text-sm);color:var(--color-text-onmuted);margin:var(--space-1) 0 0;line-height:1.5}
+    .tlrow__who{display:flex;gap:var(--space-2);align-items:flex-start;flex:0 0 auto}
+    .tlwho__name{font-size:var(--text-sm);font-weight:600;color:var(--color-heading);margin:0;line-height:1.3}
+    .tlwho__role{font-size:var(--text-xs);color:var(--color-text-muted);margin:0}
+    @media(max-width:720px){.tlrow{flex-direction:column;gap:var(--space-2)}.tlrow__who{order:-1}}
+
     .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
     @media(max-width:820px){.submeta{grid-template-columns:1fr}.rogrid{grid-template-columns:1fr}.statusbar{flex-wrap:wrap}.statusbar__actions{width:100%}}
     @media(max-width:720px){.bc .bc-hide{display:none}}
@@ -226,60 +276,80 @@
               <!-- ações da versão (variam por estado): Editar, Excluir, etc. -->
               <div class="statusbar__actions" id="pageActions"></div>
             </div>
-            <!-- metadados da submissão: dentro do cabeçalho, separado por uma linha fina -->
-            <div class="submeta" id="submeta"></div>
           </div>
         </div>
 
         <div class="wrap">
-          <!-- banner de status (dinâmico) -->
-          <div class="statusbar" id="statusbar"></div>
-
-          <div class="detbody">
-          <!-- Identificação -->
-          <section class="card" aria-labelledby="d-ident">
-            <div class="card__h"><span class="card__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg></span><h2 id="d-ident">Identificação</h2></div>
-            <dl class="rogrid">
-              <div class="roitem"><dt>Nome empresarial</dt><dd id="roNome">MAG Seguros</dd></div>
-              <div class="roitem"><dt>CNPJ (raiz)</dt><dd>33.608.308</dd></div>
-              <div class="roitem"><dt>Natureza jurídica</dt><dd>Sociedade Anônima</dd></div>
-            </dl>
+          <!-- contexto: empresa -->
+          <section class="card cocard" aria-label="Empresa">
+            <div class="cocard__id">
+              <span class="cocard__logo" id="coLogo"></span>
+              <div><p class="cocard__name" id="coNome">MAG Seguros</p><p class="cocard__cnpj" id="coCnpj">CNPJ 33.608.308/0001-73</p></div>
+            </div>
+            <div class="kv"><p class="kv__k">Regime principal</p><p class="kv__v" id="coRegime">Serviços Financeiros</p></div>
+            <div class="kv"><p class="kv__k">Versão</p><p class="kv__v" id="coVer">Versão 1</p></div>
           </section>
 
-          <!-- Vigência -->
-          <section class="card" aria-labelledby="d-vig">
-            <div class="card__h"><span class="card__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span><h2 id="d-vig">Vigência</h2></div>
-            <dl class="rogrid">
-              <div class="roitem"><dt>Início da vigência</dt><dd>01/01/2026</dd></div>
-              <div class="roitem"><dt>Fim da vigência</dt><dd>Sem data de fim</dd></div>
-            </dl>
-          </section>
+          <!-- pessoas do processo -->
+          <section class="card peoplecard" id="peopleCard" aria-label="Responsáveis"></section>
 
-          <!-- Regime tributário -->
-          <section class="card" aria-labelledby="d-reg">
-            <div class="card__h"><span class="card__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10M12 3v18M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg></span><h2 id="d-reg">Regime tributário</h2></div>
-            <dl class="rogrid">
-              <div class="roitem"><dt>CNAE principal</dt><dd>65.11-1/01 · Seguros de vida</dd></div>
-              <div class="roitem"><dt>Regime principal</dt><dd><span class="ronum">1</span>Serviços Financeiros</dd></div>
-              <div class="roitem"><dt>Regimes secundários</dt><dd>Nenhum</dd></div>
-              <div class="roitem"><dt>Natureza da tributação</dt><dd>Tributação regular</dd></div>
-            </dl>
-          </section>
+          <!-- pendência que exige ação -->
+          <div id="alertSlot"></div>
 
-          <!-- Atividades -->
-          <section class="card" aria-labelledby="d-atv">
-            <div class="card__h"><span class="card__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8M13 12h8M13 18h8"/></svg></span><h2 id="d-atv">Atividades</h2></div>
-            <dl class="rogrid">
-              <div class="roitem rogrid__full"><dt>Serviços Financeiros<span class="rotab">Tabela 21</span></dt>
-                <dd><div class="ropicks">
-                  <div class="ropick"><span class="ropick__cod">11A</span><span class="ropick__desc">Operações de seguros de ramos elementares e seguros de pessoas sem cobertura por sobrevivência, com exceção dos seguros de saúde de que trata o Capítulo III do Título V da Lei Complementar nº 214/2025</span></div>
-                  <div class="ropick"><span class="ropick__cod">11B</span><span class="ropick__desc">Operações de seguros de pessoas com cobertura por sobrevivência, com exceção dos seguros de saúde de que trata o Capítulo III do Título V da Lei Complementar nº 214/2025</span></div>
-                  <div class="ropick"><span class="ropick__cod">13A</span><span class="ropick__desc">Previdência privada, composta de operações de administração e gestão da previdência complementar aberta</span></div>
-                </div></dd>
+          <!-- abas: informações da versão x histórico -->
+          <section class="card dcard" aria-label="Detalhe da versão">
+            <div class="tabs" id="dtabs" role="tablist" aria-label="Ver a versão">
+              <button class="tab is-active" type="button" role="tab" id="dt-info" aria-selected="true" aria-controls="dp-info" data-dtab="info"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>Informações da versão</button>
+              <button class="tab" type="button" role="tab" id="dt-hist" aria-selected="false" aria-controls="dp-hist" data-dtab="hist"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8v4l3 2"/><path d="M3.05 11a9 9 0 1 1 .5 4"/><path d="M3 3v5h5"/></svg>Histórico da versão</button>
+            </div>
+
+            <div class="tabs__panel" id="dp-info" role="tabpanel" aria-labelledby="dt-info" tabindex="0">
+              <div class="accordion" id="dacc">
+                <div class="accordion__item is-open">
+                  <button class="accordion__head" type="button" aria-expanded="true"><span class="acchd"><span class="accicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg></span>Identificação</span><span class="accordion__chev" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button>
+                  <div class="accordion__panel"><dl class="rogrid">
+                    <div class="roitem"><dt>Nome empresarial</dt><dd id="roNome">MAG Seguros</dd></div>
+                    <div class="roitem"><dt>CNPJ (raiz)</dt><dd id="roCnpjRaiz">33.608.308</dd></div>
+                    <div class="roitem"><dt>Natureza jurídica</dt><dd>Sociedade Anônima</dd></div>
+                  </dl></div>
+                </div>
+                <div class="accordion__item">
+                  <button class="accordion__head" type="button" aria-expanded="false"><span class="acchd"><span class="accicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>Vigência</span><span class="accordion__chev" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button>
+                  <div class="accordion__panel"><dl class="rogrid">
+                    <div class="roitem"><dt>Início da vigência</dt><dd>01/01/2026</dd></div>
+                    <div class="roitem"><dt>Fim da vigência</dt><dd>Sem data de fim</dd></div>
+                  </dl></div>
+                </div>
+                <div class="accordion__item">
+                  <button class="accordion__head" type="button" aria-expanded="false"><span class="acchd"><span class="accicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10M12 3v18M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg></span>Regime tributário</span><span class="accordion__chev" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button>
+                  <div class="accordion__panel"><dl class="rogrid">
+                    <div class="roitem"><dt>CNAE principal</dt><dd>65.11-1/01 · Seguros de vida</dd></div>
+                    <div class="roitem"><dt>Regime principal</dt><dd><span class="ronum">1</span>Serviços Financeiros</dd></div>
+                    <div class="roitem"><dt>Regimes secundários</dt><dd>Nenhum</dd></div>
+                    <div class="roitem"><dt>Natureza da tributação</dt><dd>Tributação regular</dd></div>
+                  </dl></div>
+                </div>
+                <div class="accordion__item">
+                  <button class="accordion__head" type="button" aria-expanded="false"><span class="acchd"><span class="accicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8M13 12h8M13 18h8"/></svg></span>Atividades</span><span class="accordion__chev" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button>
+                  <div class="accordion__panel"><dl class="rogrid">
+                    <div class="roitem rogrid__full"><dt>Serviços Financeiros<span class="rotab">Tabela 21</span></dt>
+                      <dd><div class="ropicks">
+                        <div class="ropick"><span class="ropick__cod">11A</span><span class="ropick__desc">Operações de seguros de ramos elementares e seguros de pessoas sem cobertura por sobrevivência, com exceção dos seguros de saúde de que trata o Capítulo III do Título V da Lei Complementar nº 214/2025</span></div>
+                        <div class="ropick"><span class="ropick__cod">11B</span><span class="ropick__desc">Operações de seguros de pessoas com cobertura por sobrevivência, com exceção dos seguros de saúde de que trata o Capítulo III do Título V da Lei Complementar nº 214/2025</span></div>
+                        <div class="ropick"><span class="ropick__cod">13A</span><span class="ropick__desc">Previdência privada, composta de operações de administração e gestão da previdência complementar aberta</span></div>
+                      </div></dd>
+                    </div>
+                  </dl></div>
+                </div>
               </div>
-            </dl>
+              <button class="seelink" type="button" id="expandAll"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h18M12 3v18"/></svg>Ver todos os detalhes</button>
+            </div>
+
+            <div class="tabs__panel" id="dp-hist" role="tabpanel" aria-labelledby="dt-hist" tabindex="0" hidden>
+              <div class="histhead"><h3>Histórico do processo desta versão</h3><button class="btn btn--secondary" type="button"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/></svg>Baixar histórico</button></div>
+              <ol class="timeline" id="tl"></ol>
+            </div>
           </section>
-          </div>
         </div>
       </main>
     </div>
@@ -325,30 +395,102 @@
   function sitFor(key){ if(key==='revisao') return 'revisao'; if(key==='ajuste') return 'ajustes'; var us=dparam('sit'); return (['sucesso','advertencias','encerrada','processando','rejeitado','rascunho'].indexOf(us)>=0)?us:'sucesso'; }
   function initials(n){return n.split(/\s+/).slice(0,2).map(function(w){return w[0];}).join('').toUpperCase();}
   function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
+  var USER='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
+  var CHEVR='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>';
+  /* Eventos do ciclo de vida (Manual RFB: interno a-DeRE -> Receita; situações oficiais sucesso/advertências/rejeitado; advertência = aceito) */
+  var EV={
+    criada:      {t:'02/09/2026 · 10:47', title:'Versão criada',                    who:'Ricardo Alves', role:'Elaborador', dot:'success'},
+    enviada:     {t:'02/09/2026 · 11:15', title:'Enviada para revisão',              who:'Ricardo Alves', role:'Elaborador', dot:'info'},
+    ajustes:     {t:'02/09/2026 · 14:32', title:'Ajustes solicitados', detail:'Revisar o enquadramento no regime específico antes de reenviar.', who:'Ana Prado', role:'Aprovador', dot:'warning'},
+    reenviada:   {t:'03/09/2026 · 09:10', title:'Reenviada para revisão',            who:'Ricardo Alves', role:'Elaborador', dot:'info'},
+    aprovada:    {t:'03/09/2026 · 11:20', title:'Aprovada',                          who:'Ana Prado',     role:'Aprovadora', dot:'success'},
+    transmitida: {t:'03/09/2026 · 11:25', title:'Transmitida à Receita Federal',     who:'Ricardo Alves', role:'Elaborador', dot:'info'},
+    processando: {t:'03/09/2026 · 11:26', title:'Em processamento na Receita Federal', who:'Receita Federal', role:'Sistema', dot:'info'},
+    processada:  {t:'03/09/2026 · 11:27', title:'Processada com sucesso', detail:'Recibo: 1.1.2026.0000000000000000001', who:'Receita Federal', role:'Sistema', dot:'success'},
+    processada_adv:{t:'03/09/2026 · 11:27', title:'Processada com advertências', detail:'Recibo: 1.1.2026.0000000000000000001. Advertências não impeditivas: a vigência está ativa.', who:'Receita Federal', role:'Sistema', dot:'warning'},
+    rejeitada:   {t:'03/09/2026 · 11:27', title:'Rejeitada pela Receita Federal', detail:'A transmissão foi rejeitada. Corrija os erros apontados e reenvie.', who:'Receita Federal', role:'Sistema', dot:'danger'}
+  };
+  var TL={
+    rascunho:     ['criada'],
+    revisao:      ['criada','enviada'],
+    ajustes:      ['criada','enviada','ajustes'],
+    processando:  ['criada','enviada','aprovada','transmitida','processando'],
+    sucesso:      ['criada','enviada','ajustes','reenviada','aprovada','transmitida','processada'],
+    advertencias: ['criada','enviada','ajustes','reenviada','aprovada','transmitida','processada_adv'],
+    rejeitado:    ['criada','enviada','transmitida','rejeitada'],
+    encerrada:    ['criada','enviada','aprovada','transmitida','processada']
+  };
+  function personBlock(label, who, date){
+    return '<div class="person"><p class="person__k">'+USER+esc(label)+'</p><div class="person__v"><span class="avatar avatar--sm">'+initials(who)+'</span><div><p class="person__name">'+esc(who)+'</p>'+(date?'<p class="person__date">'+esc(date)+'</p>':'')+'</div></div></div>';
+  }
+  function renderPeople(sit){
+    var el=$('peopleCard'); if(!el) return;
+    var html=personBlock('Criado por','Ricardo Alves','02/09/2026, 10:47');
+    if(sit!=='rascunho') html+=personBlock('Enviado para revisão por','Ricardo Alves','02/09/2026, 11:15');
+    if(['revisao','ajustes','processando','sucesso','advertencias','rejeitado','encerrada'].indexOf(sit)>=0) html+=personBlock('Aprovador','Ana Prado','');
+    el.innerHTML=html;
+  }
+  function renderAlert(sit){
+    var el=$('alertSlot'); if(!el) return;
+    if(sit==='ajustes'){
+      el.innerHTML='<div class="alert alert--warning" role="status"><span class="alert__icon">'+ALERT+'</span><div class="alert__body"><p class="alert__title">Ajustes solicitados nesta versão</p><p class="alert__text">O revisor devolveu a versão com pedidos de ajuste. Faça as correções e reenvie para revisão. Nada foi transmitido à Receita.</p></div><span class="alert__act"><button class="btn btn--secondary" type="button" data-goto-hist>Ver histórico'+CHEVR+'</button></span></div>';
+    } else if(sit==='rejeitado'){
+      el.innerHTML='<div class="alert alert--danger" role="status"><span class="alert__icon">'+ALERT+'</span><div class="alert__body"><p class="alert__title">Versão rejeitada pela Receita Federal</p><p class="alert__text">A transmissão foi rejeitada. Consulte o motivo no histórico, corrija as informações e reenvie.</p></div><span class="alert__act"><button class="btn btn--secondary" type="button" data-goto-hist>Ver histórico'+CHEVR+'</button></span></div>';
+    } else { el.innerHTML=''; }
+  }
+  function renderTimeline(sit){
+    var el=$('tl'); if(!el) return;
+    var keys=TL[sit]||TL.revisao;
+    el.innerHTML=keys.map(function(k){
+      var e=EV[k]; if(!e) return '';
+      var who='<div class="tlrow__who"><span class="avatar avatar--sm">'+initials(e.who)+'</span><div><p class="tlwho__name">'+esc(e.who)+'</p><p class="tlwho__role">'+esc(e.role)+'</p></div></div>';
+      var detail=e.detail?'<p class="tl__detail">'+esc(e.detail)+'</p>':'';
+      return '<li class="timeline__item"><span class="timeline__dot timeline__dot--'+e.dot+'"></span><div class="tlrow"><div class="tlrow__main"><span class="timeline__time">'+esc(e.t)+'</span><p class="timeline__title">'+esc(e.title)+'</p>'+detail+'</div>'+who+'</div></li>';
+    }).join('');
+  }
   var curDetState='revisao';
   function render(key){
     curDetState=key;
-    var s=STATES[key], bar=$('statusbar');
-    bar.className='statusbar statusbar--'+s.tone;
-    bar.style.display=(key==='revisao')?'none':'';  /* em revisão o status já está no badge do título */
-    var comment = s.comment? '<div class="statusbar__comment">'+COMMENT+'<span>'+esc(s.comment)+'</span></div>':'';
-    bar.innerHTML='<span class="statusbar__ic">'+s.ic+'</span>'+
-      '<div class="statusbar__b"><h2 class="statusbar__title">'+esc(s.label)+'</h2>'+
-      '<p class="statusbar__desc">'+esc(s.desc)+'</p>'+comment+'</div>'+
-      (s.cardActions?'<div class="statusbar__actions">'+s.cardActions+'</div>':'');
+    var s=STATES[key], sit=sitFor(key);
     if($('pageActions')) $('pageActions').innerHTML = s.topActions;
-    var _c=dco(); var company='<div><p class="submeta__k">Empresa</p><div class="submeta__v"><span class="submeta__logo"><img src="'+_c.logo+'" alt=""></span><span>'+_c.nome+' <span class="num" style="color:var(--color-text-muted);font-weight:400">· '+_c.cnpj+'</span></span></div></div>';
-    $('submeta').innerHTML=company+s.meta.map(function(m){
-      var v = m.by ? '<span class="avatar avatar--sm">'+initials(m.by)+'</span>'+esc(m.by)+(m.v?' <span class="num" style="color:var(--color-text-muted);font-weight:400">· '+esc(m.v)+'</span>':'') : '<span class="num">'+esc(m.v)+'</span>';
-      return '<div><p class="submeta__k">'+esc(m.k)+'</p><div class="submeta__v">'+v+'</div></div>';
-    }).join('');
     var vnum=dparam('v'); var vlabel=vnum?('Versão '+vnum):s.ver;
     if($('dTitle')) $('dTitle').textContent = vlabel+' · Informações do contribuinte';
-    if($('dBadge')){ var _st=SIT[sitFor(key)]||{label:s.sub,pill:s.pill}; $('dBadge').innerHTML = '<span class="status '+_st.pill+'"><span class="status__dot"></span>'+esc(_st.label)+'</span>'; }
     if($('bcVer')) $('bcVer').textContent = vlabel;
+    if($('coVer')) $('coVer').textContent = vlabel;
+    if($('dBadge')){ var _st=SIT[sit]||{label:s.sub,pill:s.pill}; $('dBadge').innerHTML = '<span class="status '+_st.pill+'"><span class="status__dot"></span>'+esc(_st.label)+'</span>'; }
+    renderPeople(sit); renderAlert(sit); renderTimeline(sit);
     document.querySelectorAll('[data-sc]').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-sc')===key); });
   }
   document.addEventListener('click',function(e){ var b=e.target.closest('[data-sc]'); if(b) render(b.getAttribute('data-sc')); });
+
+  /* abas: Informações da versão x Histórico */
+  function selDTab(t){
+    var key=t.getAttribute('data-dtab');
+    document.querySelectorAll('[data-dtab]').forEach(function(x){ var on=x===t; x.classList.toggle('is-active',on); x.setAttribute('aria-selected',String(on)); x.tabIndex=on?0:-1; });
+    if($('dp-info')) $('dp-info').hidden=(key!=='info');
+    if($('dp-hist')) $('dp-hist').hidden=(key!=='hist');
+  }
+  document.querySelectorAll('[data-dtab]').forEach(function(x){ x.tabIndex=x.getAttribute('aria-selected')==='true'?0:-1; });
+  document.addEventListener('click',function(e){
+    var t=e.target.closest('[data-dtab]'); if(t){ selDTab(t); return; }
+    if(e.target.closest('[data-goto-hist]')){ var h=$('dt-hist'); if(h){ selDTab(h); h.focus(); } }
+  });
+  document.addEventListener('keydown',function(e){
+    var t=e.target.closest && e.target.closest('[data-dtab]'); if(!t) return;
+    var tabs=Array.prototype.slice.call(document.querySelectorAll('[data-dtab]')), i=tabs.indexOf(t), n=null;
+    if(e.key==='ArrowRight') n=tabs[(i+1)%tabs.length]; else if(e.key==='ArrowLeft') n=tabs[(i-1+tabs.length)%tabs.length]; else if(e.key==='Home') n=tabs[0]; else if(e.key==='End') n=tabs[tabs.length-1];
+    if(n){ e.preventDefault(); selDTab(n); n.focus(); }
+  });
+
+  /* acordeão de Informações da versão */
+  document.querySelectorAll('#dacc .accordion__head').forEach(function(head){
+    head.addEventListener('click',function(){ var it=head.closest('.accordion__item'); var open=it.classList.toggle('is-open'); head.setAttribute('aria-expanded',String(open)); });
+  });
+  (function(){ var b=$('expandAll'); if(!b) return; b.addEventListener('click',function(){
+    var items=document.querySelectorAll('#dacc .accordion__item'), allOpen=Array.prototype.every.call(items,function(i){return i.classList.contains('is-open');});
+    items.forEach(function(i){ i.classList.toggle('is-open',!allOpen); var h=i.querySelector('.accordion__head'); if(h) h.setAttribute('aria-expanded',String(!allOpen)); });
+    b.lastChild.textContent = allOpen ? 'Ver todos os detalhes' : 'Ocultar detalhes';
+  }); })();
   /* empresas (mesmos dados da lista): o detalhe é de UMA empresa, escolhida por ?emp= */
   var DCO={
     seg:{nome:'MAG Seguros',       cnpj:'33.608.308/0001-73', logo:'../Logos/MAG%20seguros.png'},
@@ -368,6 +510,10 @@
     var bcE=$('bcEmp'); if(bcE){ bcE.setAttribute('href','info-contribuinte-empresa.html?emp='+emp+_scnQ); bcE.textContent=_co.nome; }
     var bcL=document.querySelector('a.bc-hide'); if(bcL && dparam('scn')) bcL.setAttribute('href','info-contribuinte-lista.html?scn='+dparam('scn'));
     var rn=$('roNome'); if(rn) rn.textContent=_co.nome;
+    if($('coNome')) $('coNome').textContent=_co.nome;
+    if($('coCnpj')) $('coCnpj').textContent='CNPJ '+_co.cnpj;
+    if($('coLogo')) $('coLogo').innerHTML='<img src="'+_co.logo+'" alt="Logo '+esc(_co.nome)+'">';
+    if($('roCnpjRaiz')) $('roCnpjRaiz').textContent=(_co.cnpj||'').split('/')[0];
     document.addEventListener('click',function(e){ var a=e.target.closest('a[href^="info-contribuinte.html?modo=editar"]'); if(a && a.getAttribute('href').indexOf('emp=')<0){ a.setAttribute('href', a.getAttribute('href')+'&emp='+emp+_scnQ); } }, true);
     /* abre no estado real da versão clicada (não sempre "Em revisão") */
     var st=dparam('st'); render(STATES[st]?st:'revisao');
