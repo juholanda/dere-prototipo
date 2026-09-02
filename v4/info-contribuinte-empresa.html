@@ -58,6 +58,8 @@
     .kv{min-width:0}
     .kv__k{font-size:var(--text-xs);color:var(--color-text-muted);font-weight:600;margin:0 0 var(--space-1);white-space:nowrap}
     .kv__v{font-size:var(--text-sm);color:var(--color-heading);font-weight:500;margin:0;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .cocard .kv__k{font-size:var(--text-sm)}
+    .cocard .kv__v{font-size:var(--text-base)}
 
     /* alerta de pendência (ajustes solicitados / rejeição) com ação à direita */
     .alert{margin-bottom:var(--space-6);align-items:center}
@@ -506,7 +508,7 @@
     if(!has){ slot.innerHTML=''; }
     else if(prog){
       /* botão habilitado: ao clicar, a modal explica por que não dá pra criar outra agora */
-      slot.innerHTML='<button class="btn btn--primary btn--lg" type="button" id="headerAct">'+I.plus+'Registrar nova versão</button>';
+      slot.innerHTML='<button class="btn btn--primary btn--lg" type="button" id="headerAct">'+I.plus+'Criar nova versão</button>';
       var lbl='Ir para a versão em andamento';
       var pill=(SIT[prog.sit]||{}).label||'em andamento';
       $('headerAct').addEventListener('click',function(){
@@ -515,7 +517,7 @@
         dsDialog.open($('blockModal'));
       });
     } else {
-      slot.innerHTML='<a class="btn btn--primary btn--lg" id="headerAct" href="'+hrefNova()+'">'+I.plus+'Registrar nova versão</a>';
+      slot.innerHTML='<a class="btn btn--primary btn--lg" id="headerAct" href="'+hrefNova()+'">'+I.plus+'Criar nova versão</a>';
     }
     $('emptyAct').setAttribute('href',hrefNova());
 
