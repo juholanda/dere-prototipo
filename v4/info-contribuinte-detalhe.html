@@ -136,7 +136,8 @@
     .mnote svg{width:16px;height:16px;flex:0 0 auto;color:var(--color-text-muted);margin-top:2px}
 
     /* ===== contexto: empresa (cocard) e pessoas do processo ===== */
-    .cocard{display:flex;align-items:center;gap:var(--space-10);padding:var(--space-6);flex-wrap:wrap;margin-bottom:var(--space-6)}
+    .infocard{padding:0}
+    .cocard{display:flex;align-items:center;gap:var(--space-10);padding:var(--space-6);flex-wrap:wrap}
     .cocard__id{display:flex;align-items:center;gap:var(--space-3);min-width:0;flex:1 1 260px}
     .cocard__logo{width:var(--space-12);height:var(--space-12);border-radius:var(--radius-lg);overflow:hidden;background:var(--color-surface);border:1px solid var(--color-border);flex:0 0 auto;display:grid;place-items:center}
     .cocard__logo img{width:100%;height:100%;object-fit:cover;display:block}
@@ -145,7 +146,7 @@
     .kv{min-width:0}
     .kv__k{font-size:var(--text-xs);color:var(--color-text-muted);font-weight:600;margin:0 0 var(--space-1);white-space:nowrap}
     .kv__v{font-size:var(--text-sm);color:var(--color-heading);font-weight:500;margin:0;font-variant-numeric:tabular-nums}
-    .peoplecard{display:flex;gap:var(--space-10) var(--space-14);flex-wrap:wrap;padding:var(--space-6);margin-bottom:var(--space-6)}
+    .peoplecard{display:flex;gap:var(--space-10) var(--space-14);flex-wrap:wrap;padding:var(--space-6);border-top:1px solid var(--color-divider)}
     .person{min-width:0}
     .person__k{display:flex;align-items:center;gap:var(--space-1-5);font-size:var(--text-xs);color:var(--color-text-muted);font-weight:600;margin:0 0 var(--space-3)}
     .person__k svg{width:14px;height:14px}
@@ -280,18 +281,18 @@
         </div>
 
         <div class="wrap">
-          <!-- contexto: empresa -->
-          <section class="card cocard" aria-label="Empresa">
-            <div class="cocard__id">
-              <span class="cocard__logo" id="coLogo"></span>
-              <div><p class="cocard__name" id="coNome">MAG Seguros</p><p class="cocard__cnpj" id="coCnpj">CNPJ 33.608.308/0001-73</p></div>
+          <!-- contexto: empresa + responsáveis num card só -->
+          <section class="card infocard" aria-label="Empresa e responsáveis">
+            <div class="cocard">
+              <div class="cocard__id">
+                <span class="cocard__logo" id="coLogo"></span>
+                <div><p class="cocard__name" id="coNome">MAG Seguros</p><p class="cocard__cnpj" id="coCnpj">CNPJ 33.608.308/0001-73</p></div>
+              </div>
+              <div class="kv"><p class="kv__k">Regime principal</p><p class="kv__v" id="coRegime">Serviços Financeiros</p></div>
+              <div class="kv"><p class="kv__k">Versão</p><p class="kv__v" id="coVer">Versão 1</p></div>
             </div>
-            <div class="kv"><p class="kv__k">Regime principal</p><p class="kv__v" id="coRegime">Serviços Financeiros</p></div>
-            <div class="kv"><p class="kv__k">Versão</p><p class="kv__v" id="coVer">Versão 1</p></div>
+            <div class="peoplecard" id="peopleCard"></div>
           </section>
-
-          <!-- pessoas do processo -->
-          <section class="card peoplecard" id="peopleCard" aria-label="Responsáveis"></section>
 
           <!-- pendência que exige ação -->
           <div id="alertSlot"></div>
