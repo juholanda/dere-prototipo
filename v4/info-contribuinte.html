@@ -40,7 +40,7 @@
     /* ===== layout do formulário: cards + nav à direita ===== */
     .cadwrap{display:grid;grid-template-columns:minmax(0,1fr) 232px;gap:var(--space-10);align-items:start}
     .cadnav{position:sticky;top:var(--space-6);display:flex;flex-direction:column;gap:0;border-left:2px solid var(--color-border)}
-    .cadnav__item{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-2) var(--space-4);margin-left:-2px;border-left:2px solid transparent;color:var(--color-text-muted);font-size:var(--text-sm);font-weight:500;line-height:1.3;background:transparent;cursor:pointer;text-align:left;text-decoration:none;transition:color .12s,border-color .12s}
+    .cadnav__item{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-2) var(--space-4);margin-left:-2px;border-left:2px solid transparent;color:var(--color-text-muted);font-size:var(--text-base);font-weight:500;line-height:1.3;background:transparent;cursor:pointer;text-align:left;text-decoration:none;transition:color .12s,border-color .12s}
     .cadnav__item:hover:not(.is-current){color:var(--color-heading);border-left-color:var(--color-text-muted)}
     .cadnav__item.is-current{color:var(--color-primary);border-left-color:var(--color-primary);font-weight:600}
     .cadnav__item svg{width:17px;height:17px;flex:0 0 auto}
@@ -808,7 +808,6 @@
     <span class="demobar__lbl">Demo</span>
     <strong id="fdemoLbl">Cenário</strong>
     <span class="demobar__sep" aria-hidden="true"></span>
-    <button type="button" id="fdemoVoltar">Voltar ao detalhe</button>
     <button type="button" id="fdemoReset">Resetar</button>
   </div>
   <script>
@@ -820,8 +819,7 @@
       document.getElementById('fdemoLbl').textContent=LBL[cen]||'Cenário';
       var emp=p('emp')||'seg';
       function detURL(){ return 'info-contribuinte-detalhe.html?emp='+emp+'&cenario='+cen+(p('v')?('&v='+p('v')):'')+(p('scn')?('&scn='+p('scn')):''); }
-      document.getElementById('fdemoVoltar').addEventListener('click',function(){ window.location.href=detURL(); });
-      document.getElementById('fdemoReset').addEventListener('click',function(){ try{ localStorage.removeItem('adere.d1001.draft.'+emp); localStorage.removeItem('adere.sent.d1001'); localStorage.removeItem('adere.sent.d1001.t'); localStorage.removeItem('adere.d1001.approval.'+emp); }catch(e){} window.location.href=detURL(); });
+      document.getElementById('fdemoReset').addEventListener('click',function(){ try{ localStorage.removeItem('adere.d1001.draft.'+emp); localStorage.removeItem('adere.sent.d1001'); localStorage.removeItem('adere.sent.d1001.t'); localStorage.removeItem('adere.d1001.approval.'+emp); localStorage.removeItem('adere.d1001.excluded.'+emp); }catch(e){} window.location.href=detURL()+'&fresh=1'; });
     })();
   </script>
 </body>
