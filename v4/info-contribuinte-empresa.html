@@ -80,13 +80,10 @@
     /* linha de versão (vigente / em andamento) */
     .verrow{display:flex;gap:var(--space-4);align-items:center;padding:var(--space-4) var(--space-6);border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-surface)}
     .verrow--current{border-color:var(--color-primary);background:var(--color-primary-subtle)}
-    .verrow__badge{flex:0 0 auto;width:var(--space-10);height:var(--space-10);border-radius:var(--radius-lg);display:grid;place-items:center;background:var(--color-surface-2);color:var(--color-text-onmuted)}
+    /* quadrado da linha: número da versão (v1, v4). Só a vigente leva o check. O estado fica por conta da pílula. */
+    .verrow__badge{flex:0 0 auto;width:var(--space-10);height:var(--space-10);border-radius:var(--radius-lg);display:grid;place-items:center;background:var(--color-surface-2);color:var(--color-text-onmuted);font-size:var(--text-sm);font-weight:700;font-variant-numeric:tabular-nums}
     .verrow__badge svg{width:20px;height:20px}
     .verrow__badge--success{background:var(--color-success-bg);color:var(--color-success-fg)}
-    .verrow__badge--info{background:var(--color-info-bg);color:var(--color-info-fg)}
-    .verrow__badge--warning{background:var(--color-warning-bg);color:var(--color-warning-fg)}
-    .verrow__badge--danger{background:var(--color-danger-bg);color:var(--color-danger-fg)}
-    .verrow__badge--draft{background:var(--color-draft-bg);color:var(--color-draft-fg)}
     /* na linha destacada (fundo azul-claro) o quadrado verde-claro perdia contraste: quadrado branco, ícone verde (AA sobre branco) */
     .verrow--current .verrow__badge{background:var(--color-surface);border:1px solid var(--color-border)}
     .verrow__main{flex:1 1 260px;min-width:0}
@@ -96,9 +93,10 @@
     .verrow__kvs{display:flex;gap:var(--space-10);flex:0 0 auto}
     .verrow__act{flex:0 0 auto;display:flex;align-items:center;gap:var(--space-2)}
     .verrow__act .btn{white-space:nowrap}
+    .verrow__sep{width:1px;height:var(--space-10);background:var(--color-border);flex:0 0 auto;margin:0 var(--space-2)}
     .status{white-space:nowrap;font-size:var(--text-sm)}
     .status--neutral{background:var(--color-surface-2);color:var(--color-text-onmuted)}
-    @media(max-width:1100px){.verrow{flex-wrap:wrap}.verrow__kvs{width:100%;padding-left:calc(var(--space-10) + var(--space-4))}.verrow__act{margin-left:auto}}
+    @media(max-width:1100px){.verrow{flex-wrap:wrap}.verrow__kvs{width:100%;padding-left:calc(var(--space-10) + var(--space-4))}.verrow__sep{display:none}.verrow__act{margin-left:auto}}
 
     /* tabela das encerradas: MESMO tratamento da tabela da lista (full-bleed no card, cabeçalho ordenável do DS,
        células a 16px com respiro space-4, botão de 40px, rodapé padrão contagem + paginador) */
@@ -398,10 +396,10 @@
     var s=SIT[v.sit]||{label:v.sit,pill:'',tone:'',ic:I.info,lead:'Atualizada em'};
     var kvs=opts.kvs.map(function(p){ return kv(p[0],p[1]); }).join('');
     return '<div class="verrow'+(opts.current?' verrow--current':'')+'" data-href="'+hrefOf(v)+'">'+
-      '<span class="verrow__badge'+(s.tone?' verrow__badge--'+s.tone:'')+'" aria-hidden="true">'+s.ic+'</span>'+
+      (opts.current ? '<span class="verrow__badge verrow__badge--success" aria-hidden="true">'+s.ic+'</span>' : '<span class="verrow__badge" aria-hidden="true">v'+v.n+'</span>')+
       '<div class="verrow__main"><div class="verrow__top"><span class="verrow__title">Versão '+v.n+'</span><span class="status '+s.pill+'"><span class="status__dot"></span>'+esc(s.label)+'</span></div>'+
       '<p class="verrow__meta">'+esc(opts.meta)+'</p></div>'+
-      '<div class="verrow__kvs">'+kvs+'</div>'+
+      '<div class="verrow__kvs">'+kvs+'</div><span class="verrow__sep" aria-hidden="true"></span>'+
       '<div class="verrow__act"><a class="btn btn--secondary" href="'+hrefOf(v)+'">'+esc(opts.cta||'Ver versão')+I.chev+'</a></div>'+
     '</div>';
   }
