@@ -251,7 +251,7 @@
     avisos:    {label:'Processado com adv.', pill:'status--warning'},
     rejeitado: {label:'Rejeitado',              pill:'status--danger'},
     revisao:   {label:'Em revisão',              pill:'status--info'},
-    rascunho:  {label:'Rascunho',                pill:'status--draft'},
+    rascunho:  {label:'Em andamento',            pill:'status--draft'},
     naoenviada:{label:'Não iniciada',            pill:'status--neutral'}
   };
   /* pendência = nova versão em andamento sobre um cadastro que já tem versão aceita */
@@ -386,7 +386,7 @@
     var e=curEmp().filter(function(x){return x.id===empId;})[0];
     var wrap=document.getElementById('toasts'); if(!wrap) return;
     var el=document.createElement('div'); el.className='toast toast--success'; el.setAttribute('role','status');
-    el.innerHTML='<span class="toast__icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.8 10A10 10 0 1 1 17 3.3"/><path d="m9 11 3 3L22 4"/></svg></span><div><p class="toast__title">Rascunho salvo</p><p class="toast__text">'+(e?esc(e.nome)+'. ':'')+'Continue o preenchimento quando quiser.</p></div>';
+    el.innerHTML='<span class="toast__icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.8 10A10 10 0 1 1 17 3.3"/><path d="m9 11 3 3L22 4"/></svg></span><div><p class="toast__title">Progresso salvo</p><p class="toast__text">'+(e?esc(e.nome)+'. ':'')+'Continue o preenchimento quando quiser.</p></div>';
     wrap.appendChild(el);
     setTimeout(function(){ el.remove(); }, 6000);
     try{ history.replaceState(null,'','info-contribuinte-lista.html?scn='+scenario); }catch(err){}
