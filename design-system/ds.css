@@ -571,7 +571,8 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 @keyframes ds-fade-in{from{opacity:0}to{opacity:1}}
 @media (prefers-reduced-motion:reduce){.drawer,.drawer-backdrop{animation:none}}
 .drawer__header{display:flex;align-items:center;justify-content:space-between;padding:var(--space-4) var(--space-8);border-bottom:1px solid var(--color-border)}
-.drawer__header h2,.drawer__title{font-size:var(--text-xl) !important;font-weight:600;margin:0;color:var(--color-heading)} /* título do drawer: 20px semibold (o !important vence o h2 global de 24px) */
+/* título de drawer e de modal: MESMO tamanho (20px) e peso (700) — o !important vence o heading genérico h1–h6 */
+.drawer__header h2,.drawer__title{font-size:var(--text-2xl) !important;font-weight:700 !important;margin:0;color:var(--color-heading)}
 .drawer__body{padding:var(--space-8);overflow:auto;flex:1}
 .drawer__footer{display:flex;justify-content:flex-end;gap:var(--space-2);padding:var(--space-4) var(--space-8);border-top:1px solid var(--color-border)}
 .drawer__footer > .btn:first-child:not(:last-child){margin-right:auto}
@@ -717,8 +718,8 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 .modal__topbar + .confirm{padding-top:var(--space-2)}
 .modal--lg{width:min(720px,100%)}
 .modal__header{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;padding:var(--space-6) var(--space-6) var(--space-4)}
-/* título de modal: mesmo tamanho e peso em TODAS as modais (o !important vence o heading genérico h1–h6) */
-.modal__title{font-size:var(--text-xl) !important;font-weight:700 !important;color:var(--color-heading);margin:0}
+
+.modal__title{font-size:var(--text-2xl) !important;font-weight:700 !important;color:var(--color-heading);margin:0}
 .modal__body{padding:0 var(--space-6);overflow:auto;color:var(--color-text-onmuted);font-size:var(--text-sm)}
 .modal__footer{display:flex;justify-content:flex-end;gap:var(--space-2);padding:var(--space-6)}
 /* Cancelar/dismiss (1º botão) vai pro lado oposto; as ações ficam agrupadas à direita */
