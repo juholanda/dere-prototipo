@@ -406,7 +406,7 @@ textarea.input{height:auto;padding:var(--space-2) var(--space-3);min-height:84px
    Células de linha expandida (colspan) ficam de fora. */
 .table--stickyactions tbody tr{background:var(--color-surface)}
 .table--stickyactions th:last-child:not([colspan]),
-.table--stickyactions td:last-child:not([colspan]){position:sticky;right:0;z-index:1;border-left:1px solid var(--color-border)}
+.table--stickyactions td:last-child:not([colspan]){position:sticky;right:0;z-index:1}
 .table--stickyactions td:last-child:not([colspan]){background:inherit}
 .table--stickyactions th:last-child:not([colspan]){background:var(--color-surface)}
 /* Wrapper de tabela: em tela menor a tabela NÃO encolhe nem corta o conteúdo (status, botão);
