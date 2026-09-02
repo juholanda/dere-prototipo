@@ -720,7 +720,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 .accordion__panel{padding:var(--space-2) var(--space-4) var(--space-4);color:var(--color-text-onmuted);font-size:var(--text-sm);line-height:var(--leading-normal)}
 .accordion__item:not(.is-open) .accordion__panel{display:none}
 /* Cabeçalho do acordeão com ícone opcional (à esquerda do título) */
-.accordion__label{display:flex;align-items:center;gap:var(--space-3);min-width:0}
+.accordion__label{display:flex;align-items:center;gap:var(--space-3);min-width:0;font-size:var(--text-xl)}
 .accordion__icon{width:30px;height:30px;border-radius:var(--radius-lg);background:var(--color-primary-subtle);color:var(--color-primary);display:grid;place-items:center;flex:0 0 auto}
 .accordion__icon svg{width:17px;height:17px}
 @media (prefers-reduced-motion:reduce){.accordion__chev{transition:none}}
