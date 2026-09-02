@@ -388,6 +388,9 @@ textarea.input{height:auto;padding:var(--space-2) var(--space-3);min-height:84px
 .status--danger{background:var(--color-danger-bg);color:var(--color-danger-fg)}
 .status--info{background:var(--color-info-bg);color:var(--color-info-fg)}
 .status--draft{background:var(--color-draft-bg);color:var(--color-draft-fg)} /* rascunho */
+/* tamanho pequeno: altura menor, para listas/linhas do tempo densas */
+.status--sm{padding:1px var(--space-2);font-size:var(--text-xs);gap:var(--space-1)}
+.status--sm .status__dot{width:6px;height:6px}
 
 /* Tabela — fundo branco, header sóbrio, zebra bem sutil */
 .table{width:100%;border-collapse:collapse;font-size:var(--text-sm);background:var(--color-surface)}
@@ -962,8 +965,9 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 .menu{position:relative;display:inline-flex}
 .menu__panel{position:absolute;z-index:30;top:calc(100% + 6px);right:0;min-width:200px;background:var(--color-surface);
   border:1px solid var(--color-border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);padding:6px}
-.menu__item{display:flex;align-items:center;gap:var(--space-2);width:100%;padding:var(--space-2) var(--space-2);border:0;background:transparent;
-  border-radius:var(--radius-base);cursor:pointer;color:var(--color-text);font:inherit;font-size:var(--text-sm);text-align:left}
+.menu__item{display:flex;align-items:center;gap:var(--space-3);width:100%;padding:var(--space-2) var(--space-3);border:0;background:transparent;
+  border-radius:var(--radius-base);cursor:pointer;color:var(--color-text);font:inherit;font-size:var(--text-sm);font-weight:500;text-align:left}
+.menu__item svg{width:18px;height:18px;flex:0 0 auto}
 .menu__item:hover{background:var(--color-surface-2)}
 .menu__item:focus-visible{outline:none;box-shadow:var(--ring)}
 .menu__item--danger{color:var(--color-danger)}

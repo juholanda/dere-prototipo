@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Detalhe do contribuinte</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=28">
+  <link rel="stylesheet" href="../design-system/ds.css?v=30">
   <script src="../design-system/ds-tailwind.js"></script>
   <script src="../design-system/ds-dialog.js"></script>
   <style>
@@ -185,17 +185,19 @@
 
     /* ===== histórico / linha do tempo do ciclo de vida ===== */
     .histhead{display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);flex-wrap:wrap;margin-bottom:var(--space-6)}
-    .histhead h3{font-size:var(--text-base)!important;font-weight:700!important;color:var(--color-heading);margin:0}
+    .histhead__desc{font-size:var(--text-base);color:var(--color-text-onmuted);margin:0;max-width:56ch;line-height:1.5}
     /* bolinhas neutras (uma cor só, pra não poluir) */
     #tl .timeline__dot{border-color:var(--color-border-strong)}
     .tl__body{min-width:0}
-    #tl .timeline__item{padding-bottom:var(--space-8)}
-    .tl__head{display:flex;align-items:baseline;justify-content:space-between;gap:var(--space-4)}
+    #tl .timeline__item{padding-bottom:var(--space-10)}
+    .tl__head{display:flex;align-items:baseline;gap:var(--space-6)}
     .tl__title{font-size:var(--text-base);font-weight:600;color:var(--color-heading);margin:0;line-height:1.3}
     .tl__time{font-size:var(--text-xs);color:var(--color-text-muted);flex:0 0 auto;font-variant-numeric:tabular-nums;white-space:nowrap}
-    .tl__desc{font-size:var(--text-sm);color:var(--color-text-onmuted);margin:var(--space-2) 0 0;line-height:1.5}
-    .tl__meta{display:flex;align-items:center;gap:var(--space-3) var(--space-4);flex-wrap:wrap;margin-top:var(--space-3)}
-    .tl__who{display:inline-flex;align-items:center;gap:var(--space-2);font-size:var(--text-sm);color:var(--color-text-muted)}
+    .tl__fields{margin-top:var(--space-3);display:flex;flex-direction:column;gap:var(--space-4)}
+    .tl__field{display:flex;gap:var(--space-3);align-items:baseline}
+    .tl__field dt{font-size:var(--text-sm);color:var(--color-text-muted);font-weight:600;flex:0 0 auto;min-width:104px}
+    .tl__field dd{margin:0;font-size:var(--text-sm);color:var(--color-heading);min-width:0;line-height:1.5}
+    .tl__who{display:inline-flex;align-items:center;gap:var(--space-2)}
     .tl__who strong{color:var(--color-heading);font-weight:600}
     .tl__role{color:var(--color-text-muted)}
 
@@ -360,7 +362,7 @@
             </div>
 
             <div class="tabs__panel" id="dp-hist" role="tabpanel" aria-labelledby="dt-hist" tabindex="0" hidden>
-              <div class="histhead"><h3>Histórico do processo desta versão</h3><button class="btn btn--secondary" type="button"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/></svg>Baixar histórico</button></div>
+              <div class="histhead"><p class="histhead__desc">Cada etapa do processamento desta versão, do preenchimento ao retorno da Receita Federal.</p><button class="btn btn--secondary" type="button"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/></svg>Baixar histórico</button></div>
               <ol class="timeline" id="tl"></ol>
             </div>
           </section>
@@ -400,7 +402,7 @@
       desc:'O aprovador aprovou e as informações foram transmitidas à Receita, com recibo. A vigência está ativa. Para mudar, altere os dados (gera uma nova versão) ou exclua a vigência. Toda alteração ou exclusão passa por nova aprovação antes de ir à Receita.',
       meta:[{k:'Enviado por',by:'Ricardo Alves',v:'hoje, 14:32'},{k:'Aprovado por',by:'Ana Prado',v:'hoje, 15:40'},{k:'Recibo (Receita)',v:'RC-2026.0001'}],
       comment:null,
-      topActions:'<button class="btn btn--ghost" type="button"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>Ver comprovante</button><button class="btn btn--danger-outline" type="button" data-open-excluir><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M10 11v6M14 11v6"/></svg>Excluir versão</button><a class="btn btn--primary" href="info-contribuinte.html?modo=nova"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>Editar informações</a>',
+      topActions:'<div class="menu" data-actions><button class="btn btn--secondary" type="button" data-actions-toggle aria-haspopup="true" aria-expanded="false">Mais ações <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button><div class="menu__panel" hidden role="menu"><button class="menu__item" type="button" role="menuitem"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>Ver comprovante</button><button class="menu__item menu__item--danger" type="button" role="menuitem" data-open-excluir><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M10 11v6M14 11v6"/></svg>Excluir versão</button></div></div><a class="btn btn--primary" href="info-contribuinte.html?modo=nova"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>Editar informações</a>',
       cardActions:''
     }
   };
@@ -413,15 +415,16 @@
   var CHEVR='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>';
   /* Eventos do ciclo de vida (Manual RFB: interno a-DeRE -> Receita; situações oficiais sucesso/advertências/rejeitado; advertência = aceito) */
   /* Cada passo: ação (título) + status REAL resultante (badge) + quem fez + data. Papéis: Preparador/Aprovador (perfis do produto). */
+  /* Cada passo: título (ação) + Status REAL + Responsável (perfil) + Comentário/Recibo/Motivo quando houver. */
   var EV={
     criada:      {t:'02/09/2026 · 10:47', title:'Versão criada',                 status:['Rascunho','status--draft'],                 who:'Ricardo Alves', role:'Preparador'},
     enviada:     {t:'02/09/2026 · 11:15', title:'Enviada para revisão',          status:['Em revisão','status--info'],                who:'Ricardo Alves', role:'Preparador'},
-    ajustes:     {t:'02/09/2026 · 14:32', title:'Ajustes solicitados',           status:['Ajustes solicitados','status--warning'],    who:'Ana Prado', role:'Aprovadora', desc:'O regime secundário não se aplica a esta empresa. Remova a marcação e confirme a vigência antes de reenviar.'},
+    ajustes:     {t:'02/09/2026 · 14:32', title:'Ajustes solicitados',           status:['Ajustes solicitados','status--warning'],    who:'Ana Prado', role:'Aprovadora', extra:['Comentário','O regime secundário não se aplica a esta empresa. Remova a marcação e confirme a vigência antes de reenviar.']},
     reenviada:   {t:'03/09/2026 · 09:10', title:'Reenviada para revisão',        status:['Em revisão','status--info'],                who:'Ricardo Alves', role:'Preparador'},
-    aprovada:    {t:'03/09/2026 · 11:20', title:'Aprovada e transmitida à Receita Federal', status:['Em processamento','status--info'], who:'Ana Prado', role:'Aprovadora', desc:'A aprovação assina e transmite automaticamente à Receita.'},
-    processada:  {t:'03/09/2026 · 11:27', title:'Processada pela Receita Federal', status:['Processado com sucesso','status--success'], who:'Receita Federal', role:'Sistema', desc:'Recibo 1.1.2026.0000000000000000001.'},
-    processada_adv:{t:'03/09/2026 · 11:27', title:'Processada pela Receita Federal', status:['Processado com advertências','status--warning'], who:'Receita Federal', role:'Sistema', desc:'Recibo 1.1.2026.0000000000000000001. Advertências não impeditivas: a vigência está ativa.'},
-    rejeitada:   {t:'03/09/2026 · 11:27', title:'Processada pela Receita Federal', status:['Rejeitada','status--danger'], who:'Receita Federal', role:'Sistema', desc:'A transmissão foi rejeitada. Corrija os erros apontados e reenvie.'}
+    aprovada:    {t:'03/09/2026 · 11:20', title:'Aprovada e transmitida à Receita Federal', status:['Em processamento','status--info'], who:'Ana Prado', role:'Aprovadora'},
+    processada:  {t:'03/09/2026 · 11:27', title:'Processada pela Receita Federal', status:['Processado com sucesso','status--success'], who:'Receita Federal', role:'Sistema', extra:['Recibo','1.1.2026.0000000000000000001']},
+    processada_adv:{t:'03/09/2026 · 11:27', title:'Processada pela Receita Federal', status:['Processado com advertências','status--warning'], who:'Receita Federal', role:'Sistema', extra:['Recibo','1.1.2026.0000000000000000001 (advertências não impeditivas; vigência ativa)']},
+    rejeitada:   {t:'03/09/2026 · 11:27', title:'Processada pela Receita Federal', status:['Rejeitada','status--danger'], who:'Receita Federal', role:'Sistema', extra:['Motivo','A transmissão foi rejeitada. Corrija os erros apontados e reenvie.']}
   };
   var TL={
     rascunho:     ['criada'],
@@ -457,13 +460,16 @@
     el.innerHTML=keys.map(function(k){
       var e=EV[k]; if(!e) return '';
       var st=e.status||['',''];
-      var badge='<span class="status '+st[1]+'"><span class="status__dot"></span>'+esc(st[0])+'</span>';
-      var who='<span class="tl__who"><span class="avatar avatar--sm">'+initials(e.who)+'</span><strong>'+esc(e.who)+'</strong><span class="tl__role">· '+esc(e.role)+'</span></span>';
-      var desc=e.desc?'<p class="tl__desc">'+esc(e.desc)+'</p>':'';
+      var badge='<span class="status status--sm '+st[1]+'"><span class="status__dot"></span>'+esc(st[0])+'</span>';
+      var who='<span class="tl__who"><span class="avatar avatar--sm">'+initials(e.who)+'</span><span class="tl__whotx"><strong>'+esc(e.who)+'</strong><span class="tl__role"> · '+esc(e.role)+'</span></span></span>';
+      var extra=e.extra?'<div class="tl__field"><dt>'+esc(e.extra[0])+'</dt><dd>'+esc(e.extra[1])+'</dd></div>':'';
       return '<li class="timeline__item"><span class="timeline__dot timeline__dot--muted"></span><div class="tl__body">'+
         '<div class="tl__head"><p class="tl__title">'+esc(e.title)+'</p><span class="tl__time">'+esc(e.t)+'</span></div>'+
-        desc+
-        '<div class="tl__meta">'+badge+who+'</div>'+
+        '<dl class="tl__fields">'+
+          '<div class="tl__field"><dt>Status</dt><dd>'+badge+'</dd></div>'+
+          '<div class="tl__field"><dt>Responsável</dt><dd>'+who+'</dd></div>'+
+          extra+
+        '</dl>'+
       '</div></li>';
     }).join('');
   }
@@ -531,6 +537,15 @@
     document.addEventListener('click',function(e){ var a=e.target.closest('a[href^="info-contribuinte.html?modo=editar"]'); if(!a) return; var h=a.getAttribute('href'); var v=dparam('v'); if(v) h=h.replace(/([?&])v=\d+/, '$1v='+v); if(h.indexOf('emp=')<0) h+='&emp='+emp+_scnQ; a.setAttribute('href', h); }, true);
     var st=dparam('st'); render(STATES[st]?st:'revisao');
   })();
+
+  /* Botão "Mais ações" (dropdown): abre o painel; fecha ao escolher, clicar fora ou Esc */
+  document.addEventListener('click',function(e){
+    var t=e.target.closest('[data-actions-toggle]');
+    if(t){ e.stopPropagation(); var m=t.closest('[data-actions]'), pnl=m.querySelector('.menu__panel'), willOpen=pnl.hidden; document.querySelectorAll('[data-actions] .menu__panel').forEach(function(x){x.hidden=true;}); pnl.hidden=!willOpen; t.setAttribute('aria-expanded',String(willOpen)); return; }
+    if(e.target.closest('[data-actions] .menu__item')){ document.querySelectorAll('[data-actions] .menu__panel').forEach(function(x){x.hidden=true;}); return; }
+    document.querySelectorAll('[data-actions]').forEach(function(m){ if(!m.contains(e.target)){ var pnl=m.querySelector('.menu__panel'); if(pnl)pnl.hidden=true; var b=m.querySelector('[data-actions-toggle]'); if(b)b.setAttribute('aria-expanded','false'); } });
+  });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape'){ document.querySelectorAll('[data-actions] .menu__panel').forEach(function(x){x.hidden=true;}); document.querySelectorAll('[data-actions-toggle]').forEach(function(b){b.setAttribute('aria-expanded','false');}); } });
 
   /* Shell */
   document.querySelectorAll('[data-menu]').forEach(function(menu){
