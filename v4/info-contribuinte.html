@@ -26,7 +26,8 @@
     .dark .content,:root[data-theme="dark"] .content{background:var(--color-bg)}
     .cadscroll{flex:1;overflow:auto;min-height:0;scroll-behavior:smooth}
     @media(prefers-reduced-motion:reduce){.cadscroll{scroll-behavior:auto}}
-    .wrap{padding:var(--space-8);max-width:1480px;width:100%;margin:0 auto;box-sizing:border-box}
+    /* conteúdo cresce até 1600px; margem lateral nunca menor que 40px (padding) */
+    .wrap{padding:var(--space-8) var(--space-10);max-width:1600px;width:100%;margin:0 auto;box-sizing:border-box}
     .page-h{background:var(--color-surface);border-bottom:1px solid var(--color-border)}
     .page-h .wrap{padding-top:var(--space-8);padding-bottom:var(--space-8)}
     .eyebrow{font-size:var(--text-xs);font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--color-text-muted);margin:0 0 var(--space-1-5)}
@@ -680,7 +681,7 @@
     openB.addEventListener('click',function(){ dsDialog.open(modal); });
     modal.querySelectorAll('[data-confirm-close]').forEach(function(b){ b.addEventListener('click',close); });
     modal.addEventListener('click',function(e){ if(e.target===modal) close(); });
-    $('confirmSubmit').addEventListener('click',function(){ var q=function(k){var m=new RegExp('[?&]'+k+'=([^&]+)').exec(location.search);return m?decodeURIComponent(m[1]):'';}; try{ localStorage.setItem('adere.sent.d1001', q('emp')||'seg'); localStorage.setItem('adere.sent.d1001.t', String(Date.now())); var _rp=document.querySelector('input[name="regprin"]:checked'), _rl=_rp&&_rp.closest('.selectcard')&&_rp.closest('.selectcard').querySelector('.selectcard__title'); if(_rl) localStorage.setItem('adere.sent.d1001.regime', _rl.textContent.replace(/^Regime Específico de /,'').trim()); }catch(e){} window.location.href='info-contribuinte-detalhe.html?v=1&st=revisao&from=lista'+(q('scn')?('&scn='+q('scn')):'')+(q('emp')?('&emp='+q('emp')):''); });
+    $('confirmSubmit').addEventListener('click',function(){ var q=function(k){var m=new RegExp('[?&]'+k+'=([^&]+)').exec(location.search);return m?decodeURIComponent(m[1]):'';}; try{ localStorage.setItem('adere.sent.d1001', q('emp')||'seg'); localStorage.setItem('adere.sent.d1001.t', String(Date.now())); var _rp=document.querySelector('input[name="regprin"]:checked'), _rl=_rp&&_rp.closest('.selectcard')&&_rp.closest('.selectcard').querySelector('.selectcard__title'); if(_rl) localStorage.setItem('adere.sent.d1001.regime', _rl.textContent.replace(/^Regime Específico de /,'').trim()); }catch(e){} window.location.href='info-contribuinte-empresa.html?emp='+(q('emp')||'seg')+(q('scn')?('&scn='+q('scn')):''); });
   })();
 
   /* Tooltip da sugestão da IA (position:fixed para escapar o recorte do drawer) */

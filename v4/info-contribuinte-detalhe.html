@@ -22,7 +22,8 @@
     .topbar{height:64px;flex:0 0 auto;background:var(--color-surface);border-bottom:1px solid var(--color-border);display:flex;align-items:center;gap:var(--space-4);padding:0 var(--space-6)}
     .content{flex:1;overflow:auto;min-height:0;background:var(--slate-100);scrollbar-gutter:stable}
     .dark .content,:root[data-theme="dark"] .content{background:var(--color-bg)}
-    .wrap{padding:var(--space-8);max-width:1480px;width:100%;margin:0 auto;box-sizing:border-box}
+    /* conteúdo cresce até 1600px; margem lateral nunca menor que 40px (padding) */
+    .wrap{padding:var(--space-8) var(--space-10);max-width:1600px;width:100%;margin:0 auto;box-sizing:border-box}
     .page-h{background:var(--color-surface);border-bottom:1px solid var(--color-border)}
     .page-h .wrap{padding-top:var(--space-6);padding-bottom:var(--space-6)}
     .page-h__row{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--space-6);flex-wrap:wrap}
@@ -33,9 +34,6 @@
     .titlerow{display:flex;align-items:center;gap:var(--space-3);flex-wrap:wrap}
     .titlerow .status{font-size:var(--text-sm)}
     .page-h p{color:var(--color-text-muted);font-size:var(--text-base);margin:var(--space-2) 0 0}
-    .backlink{display:inline-flex;align-items:center;gap:var(--space-1-5);font-size:var(--text-sm);font-weight:600;color:var(--color-primary);text-decoration:none;margin-bottom:var(--space-3)}
-    .backlink:hover{text-decoration:underline}
-    .backlink svg{width:16px;height:16px}
     .scenario{display:inline-flex;gap:2px;padding:var(--space-1);background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-pill);flex:0 0 auto}
     /* Overlay de DEMONSTRAÇÃO (dev) — flutua por cima da interface, não faz parte do produto */
     .demobar{position:fixed;bottom:var(--space-4);left:50%;transform:translateX(-50%);z-index:200;display:flex;align-items:center;gap:var(--space-1);background:var(--slate-900);border:1px solid rgba(255,255,255,.14);border-radius:var(--radius-pill);padding:2px var(--space-1-5);box-shadow:var(--shadow-md);font-size:var(--text-xs)}
@@ -221,7 +219,6 @@
       <main id="conteudo" tabindex="-1" class="content skip-target">
         <div class="page-h">
           <div class="wrap">
-            <a class="backlink" id="backLink" href="info-contribuinte-empresa.html?emp=seg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>Voltar</a>
             <div class="page-h__row">
               <div>
                 <div class="titlerow"><h1 id="dTitle">Informações do contribuinte</h1><span id="dBadge"></span></div>
@@ -323,6 +320,9 @@
       cardActions:''
     }
   };
+  /* MESMOS status da lista (label + cor): o badge do título usa exatamente estes */
+  var SIT={ rascunho:{label:'Rascunho',pill:'status--draft'}, revisao:{label:'Em revisão',pill:'status--info'}, ajustes:{label:'Ajustes solicitados',pill:'status--warning'}, processando:{label:'Em processamento',pill:'status--info'}, sucesso:{label:'Processado com sucesso',pill:'status--success'}, advertencias:{label:'Processado com advertências',pill:'status--warning'}, rejeitado:{label:'Rejeitada',pill:'status--danger'}, encerrada:{label:'Encerrada',pill:'status--neutral'} };
+  function sitFor(key){ if(key==='revisao') return 'revisao'; if(key==='ajuste') return 'ajustes'; var us=dparam('sit'); return (['sucesso','advertencias','encerrada','processando','rejeitado','rascunho'].indexOf(us)>=0)?us:'sucesso'; }
   function initials(n){return n.split(/\s+/).slice(0,2).map(function(w){return w[0];}).join('').toUpperCase();}
   function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
   var curDetState='revisao';
@@ -344,7 +344,7 @@
     }).join('');
     var vnum=dparam('v'); var vlabel=vnum?('Versão '+vnum):s.ver;
     if($('dTitle')) $('dTitle').textContent = vlabel+' · Informações do contribuinte';
-    if($('dBadge')) $('dBadge').innerHTML = '<span class="status '+s.pill+'"><span class="status__dot"></span>'+esc(s.sub)+'</span>';
+    if($('dBadge')){ var _st=SIT[sitFor(key)]||{label:s.sub,pill:s.pill}; $('dBadge').innerHTML = '<span class="status '+_st.pill+'"><span class="status__dot"></span>'+esc(_st.label)+'</span>'; }
     if($('bcVer')) $('bcVer').textContent = vlabel;
     document.querySelectorAll('[data-sc]').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-sc')===key); });
   }
@@ -361,9 +361,8 @@
   function dco(){ return DCO[dparam('emp')||'seg']||DCO.seg; }
   (function(){
     var emp=dparam('emp')||'seg';
-    /* o detalhe é de uma versão de UMA empresa: o "Voltar" sobe um nível, para a página da empresa (ex.: MAG Seguros) */
+    /* navegação do 2º nível é pelo breadcrumb (sem "Voltar") */
     var _scnQ=dparam('scn')?('&scn='+dparam('scn')):'';
-    var bl=$('backLink'); if(bl){ bl.setAttribute('href', 'info-contribuinte-empresa.html?emp='+emp+_scnQ); }
     /* breadcrumb, nome da empresa e "Editar informações" seguem a empresa e o cenário da URL */
     var _co=dco();
     var bcE=$('bcEmp'); if(bcE){ bcE.setAttribute('href','info-contribuinte-empresa.html?emp='+emp+_scnQ); bcE.textContent=_co.nome; }

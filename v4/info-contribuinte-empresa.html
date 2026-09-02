@@ -23,7 +23,8 @@
     .topbar{height:64px;flex:0 0 auto;background:var(--color-surface);border-bottom:1px solid var(--color-border);display:flex;align-items:center;gap:var(--space-4);padding:0 var(--space-6)}
     .content{flex:1;overflow:auto;min-height:0;background:var(--slate-100);scrollbar-gutter:stable}
     .dark .content,:root[data-theme="dark"] .content{background:var(--color-bg)}
-    .wrap{padding:var(--space-8);max-width:1480px;width:100%;margin:0 auto;box-sizing:border-box}
+    /* conteúdo cresce até 1600px; margem lateral nunca menor que 40px (padding) */
+    .wrap{padding:var(--space-8) var(--space-10);max-width:1600px;width:100%;margin:0 auto;box-sizing:border-box}
 
     /* Cabeçalho da página: branco, largura toda, título "Versões" + tag do evento (mesmo padrão da lista) */
     .page-h{background:var(--color-surface);border-bottom:1px solid var(--color-border)}
@@ -72,7 +73,7 @@
 
     /* seções: vigente · em andamento · encerradas */
     .versec{padding:var(--space-6) var(--space-6) 0}
-    .versec:last-child{padding-bottom:var(--space-6)}
+    #vp-tab{padding-bottom:var(--space-8)}
     /* entre uma seção e a próxima: 48px (24 de padding + 24 de margem), pra cada bloco respirar */
     .versec + .versec{margin-top:var(--space-6)}
     /* título da seção (18px) + subtítulo de uma linha (14px), 16px entre eles e 16px até as linhas */
@@ -314,7 +315,7 @@
                 <p class="versec__hint">Versão em processo de criação, revisão ou processamento pela Receita Federal.</p>
                 <div id="secProg"></div>
               </section>
-              <section class="versec" aria-labelledby="h-enc">
+              <section class="versec" aria-labelledby="h-enc" id="secEncSection">
                 <div class="versec__h"><h2 id="h-enc">Versões encerradas</h2></div>
                 <p class="versec__hint">Versões substituídas por versões mais recentes, mantidas para consulta do histórico.</p>
                 <div id="secEnc"></div>
@@ -431,7 +432,7 @@
 
   function endOf(vig){ var m=(vig||'').match(/\d{2}\/\d{2}\/\d{4}/g)||[]; return m[1]||'—'; }
   function stOf(v){ return (v.sit==='revisao')?'revisao':(v.sit==='ajustes')?'ajuste':'aprovado'; }
-  function hrefOf(v){ return 'info-contribuinte-detalhe.html?emp='+EMP+'&v='+v.n+'&st='+stOf(v)+Q(false); }
+  function hrefOf(v){ var _sit=(v.vigrole==='past')?'encerrada':v.sit; return 'info-contribuinte-detalhe.html?emp='+EMP+'&v='+v.n+'&st='+stOf(v)+'&sit='+_sit+Q(false); }
   function hrefNova(){ return 'info-contribuinte.html?modo=nova&emp='+EMP+Q(false)+'&from=empresa'; }
   /* rascunho continua no FORMULÁRIO; versões já enviadas abrem o detalhe */
   function goOf(v){ return (v.sit==='rascunho') ? (hrefNova()+'&v='+v.n+'&st=rascunho') : hrefOf(v); }
@@ -531,8 +532,9 @@
       ? row(prog,{cta:(prog.sit==='ajustes')?'Ver ajustes':(prog.sit==='rascunho')?'Continuar':null, href:goOf(prog), primary:(prog.sit==='rascunho'||prog.sit==='ajustes')})
       : emptyBox('Nenhuma versão em andamento.', 'Você pode registrar uma nova versão quando necessário.');
 
-    /* encerradas */
-    renderEnc(enc);
+    /* encerradas: a seção só aparece quando há histórico */
+    $('secEncSection').hidden = !enc.length;
+    if(enc.length) renderEnc(enc);
     /* linha e cartão inteiros clicáveis (o botão continua sendo o controle acessível) */
     bindRows();
   }
