@@ -10,6 +10,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="../design-system/ds.css?v=28">
   <script src="../design-system/ds-tailwind.js"></script>
+  <script src="../design-system/ds-dialog.js"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -154,11 +155,15 @@
     .person__name{font-size:var(--text-sm);font-weight:600;color:var(--color-heading);line-height:1.3}
     .person__date{font-size:var(--text-xs);color:var(--color-text-muted);font-variant-numeric:tabular-nums;margin-top:1px}
 
-    /* ===== alerta de pendência (ajustes/rejeição) ===== */
-    .alert{margin-bottom:var(--space-6);align-items:center}
-    .alert__body{flex:1}
-    .alert__act{flex:0 0 auto}
-    .alert__act .btn{white-space:nowrap}
+    /* ===== alerta de pendência: fundo branco + traço lateral vivo, feedback direto ===== */
+    .dalert{display:flex;gap:var(--space-3);align-items:flex-start;background:var(--color-surface);border:1px solid var(--color-border);border-left:4px solid var(--color-warning);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:var(--space-4) var(--space-6);margin-bottom:var(--space-6)}
+    .dalert--danger{border-left-color:var(--color-danger)}
+    .dalert__ic{flex:0 0 auto;margin-top:1px}
+    .dalert__ic svg{width:20px;height:20px}
+    .dalert--warning .dalert__ic{color:var(--color-warning)}
+    .dalert--danger .dalert__ic{color:var(--color-danger)}
+    .dalert__title{font-weight:700;color:var(--color-heading);margin:0;font-size:var(--text-base)}
+    .dalert__text{font-size:var(--text-sm);color:var(--color-text-onmuted);margin:var(--space-1) 0 0;line-height:1.55}
 
     /* ===== card com abas ===== */
     .dcard{padding:0;overflow:hidden}
@@ -167,7 +172,8 @@
     /* acordeão de informações da versão */
     .accicon{width:30px;height:30px;border-radius:var(--radius-lg);background:var(--color-primary-subtle);color:var(--color-primary);display:grid;place-items:center;flex:0 0 auto}
     .accicon svg{width:17px;height:17px}
-    .accordion__head{font-size:var(--text-base);font-weight:600;color:var(--color-heading)}
+    .accordion__head{font-size:var(--text-base);font-weight:600;color:var(--color-heading);padding:var(--space-4) var(--space-6)}
+    #dacc .accordion__panel{padding:var(--space-6)}
     .acchd{display:flex;align-items:center;gap:var(--space-3);min-width:0}
     .seelink{display:inline-flex;align-items:center;gap:var(--space-1-5);margin-top:var(--space-4);font-size:var(--text-sm);font-weight:600;color:var(--color-primary);background:none;border:0;cursor:pointer;padding:0}
     .seelink:hover{text-decoration:underline}
@@ -313,15 +319,15 @@
                     <div class="roitem"><dt>Natureza jurídica</dt><dd>Sociedade Anônima</dd></div>
                   </dl></div>
                 </div>
-                <div class="accordion__item">
-                  <button class="accordion__head" type="button" aria-expanded="false"><span class="acchd"><span class="accicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>Vigência</span><span class="accordion__chev" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button>
+                <div class="accordion__item is-open">
+                  <button class="accordion__head" type="button" aria-expanded="true"><span class="acchd"><span class="accicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>Vigência</span><span class="accordion__chev" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button>
                   <div class="accordion__panel"><dl class="rogrid">
                     <div class="roitem"><dt>Início da vigência</dt><dd>01/01/2026</dd></div>
                     <div class="roitem"><dt>Fim da vigência</dt><dd>Sem data de fim</dd></div>
                   </dl></div>
                 </div>
-                <div class="accordion__item">
-                  <button class="accordion__head" type="button" aria-expanded="false"><span class="acchd"><span class="accicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10M12 3v18M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg></span>Regime tributário</span><span class="accordion__chev" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button>
+                <div class="accordion__item is-open">
+                  <button class="accordion__head" type="button" aria-expanded="true"><span class="acchd"><span class="accicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10M12 3v18M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg></span>Regime tributário</span><span class="accordion__chev" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button>
                   <div class="accordion__panel"><dl class="rogrid">
                     <div class="roitem"><dt>CNAE principal</dt><dd>65.11-1/01 · Seguros de vida</dd></div>
                     <div class="roitem"><dt>Regime principal</dt><dd><span class="ronum">1</span>Serviços Financeiros</dd></div>
@@ -329,8 +335,8 @@
                     <div class="roitem"><dt>Natureza da tributação</dt><dd>Tributação regular</dd></div>
                   </dl></div>
                 </div>
-                <div class="accordion__item">
-                  <button class="accordion__head" type="button" aria-expanded="false"><span class="acchd"><span class="accicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8M13 12h8M13 18h8"/></svg></span>Atividades</span><span class="accordion__chev" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button>
+                <div class="accordion__item is-open">
+                  <button class="accordion__head" type="button" aria-expanded="true"><span class="acchd"><span class="accicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8M13 12h8M13 18h8"/></svg></span>Atividades</span><span class="accordion__chev" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button>
                   <div class="accordion__panel"><dl class="rogrid">
                     <div class="roitem rogrid__full"><dt>Serviços Financeiros<span class="rotab">Tabela 21</span></dt>
                       <dd><div class="ropicks">
@@ -342,7 +348,6 @@
                   </dl></div>
                 </div>
               </div>
-              <button class="seelink" type="button" id="expandAll"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h18M12 3v18"/></svg>Ver todos os detalhes</button>
             </div>
 
             <div class="tabs__panel" id="dp-hist" role="tabpanel" aria-labelledby="dt-hist" tabindex="0" hidden>
@@ -370,7 +375,7 @@
       desc:'A submissão está com o aprovador. Assim que for aprovada, é transmitida à Receita. Enquanto não for revisada, você ainda pode cancelar e editar.',
       meta:[{k:'Enviado por',by:'Ricardo Alves',v:'hoje, 14:32'},{k:'Aprovador',by:'Ana Prado',v:''}],
       comment:null,
-      topActions:'<button class="btn btn--danger-outline" type="button" data-open-excluir>Excluir versão</button><a class="btn btn--primary" href="info-contribuinte.html?modo=editar&v=1">Editar informações</a>',
+      topActions:'<button class="btn btn--danger-outline" type="button" data-open-excluir><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M10 11v6M14 11v6"/></svg>Excluir versão</button><a class="btn btn--primary" href="info-contribuinte.html?modo=editar&v=1"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>Editar informações</a>',
       cardActions:''
     },
     ajuste:{
@@ -378,7 +383,7 @@
       desc:'O aprovador devolveu a submissão com pedidos de ajuste. Faça as correções e reenvie para revisão. Nada foi transmitido à Receita.',
       meta:[{k:'Enviado por',by:'Ricardo Alves',v:'hoje, 14:32'},{k:'Revisado por',by:'Ana Prado',v:'hoje, 15:10'}],
       comment:'Ana Prado: “O regime secundário não se aplica à MAG Seguros. Remova a marcação e confirme a vigência antes de reenviar.”',
-      topActions:'<button class="btn btn--danger-outline" type="button" data-open-excluir>Excluir versão</button><a class="btn btn--primary" href="info-contribuinte.html?modo=editar&v=3">Editar informações</a>',
+      topActions:'<button class="btn btn--danger-outline" type="button" data-open-excluir><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M10 11v6M14 11v6"/></svg>Excluir versão</button><a class="btn btn--primary" href="info-contribuinte.html?modo=editar&v=3"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>Editar informações</a>',
       cardActions:''
     },
     aprovado:{
@@ -386,7 +391,7 @@
       desc:'O aprovador aprovou e as informações foram transmitidas à Receita, com recibo. A vigência está ativa. Para mudar, altere os dados (gera uma nova versão) ou exclua a vigência. Toda alteração ou exclusão passa por nova aprovação antes de ir à Receita.',
       meta:[{k:'Enviado por',by:'Ricardo Alves',v:'hoje, 14:32'},{k:'Aprovado por',by:'Ana Prado',v:'hoje, 15:40'},{k:'Recibo (Receita)',v:'RC-2026.0001'}],
       comment:null,
-      topActions:'<button class="btn btn--ghost" type="button">Ver comprovante</button><button class="btn btn--danger-outline" type="button" data-open-excluir>Excluir versão</button><a class="btn btn--primary" href="info-contribuinte.html?modo=nova">Editar informações</a>',
+      topActions:'<button class="btn btn--ghost" type="button"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>Ver comprovante</button><button class="btn btn--danger-outline" type="button" data-open-excluir><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M10 11v6M14 11v6"/></svg>Excluir versão</button><a class="btn btn--primary" href="info-contribuinte.html?modo=nova"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>Editar informações</a>',
       cardActions:''
     }
   };
@@ -399,12 +404,12 @@
   var CHEVR='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>';
   /* Eventos do ciclo de vida (Manual RFB: interno a-DeRE -> Receita; situações oficiais sucesso/advertências/rejeitado; advertência = aceito) */
   var EV={
-    criada:      {t:'02/09/2026 · 10:47', title:'Versão criada',                    who:'Ricardo Alves', role:'Elaborador', dot:'success'},
-    enviada:     {t:'02/09/2026 · 11:15', title:'Enviada para revisão',              who:'Ricardo Alves', role:'Elaborador', dot:'info'},
-    ajustes:     {t:'02/09/2026 · 14:32', title:'Ajustes solicitados', detail:'Revisar o enquadramento no regime específico antes de reenviar.', who:'Ana Prado', role:'Aprovador', dot:'warning'},
-    reenviada:   {t:'03/09/2026 · 09:10', title:'Reenviada para revisão',            who:'Ricardo Alves', role:'Elaborador', dot:'info'},
+    criada:      {t:'02/09/2026 · 10:47', title:'Versão criada',                    who:'Ricardo Alves', role:'Preparador', dot:'success'},
+    enviada:     {t:'02/09/2026 · 11:15', title:'Enviada para revisão',              who:'Ricardo Alves', role:'Preparador', dot:'info'},
+    ajustes:     {t:'02/09/2026 · 14:32', title:'Ajustes solicitados', detail:'O regime secundário não se aplica a esta empresa. Remova a marcação e confirme a vigência antes de reenviar.', who:'Ana Prado', role:'Aprovadora', dot:'warning'},
+    reenviada:   {t:'03/09/2026 · 09:10', title:'Reenviada para revisão',            who:'Ricardo Alves', role:'Preparador', dot:'info'},
     aprovada:    {t:'03/09/2026 · 11:20', title:'Aprovada',                          who:'Ana Prado',     role:'Aprovadora', dot:'success'},
-    transmitida: {t:'03/09/2026 · 11:25', title:'Transmitida à Receita Federal',     who:'Ricardo Alves', role:'Elaborador', dot:'info'},
+    transmitida: {t:'03/09/2026 · 11:25', title:'Transmitida à Receita Federal',     who:'Ricardo Alves', role:'Preparador', dot:'info'},
     processando: {t:'03/09/2026 · 11:26', title:'Em processamento na Receita Federal', who:'Receita Federal', role:'Sistema', dot:'info'},
     processada:  {t:'03/09/2026 · 11:27', title:'Processada com sucesso', detail:'Recibo: 1.1.2026.0000000000000000001', who:'Receita Federal', role:'Sistema', dot:'success'},
     processada_adv:{t:'03/09/2026 · 11:27', title:'Processada com advertências', detail:'Recibo: 1.1.2026.0000000000000000001. Advertências não impeditivas: a vigência está ativa.', who:'Receita Federal', role:'Sistema', dot:'warning'},
@@ -433,9 +438,9 @@
   function renderAlert(sit){
     var el=$('alertSlot'); if(!el) return;
     if(sit==='ajustes'){
-      el.innerHTML='<div class="alert alert--warning" role="status"><span class="alert__icon">'+ALERT+'</span><div class="alert__body"><p class="alert__title">Ajustes solicitados nesta versão</p><p class="alert__text">O revisor devolveu a versão com pedidos de ajuste. Faça as correções e reenvie para revisão. Nada foi transmitido à Receita.</p></div><span class="alert__act"><button class="btn btn--secondary" type="button" data-goto-hist>Ver histórico'+CHEVR+'</button></span></div>';
+      el.innerHTML='<div class="dalert dalert--warning" role="status"><span class="dalert__ic">'+ALERT+'</span><div><p class="dalert__title">Ajustes solicitados por Ana Prado</p><p class="dalert__text">'+esc(EV.ajustes.detail)+'</p></div></div>';
     } else if(sit==='rejeitado'){
-      el.innerHTML='<div class="alert alert--danger" role="status"><span class="alert__icon">'+ALERT+'</span><div class="alert__body"><p class="alert__title">Versão rejeitada pela Receita Federal</p><p class="alert__text">A transmissão foi rejeitada. Consulte o motivo no histórico, corrija as informações e reenvie.</p></div><span class="alert__act"><button class="btn btn--secondary" type="button" data-goto-hist>Ver histórico'+CHEVR+'</button></span></div>';
+      el.innerHTML='<div class="dalert dalert--danger" role="status"><span class="dalert__ic">'+ALERT+'</span><div><p class="dalert__title">Versão rejeitada pela Receita Federal</p><p class="dalert__text">'+esc(EV.rejeitada.detail)+'</p></div></div>';
     } else { el.innerHTML=''; }
   }
   function renderTimeline(sit){
@@ -482,16 +487,12 @@
     if(n){ e.preventDefault(); selDTab(n); n.focus(); }
   });
 
-  /* acordeão de Informações da versão */
+  /* acordeão: começa tudo aberto; cada seção fecha/abre ao clicar no cabeçalho */
   document.querySelectorAll('#dacc .accordion__head').forEach(function(head){
     head.addEventListener('click',function(){ var it=head.closest('.accordion__item'); var open=it.classList.toggle('is-open'); head.setAttribute('aria-expanded',String(open)); });
   });
-  (function(){ var b=$('expandAll'); if(!b) return; b.addEventListener('click',function(){
-    var items=document.querySelectorAll('#dacc .accordion__item'), allOpen=Array.prototype.every.call(items,function(i){return i.classList.contains('is-open');});
-    items.forEach(function(i){ i.classList.toggle('is-open',!allOpen); var h=i.querySelector('.accordion__head'); if(h) h.setAttribute('aria-expanded',String(!allOpen)); });
-    b.lastChild.textContent = allOpen ? 'Ver todos os detalhes' : 'Ocultar detalhes';
-  }); })();
-  /* empresas (mesmos dados da lista): o detalhe é de UMA empresa, escolhida por ?emp= */
+
+  /* empresa do contexto (?emp=) + estado inicial (?st=/?sit=) */
   var DCO={
     seg:{nome:'MAG Seguros',       cnpj:'33.608.308/0001-73', logo:'../Logos/MAG%20seguros.png'},
     fin:{nome:'MAG Finanças',      cnpj:'21.995.256/0001-56', logo:'../Logos/mag%20financas.jpeg'},
@@ -503,9 +504,7 @@
   function dco(){ return DCO[dparam('emp')||'seg']||DCO.seg; }
   (function(){
     var emp=dparam('emp')||'seg';
-    /* navegação do 2º nível é pelo breadcrumb (sem "Voltar") */
     var _scnQ=dparam('scn')?('&scn='+dparam('scn')):'';
-    /* breadcrumb, nome da empresa e "Editar informações" seguem a empresa e o cenário da URL */
     var _co=dco();
     var bcE=$('bcEmp'); if(bcE){ bcE.setAttribute('href','info-contribuinte-empresa.html?emp='+emp+_scnQ); bcE.textContent=_co.nome; }
     var bcL=document.querySelector('a.bc-hide'); if(bcL && dparam('scn')) bcL.setAttribute('href','info-contribuinte-lista.html?scn='+dparam('scn'));
@@ -514,8 +513,8 @@
     if($('coCnpj')) $('coCnpj').textContent='CNPJ '+_co.cnpj;
     if($('coLogo')) $('coLogo').innerHTML='<img src="'+_co.logo+'" alt="Logo '+esc(_co.nome)+'">';
     if($('roCnpjRaiz')) $('roCnpjRaiz').textContent=(_co.cnpj||'').split('/')[0];
-    document.addEventListener('click',function(e){ var a=e.target.closest('a[href^="info-contribuinte.html?modo=editar"]'); if(a && a.getAttribute('href').indexOf('emp=')<0){ a.setAttribute('href', a.getAttribute('href')+'&emp='+emp+_scnQ); } }, true);
-    /* abre no estado real da versão clicada (não sempre "Em revisão") */
+    /* "Editar informações" aponta para a versão certa (corrige o v pela URL) e leva empresa+cenário */
+    document.addEventListener('click',function(e){ var a=e.target.closest('a[href^="info-contribuinte.html?modo=editar"]'); if(!a) return; var h=a.getAttribute('href'); var v=dparam('v'); if(v) h=h.replace(/([?&])v=\d+/, '$1v='+v); if(h.indexOf('emp=')<0) h+='&emp='+emp+_scnQ; a.setAttribute('href', h); }, true);
     var st=dparam('st'); render(STATES[st]?st:'revisao');
   })();
 
@@ -562,16 +561,10 @@
         window.location.href='info-contribuinte-empresa.html?emp='+(dparam('emp')||'seg')+(dparam('scn')?('&scn='+dparam('scn')):'');
         return;
       }
-      var bar=$('statusbar'); bar.style.display='';
-      {
-        /* vigente: a exclusão vira um evento que passa pelo aprovador antes de ir à Receita */
-        bar.className='statusbar statusbar--info';
-        bar.innerHTML='<span class="statusbar__ic">'+CLOCK+'</span>'+
-          '<div class="statusbar__b"><h2 class="statusbar__title">Exclusão em revisão</h2>'+
-          '<p class="statusbar__desc">O pedido de exclusão (tpOper Exclusão) está com Ana Prado. Depois de aprovado, é transmitido à Receita e a vigência é encerrada. Enquanto não for revisado, você pode cancelar.</p></div>'+
-          '<div class="statusbar__actions"><button class="btn btn--ghost" type="button" onclick="render(\'aprovado\')">Cancelar exclusão</button></div>';
-      }
-      bar.scrollIntoView({behavior:'smooth',block:'center'});
+      /* vigente: a exclusão vira um evento que passa pelo aprovador; volta à página da empresa, onde aparece como pendente */
+      dsDialog.close();
+      window.location.href='info-contribuinte-empresa.html?emp='+(dparam('emp')||'seg')+(dparam('scn')?('&scn='+dparam('scn')):'');
+      return;
     });
   });
 </script>
