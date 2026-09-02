@@ -441,9 +441,13 @@
   }
   function renderPeople(sit){
     var el=$('peopleCard'); if(!el) return;
+    var approved=['sucesso','advertencias','encerrada','processando','rejeitado'].indexOf(sit)>=0;
+    var processed=['sucesso','advertencias','rejeitado','encerrada'].indexOf(sit)>=0;
     var html=personBlock('Criado por','Ricardo Alves','02/09/2026, 10:47');
     if(sit!=='rascunho') html+=personBlock('Enviado para revisão por','Ricardo Alves','02/09/2026, 11:15');
-    if(['revisao','ajustes','processando','sucesso','advertencias','rejeitado','encerrada'].indexOf(sit)>=0) html+=personBlock('Aprovador','Ana Prado','');
+    if(approved) html+=personBlock('Aprovado por','Ana Prado','03/09/2026, 11:20');
+    else if(['revisao','ajustes'].indexOf(sit)>=0) html+=personBlock('Aprovador','Ana Prado','');
+    if(processed) html+=personBlock('Processado em','Receita Federal','03/09/2026, 11:27');
     el.innerHTML=html;
   }
   function renderAlert(sit){
