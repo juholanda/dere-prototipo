@@ -396,6 +396,14 @@
       topActions:'<button class="btn btn--danger-outline" type="button" data-open-excluir><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M10 11v6M14 11v6"/></svg>Excluir versão</button><a class="btn btn--primary" href="info-contribuinte.html?modo=editar&v=3"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>Editar informações</a>',
       cardActions:''
     },
+    rascunho:{
+      tone:'draft', ic:CLOCK, pill:'status--draft', label:'Rascunho', ver:'Versão 4', sub:'Rascunho',
+      desc:'Esta versão está em rascunho: foi salva mas ainda não enviada para revisão. Continue o preenchimento e envie quando estiver pronta. Nada foi transmitido à Receita.',
+      meta:[{k:'Criado por',by:'Ricardo Alves',v:'hoje, 10:20'}],
+      comment:null,
+      topActions:'<button class="btn btn--danger-outline" type="button" data-open-excluir><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M10 11v6M14 11v6"/></svg>Excluir versão</button><a class="btn btn--primary" href="info-contribuinte.html?modo=editar&v=4"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>Continuar editando</a>',
+      cardActions:''
+    },
     aprovado:{
       tone:'success', ic:CHECK, pill:'status--success', label:'Aprovado e transmitido', ver:'Versão 2', sub:'Vigente',
       desc:'O aprovador aprovou e as informações foram transmitidas à Receita, com recibo. A vigência está ativa. Para mudar, altere os dados (gera uma nova versão) ou exclua a vigência. Toda alteração ou exclusão passa por nova aprovação antes de ir à Receita.',
@@ -407,7 +415,7 @@
   };
   /* MESMOS status da lista (label + cor): o badge do título usa exatamente estes */
   var SIT={ rascunho:{label:'Rascunho',pill:'status--draft'}, revisao:{label:'Em revisão',pill:'status--info'}, ajustes:{label:'Ajustes solicitados',pill:'status--warning'}, processando:{label:'Em processamento',pill:'status--info'}, sucesso:{label:'Processado com sucesso',pill:'status--success'}, advertencias:{label:'Processado com advertências',pill:'status--warning'}, rejeitado:{label:'Rejeitada',pill:'status--danger'}, encerrada:{label:'Encerrada',pill:'status--neutral'} };
-  function sitFor(key){ if(key==='revisao') return 'revisao'; if(key==='ajuste') return 'ajustes'; var us=dparam('sit'); return (['sucesso','advertencias','encerrada','processando','rejeitado','rascunho'].indexOf(us)>=0)?us:'sucesso'; }
+  function sitFor(key){ if(key==='revisao') return 'revisao'; if(key==='ajuste') return 'ajustes'; if(key==='rascunho') return 'rascunho'; var us=dparam('sit'); return (['sucesso','advertencias','encerrada','processando','rejeitado','rascunho'].indexOf(us)>=0)?us:'sucesso'; }
   function initials(n){return n.split(/\s+/).slice(0,2).map(function(w){return w[0];}).join('').toUpperCase();}
   function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
   var RECEITA='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6M9 12h.01M15 12h.01"/></svg>';
@@ -534,33 +542,38 @@
     render(pr.get('st')||'revisao');
   }
   var BELL='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>';
-  var SCN_APROV=[
-    ['Aprovar nova versão',{role:'aprovador',st:'revisao',op:'nova',sit:''}],
-    ['Aprovar alteração',{role:'aprovador',st:'revisao',op:'alteracao',sit:''}],
-    ['Aprovar exclusão',{role:'aprovador',st:'revisao',op:'exclusao',sit:''}],
-    ['Em processamento',{role:'aprovador',st:'aprovado',sit:'processando'}],
-    ['Processado (vigente)',{role:'aprovador',st:'aprovado',sit:'sucesso'}],
-    ['Rejeitada',{role:'aprovador',st:'aprovado',sit:'rejeitado'}]
-  ];
-  var SCN_PREP=[
-    ['Em revisão',{role:'preparador',st:'revisao',sit:''}],
-    ['Ajustes solicitados',{role:'preparador',st:'ajuste',sit:''}],
-    ['Vigente',{role:'preparador',st:'aprovado',sit:'sucesso'}],
-    ['Rejeitada',{role:'preparador',st:'aprovado',sit:'rejeitado'}],
-    ['Encerrada',{role:'preparador',st:'aprovado',sit:'encerrada'}]
-  ];
-  function scnList(){ return (curRole==='aprovador')?SCN_APROV:SCN_PREP; }
-  function scnActive(o){
+  /* ===== Cenários de negócio: a barra é dirigida por ?cenario= (segue as páginas); Resetar volta ao início do cenário ===== */
+  var CENARIOS = {
+    andamento:{ label:'Versão em andamento', start:{role:'preparador',st:'revisao',op:'nova',sit:''},
+      opts:[ ['Alterar',{act:'editar'}], ['Excluir',{act:'excluir'}] ] },
+    vigente:{ label:'Versão vigente', start:{role:'preparador',st:'aprovado',sit:'sucesso',op:'nova'},
+      opts:[ ['Alterar',{act:'editar'}], ['Excluir',{act:'excluir'}] ] },
+    aprovar:{ label:'Aprovar versão', start:{role:'aprovador',st:'revisao',op:'nova',sit:''},
+      opts:[ ['Nova versão',{role:'aprovador',st:'revisao',op:'nova',sit:''}], ['Alteração',{role:'aprovador',st:'revisao',op:'alteracao',sit:''}], ['Exclusão',{role:'aprovador',st:'revisao',op:'exclusao',sit:''}] ] },
+    corrigir:{ label:'Corrigir versão', start:{role:'preparador',st:'ajuste',sit:'',op:'nova'},
+      opts:[ ['Ajustes do aprovador',{role:'preparador',st:'ajuste',sit:'',op:'nova'}], ['Rejeitada pela Receita',{role:'preparador',st:'aprovado',sit:'rejeitado',op:'nova'}] ] },
+    estados:{ label:'Estados da versão', start:{role:'preparador',st:'rascunho',sit:'',op:'nova'},
+      opts:[ ['Rascunho',{role:'preparador',st:'rascunho',sit:'',op:'nova'}], ['Em revisão',{role:'preparador',st:'revisao',sit:'',op:'nova'}], ['Ajustes solicitados',{role:'preparador',st:'ajuste',sit:'',op:'nova'}], ['Em processamento',{role:'preparador',st:'aprovado',sit:'processando',op:'nova'}], ['Processada com sucesso',{role:'preparador',st:'aprovado',sit:'sucesso',op:'nova'}], ['Processada com advertências',{role:'preparador',st:'aprovado',sit:'advertencias',op:'nova'}], ['Rejeitada',{role:'preparador',st:'aprovado',sit:'rejeitado',op:'nova'}] ] }
+  };
+  function curCenario(){ return CENARIOS[dparam('cenario')]||null; }
+  function goEditar(){ var v=dparam('v')||'4'; window.location.href='info-contribuinte.html?modo=editar&v='+v+'&emp='+empId()+(dparam('scn')?('&scn='+dparam('scn')):'')+(dparam('cenario')?('&cenario='+dparam('cenario')):''); }
+  function optActive(o){
+    if(o.act) return false;
+    if((o.role||'preparador')!==curRole) return false;
     if(o.st!==curDetState) return false;
     if(curDetState==='revisao') return (o.op||'nova')===curOp;
     if(curDetState==='aprovado') return (o.sit||'')===sitFor('aprovado');
     return true;
   }
   function syncDemo(){
-    document.querySelectorAll('[data-role]').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-role')===curRole); });
-    var wrap=$('demoScenarios'); if(wrap){ wrap.innerHTML=scnList().map(function(sc,i){ return '<button type="button" data-scn-i="'+i+'"'+(scnActive(sc[1])?' class="on"':'')+'>'+sc[0]+'</button>'; }).join(''); }
+    var cen=curCenario()||CENARIOS.estados;
+    if($('demoCenLbl')) $('demoCenLbl').textContent=cen.label;
+    var wrap=$('demoOpts'); if(!wrap) return;
+    wrap.innerHTML=cen.opts.map(function(o,i){ return '<button type="button" data-opt-i="'+i+'"'+(optActive(o[1])?' class="on"':'')+'>'+o[0]+'</button>'; }).join('');
   }
-  function resetDemo(){ try{ localStorage.removeItem('adere.d1001.approval.'+empId()); }catch(e){} _ajusteComment=''; setScenario({role:'aprovador',op:'nova',st:'revisao',sit:''}); showToast('Demonstração reiniciada.'); }
+  function clearDemoLS(){ try{ localStorage.removeItem('adere.d1001.approval.'+empId()); localStorage.removeItem('adere.sent.d1001'); localStorage.removeItem('adere.sent.d1001.t'); localStorage.removeItem('adere.d1001.draft.'+empId()); }catch(e){} _ajusteComment=''; }
+  function resetDemo(){ clearDemoLS(); var cen=curCenario(); setScenario(cen?cen.start:{role:'preparador',st:'revisao',sit:'',op:'nova'}); showToast('Cenário reiniciado.'); }
+  document.addEventListener('DOMContentLoaded', syncDemo);
   function showNotif(){
     var w=$('notifWrap'); if(!w) return; var vnum=dparam('v')||'4';
     var n=document.createElement('button'); n.type='button'; n.className='notif';
@@ -584,10 +597,12 @@
     syncDemo();
   }
   document.addEventListener('click',function(e){
-    var r=e.target.closest('[data-role]'); if(r){ var role=r.getAttribute('data-role'); setScenario(role==='aprovador'?{role:'aprovador',st:'revisao',op:'nova',sit:''}:{role:'preparador',st:'revisao',sit:''}); return; }
-    var sc=e.target.closest('[data-scn-i]'); if(sc){ var o=scnList()[+sc.getAttribute('data-scn-i')][1]; setScenario(o); return; }
+    var op=e.target.closest('[data-opt-i]');
+    if(op){ var cen=curCenario()||CENARIOS.estados; var o=cen.opts[+op.getAttribute('data-opt-i')][1];
+      if(o.act==='editar'){ goEditar(); return; }
+      if(o.act==='excluir'){ var xb=document.querySelector('[data-open-excluir]'); if(xb){ xb.click(); } return; }
+      setScenario(o); return; }
     if(e.target.closest('[data-reset]')){ resetDemo(); return; }
-    if(e.target.closest('[data-notif]')){ showNotif(); return; }
   });
 
   /* abas: Informações da versão x Histórico */
@@ -637,7 +652,19 @@
     if($('roCnpjRaiz')) $('roCnpjRaiz').textContent=(_co.cnpj||'').split('/')[0];
     /* "Editar informações" aponta para a versão certa (corrige o v pela URL) e leva empresa+cenário */
     document.addEventListener('click',function(e){ var a=e.target.closest('a[href^="info-contribuinte.html?modo=editar"]'); if(!a) return; var h=a.getAttribute('href'); var v=dparam('v'); if(v) h=h.replace(/([?&])v=\d+/, '$1v='+v); if(h.indexOf('emp=')<0) h+='&emp='+emp+_scnQ; a.setAttribute('href', h); }, true);
-    var st=dparam('st'); render(STATES[st]?st:'revisao');
+    var _cen=curCenario();
+    if(_cen){
+      /* entrada nova pelo flows (fresh=1): começa limpo. Navegação interna não traz fresh, então persiste. */
+      if(dparam('fresh')==='1'){ clearDemoLS(); try{ var _pf=new URLSearchParams(location.search); _pf.delete('fresh'); history.replaceState(null,'','?'+_pf.toString()); }catch(e){} }
+      /* o cenário PERSISTE: reflete o que foi feito (enviado/rascunho/aprovação); só o Resetar volta ao início */
+      var _sent=false,_draft=false,_appr=null;
+      try{ _sent=localStorage.getItem('adere.sent.d1001')===empId(); _draft=!!localStorage.getItem('adere.d1001.draft.'+empId()); _appr=localStorage.getItem('adere.d1001.approval.'+empId()); }catch(e){}
+      if(_appr==='processing') setScenario({role:(_cen.start.role||'preparador'), st:'aprovado', sit:'processando', op:(_cen.start.op||'nova')});
+      else if(_appr==='ajuste') setScenario({role:'preparador', st:'ajuste', op:'nova', sit:''});
+      else if(_sent) setScenario({role:(_cen.start.role||'preparador'), st:'revisao', op:(_cen.start.op||'nova'), sit:''});
+      else if(_draft) setScenario({role:'preparador', st:'rascunho', op:'nova', sit:''});
+      else setScenario(_cen.start);
+    } else { var st=dparam('st'); render(STATES[st]?st:'revisao'); }
   })();
 
   /* Botão "Mais ações" (dropdown): abre o painel; fecha ao escolher, clicar fora ou Esc */
@@ -828,14 +855,11 @@
 
   <!-- Ferramenta de DEMONSTRAÇÃO (não faz parte do produto): alterna o estado da versão -->
   <div class="demobar" role="group" aria-label="Ferramenta de demonstração">
-    <span class="demobar__lbl">Demo · ver como</span>
-    <button type="button" data-role="preparador">Preparador</button>
-    <button type="button" data-role="aprovador">Aprovador</button>
+    <span class="demobar__lbl">Demo</span>
+    <strong id="demoCenLbl" style="color:rgba(255,255,255,.95);font-size:var(--text-xs);font-weight:700">Cenário</strong>
     <span class="demobar__sep" aria-hidden="true"></span>
-    <span class="demobar__lbl">Cenário</span>
-    <span id="demoScenarios" class="demobar__scn"></span>
+    <span id="demoOpts" class="demobar__scn"></span>
     <span class="demobar__sep" aria-hidden="true"></span>
-    <button type="button" data-notif>Ver notificação</button>
     <button type="button" data-reset>Resetar</button>
   </div>
 </body>

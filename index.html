@@ -115,11 +115,15 @@
           <div><span class="flow__n">Fluxo 3</span><h2>Informações do contribuinte (D-1001)</h2><p>Lista das empresas, versões, detalhe e os fluxos de alteração e exclusão, com aprovação antes da Receita.</p></div>
         </div>
         <div class="flow__scn">
-          <span class="flow__scn-lbl">Cenários</span>
+          <span class="flow__scn-lbl">Começar por</span>
           <a class="scn scn--main" href="v4/info-contribuinte-lista.html?scn=new">Lista de empresas <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
-          <a class="scn" href="v4/info-contribuinte-detalhe.html?emp=seg&v=3&st=aprovado">Detalhe da versão (situações e visão do aprovador na barra de demo)</a>
-          <a class="scn" href="v4/info-contribuinte.html?modo=nova">Formulário · nova versão</a>
-          <a class="scn" href="v4/info-contribuinte.html?modo=alteracao">Formulário · alteração</a>
+          <a class="scn" href="v4/info-contribuinte.html?modo=nova&emp=s2u">Registrar primeira versão</a>
+          <span class="flow__scn-lbl" style="margin-top:var(--space-3)">Cenários de negócio · a barra de demo acompanha as páginas; Resetar volta ao início</span>
+          <a class="scn" href="v4/info-contribuinte-detalhe.html?emp=fin&v=4&cenario=andamento&fresh=1&scn=pop">Versão em andamento · alterar ou excluir</a>
+          <a class="scn" href="v4/info-contribuinte-detalhe.html?emp=seg&v=3&cenario=vigente&fresh=1&scn=pop">Versão vigente · alterar ou excluir</a>
+          <a class="scn" href="v4/info-contribuinte-detalhe.html?emp=fin&v=4&cenario=aprovar&fresh=1&scn=pop">Aprovar versão</a>
+          <a class="scn" href="v4/info-contribuinte-detalhe.html?emp=seg&v=4&cenario=corrigir&fresh=1&scn=pop">Corrigir versão · ajustes ou rejeitada</a>
+          <a class="scn" href="v4/info-contribuinte-detalhe.html?emp=seg&v=3&cenario=estados&fresh=1&scn=pop">Estados da versão</a>
         </div>
       </div>
     </div>
