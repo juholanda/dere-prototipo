@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Versões · MAG Seguros</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=24">
+  <link rel="stylesheet" href="../design-system/ds.css?v=25">
   <script src="../design-system/ds-tailwind.js"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
@@ -74,7 +74,7 @@
     .versec + .versec{margin-top:var(--space-6)}
     /* título da seção (18px) + subtítulo de uma linha (14px), 16px entre eles e 16px até as linhas */
     .versec__h{display:flex;align-items:center;gap:var(--space-2);margin:0 0 var(--space-4)}
-    .versec__h h3{font-size:var(--text-xl)!important;font-weight:700!important;color:var(--color-heading);margin:0}
+    .versec__h h2{font-size:var(--text-xl)!important;font-weight:700!important;color:var(--color-heading);margin:0}
     .versec__hint{font-size:var(--text-sm);color:var(--color-text-muted);margin:0 0 var(--space-4);line-height:1.5}
     .versec__empty{display:flex;gap:var(--space-3);align-items:center;font-size:var(--text-sm);color:var(--color-text-muted);padding:var(--space-4);border:1px dashed var(--color-border-strong);border-radius:var(--radius-lg)}
     .versec__empty svg{width:18px;height:18px;flex:0 0 auto;color:var(--color-text-muted)}
@@ -88,12 +88,14 @@
     .verrow__badge--success{background:var(--color-success-bg);color:var(--color-success-fg)}
     /* na linha destacada (fundo azul-claro) o quadrado verde-claro perdia contraste: quadrado branco, ícone verde (AA sobre branco) */
     .verrow--current .verrow__badge{background:var(--color-surface);border:1px solid var(--color-border)}
+    /* sobre o azul-claro, o cinza "muted" fica em 4,3:1; o "onmuted" passa de 6:1 (AA) */
+    .verrow--current .kv__k{color:var(--color-text-onmuted)}
     /* MESMA estrutura nas três seções: título + pílula em cima; embaixo os mesmos cinco campos em colunas de
        largura fixa (alinham entre linhas e seções); o que não existe leva traço. */
     .verrow__main{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:var(--space-3)}
     .verrow__top{display:flex;align-items:center;gap:var(--space-3);flex-wrap:wrap}
     .verrow__title{font-size:var(--text-base);font-weight:700;color:var(--color-heading)}
-    .verrow__kvs{display:grid;grid-template-columns:120px 140px 100px 100px minmax(80px,1fr);gap:var(--space-6)}
+    .verrow__kvs{display:grid;grid-template-columns:150px 130px 80px 80px minmax(84px,1fr);gap:var(--space-6)}
     .verrow__act{flex:0 0 auto;display:flex;align-items:center;gap:var(--space-2)}
     .verrow__act .btn{white-space:nowrap}
     .verrow__act .icon-btn{color:var(--color-primary)}
@@ -265,17 +267,17 @@
 
             <div class="tabs__panel" id="vp-tab" role="tabpanel" aria-labelledby="vt-tab" tabindex="0">
               <section class="versec" aria-labelledby="h-vig">
-                <div class="versec__h"><h3 id="h-vig">Versão vigente</h3></div>
+                <div class="versec__h"><h2 id="h-vig">Versão vigente</h2></div>
                 <p class="versec__hint">A versão que está valendo hoje na Receita.</p>
                 <div id="secVig"></div>
               </section>
               <section class="versec" aria-labelledby="h-prog">
-                <div class="versec__h"><h3 id="h-prog">Em andamento</h3></div>
+                <div class="versec__h"><h2 id="h-prog">Em andamento</h2></div>
                 <p class="versec__hint">Uma versão por vez: rascunho, em revisão ou aguardando o processamento da Receita.</p>
                 <div id="secProg"></div>
               </section>
               <section class="versec" aria-labelledby="h-enc">
-                <div class="versec__h"><h3 id="h-enc">Versões encerradas</h3></div>
+                <div class="versec__h"><h2 id="h-enc">Versões encerradas</h2></div>
                 <p class="versec__hint">Versões substituídas por uma mais nova. Ficam aqui como histórico.</p>
                 <div id="secEnc"></div>
               </section>
@@ -396,7 +398,8 @@
       ? '<span class="verrow__badge verrow__badge--success" aria-hidden="true">'+I.check+'</span>'
       : '<span class="verrow__badge" aria-hidden="true">v'+v.n+'</span>';
     /* o que importa numa lista de versões: quando vale, o que diz, quando foi e a prova da Receita (quem fez fica no detalhe) */
-    var kvs=[['Vigência',v.vig],['Regime principal',v.regime||regimeOf(v)],['Enviada em',v.env],['Processada em',v.proc],['Recibo',v.recibo]]
+    var day=function(d){ return d?String(d).split(',')[0]:d; };
+    var kvs=[['Vigência',v.vig],['Regime principal',v.regime||regimeOf(v)],['Enviada em',day(v.env)],['Processada em',day(v.proc)],['Recibo',v.recibo]]
       .map(function(p){ return kv(p[0],(p[1]&&p[1]!=='—')?p[1]:'—'); }).join('');
     return '<div class="verrow'+(opts.current?' verrow--current':'')+'" data-href="'+hrefOf(v)+'">'+badge+
       '<div class="verrow__main"><div class="verrow__top"><span class="verrow__title">Versão '+v.n+'</span><span class="status '+s.pill+'"><span class="status__dot"></span>'+esc(s.label)+'</span></div>'+
@@ -442,7 +445,9 @@
     var slot=$('headerActSlot');
     if(!has){ slot.innerHTML=''; }
     else if(prog){
-      slot.innerHTML='<span class="tooltip tooltip--end"><button class="btn btn--primary" type="button" disabled>'+I.plus+'Registrar nova versão</button><span class="tooltip__bubble tooltip__bubble--stack" role="tooltip"><strong>Já existe uma versão em andamento</strong>Conclua ou cancele a Versão '+prog.n+' antes de registrar outra.</span></span>';
+      /* aria-disabled (não disabled): o botão continua focável e o motivo chega por teclado e leitor de tela (aria-describedby) */
+      slot.innerHTML='<span class="tooltip tooltip--end"><button class="btn btn--primary" type="button" aria-disabled="true" aria-describedby="tip-nova">'+I.plus+'Registrar nova versão</button><span class="tooltip__bubble tooltip__bubble--stack" role="tooltip" id="tip-nova"><strong>Já existe uma versão em andamento</strong>Conclua ou cancele a Versão '+prog.n+' antes de registrar outra.</span></span>';
+      slot.querySelector('button').addEventListener('click',function(e){ e.preventDefault(); });
     } else {
       slot.innerHTML='<a class="btn btn--primary" id="headerAct" href="'+hrefNova()+'">'+I.plus+'Registrar nova versão</a>';
     }
@@ -522,13 +527,20 @@
   }
   renderTimeline();
 
-  /* Abas: Versões x Linha do tempo */
-  document.addEventListener('click',function(ev){
-    var t=ev.target.closest('[data-vtab]'); if(!t) return;
+  /* Abas (padrão APG): um tab stop só, setas trocam a aba e movem o foco */
+  function selectTab(t){
     var key=t.getAttribute('data-vtab');
-    document.querySelectorAll('[data-vtab]').forEach(function(x){ var on=x===t; x.classList.toggle('is-active',on); x.setAttribute('aria-selected',String(on)); });
+    document.querySelectorAll('[data-vtab]').forEach(function(x){ var on=x===t; x.classList.toggle('is-active',on); x.setAttribute('aria-selected',String(on)); x.tabIndex=on?0:-1; });
     $('vp-tab').hidden=(key!=='tab');
     $('vp-tl').hidden=(key!=='tl');
+  }
+  document.querySelectorAll('[data-vtab]').forEach(function(x){ x.tabIndex=x.getAttribute('aria-selected')==='true'?0:-1; });
+  document.addEventListener('click',function(ev){ var t=ev.target.closest('[data-vtab]'); if(t) selectTab(t); });
+  document.addEventListener('keydown',function(ev){
+    var t=ev.target.closest && ev.target.closest('[data-vtab]'); if(!t) return;
+    var tabs=Array.prototype.slice.call(document.querySelectorAll('[data-vtab]')), i=tabs.indexOf(t), n=null;
+    if(ev.key==='ArrowRight') n=tabs[(i+1)%tabs.length]; else if(ev.key==='ArrowLeft') n=tabs[(i-1+tabs.length)%tabs.length]; else if(ev.key==='Home') n=tabs[0]; else if(ev.key==='End') n=tabs[tabs.length-1];
+    if(n){ ev.preventDefault(); selectTab(n); n.focus(); }
   });
 
   /* Shell */
