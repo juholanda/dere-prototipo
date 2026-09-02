@@ -72,9 +72,10 @@
     .versec:last-child{padding-bottom:var(--space-6)}
     /* entre uma seção e a próxima: 48px (24 de padding + 24 de margem), pra cada bloco respirar */
     .versec + .versec{margin-top:var(--space-6)}
+    /* título da seção (18px) + subtítulo de uma linha (14px), 16px entre eles e 16px até as linhas */
     .versec__h{display:flex;align-items:center;gap:var(--space-2);margin:0 0 var(--space-4)}
-    .versec__h h3{font-size:var(--text-base)!important;font-weight:700!important;color:var(--color-heading);margin:0}
-    .versec__hint{font-size:var(--text-sm);color:var(--color-text-muted);margin:0 0 var(--space-4)}
+    .versec__h h3{font-size:var(--text-xl)!important;font-weight:700!important;color:var(--color-heading);margin:0}
+    .versec__hint{font-size:var(--text-sm);color:var(--color-text-muted);margin:0 0 var(--space-4);line-height:1.5}
     .versec__empty{display:flex;gap:var(--space-3);align-items:center;font-size:var(--text-sm);color:var(--color-text-muted);padding:var(--space-4);border:1px dashed var(--color-border-strong);border-radius:var(--radius-lg)}
     .versec__empty svg{width:18px;height:18px;flex:0 0 auto;color:var(--color-text-muted)}
 
@@ -87,35 +88,24 @@
     .verrow__badge--success{background:var(--color-success-bg);color:var(--color-success-fg)}
     /* na linha destacada (fundo azul-claro) o quadrado verde-claro perdia contraste: quadrado branco, ícone verde (AA sobre branco) */
     .verrow--current .verrow__badge{background:var(--color-surface);border:1px solid var(--color-border)}
-    .verrow__main{flex:1 1 260px;min-width:0}
+    /* MESMA estrutura nas três seções: título + pílula em cima; embaixo os mesmos cinco campos em colunas de
+       largura fixa (alinham entre linhas e seções); o que não existe leva traço. */
+    .verrow__main{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:var(--space-3)}
     .verrow__top{display:flex;align-items:center;gap:var(--space-3);flex-wrap:wrap}
     .verrow__title{font-size:var(--text-base);font-weight:700;color:var(--color-heading)}
-    .verrow__meta{font-size:var(--text-sm);color:var(--color-text-muted);margin-top:var(--space-1);line-height:1.5;font-variant-numeric:tabular-nums}
-    .verrow__kvs{display:flex;gap:var(--space-10);flex:0 0 auto}
+    .verrow__kvs{display:grid;grid-template-columns:120px 104px 96px 80px minmax(72px,1fr);gap:var(--space-6)}
     .verrow__act{flex:0 0 auto;display:flex;align-items:center;gap:var(--space-2)}
     .verrow__act .btn{white-space:nowrap}
-    .verrow__sep{width:1px;height:var(--space-10);background:var(--color-border);flex:0 0 auto;margin:0 var(--space-2)}
+    .verrow__act .icon-btn{color:var(--color-primary)}
+    .verrow__act .icon-btn svg{width:18px;height:18px}
+    .verrow__sep{width:1px;align-self:stretch;background:var(--color-border);flex:0 0 auto;margin:0 var(--space-2)}
+    .verlist{display:flex;flex-direction:column;gap:var(--space-3)}
     .status{white-space:nowrap;font-size:var(--text-sm)}
     .status--neutral{background:var(--color-surface-2);color:var(--color-text-onmuted)}
-    @media(max-width:1100px){.verrow{flex-wrap:wrap}.verrow__kvs{width:100%;padding-left:calc(var(--space-10) + var(--space-4))}.verrow__sep{display:none}.verrow__act{margin-left:auto}}
+    @media(max-width:1100px){.verrow{flex-wrap:wrap}.verrow__kvs{grid-template-columns:repeat(2,minmax(0,1fr))}.verrow__sep{display:none}.verrow__act{margin-left:auto}}
 
-    /* tabela das encerradas: MESMO tratamento da tabela da lista (full-bleed no card, cabeçalho ordenável do DS,
-       células a 16px com respiro space-4, botão de 40px, rodapé padrão contagem + paginador) */
-    .versec--table{padding-left:0;padding-right:0;padding-bottom:0}
-    .versec--table .versec__h{padding:0 var(--space-6)}
-    #enctable{margin:0}
-    #enctable th.sortable{white-space:nowrap}
-    #enctable th:first-child,#enctable td:first-child{padding-left:var(--space-6)}
-    #enctable th:last-child,#enctable td:last-child{padding-right:var(--space-6)}
-    #enctable td{padding-top:var(--space-4);padding-bottom:var(--space-4);vertical-align:middle;font-size:var(--text-base)}
-    #enctable tbody tr:last-child td{border-bottom:0}
-    #enctable tbody tr[data-href]{cursor:pointer}
-    #enctable tbody tr[data-href]:hover{background:var(--color-primary-subtle)}
-    #enctable td .num{font-variant-numeric:tabular-nums}
-    #enctable .celltitle{font-size:var(--text-base);font-weight:600;color:var(--color-heading);white-space:nowrap}
-    .ver-act{text-align:right;white-space:nowrap;width:1%}
-    .ver-act .btn{white-space:nowrap}
-    .tablefoot{display:flex;justify-content:space-between;align-items:center;gap:var(--space-3);padding:var(--space-4) var(--space-6);border-top:1px solid var(--color-border);font-size:var(--text-sm);color:var(--color-text-muted);flex-wrap:wrap}
+    /* rodapé padrão (contagem + paginador) embaixo da lista de encerradas */
+    .tablefoot{display:flex;justify-content:space-between;align-items:center;gap:var(--space-3);padding:var(--space-4) 0 0;margin-top:var(--space-4);border-top:1px solid var(--color-border);font-size:var(--text-sm);color:var(--color-text-muted);flex-wrap:wrap}
     .tablefoot b{color:var(--color-heading);font-variant-numeric:tabular-nums}
     .tpager{display:inline-flex;align-items:center;gap:var(--space-2)}
     .tpager button:disabled{opacity:.4;cursor:default}
@@ -276,14 +266,17 @@
             <div class="tabs__panel" id="vp-tab" role="tabpanel" aria-labelledby="vt-tab" tabindex="0">
               <section class="versec" aria-labelledby="h-vig">
                 <div class="versec__h"><h3 id="h-vig">Versão vigente</h3></div>
+                <p class="versec__hint">A versão que está valendo hoje na Receita.</p>
                 <div id="secVig"></div>
               </section>
               <section class="versec" aria-labelledby="h-prog">
                 <div class="versec__h"><h3 id="h-prog">Em andamento</h3></div>
+                <p class="versec__hint">Uma versão por vez: rascunho, em revisão ou aguardando o processamento da Receita.</p>
                 <div id="secProg"></div>
               </section>
-              <section class="versec versec--table" aria-labelledby="h-enc">
+              <section class="versec" aria-labelledby="h-enc">
                 <div class="versec__h"><h3 id="h-enc">Versões encerradas</h3></div>
+                <p class="versec__hint">Versões substituídas por uma mais nova. Ficam aqui como histórico.</p>
                 <div id="secEnc"></div>
               </section>
             </div>
@@ -327,23 +320,23 @@
     seg:{nome:'MAG Seguros', cnpj:'33.608.308/0001-73', logo:'../Logos/MAG%20seguros.png', regime:'Serviços Financeiros', versions:[
       {n:4, current:false, sit:'revisao',      vigrole:null,   vig:'—',                       recibo:'—',            quando:'01/09/2026, 14:32', resp:'Ricardo Alves'},
       {n:3, current:true,  sit:'advertencias', vigrole:'now',  vig:'01/01/2026 · em aberto',  recibo:'RC-2026.0003', quando:'15/08/2026, 15:40', env:'15/08/2026, 15:40', proc:'16/08/2026, 09:12'},
-      {n:2, current:false, sit:'sucesso',      vigrole:'past', vig:'01/09/2025 a 31/12/2025', recibo:'RC-2025.0002', quando:'20/12/2025, 11:10'},
-      {n:1, current:false, sit:'sucesso',      vigrole:'past', vig:'01/01/2025 a 31/08/2025', recibo:'RC-2025.0001', quando:'10/01/2025, 09:20'}
+      {n:2, current:false, sit:'sucesso',      vigrole:'past', vig:'01/09/2025 a 31/12/2025', recibo:'RC-2025.0002', quando:'31/12/2025, 23:59', env:'28/08/2025, 10:14', resp:'Ricardo Alves'},
+      {n:1, current:false, sit:'sucesso',      vigrole:'past', vig:'01/01/2025 a 31/08/2025', recibo:'RC-2025.0001', quando:'31/08/2025, 23:59', env:'09/01/2025, 09:20', resp:'Ricardo Alves'}
     ]},
     cap:{nome:'MAG Capitalização', cnpj:'52.780.551/0001-19', logo:'../Logos/mag%20capitalizacoes.jpeg', regime:'Serviços Financeiros', versions:[
       {n:3, current:true,  sit:'sucesso',      vigrole:'now',  vig:'01/01/2026 · em aberto',  recibo:'RC-2026.0003', quando:'31/08/2026, 09:15', env:'30/08/2026, 17:05', proc:'31/08/2026, 09:15'},
-      {n:2, current:false, sit:'sucesso',      vigrole:'past', vig:'01/06/2025 a 31/12/2025', recibo:'RC-2025.0002', quando:'02/06/2025, 14:00'},
-      {n:1, current:false, sit:'sucesso',      vigrole:'past', vig:'01/01/2025 a 31/05/2025', recibo:'RC-2025.0001', quando:'05/01/2025, 10:30'}
+      {n:2, current:false, sit:'sucesso',      vigrole:'past', vig:'01/06/2025 a 31/12/2025', recibo:'RC-2025.0002', quando:'31/12/2025, 23:59', env:'30/05/2025, 14:00', resp:'Ricardo Alves'},
+      {n:1, current:false, sit:'sucesso',      vigrole:'past', vig:'01/01/2025 a 31/05/2025', recibo:'RC-2025.0001', quando:'31/05/2025, 23:59', env:'04/01/2025, 10:30', resp:'Ricardo Alves'}
     ]},
     fin:{nome:'MAG Finanças', cnpj:'21.995.256/0001-56', logo:'../Logos/mag%20financas.jpeg', regime:'Serviços Financeiros', versions:[
       {n:3, current:true,  sit:'sucesso',      vigrole:'now',  vig:'01/01/2026 a 31/12/2026', recibo:'RC-2026.0003', quando:'22/08/2026, 16:40', env:'21/08/2026, 10:20', proc:'22/08/2026, 16:40'},
-      {n:2, current:false, sit:'sucesso',      vigrole:'past', vig:'01/07/2025 a 31/12/2025', recibo:'RC-2025.0002', quando:'01/07/2025, 09:00'},
-      {n:1, current:false, sit:'sucesso',      vigrole:'past', vig:'01/01/2025 a 30/06/2025', recibo:'RC-2025.0001', quando:'03/01/2025, 08:45'}
+      {n:2, current:false, sit:'sucesso',      vigrole:'past', vig:'01/07/2025 a 31/12/2025', recibo:'RC-2025.0002', quando:'31/12/2025, 23:59', env:'30/06/2025, 09:00', resp:'Ricardo Alves'},
+      {n:1, current:false, sit:'sucesso',      vigrole:'past', vig:'01/01/2025 a 30/06/2025', recibo:'RC-2025.0001', quando:'30/06/2025, 23:59', env:'02/01/2025, 08:45', resp:'Ricardo Alves'}
     ]},
     sic:{nome:'Sicoob Seguradora', cnpj:'26.314.512/0001-16', logo:'../Logos/sicoob.svg', regime:'Serviços Financeiros', versions:[
       {n:3, current:false, sit:'rejeitado',    vigrole:null,   vig:'—',                       recibo:'—',            quando:'01/09/2026, 08:40', resp:'Ricardo Alves'},
-      {n:2, current:false, sit:'sucesso',      vigrole:'past', vig:'01/07/2025 a 31/12/2025', recibo:'RC-2025.0002', quando:'01/07/2025, 15:20'},
-      {n:1, current:false, sit:'sucesso',      vigrole:'past', vig:'01/01/2025 a 30/06/2025', recibo:'RC-2025.0001', quando:'02/01/2025, 12:00'}
+      {n:2, current:false, sit:'sucesso',      vigrole:'past', vig:'01/07/2025 a 31/12/2025', recibo:'RC-2025.0002', quando:'31/12/2025, 23:59', env:'30/06/2025, 15:20', resp:'Ricardo Alves'},
+      {n:1, current:false, sit:'sucesso',      vigrole:'past', vig:'01/01/2025 a 30/06/2025', recibo:'RC-2025.0001', quando:'30/06/2025, 23:59', env:'01/01/2025, 12:00', resp:'Ricardo Alves'}
     ]},
     s2u:{nome:'Simple2u', cnpj:'40.997.879/0001-02', logo:'../Logos/simple2u.svg', regime:null, versions:[]}
   };
@@ -393,50 +386,33 @@
   function hrefNova(){ return 'info-contribuinte.html?modo=nova&emp='+EMP+Q(false); }
   function kv(k,v){ return '<div class="kv"><p class="kv__k">'+esc(k)+'</p><p class="kv__v">'+esc(v||'—')+'</p></div>'; }
   function emptyBox(txt){ return '<div class="versec__empty">'+I.info+'<span>'+esc(txt)+'</span></div>'; }
+  /* Uma linha só para vigente, em andamento e encerradas: os mesmos cinco campos, sempre na mesma ordem. */
   function row(v, opts){
-    var s=SIT[v.sit]||{label:v.sit,pill:'',tone:'',ic:I.info,lead:'Atualizada em'};
-    var kvs=opts.kvs.map(function(p){ return kv(p[0],p[1]); }).join('');
-    return '<div class="verrow'+(opts.current?' verrow--current':'')+'" data-href="'+hrefOf(v)+'">'+
-      (opts.current ? '<span class="verrow__badge verrow__badge--success" aria-hidden="true">'+s.ic+'</span>' : '<span class="verrow__badge" aria-hidden="true">v'+v.n+'</span>')+
+    opts=opts||{};
+    var s=(v.vigrole==='past')?ENC:(SIT[v.sit]||{label:v.sit,pill:''});
+    var badge = opts.current
+      ? '<span class="verrow__badge verrow__badge--success" aria-hidden="true">'+I.check+'</span>'
+      : '<span class="verrow__badge" aria-hidden="true">v'+v.n+'</span>';
+    var kvs=[['Vigência',v.vig],['Última atualização',v.quando],['Enviada em',v.env],['Recibo',v.recibo],['Responsável',v.resp||'Ricardo Alves']]
+      .map(function(p){ return kv(p[0],(p[1]&&p[1]!=='—')?p[1]:'—'); }).join('');
+    return '<div class="verrow'+(opts.current?' verrow--current':'')+'" data-href="'+hrefOf(v)+'">'+badge+
       '<div class="verrow__main"><div class="verrow__top"><span class="verrow__title">Versão '+v.n+'</span><span class="status '+s.pill+'"><span class="status__dot"></span>'+esc(s.label)+'</span></div>'+
-      '<p class="verrow__meta">'+esc(opts.meta)+'</p></div>'+
-      '<div class="verrow__kvs">'+kvs+'</div><span class="verrow__sep" aria-hidden="true"></span>'+
-      '<div class="verrow__act"><a class="btn '+(opts.primary?'btn--primary':'btn--secondary')+'" href="'+hrefOf(v)+'">'+esc(opts.cta||'Ver versão')+I.chev+'</a></div>'+
+      '<div class="verrow__kvs">'+kvs+'</div></div>'+
+      '<span class="verrow__sep" aria-hidden="true"></span>'+
+      /* só consultar = botão-ícone com seta (nome acessível no aria-label); agir (Continuar, Ver ajustes) = botão com texto */
+      '<div class="verrow__act">'+(opts.cta
+        ? '<a class="btn '+(opts.primary?'btn--primary':'btn--secondary')+'" href="'+hrefOf(v)+'">'+esc(opts.cta)+I.chev+'</a>'
+        : '<a class="icon-btn" href="'+hrefOf(v)+'" aria-label="Ver Versão '+v.n+'">'+I.chev+'</a>')+'</div>'+
     '</div>';
   }
-
-  var SORTIC='<span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span>';
-  var ENC_COLS=[['n','Versão'],['vig','Vigência'],['sit','Situação'],['enc','Encerrada em'],['recibo','Recibo']];
-  var encSort={key:'n',dir:'desc'};
-  function dkey(s){ var m=/(\d{2})\/(\d{2})\/(\d{4})/.exec(s||''); return m?(m[3]+m[2]+m[1]):''; }
+  /* encerradas: mesma linha, da mais recente para a mais antiga, com o rodapé padrão de contagem e paginação */
   function renderEnc(enc){
     var box=$('secEnc');
-    if(!enc.length){ box.innerHTML='<div style="padding:0 var(--space-6) var(--space-6)">'+emptyBox('Nenhuma versão encerrada. Quando uma nova versão entra em vigor, a anterior passa para cá.')+'</div>'; return; }
-    var rows=enc.slice().sort(function(a,b){
-      var k=encSort.key, x, y;
-      if(k==='n'){ x=a.n; y=b.n; } else if(k==='vig'){ x=dkey(a.vig); y=dkey(b.vig); } else if(k==='enc'){ x=dkey(endOf(a.vig)); y=dkey(endOf(b.vig)); } else if(k==='sit'){ x=y=0; } else { x=a.recibo; y=b.recibo; }
-      var r=(x<y)?-1:(x>y)?1:0; return encSort.dir==='asc'?r:-r;
-    });
-    box.innerHTML='<div class="table-wrap"><table class="table table--stickyactions" id="enctable">'+
-      '<thead><tr>'+ENC_COLS.map(function(c){ var on=c[0]===encSort.key; return '<th scope="col" class="sortable'+(on?' is-sorted':'')+'" data-sort="'+c[0]+'" aria-sort="'+(on?(encSort.dir==='asc'?'ascending':'descending'):'none')+'" tabindex="0" role="button">'+c[1]+' '+SORTIC+'</th>'; }).join('')+
-      '<th scope="col"><span class="sr-only">Ações</span></th></tr></thead><tbody>'+
-      rows.map(function(v){
-        return '<tr data-href="'+hrefOf(v)+'">'+
-          '<td><span class="celltitle">Versão '+v.n+'</span></td>'+
-          '<td><span class="num">'+esc(v.vig)+'</span></td>'+
-          '<td><span class="status '+ENC.pill+'"><span class="status__dot"></span>'+ENC.label+'</span></td>'+
-          '<td><span class="num">'+esc(endOf(v.vig))+'</span></td>'+
-          '<td><span class="num">'+esc(v.recibo)+'</span></td>'+
-          '<td class="ver-act"><a class="btn btn--secondary" href="'+hrefOf(v)+'">Ver versão</a></td>'+
-        '</tr>';
-      }).join('')+
-      '</tbody></table></div>'+
+    if(!enc.length){ box.innerHTML=emptyBox('Nenhuma versão encerrada. Quando uma nova versão entra em vigor, a anterior passa para cá.'); return; }
+    var rows=enc.slice().sort(function(a,b){ return b.n-a.n; });
+    box.innerHTML='<div class="verlist">'+rows.map(function(v){ return row(v,{}); }).join('')+'</div>'+
       '<div class="tablefoot"><span><b>'+enc.length+'</b> de <b>'+enc.length+'</b> '+(enc.length===1?'versão encerrada':'versões encerradas')+'</span>'+
       '<span class="tpager"><button class="icon-btn icon-btn--sm" type="button" aria-label="Página anterior" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><span>Página 1 de 1</span><button class="icon-btn icon-btn--sm" type="button" aria-label="Próxima página" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button></span></div>';
-    box.querySelectorAll('th.sortable').forEach(function(th){
-      var go=function(){ var k=th.getAttribute('data-sort'); encSort.dir=(encSort.key===k&&encSort.dir==='desc')?'asc':(encSort.key===k?'desc':'asc'); encSort.key=k; renderEnc(enc); bindRows(); };
-      th.addEventListener('click',go); th.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); go(); } });
-    });
   }
   function bindRows(){
     document.querySelectorAll('[data-href]').forEach(function(el){
@@ -484,16 +460,15 @@
 
     /* vigente */
     $('secVig').innerHTML = vig
-      ? row(vig,{current:true, meta:'Vigência: '+vig.vig, kvs:[['Enviada em',vig.env||vig.quando],['Processada em',vig.proc||vig.quando],['Recibo',vig.recibo]]})
+      ? row(vig,{current:true})
       : emptyBox('Nenhuma versão vigente. A primeira versão processada com sucesso pela Receita aparece aqui.');
 
-    /* em andamento (0 ou 1) */
+    /* em andamento (0 ou 1): a ação que o usuário precisa tomar é primária; só consultar é secundária */
     $('secProg').innerHTML = prog
-      /* a ação que o usuário precisa tomar (continuar o rascunho, fazer os ajustes) é primária; só consultar é secundária */
-      ? row(prog,{current:false, meta:(SIT[prog.sit]||{}).lead+' '+prog.quando, kvs:[['Última atualização',prog.quando],['Responsável',prog.resp||'Ricardo Alves']], cta:(prog.sit==='ajustes')?'Ver ajustes':(prog.sit==='rascunho')?'Continuar':'Ver versão', primary:(prog.sit==='rascunho'||prog.sit==='ajustes')})
+      ? row(prog,{cta:(prog.sit==='ajustes')?'Ver ajustes':(prog.sit==='rascunho')?'Continuar':null, primary:(prog.sit==='rascunho'||prog.sit==='ajustes')})
       : emptyBox('Nenhuma versão em andamento. Só pode haver uma por vez: ao registrar uma nova versão, ela aparece aqui até ser processada.');
 
-    /* encerradas (tabela + rodapé padrão, igual à lista) */
+    /* encerradas */
     renderEnc(enc);
     /* linha e cartão inteiros clicáveis (o botão continua sendo o controle acessível) */
     bindRows();
