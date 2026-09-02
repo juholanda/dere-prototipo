@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Versões · MAG Seguros</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=40">
+  <link rel="stylesheet" href="../design-system/ds.css?v=41">
   <script src="../design-system/ds-tailwind.js"></script>
   <script src="../design-system/ds-dialog.js"></script>
   <style>
@@ -329,7 +329,7 @@
             <div class="empty" id="verempty" hidden>
               <div class="empty__icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M9 15h6M12 12v6"/></svg></div>
               <p class="empty__title">Nenhuma versão ainda</p>
-              <p style="margin:0;max-width:46ch">Este contribuinte ainda não teve as informações preenchidas. Crie a primeira versão para enviar à Receita.</p>
+              <p class="empty__text">Este contribuinte ainda não teve as informações preenchidas. Crie a primeira versão para enviar à Receita.</p>
               <a class="btn btn--primary" id="emptyAct" href="info-contribuinte.html?modo=nova" style="margin-top:var(--space-2)">Preencher informações do contribuinte</a>
             </div>
           </section>
@@ -379,6 +379,7 @@
       {n:1, current:false, sit:'sucesso',      vigrole:'past', vig:'01/01/2025 a 31/05/2025', recibo:'RC-2025.0001', quando:'31/05/2025, 23:59', env:'04/01/2025, 10:30', proc:'05/01/2025, 09:00', resp:'Ricardo Alves'}
     ]},
     fin:{nome:'MAG Finanças', cnpj:'21.995.256/0001-56', logo:'../Logos/mag%20financas.jpeg', regime:'Serviços Financeiros', versions:[
+      {n:4, current:false, sit:'revisao',      vigrole:null,   vig:'—',                       recibo:'—',            quando:'hoje, 10:20', env:'', resp:'Ricardo Alves'},
       {n:3, current:true,  sit:'sucesso',      vigrole:'now',  vig:'01/01/2026 a 31/12/2026', recibo:'RC-2026.0003', quando:'22/08/2026, 16:40', env:'21/08/2026, 10:20', proc:'22/08/2026, 16:40'},
       {n:2, current:false, sit:'sucesso',      vigrole:'past', vig:'01/07/2025 a 31/12/2025', recibo:'RC-2025.0002', quando:'31/12/2025, 23:59', env:'30/06/2025, 09:00', proc:'01/07/2025, 09:00', resp:'Ricardo Alves'},
       {n:1, current:false, sit:'sucesso',      vigrole:'past', vig:'01/01/2025 a 30/06/2025', recibo:'RC-2025.0001', quando:'30/06/2025, 23:59', env:'02/01/2025, 08:45', proc:'03/01/2025, 09:00', resp:'Ricardo Alves'}

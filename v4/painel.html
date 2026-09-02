@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Painel de Monitoramento</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=40">
+  <link rel="stylesheet" href="../design-system/ds.css?v=41">
   <script src="../design-system/ds-tailwind.js"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
@@ -621,7 +621,7 @@
         eTit='Nenhum evento ainda';
         eDesc='Os eventos aparecem aqui conforme você preenche e transmite as declarações.';
       }
-      body.innerHTML='<tr class="evempty"><td colspan="7" style="padding:0"><div class="empty"><div class="empty__icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+eIc+'</svg></div><p class="empty__title">'+eTit+'</p><p style="margin:0">'+eDesc+'</p>'+eExtra+'</div></td></tr>';
+      body.innerHTML='<tr class="evempty"><td colspan="7" style="padding:0"><div class="empty"><div class="empty__icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+eIc+'</svg></div><p class="empty__title">'+eTit+'</p><p class="empty__text">'+eDesc+'</p>'+eExtra+'</div></td></tr>';
       var ce=body.querySelector('[data-clear-empty]'); if(ce) ce.addEventListener('click',function(){ var c=$('fClear'); if(c) c.click(); });
       return;
     }

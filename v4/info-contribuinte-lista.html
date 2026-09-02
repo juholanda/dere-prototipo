@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Informações do Contribuinte</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=40">
+  <link rel="stylesheet" href="../design-system/ds.css?v=41">
   <script src="../design-system/ds-tailwind.js"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
@@ -262,9 +262,9 @@
     /* aceitas na Receita — vigência em aberto (sem fim) */
     {id:'cap', nome:'MAG Capitalização', cnpj:'52.780.551/0001-19', regime:'Serviços Financeiros', vigente:{ver:3, since:'01/01/2026', until:null},         sit:'sucesso',    draft:null,      at:'ontem, 09:15', ts:200},
     /* vigência com fim definido */
-    {id:'fin', nome:'MAG Finanças',      cnpj:'21.995.256/0001-56', regime:'Serviços Financeiros', vigente:{ver:3, since:'01/01/2026', until:'31/12/2026'}, sit:'sucesso',    draft:null,      at:'22/ago, 16:40', ts:100},
+    {id:'fin', nome:'MAG Finanças',      cnpj:'21.995.256/0001-56', regime:'Serviços Financeiros', vigente:{ver:3, since:'01/01/2026', until:'31/12/2026'}, sit:'sucesso',    draft:'revisao', at:'hoje, 10:20', ts:1020},
     /* processado com avisos (aceito, mas com ressalvas) + nova versão (v4) em revisão */
-    {id:'seg', nome:'MAG Seguros',       cnpj:'33.608.308/0001-73', regime:'Serviços Financeiros', vigente:{ver:3, since:'01/01/2026', until:null},         sit:'avisos',     draft:'revisao', at:'hoje, 14:32', ts:1432},
+    {id:'seg', nome:'MAG Seguros',       cnpj:'33.608.308/0001-73', regime:'Serviços Financeiros', vigente:{ver:3, since:'01/01/2026', until:null},         sit:'avisos',     draft:null,      at:'hoje, 14:32', ts:1432},
     /* transmitida e rejeitada pela Receita: ainda sem versão aceita */
     {id:'sic', nome:'Sicoob Seguradora', cnpj:'26.314.512/0001-16', regime:'Serviços Financeiros', vigente:null,                       sit:'rejeitado',  draft:null,      at:'hoje, 11:05', ts:1105},
     /* nunca transmitida à Receita */
@@ -294,7 +294,7 @@
   function curEmp(){ return scenario==='new'?EMP_NEW:EMP_POP; }
   /* a empresa é contexto; o status é sempre da VERSÃO vigente (não um "estado da empresa") */
   function situacaoCell(e){
-    var s=SIT[e.sit];
+    var s=SIT[e.draft || e.sit] || SIT[e.sit];
     return '<span class="status '+s.pill+'"><span class="status__dot"></span>'+esc(s.label)+'</span>';
   }
   var SITRANK={rejeitado:0, naoenviada:1, avisos:2, sucesso:3};
