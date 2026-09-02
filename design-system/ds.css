@@ -803,6 +803,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 .timeline__time{font-size:var(--text-sm);color:var(--color-text-muted);white-space:nowrap;flex:0 0 auto;font-variant-numeric:tabular-nums}
 .timeline__title{font-size:var(--text-base);font-weight:600;color:var(--color-heading);margin:0;line-height:1.3}
 .timeline__text{font-size:var(--text-sm);color:var(--color-text-onmuted);margin:0}
+.timeline__head + .timeline__text{margin-top:var(--space-1)}
 /* Item detalhado (histórico de versões): título + hora na mesma linha; descrição; campos rotulados; ator */
 .timeline__body{min-width:0}
 .timeline__head{display:flex;align-items:baseline;gap:var(--space-6)}

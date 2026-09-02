@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Design System · DeRE</title>
-  <link rel="stylesheet" href="ds.css?v=33">
+  <link rel="stylesheet" href="ds.css?v=34">
   <style>
     /* Layout do catálogo (só do doc, não é componente do DS) */
     .app{display:grid;grid-template-columns:236px 1fr;min-height:100vh}
@@ -719,12 +719,12 @@
         <h2>Timeline</h2>
         <p class="sec__hint">Um componente, três níveis de detalhe. Bolinha: cor semântica (success/info/warning/danger) ou <code>--muted</code>. Título + hora na mesma linha (<code>.timeline__head</code>), descrição (<code>.timeline__text</code>/<code>.timeline__desc</code>) e, quando precisar, campos rotulados (<code>.timeline__fields</code>) e ator (<code>.timeline__who</code>). Variante <code>.timeline--muted</code> deixa as bolinhas neutras e leva a linha até o fim do último item.</p>
 
-        <h3 style="margin-top:var(--space-6)">Simples (hora · título · texto)</h3>
+        <h3 style="margin-top:var(--space-6)">Simples (título + hora · texto)</h3>
         <div class="card"><div class="card__body">
-          <ul class="timeline">
-            <li class="timeline__item"><span class="timeline__dot timeline__dot--success"></span><p class="timeline__time">Hoje, 09:12</p><p class="timeline__title">Apuração concluída</p><p class="timeline__text">Sem divergências na competência 08/2026.</p></li>
-            <li class="timeline__item"><span class="timeline__dot"></span><p class="timeline__time">Ontem, 16:40</p><p class="timeline__title">42 documentos importados</p><p class="timeline__text">Lote enviado por Ana Silva.</p></li>
-            <li class="timeline__item"><span class="timeline__dot timeline__dot--muted"></span><p class="timeline__time">05/08, 11:03</p><p class="timeline__title">Competência aberta</p><p class="timeline__text">Prazo de entrega até 20/09.</p></li>
+          <ul class="timeline timeline--muted">
+            <li class="timeline__item"><span class="timeline__dot"></span><div class="timeline__body"><div class="timeline__head"><p class="timeline__title">Apuração concluída</p><span class="timeline__time">Hoje, 09:12</span></div><p class="timeline__text">Sem divergências na competência 08/2026.</p></div></li>
+            <li class="timeline__item"><span class="timeline__dot"></span><div class="timeline__body"><div class="timeline__head"><p class="timeline__title">42 documentos importados</p><span class="timeline__time">Ontem, 16:40</span></div><p class="timeline__text">Lote enviado por Ana Silva.</p></div></li>
+            <li class="timeline__item"><span class="timeline__dot"></span><div class="timeline__body"><div class="timeline__head"><p class="timeline__title">Competência aberta</p><span class="timeline__time">05/08, 11:03</span></div><p class="timeline__text">Prazo de entrega até 20/09.</p></div></li>
           </ul>
         </div></div>
 
