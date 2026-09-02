@@ -779,7 +779,17 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 .modal__footer{display:flex;justify-content:flex-end;gap:var(--space-2);padding:var(--space-6)}
 /* Cancelar/dismiss (1º botão) vai pro lado oposto; as ações ficam agrupadas à direita */
 .modal__footer > .btn:first-child:not(:last-child){margin-right:auto}
+.modal__footer .btn{height:var(--control-h-lg);font-size:var(--text-base);padding:0 var(--space-6)}
 .confirm{display:flex;gap:1rem;padding:var(--space-6);align-items:flex-start}
+/* Cabeçalho de modal com ícone à esquerda do título (confirmações). O ícone é danger por padrão; use as variantes. */
+.modal__header--icon{align-items:center;gap:var(--space-3)}
+.modal__header--icon .modal__title{flex:1;min-width:0}
+.modal__ic{flex:0 0 auto;width:36px;height:36px;border-radius:var(--radius-lg);display:grid;place-items:center;background:var(--color-danger-bg);color:var(--color-danger-fg)}
+.modal__ic svg{width:19px;height:19px}
+.modal__ic--warning{background:var(--color-warning-bg);color:var(--color-warning)}
+.modal__ic--primary{background:var(--color-primary-subtle);color:var(--color-primary)}
+.modal__ic--success{background:var(--color-success-bg);color:var(--color-success-fg)}
+.modal__header--icon + .modal__body{padding-top:var(--space-2)}
 .modal__header + .confirm{padding-top:var(--space-2)}
 .confirm__icon{flex:0 0 auto;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--color-danger-bg);color:var(--color-danger)}
 .confirm__icon--warning{background:var(--color-warning-bg);color:var(--color-warning)}

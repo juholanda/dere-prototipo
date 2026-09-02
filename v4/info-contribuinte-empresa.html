@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Versões · MAG Seguros</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=41">
+  <link rel="stylesheet" href="../design-system/ds.css?v=42">
   <script src="../design-system/ds-tailwind.js"></script>
   <script src="../design-system/ds-dialog.js"></script>
   <style>
@@ -58,8 +58,6 @@
     .kv{min-width:0}
     .kv__k{font-size:var(--text-xs);color:var(--color-text-muted);font-weight:600;margin:0 0 var(--space-1);white-space:nowrap}
     .kv__v{font-size:var(--text-sm);color:var(--color-heading);font-weight:500;margin:0;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .cocard .kv__k{font-size:var(--text-sm)}
-    .cocard .kv__v{font-size:var(--text-base)}
 
     /* alerta de pendência (ajustes solicitados / rejeição) com ação à direita */
     .alert{margin-bottom:var(--space-6);align-items:center}
@@ -343,7 +341,7 @@
   <!-- Bloqueio: já existe uma versão em andamento -->
   <div class="scrim" id="blockModal" hidden>
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="blockTitle" aria-describedby="blockDesc">
-      <div class="modal__header"><div class="modal__lead"><span class="modal__lead-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span><h2 class="modal__title" id="blockTitle">Já existe uma versão em andamento</h2></div></div>
+      <div class="modal__header modal__header--icon"><span class="modal__ic modal__ic--warning" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span><h2 class="modal__title" id="blockTitle">Já existe uma versão em andamento</h2><button class="icon-btn" type="button" data-block-close aria-label="Fechar" style="flex:0 0 auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg></button></div>
       <div class="modal__body" id="blockDesc"><p id="blockText" style="margin:0"></p></div>
       <div class="modal__footer"><button class="btn btn--ghost" type="button" data-block-close>Fechar</button><a class="btn btn--primary" id="blockGo" href="#">Ver a versão em andamento</a></div>
     </div>

@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Detalhe do contribuinte</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=41">
+  <link rel="stylesheet" href="../design-system/ds.css?v=42">
   <script src="../design-system/ds-tailwind.js"></script>
   <script src="../design-system/ds-dialog.js"></script>
   <style>
@@ -151,11 +151,11 @@
     /* ===== contexto: empresa (cocard) e pessoas do processo ===== */
     .cocard{display:flex;align-items:flex-start;gap:var(--space-8) var(--space-10);padding:var(--space-6);flex-wrap:wrap}
     .cometa{display:flex;gap:var(--space-10);flex-wrap:wrap;align-items:stretch}
-    .cofield__k{display:flex;align-items:center;gap:var(--space-1-5);font-size:var(--text-xs);color:var(--color-text-muted);font-weight:600;margin:0 0 var(--space-3);white-space:nowrap}
+    .cofield__k{display:flex;align-items:center;gap:var(--space-1-5);font-size:var(--text-sm);color:var(--color-text-muted);font-weight:600;margin:0 0 var(--space-3);white-space:nowrap}
     .cofield__k svg{width:14px;height:14px;flex:0 0 auto}
     .vigtag{display:flex;align-items:center;gap:3px;color:var(--color-success-fg);font-weight:700;font-size:var(--text-xs);margin-top:var(--space-1)}
     .vigtag svg{width:13px;height:13px}
-    .cofield__v{font-size:var(--text-sm);color:var(--color-heading);font-weight:500;margin:0;line-height:1.3}
+    .cofield__v{font-size:var(--text-base);color:var(--color-heading);font-weight:500;margin:0;line-height:1.3}
     .cocard__id{display:flex;align-items:center;gap:var(--space-3);min-width:0;flex:1 1 240px}
     .cocard__logo{width:var(--space-12);height:var(--space-12);border-radius:var(--radius-lg);overflow:hidden;background:var(--color-surface);border:1px solid var(--color-border);flex:0 0 auto;display:grid;place-items:center}
     .cocard__logo img{width:100%;height:100%;object-fit:cover;display:block}
@@ -165,11 +165,11 @@
     .kv__k{font-size:var(--text-xs);color:var(--color-text-muted);font-weight:600;margin:0 0 var(--space-1);white-space:nowrap}
     .kv__v{font-size:var(--text-base);color:var(--color-heading);font-weight:500;margin:0;font-variant-numeric:tabular-nums}
     .person{min-width:0}
-    .person__k{display:flex;align-items:center;gap:var(--space-1-5);font-size:var(--text-xs);color:var(--color-text-muted);font-weight:600;margin:0 0 var(--space-3);white-space:nowrap}
+    .person__k{display:flex;align-items:center;gap:var(--space-1-5);font-size:var(--text-sm);color:var(--color-text-muted);font-weight:600;margin:0 0 var(--space-3);white-space:nowrap}
     .person__k svg{width:14px;height:14px}
     .person__v{display:flex;align-items:center;gap:var(--space-2)}
-    .person__name{font-size:var(--text-sm);font-weight:600;color:var(--color-heading);line-height:1.3}
-    .person__date{font-size:var(--text-xs);color:var(--color-text-muted);font-variant-numeric:tabular-nums;margin-top:1px}
+    .person__name{font-size:var(--text-base);font-weight:600;color:var(--color-heading);line-height:1.3}
+    .person__date{font-size:var(--text-sm);color:var(--color-text-muted);font-variant-numeric:tabular-nums;margin-top:1px}
     .rf-wait{display:inline-flex;align-items:center;gap:var(--space-1-5);color:var(--color-text-muted);font-size:var(--text-sm)}
     .rf-wait svg{width:16px;height:16px;flex:0 0 auto}
 
@@ -770,15 +770,13 @@
 
   <div class="scrim" id="excluirModal" hidden>
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="exTitle">
-      <div class="modal__header" style="display:flex;align-items:flex-start;justify-content:space-between;gap:var(--space-3)">
+      <div class="modal__header modal__header--icon">
+        <span class="modal__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M10 11v6M14 11v6"/></svg></span>
         <h3 class="modal__title" id="exTitle">Excluir a informação do contribuinte?</h3>
-        <button class="icon-btn" type="button" data-close-excluir aria-label="Fechar" style="flex:0 0 auto;margin:calc(-1 * var(--space-1)) calc(-1 * var(--space-1)) 0 0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg></button>
+        <button class="icon-btn" type="button" data-close-excluir aria-label="Fechar" style="flex:0 0 auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg></button>
       </div>
       <div class="modal__body">
-        <div class="modal__lead">
-          <span class="modal__lead-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M10 11v6M14 11v6"/></svg></span>
-          <p id="exLead">A exclusão encerra a vigência ativa do D-1001 na Receita. Ela não é imediata: entra como um evento de exclusão que <strong>passa pela aprovação de Ana Prado</strong> antes de ser transmitido.</p>
-        </div>
+        <p id="exLead" style="margin:0 0 var(--space-6);line-height:1.5">A exclusão encerra a vigência ativa do D-1001 na Receita. Ela não é imediata: entra como um evento de exclusão que <strong>passa pela aprovação de Ana Prado</strong> antes de ser transmitido.</p>
         <div class="mform">
           <div class="field">
             <label class="field__label" for="motExcl">Motivo da exclusão</label>
