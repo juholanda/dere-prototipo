@@ -427,6 +427,15 @@
           : [];
   } else {
     _base = CO.versions.slice().filter(function(v){ return !(EMP==='seg' && v.sit==='revisao' && !_d1Sent); });
+    /* incorpora a versão em andamento criada pelo usuário (rascunho salvo ou enviada), respeitando a regra de UMA por vez */
+    var _prog=['rascunho','revisao','ajustes','processando','rejeitado'];
+    var _hasProg=_base.some(function(v){ return _prog.indexOf(v.sit)>=0; });
+    if(!_hasProg && (_d1Sent || _draft)){
+      var _maxN=_base.reduce(function(m,v){ return Math.max(m, v.n||0); }, 0);
+      _base.unshift(_d1Sent
+        ? {n:_maxN+1, current:false, sit:'revisao',  vigrole:null, vig:'—', recibo:'—', quando:_sentAt||'01/09/2026, 14:32',  resp:'Ricardo Alves'}
+        : {n:_maxN+1, current:false, sit:'rascunho', vigrole:null, vig:'—', recibo:'—', quando:_draftAt||'01/09/2026, 14:32', resp:'Ricardo Alves'});
+    }
   }
   var VERSIONS=_base.sort(function(a,b){ if(a.current!==b.current) return a.current?-1:1; return b.n-a.n; });
 
