@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Detalhe do contribuinte</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=31">
+  <link rel="stylesheet" href="../design-system/ds.css?v=33">
   <script src="../design-system/ds-tailwind.js"></script>
   <script src="../design-system/ds-dialog.js"></script>
   <style>
@@ -160,12 +160,6 @@
     .person__date{font-size:var(--text-xs);color:var(--color-text-muted);font-variant-numeric:tabular-nums;margin-top:1px}
     .rf-wait{display:inline-flex;align-items:center;gap:var(--space-1-5);color:var(--color-text-muted);font-size:var(--text-sm)}
     .rf-wait svg{width:16px;height:16px;flex:0 0 auto}
-    .rf{display:flex;gap:var(--space-2);align-items:flex-start}
-    .rf__ic{flex:0 0 auto;margin-top:1px}
-    .rf__ic svg{width:18px;height:18px}
-    .rf__ic--info{color:var(--color-info)} .rf__ic--success{color:var(--color-success-fg)} .rf__ic--warning{color:var(--color-warning)} .rf__ic--danger{color:var(--color-danger)}
-    .rf__title{font-size:var(--text-sm);font-weight:600;color:var(--color-heading)}
-    .rf__meta{font-size:var(--text-xs);color:var(--color-text-muted);margin-top:1px;line-height:1.4}
 
     /* ===== alerta de pendência: fundo branco + traço lateral vivo, feedback direto ===== */
     .dalert{display:flex;gap:var(--space-3);align-items:flex-start;background:var(--color-surface);border:1px solid var(--color-border);border-left:4px solid var(--color-warning);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:var(--space-4) var(--space-6);margin-bottom:var(--space-6)}
@@ -192,25 +186,6 @@
     /* ===== histórico / linha do tempo do ciclo de vida ===== */
     .histhead{display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);flex-wrap:wrap;margin-bottom:var(--space-6)}
     .histhead__desc{font-size:var(--text-sm);color:var(--color-text-muted);margin:0;font-weight:600}
-    /* bolinhas neutras (uma cor só, pra não poluir) */
-    #tl .timeline__dot{border-color:var(--color-border-strong)}
-    /* o traço acompanha o último evento até o fim do seu conteúdo (sem sobrar padding embaixo) */
-    #tl .timeline__item:last-child{padding-bottom:0}
-    #tl .timeline__item:last-child::before{display:block;bottom:0}
-    .tl__body{min-width:0}
-    #tl .timeline__item{padding-bottom:var(--space-10)}
-    .tl__head{display:flex;align-items:baseline;gap:var(--space-6)}
-    .tl__title{font-size:var(--text-base);font-weight:600;color:var(--color-heading);margin:0;line-height:1.3}
-    .tl__time{font-size:var(--text-sm);font-weight:400;color:var(--color-text-muted);flex:0 0 auto;font-variant-numeric:tabular-nums;white-space:nowrap}
-    .tl__fields{margin-top:var(--space-3);display:flex;flex-direction:column;gap:var(--space-4)}
-    .tl__field{display:flex;gap:var(--space-3);align-items:baseline}
-    .tl__field dt{font-size:var(--text-sm);color:var(--color-text-muted);font-weight:600;flex:0 0 auto;min-width:104px}
-    .tl__field dd{margin:0;font-size:var(--text-sm);color:var(--color-heading);min-width:0;line-height:1.5}
-    .tl__who{display:inline-flex;align-items:center;gap:var(--space-2)}
-    .tl__who strong{color:var(--color-heading);font-weight:600}
-    .tl__role{color:var(--color-text-muted)}
-    .avatar--sys{background:var(--color-surface-2);color:var(--color-text-muted);border:1px solid var(--color-border)}
-    .avatar--sys svg{width:14px;height:14px}
 
     .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
     @media(max-width:820px){.submeta{grid-template-columns:1fr}.rogrid{grid-template-columns:1fr}.statusbar{flex-wrap:wrap}.statusbar__actions{width:100%}}
@@ -314,7 +289,6 @@
               <div><p class="cocard__name" id="coNome">MAG Seguros</p><p class="cocard__cnpj" id="coCnpj">CNPJ 33.608.308/0001-73</p></div>
             </div>
             <div class="cometa">
-              <div class="cofield"><p class="cofield__k">Regime principal</p><p class="cofield__v" id="coRegime">Serviços Financeiros</p></div>
               <div class="cofield"><p class="cofield__k">Versão</p><p class="cofield__v" id="coVer">Versão 1</p></div>
               <span class="cometa__sep" aria-hidden="true"></span>
               <div id="peopleCard" style="display:contents"></div>
@@ -374,7 +348,7 @@
 
             <div class="tabs__panel" id="dp-hist" role="tabpanel" aria-labelledby="dt-hist" tabindex="0" hidden>
               <div class="histhead"><p class="histhead__desc" id="histCount"></p><button class="btn btn--secondary" type="button"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/></svg>Baixar histórico</button></div>
-              <ol class="timeline" id="tl"></ol>
+              <ol class="timeline timeline--muted" id="tl"></ol>
             </div>
           </section>
         </div>
@@ -424,6 +398,9 @@
   function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
   var RECEITA='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6M9 12h.01M15 12h.01"/></svg>';
   var USER='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
+  var SEND='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 3.5 21 3l-.5 6.5"/><path d="m21 3-9.5 9.5"/><path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"/></svg>';
+  var APPROVE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/></svg>';
+  var FILECOG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M15.5 22H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8l6 6v3"/><circle cx="17.5" cy="17.5" r="2.5"/><path d="M17.5 14.5v-1M17.5 21.5v-1M20.5 17.5h-1M14.5 17.5h1M19.6 15.4l-.7.7M16.1 18.9l-.7.7M19.6 19.6l-.7-.7M16.1 16.1l-.7-.7"/></svg>';
   var CHEVR='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>';
   /* Eventos do ciclo de vida (Manual RFB: interno a-DeRE -> Receita; situações oficiais sucesso/advertências/rejeitado; advertência = aceito) */
   /* Cada passo: ação (título) + status REAL resultante (badge) + quem fez + data. Papéis: Preparador/Aprovador (perfis do produto). */
@@ -452,27 +429,19 @@
   var XMARK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></svg>';
   var LOADER='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>';
   /* campo do bloco de responsáveis: rótulo (ícone + texto) + valor */
-  function field(label, valHtml){ return '<div class="person"><p class="person__k">'+USER+esc(label)+'</p>'+valHtml+'</div>'; }
+  function field(label, valHtml, icon){ return '<div class="person"><p class="person__k">'+(icon||USER)+esc(label)+'</p>'+valHtml+'</div>'; }
   function personVal(who, date){ return '<div class="person__v"><span class="avatar avatar--sm">'+initials(who)+'</span><div><span class="person__name">'+esc(who)+'</span>'+(date?'<p class="person__date">'+esc(date)+'</p>':'')+'</div></div>'; }
   function waitVal(){ return '<div class="person__v rf-wait">'+CLOCK+'<span>Aguardando</span></div>'; }
-  function rfVal(tone, ic, title, meta){ return '<div class="person__v rf"><span class="rf__ic rf__ic--'+tone+'">'+ic+'</span><div><span class="rf__title">'+esc(title)+'</span>'+(meta?'<p class="rf__meta">'+esc(meta)+'</p>':'')+'</div></div>'; }
-  /* retorno da Receita por situação (o número de recibo e o código de erro são ILUSTRATIVOS: confirmar formato na doc oficial) */
-  function receitaVal(sit){
-    if(sit==='processando') return rfVal('info', LOADER, 'Em processamento', 'Desde 03/09/2026, 11:25');
-    if(sit==='sucesso')     return rfVal('success', CHECK, 'Processada com sucesso', '03/09/2026, 11:27 · Recibo '+REC);
-    if(sit==='advertencias')return rfVal('warning', CHECK, 'Processada com advertências', '03/09/2026, 11:27 · Recibo '+REC);
-    if(sit==='encerrada')   return rfVal('success', CHECK, 'Processada com sucesso', '03/09/2026, 11:27 · Recibo '+REC);
-    if(sit==='rejeitado')   return rfVal('danger', XMARK, 'Rejeitada pela Receita', '03/09/2026, 11:27 · Cód. MS1097');
-    return waitVal();
-  }
+  function sysVal(who, date){ return '<div class="person__v"><span class="avatar avatar--sm avatar--sys">'+RECEITA+'</span><div><span class="person__name">'+esc(who)+'</span>'+(date?'<p class="person__date">'+esc(date)+'</p>':'')+'</div></div>'; }
   function renderPeople(sit){
     var el=$('peopleCard'); if(!el) return;
     var approved=['sucesso','advertencias','encerrada','processando','rejeitado'].indexOf(sit)>=0;
     /* três marcos sempre visíveis; pendente = "Aguardando" */
     var html='';
-    html+=field('Enviado para revisão por', (sit!=='rascunho')?personVal('Ricardo Alves','02/09/2026, 11:15'):waitVal());
-    html+=field('Aprovado por', approved?personVal('Ana Prado','03/09/2026, 11:20'):waitVal());
-    html+=field('Processado pela Receita', receitaVal(sit));
+    var processed=['sucesso','advertencias','encerrada','rejeitado'].indexOf(sit)>=0;
+    html+=field('Enviado para revisão por', (sit!=='rascunho')?personVal('Ricardo Alves','02/09/2026, 11:15'):waitVal(), SEND);
+    html+=field('Aprovado por', approved?personVal('Ana Prado','03/09/2026, 11:20'):waitVal(), APPROVE);
+    html+=field('Processado por', processed?sysVal('Receita Federal','03/09/2026, 11:27'):waitVal(), FILECOG);
     el.innerHTML=html;
   }
   function renderAlert(sit){
@@ -494,13 +463,13 @@
       var st=e.status||['',''];
       var badge='<span class="status status--sm '+st[1]+'"><span class="status__dot"></span>'+esc(st[0])+'</span>';
       var av=(e.role==='Sistema')?'<span class="avatar avatar--sm avatar--sys">'+RECEITA+'</span>':'<span class="avatar avatar--sm">'+initials(e.who)+'</span>';
-      var who='<span class="tl__who">'+av+'<span class="tl__whotx"><strong>'+esc(e.who)+'</strong><span class="tl__role"> · '+esc(e.role)+'</span></span></span>';
-      var extra=(e.extras||[]).map(function(x){return '<div class="tl__field"><dt>'+esc(x[0])+'</dt><dd>'+esc(x[1])+'</dd></div>';}).join('');
-      return '<li class="timeline__item"><span class="timeline__dot timeline__dot--muted"></span><div class="tl__body">'+
-        '<div class="tl__head"><p class="tl__title">'+esc(e.title)+'</p><span class="tl__time">'+esc(e.t)+'</span></div>'+
-        '<dl class="tl__fields">'+
-          '<div class="tl__field"><dt>Status</dt><dd>'+badge+'</dd></div>'+
-          '<div class="tl__field"><dt>Realizado por</dt><dd>'+who+'</dd></div>'+
+      var who='<span class="timeline__who">'+av+'<span class="timeline__whotx"><strong>'+esc(e.who)+'</strong><span class="timeline__role"> · '+esc(e.role)+'</span></span></span>';
+      var extra=(e.extras||[]).map(function(x){return '<div class="timeline__field"><dt>'+esc(x[0])+'</dt><dd>'+esc(x[1])+'</dd></div>';}).join('');
+      return '<li class="timeline__item"><span class="timeline__dot timeline__dot--muted"></span><div class="timeline__body">'+
+        '<div class="timeline__head"><p class="timeline__title">'+esc(e.title)+'</p><span class="timeline__time">'+esc(e.t)+'</span></div>'+
+        '<dl class="timeline__fields">'+
+          '<div class="timeline__field"><dt>Status</dt><dd>'+badge+'</dd></div>'+
+          '<div class="timeline__field"><dt>Realizado por</dt><dd>'+who+'</dd></div>'+
           extra+
         '</dl>'+
       '</div></li>';
