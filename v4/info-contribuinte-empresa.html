@@ -54,8 +54,6 @@
     .cocard__logo .co-code{font-size:var(--text-sm);font-weight:700;color:var(--color-primary)}
     .cocard__name{font-size:var(--text-base);font-weight:600;color:var(--color-heading);margin:0;line-height:1.3}
     .cocard__cnpj{font-size:var(--text-sm);color:var(--color-text-muted);margin:2px 0 0;font-variant-numeric:tabular-nums}
-    /* dados-chave da empresa a 16px (alinha com o nome) */
-    .cocard .kv__v{font-size:var(--text-base)}
     .kv{min-width:0}
     .kv__k{font-size:var(--text-xs);color:var(--color-text-muted);font-weight:600;margin:0 0 var(--space-1);white-space:nowrap}
     .kv__v{font-size:var(--text-sm);color:var(--color-heading);font-weight:500;margin:0;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -108,9 +106,7 @@
     /* quadrado da linha: número da versão (v1, v4). Só a vigente leva o check. O estado fica por conta da pílula. */
     .verrow__badge{flex:0 0 auto;width:var(--space-10);height:var(--space-10);border-radius:var(--radius-lg);display:grid;place-items:center;background:color-mix(in srgb, var(--color-surface-2) 45%, var(--color-border));color:var(--color-text-onmuted);font-size:var(--text-sm);font-weight:700;font-variant-numeric:tabular-nums}
     .verrow__badge svg{width:20px;height:20px}
-    .verrow__badge--success{background:var(--color-success-bg);color:var(--color-success-fg)}
-    /* na linha destacada (fundo azul-claro) o quadrado verde-claro perdia contraste: quadrado branco, ícone verde (AA sobre branco) */
-    .verrow--current .verrow__badge{background:var(--color-surface);border:1px solid var(--color-border)}
+    .verrow__badge--success{color:var(--color-success-fg)} /* vigente: mesmo quadrado neutro, só o check em verde */
     /* sobre o azul-claro, o cinza "muted" fica em 4,3:1; o "onmuted" passa de 6:1 (AA) */
     .verrow--current .kv__k{color:var(--color-text-onmuted)}
     /* MESMA estrutura nas três seções: título + pílula em cima; embaixo os mesmos cinco campos em colunas de
