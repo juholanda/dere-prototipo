@@ -649,7 +649,7 @@
     modal.querySelectorAll('[data-confirm-close]').forEach(function(b){ b.addEventListener('click',close); });
     modal.addEventListener('click',function(e){ if(e.target===modal) close(); });
     document.addEventListener('keydown',function(e){ if(e.key==='Escape' && !modal.hidden) close(); });
-    $('confirmSubmit').addEventListener('click',function(){ try{localStorage.setItem('adere.sent.d1001','seg');}catch(e){} var q=function(k){var m=new RegExp('[?&]'+k+'=([^&]+)').exec(location.search);return m?decodeURIComponent(m[1]):'';}; window.location.href='info-contribuinte-detalhe.html?v=1&st=revisao&from=lista'+(q('scn')?('&scn='+q('scn')):'')+(q('emp')?('&emp='+q('emp')):''); });
+    $('confirmSubmit').addEventListener('click',function(){ var q=function(k){var m=new RegExp('[?&]'+k+'=([^&]+)').exec(location.search);return m?decodeURIComponent(m[1]):'';}; try{localStorage.setItem('adere.sent.d1001', q('emp')||'seg');}catch(e){} window.location.href='info-contribuinte-detalhe.html?v=1&st=revisao&from=lista'+(q('scn')?('&scn='+q('scn')):'')+(q('emp')?('&emp='+q('emp')):''); });
   })();
 
   /* Tooltip da sugestão da IA (position:fixed para escapar o recorte do drawer) */
@@ -671,7 +671,7 @@
 
   /* ===== Rascunho do D-1001 persiste localmente (paridade com o plano de contas) ===== */
   (function(){
-    var KEY='adere.d1001.draft.seg';
+    var KEY='adere.d1001.draft.'+((new RegExp('[?&]emp=([^&]*)').exec(location.search)||[])[1]||'seg');
     function qs(k){ var m=new RegExp('[?&]'+k+'=([^&]*)').exec(location.search); return m?decodeURIComponent(m[1]):null; }
     /* os campos por id cobrem vigência, regimes, natureza etc.; as atividades vivem em outro escopo e ficam de fora do rascunho por ora */
     function snapshot(){

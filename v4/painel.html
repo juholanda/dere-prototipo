@@ -44,7 +44,7 @@
     .scenario button.on{background:var(--color-primary-subtle);color:var(--color-primary)}
     .scenario button:focus-visible{outline:none;box-shadow:var(--ring)}
     /* Overlay de DEMONSTRAÇÃO (dev): cenário. Flutua por cima, não faz parte do produto. */
-    .demobar{position:fixed;bottom:var(--space-4);right:var(--space-4);z-index:200;display:flex;align-items:center;gap:var(--space-1);background:var(--slate-900);border:1px solid rgba(255,255,255,.14);border-radius:var(--radius-pill);padding:var(--space-1) var(--space-2);box-shadow:var(--shadow-md);font-size:var(--text-xs)}
+    .demobar{position:fixed;bottom:var(--space-4);left:50%;transform:translateX(-50%);z-index:200;display:flex;align-items:center;gap:var(--space-1);background:var(--slate-900);border:1px solid rgba(255,255,255,.14);border-radius:var(--radius-pill);padding:2px var(--space-1-5);box-shadow:var(--shadow-md);font-size:var(--text-xs)}
     .demobar__lbl{text-transform:uppercase;letter-spacing:.08em;font-weight:700;color:rgba(255,255,255,.5);padding:0 var(--space-1) 0 var(--space-2);font-size:var(--text-2xs)}
     .demobar__sep{width:1px;height:16px;background:rgba(255,255,255,.18)}
     .demobar button{background:none;border:0;color:rgba(255,255,255,.72);font-family:inherit;font-size:var(--text-xs);cursor:pointer;padding:var(--space-1) var(--space-2);border-radius:var(--radius-pill)}

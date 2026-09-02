@@ -35,6 +35,13 @@
     .scenario button{border:0;background:none;font-family:inherit;font-size:var(--text-sm);font-weight:600;color:var(--color-text-muted);padding:var(--space-1-5) var(--space-4);border-radius:var(--radius-pill);cursor:pointer;white-space:nowrap}
     .scenario button.on{background:var(--color-surface);color:var(--color-primary);box-shadow:var(--shadow-sm)}
     .scenario button:focus-visible{outline:none;box-shadow:var(--ring)}
+    /* Overlay de DEMONSTRAÇÃO (dev): cenário acompanha a navegação — flutua por cima, não é parte do produto */
+    .demobar{position:fixed;bottom:var(--space-4);left:50%;transform:translateX(-50%);z-index:200;display:flex;align-items:center;gap:var(--space-1);background:var(--slate-900);border:1px solid rgba(255,255,255,.14);border-radius:var(--radius-pill);padding:2px var(--space-1-5);box-shadow:var(--shadow-md);font-size:var(--text-xs)}
+    .demobar__lbl{text-transform:uppercase;letter-spacing:.08em;font-weight:700;color:rgba(255,255,255,.5);padding:0 var(--space-1) 0 var(--space-2);font-size:var(--text-2xs)}
+    .demobar__sep{width:1px;height:16px;background:rgba(255,255,255,.18)}
+    .demobar button{background:none;border:0;color:rgba(255,255,255,.72);font-family:inherit;font-size:var(--text-xs);cursor:pointer;padding:var(--space-1) var(--space-2);border-radius:var(--radius-pill)}
+    .demobar button:hover{color:rgba(255,255,255,1);background:rgba(255,255,255,.08)}
+    .demobar button.on{background:rgba(255,255,255,.16);color:rgba(255,255,255,1);font-weight:600}
     .bc{display:flex;align-items:center;gap:var(--space-2);font-size:var(--text-sm);min-width:0;overflow:hidden}
     .bc a{color:var(--color-primary);text-decoration:none;white-space:nowrap;font-weight:500}
     .bc a:hover{text-decoration:underline}
@@ -424,10 +431,11 @@
   $('coLogo').innerHTML=CO.logo?'<img src="'+CO.logo+'" alt="Logo '+esc(CO.nome)+'">':'<span class="co-code">'+code(CO.nome)+'</span>';
   /* vigente separada no topo; depois as demais por versão desc */
   /* MAG Seguros: a versão em revisão só existe enquanto o envio do D-1001 não foi excluído */
-  var _d1Sent=false; try{ _d1Sent=localStorage.getItem('adere.sent.d1001')==='seg'; }catch(e){}
+  /* o flag guarda o id da empresa enviada: vale para qualquer empresa, não só a seg */
+  var _d1Sent=false; try{ _d1Sent=localStorage.getItem('adere.sent.d1001')===(param('emp')||'seg'); }catch(e){}
   var _fresh=(param('scn')==='new');
   var _baseVersions;
-  if(_fresh && param('emp')==='seg'){
+  if(_fresh){
     /* primeiro acesso: a empresa só tem a versão recém-criada (em revisão), sem histórico populado */
     _baseVersions = _d1Sent
       ? [{n:1, current:false, sit:'revisao', vigrole:null, vig:'—', recibo:'—', quando:'01/09/2026, 14:32'}]
@@ -541,5 +549,29 @@
   (function(){ var btn=document.querySelector('[data-theme-toggle]'); if(!btn) return; var icon=btn.querySelector('[data-theme-icon]'), tip=document.querySelector('[data-theme-tip]'); var MOON='<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>'; var SUN='<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>'; function sync(){ var d=document.documentElement.classList.contains('dark'); icon.innerHTML=d?SUN:MOON; btn.setAttribute('aria-label',d?'Alternar para modo claro':'Alternar para modo escuro'); if(tip) tip.textContent=d?'Modo claro':'Modo escuro'; } btn.addEventListener('click',function(){ document.documentElement.classList.toggle('dark'); sync(); }); sync(); })();
 </script>
 
+  <!-- Overlay de DEMONSTRAÇÃO (dev): cenário acompanha a navegação -->
+  <div class="demobar" role="group" aria-label="Demonstração: cenário">
+    <span class="demobar__lbl">Demo</span>
+    <span class="demobar__sep" aria-hidden="true"></span>
+    <button type="button" data-scn="pop">Populado</button>
+    <button type="button" data-scn="new">Primeiro acesso</button>
+    <span class="demobar__sep" aria-hidden="true"></span>
+    <button type="button" id="demoReset" title="Zera as ações do primeiro acesso e volta à lista">Resetar</button>
+  </div>
+  <script>
+    (function(){
+      var scn=(new RegExp('[?&]scn=(new|pop)').exec(location.search)||[])[1]||'pop';
+      var emp=(new RegExp('[?&]emp=([^&]*)').exec(location.search)||[])[1]||'seg';
+      document.querySelectorAll('[data-scn]').forEach(function(b){
+        b.classList.toggle('on', b.getAttribute('data-scn')===scn);
+        b.addEventListener('click',function(){ window.location.href='info-contribuinte-empresa.html?emp='+emp+'&scn='+b.getAttribute('data-scn'); });
+      });
+      var rst=document.getElementById('demoReset');
+      if(rst) rst.addEventListener('click',function(){
+        try{ Object.keys(localStorage).forEach(function(k){ if(k==='adere.sent.d1001'||k.indexOf('adere.d1001.')===0) localStorage.removeItem(k); }); }catch(e){}
+        window.location.href='info-contribuinte-lista.html?scn=new';
+      });
+    })();
+  </script>
 </body>
 </html>
