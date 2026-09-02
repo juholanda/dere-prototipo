@@ -53,7 +53,7 @@
     .card__hint{font-size:var(--text-sm);color:var(--color-text-muted);margin:var(--space-2) 0 0}
     .table{margin:0}
     /* larguras estáveis: colunas não pulam ao trocar de cenário */
-    .table--fixed{table-layout:fixed;min-width:1080px}
+    .table--fixed{table-layout:fixed;min-width:1112px}
     /* só as células de texto truncam; a coluna de ação nunca clipa o botão */
     .table--fixed td:not(.col-act){overflow:hidden;text-overflow:ellipsis}
     .table td{padding-top:var(--space-4);padding-bottom:var(--space-4)}
@@ -203,7 +203,7 @@
             <div class="table-wrap">
               <table class="table table--fixed table--stickyactions">
                 <colgroup>
-                  <col><col style="width:190px"><col style="width:140px"><col style="width:216px"><col style="width:168px"><col style="width:142px">
+                  <col><col style="width:190px"><col style="width:140px"><col style="width:216px"><col style="width:200px"><col style="width:142px">
                 </colgroup>
                 <thead>
                   <tr>
@@ -211,7 +211,7 @@
                     <th scope="col" class="sortable" data-sort="regime" aria-sort="none" tabindex="0" role="button">Regime principal <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></th>
                     <th scope="col" class="sortable" data-sort="ver" aria-sort="none" tabindex="0" role="button">Versão vigente <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></th>
                     <th scope="col" class="sortable" data-sort="sit" aria-sort="none" tabindex="0" role="button">Status <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></th>
-                    <th scope="col" class="sortable" data-sort="at" aria-sort="none" tabindex="0" role="button">Atualizado em <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></th>
+                    <th scope="col" class="sortable" data-sort="at" aria-sort="none" tabindex="0" role="button">Última atualização <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></th>
                     <th scope="col"><span class="sr-only">Ações</span></th>
                   </tr>
                 </thead>

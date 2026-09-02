@@ -257,7 +257,7 @@
                   <div class="card__h"><span class="card__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg></span><h2 id="h-ident">Identificação</h2></div>
                   <div class="cadrow">
                     <div class="cadrow__label"><span class="lb">Nome empresarial</span><p class="cadrow__hint">Informação obtida do cadastro do CNPJ.</p></div>
-                    <div class="cadrow__field"><p class="roval">MAG Seguros</p></div>
+                    <div class="cadrow__field"><p class="roval" data-co-nome>MAG Seguros</p></div>
                   </div>
                   <div class="cadrow">
                     <div class="cadrow__label"><span class="lb">CNPJ (raiz)</span><p class="cadrow__hint">Identifica o contribuinte pela raiz de 8 dígitos do CNPJ.</p></div>
@@ -341,7 +341,7 @@
                 <section id="s-rev" class="card cadsec" aria-labelledby="h-rev">
                   <div class="card__h"><span class="card__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg></span><h2 id="h-rev">Revisão e envio</h2></div>
                   <dl class="cadsum">
-                    <div><dt>Contribuinte</dt><dd>MAG Seguros</dd></div>
+                    <div><dt>Contribuinte</dt><dd data-co-nome>MAG Seguros</dd></div>
                     <div><dt>CNPJ (raiz)</dt><dd>33.608.308</dd></div>
                     <div><dt>Natureza jurídica</dt><dd>Sociedade Anônima</dd></div>
                     <div><dt>Vigência</dt><dd>01/01/2026 · sem data de fim</dd></div>
@@ -467,6 +467,18 @@
       /* criar: cancelar volta para a lista de Informações do Contribuinte (painel fechado), preservando o cenário */
       if($('cancelBtn')) $('cancelBtn').setAttribute('href','info-contribuinte-lista.html'+(param('scn')?('?scn='+param('scn')):''));
     }
+  })();
+
+  /* Empresa do contexto (?emp=): trilha, "Contribuinte" e revisão seguem a empresa, nunca a MAG Seguros fixa; links de saída preservam o cenário */
+  (function(){
+    var DCO={seg:{nome:'MAG Seguros',cnpj:'33.608.308/0001-73'},fin:{nome:'MAG Finanças',cnpj:'21.995.256/0001-56'},cap:{nome:'MAG Capitalização',cnpj:'52.780.551/0001-19'},sic:{nome:'Sicoob Seguradora',cnpj:'26.314.512/0001-16'},s2u:{nome:'Simple2u',cnpj:'40.997.879/0001-02'}};
+    var m=/[?&]emp=([^&]+)/.exec(location.search), emp=m?decodeURIComponent(m[1]):'seg', co=DCO[emp]||DCO.seg;
+    var scn=(/[?&]scn=(new|pop)/.exec(location.search)||[])[1];
+    var bc=document.querySelector('.bc a[href^="info-contribuinte-empresa.html"]');
+    if(bc){ bc.textContent=co.nome; bc.setAttribute('href','info-contribuinte-empresa.html?emp='+emp+(scn?'&scn='+scn:'')); }
+    if(scn) document.querySelectorAll('.bc a.bc-hide, .sidenav a[href^="info-contribuinte-lista.html"]').forEach(function(a){ a.setAttribute('href','info-contribuinte-lista.html?scn='+scn); });
+    document.querySelectorAll('[data-co-nome]').forEach(function(el){ el.textContent=co.nome; });
+    document.querySelectorAll('[data-co-cnpj]').forEach(function(el){ el.textContent=co.cnpj; });
   })();
 
   /* Vigência em aberto → habilita/limpa o Fim */
@@ -639,6 +651,11 @@
     regprins.forEach(function(r){ r.addEventListener('change',function(){ syncSec(); renderSelected(); }); });
     document.querySelectorAll('#secStack input[name="regsec"]').forEach(function(i){ i.addEventListener('change',renderSelected); });
     syncSec(); renderSelected();
+    /* Ponte p/ rascunho e guarda de saída: ler/repor as atividades selecionadas (vivem só neste escopo) */
+    window.__d1001Atv={
+      get:function(){ return JSON.parse(JSON.stringify(sel)); },
+      set:function(s){ if(!s) return; Object.keys(sel).forEach(function(k){ sel[k]=Array.isArray(s[k])?s[k].slice():[]; }); renderSelected(); }
+    };
   })();
 
   /* Modal de confirmação: submeter para revisão */
@@ -673,21 +690,32 @@
   (function(){
     var KEY='adere.d1001.draft.'+((new RegExp('[?&]emp=([^&]*)').exec(location.search)||[])[1]||'seg');
     function qs(k){ var m=new RegExp('[?&]'+k+'=([^&]*)').exec(location.search); return m?decodeURIComponent(m[1]):null; }
-    /* os campos por id cobrem vigência, regimes, natureza etc.; as atividades vivem em outro escopo e ficam de fora do rascunho por ora */
-    function snapshot(){
-      var f={};
-      document.querySelectorAll('input[id],select[id],textarea[id]').forEach(function(el){
-        if(el.type==='checkbox'||el.type==='radio') f[el.id]={c:el.checked};
-        else f[el.id]={v:el.value};
+    /* Campos do formulário: por id ou, quando não há id (rádios/checks de regime e natureza), por name+posição.
+       Ficam de fora o conteúdo do drawer de atividades (busca, filtro, lista temporária) e das modais.
+       As atividades selecionadas entram pela ponte window.__d1001Atv. */
+    function fields(){
+      return Array.prototype.filter.call(document.querySelectorAll('input,select,textarea'), function(el){
+        return !el.closest('#atvDrawer') && !el.closest('.modal-backdrop') && (el.id || el.name);
       });
-      return {f:f};
+    }
+    function snapshot(){
+      var f={}, seen={};
+      fields().forEach(function(el){
+        var n=el.name||'', i=seen[n]=(seen[n]||0)+1, k=el.id||(n+'#'+i);
+        if(el.type==='checkbox'||el.type==='radio') f[k]={c:el.checked}; else f[k]={v:el.value};
+      });
+      return {f:f, a:(window.__d1001Atv?window.__d1001Atv.get():null)};
     }
     function restore(d){
       if(!d||!d.f) return;
-      Object.keys(d.f).forEach(function(id){
-        var el=document.getElementById(id); if(!el) return;
-        if('c' in d.f[id]) el.checked=d.f[id].c; else el.value=d.f[id].v;
+      var seen={};
+      fields().forEach(function(el){
+        var n=el.name||'', i=seen[n]=(seen[n]||0)+1, k=el.id||(n+'#'+i), v=d.f[k]; if(!v) return;
+        if('c' in v) el.checked=v.c; else el.value=v.v;
       });
+      /* regime principal reage a change: sincroniza os secundários e os grupos de atividade */
+      document.querySelectorAll('input[name="regprin"]:checked').forEach(function(r){ r.dispatchEvent(new Event('change')); });
+      if(window.__d1001Atv && d.a) window.__d1001Atv.set(d.a);
       var chk=document.getElementById('vigAberta'); if(chk) chk.dispatchEvent(new Event('change'));
     }
     /* Salvar rascunho = guarda e SAI do formulário (volta pra onde o Cancelar levaria, com aviso "Rascunho salvo" na chegada) */
@@ -704,18 +732,28 @@
     /* enviado para revisão = rascunho consumido */
     var cs=document.getElementById('confirmSubmit'); if(cs) cs.addEventListener('click',function(){ try{ localStorage.removeItem(KEY); }catch(e){} });
 
-    /* Guarda de saída: Cancelar com dados não salvos abre confirmação (vale para criar E editar) */
+    /* Guarda de saída: QUALQUER link que sai da página (Cancelar, trilha, menu lateral) com dados não salvos
+       abre a confirmação. Vale para criar E editar: a nova versão já vem preenchida, mexeu é alteração. */
     var leaveM=$('leaveModal'), cancelBtn=$('cancelBtn');
     if(leaveM && cancelBtn){
-      var baseline='';
+      var baseline='', pending=null;
       setTimeout(function(){ try{ baseline=JSON.stringify(snapshot()); }catch(e){} }, 60);
       function isDirty(){ try{ return !!baseline && JSON.stringify(snapshot())!==baseline; }catch(e){ return false; } }
-      function closeLeave(){ leaveM.hidden=true; }
-      cancelBtn.addEventListener('click',function(e){ if(isDirty()){ e.preventDefault(); leaveM.hidden=false; document.getElementById('leaveSaveExit').focus(); } });
+      function closeLeave(){ leaveM.hidden=true; pending=null; }
+      function leavesPage(a){
+        var h=a.getAttribute('href')||'';
+        return !!h && h.charAt(0)!=='#' && !/^javascript:/i.test(h) && a.target!=='_blank' && !leaveM.contains(a);
+      }
+      document.addEventListener('click',function(e){
+        var a=e.target.closest ? e.target.closest('a[href]') : null;
+        if(!a || !leavesPage(a) || !isDirty()) return;
+        e.preventDefault(); e.stopPropagation();
+        pending=a.getAttribute('href'); leaveM.hidden=false; document.getElementById('leaveSaveExit').focus();
+      }, true);
       leaveM.querySelectorAll('[data-leave-close]').forEach(function(b){ b.addEventListener('click',closeLeave); });
       leaveM.addEventListener('click',function(e){ if(e.target===leaveM) closeLeave(); });
       document.addEventListener('keydown',function(e){ if(e.key==='Escape' && !leaveM.hidden) closeLeave(); });
-      var dest=function(){ return cancelBtn.getAttribute('href'); };
+      var dest=function(){ return pending||cancelBtn.getAttribute('href'); };
       $('leaveSaveExit').addEventListener('click',function(){ try{ localStorage.setItem(KEY, JSON.stringify(snapshot())); }catch(e){} window.location.href=dest(); });
       $('leaveDiscard').addEventListener('click',function(){ window.location.href=dest(); });
     }
