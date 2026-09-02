@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Design System · DeRE</title>
-  <link rel="stylesheet" href="ds.css?v=35">
+  <link rel="stylesheet" href="ds.css?v=36">
   <style>
     /* Layout do catálogo (só do doc, não é componente do DS) */
     .app{display:grid;grid-template-columns:236px 1fr;min-height:100vh}
@@ -99,7 +99,8 @@
     <a href="#navegacao">Navegação e ações</a>
     <a href="#estados">Estados</a>
     <a href="#upload">Upload</a>
-    <a href="#avatar">Avatar e drawer</a>
+    <a href="#avatar">Avatar e menu</a>
+    <a href="#drawer-sec">Drawer</a>
     <div class="nav__foot">
       <button class="btn btn--secondary btn--sm" style="width:100%" onclick="dsTheme()">Claro / escuro</button>
     </div>
@@ -864,11 +865,11 @@
         </label>
       </section>
 
-      <!-- AVATAR + DRAWER -->
+      <!-- AVATAR + MENU -->
       <section class="sec" id="avatar">
         <p class="sec__k">Componentes</p>
-        <h2>Avatar e drawer</h2>
-        <p class="sec__hint">Sem foto, o avatar mostra iniciais (nunca uma foto genérica). Drawer para editar sem sair da lista.</p>
+        <h2>Avatar e menu</h2>
+        <p class="sec__hint">Sem foto, o avatar mostra iniciais (nunca uma foto genérica). O menu abre no clique.</p>
         <div class="card"><div class="card__body demo">
           <div class="menu" data-menu>
             <span class="tooltip"><button class="avatar" aria-haspopup="true" aria-expanded="false" aria-label="Ana Silva, abrir menu do usuário">AS</button><span class="tooltip__bubble" role="tooltip">Ana Silva · ana.silva@empresa.com</span></span>
@@ -881,7 +882,18 @@
           </div>
           <span class="avatar" style="width:44px;height:44px">JD</span>
           <span style="font-size:13px;color:var(--color-text-muted)">Iniciais como fallback.</span>
-          <button class="btn btn--primary btn--sm" style="margin-left:auto" onclick="dsOpenDrawer()">Abrir drawer</button>
+        </div></div>
+      </section>
+
+      <!-- DRAWER -->
+      <section class="sec" id="drawer-sec">
+        <p class="sec__k">Componentes</p>
+        <h2>Drawer</h2>
+        <p class="sec__hint">Painel lateral para editar ou adicionar sem sair da tela. Comportamento de diálogo vem do <code>ds-dialog.js</code>: o foco entra ao abrir, o Tab dá a volta dentro do painel, o fundo fica inerte (teclado e leitor de tela não alcançam), Esc fecha e o foco volta ao gatilho. Estrutura: <code>.drawer-backdrop</code> &gt; <code>.drawer</code> com <code>.drawer__header</code> · <code>.drawer__body</code> · <code>.drawer__footer</code>. Tamanhos: <code>.drawer--sm</code> 440 · <code>.drawer--md</code> 560 (padrão) · <code>.drawer--lg</code> 760.</p>
+        <div class="card"><div class="card__body demo">
+          <button class="btn btn--secondary" onclick="dsOpenDrawer('sm')">Abrir P (440)</button>
+          <button class="btn btn--secondary" onclick="dsOpenDrawer('md')">Abrir M (560)</button>
+          <button class="btn btn--secondary" onclick="dsOpenDrawer('lg')">Abrir G (760)</button>
         </div></div>
       </section>
 
@@ -1067,8 +1079,10 @@
       function(){ bd.style.display='grid'; },
       function(){ bd.style.display='none'; });
   }
-  function dsOpenDrawer(){
+  function dsOpenDrawer(size){
     var d=document.getElementById('dwr'), b=document.getElementById('bd');
+    d.classList.remove('drawer--sm','drawer--md','drawer--lg');
+    d.classList.add('drawer--'+(size||'md'));
     dsDialog.open(d,
       function(){ d.style.display='flex'; b.style.display='block'; },
       function(){ d.style.display='none'; b.style.display='none'; });
