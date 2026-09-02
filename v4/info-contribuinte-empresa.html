@@ -70,7 +70,8 @@
     /* seções: vigente · em andamento · encerradas */
     .versec{padding:var(--space-6) var(--space-6) 0}
     .versec:last-child{padding-bottom:var(--space-6)}
-    .versec + .versec{margin-top:var(--space-2)}
+    /* entre uma seção e a próxima: 48px (24 de padding + 24 de margem), pra cada bloco respirar */
+    .versec + .versec{margin-top:var(--space-6)}
     .versec__h{display:flex;align-items:center;gap:var(--space-2);margin:0 0 var(--space-4)}
     .versec__h h3{font-size:var(--text-base)!important;font-weight:700!important;color:var(--color-heading);margin:0}
     .versec__hint{font-size:var(--text-sm);color:var(--color-text-muted);margin:0 0 var(--space-4)}
