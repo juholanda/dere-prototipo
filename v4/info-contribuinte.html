@@ -475,8 +475,11 @@
       } else {
         if($('bcAcao')) $('bcAcao').textContent='Nova versão';
         if($('formTitle')) $('formTitle').textContent='Nova versão · Preencher informações do contribuinte';
-        /* criar do zero: cancelar volta para a lista de Informações do Contribuinte, preservando o cenário */
-        if($('cancelBtn')) $('cancelBtn').setAttribute('href','info-contribuinte-lista.html'+(param('scn')?('?scn='+param('scn')):''));
+        /* cancelar volta pra ONDE veio: das versões da empresa (from=empresa) ou da lista; sempre com o cenário */
+        if($('cancelBtn')){
+          if(param('from')==='empresa') $('cancelBtn').setAttribute('href','info-contribuinte-empresa.html?emp='+(param('emp')||'seg')+_scn);
+          else $('cancelBtn').setAttribute('href','info-contribuinte-lista.html'+(param('scn')?('?scn='+param('scn')):''));
+        }
       }
       if($('formSub')) $('formSub').textContent=DESC;
     }

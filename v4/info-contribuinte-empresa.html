@@ -432,7 +432,7 @@
   function endOf(vig){ var m=(vig||'').match(/\d{2}\/\d{2}\/\d{4}/g)||[]; return m[1]||'—'; }
   function stOf(v){ return (v.sit==='revisao')?'revisao':(v.sit==='ajustes')?'ajuste':'aprovado'; }
   function hrefOf(v){ return 'info-contribuinte-detalhe.html?emp='+EMP+'&v='+v.n+'&st='+stOf(v)+Q(false); }
-  function hrefNova(){ return 'info-contribuinte.html?modo=nova&emp='+EMP+Q(false); }
+  function hrefNova(){ return 'info-contribuinte.html?modo=nova&emp='+EMP+Q(false)+'&from=empresa'; }
   /* rascunho continua no FORMULÁRIO; versões já enviadas abrem o detalhe */
   function goOf(v){ return (v.sit==='rascunho') ? (hrefNova()+'&v='+v.n+'&st=rascunho') : hrefOf(v); }
   function kv(k,v){ v=v||'—'; return '<div class="kv"><p class="kv__k">'+esc(k)+'</p><p class="kv__v" title="'+esc(v)+'">'+esc(v)+'</p></div>'; }
