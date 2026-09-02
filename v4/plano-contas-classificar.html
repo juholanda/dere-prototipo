@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Plano de contas · Classificação</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=19">
+  <link rel="stylesheet" href="../design-system/ds.css?v=21">
   <script src="../design-system/ds-tailwind.js"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
@@ -236,7 +236,6 @@
     .toolbar__search svg{position:absolute;left:var(--space-3);top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--color-text-muted)}
     .toolbar__search input{padding-left:calc(var(--space-6) + var(--space-1))}
 
-    .tablewrap{overflow-x:auto;scrollbar-width:thin}
     .table{margin:0}
     .table td{vertical-align:middle}
     .ccode{font-variant-numeric:tabular-nums;font-size:var(--text-xs);color:var(--color-text-onmuted);white-space:nowrap}
@@ -569,7 +568,7 @@
                 <input class="input" id="bulkTribQ" placeholder="Filtrar por código ou descrição" autocomplete="off">
                 <div class="t11list" id="bulkTribList" style="margin-top:var(--space-2)"></div>
               </div>
-              <div class="tablewrap">
+              <div class="table-wrap">
                 <table class="table table--stickyactions" id="cltable">
                   <thead>
                     <tr>

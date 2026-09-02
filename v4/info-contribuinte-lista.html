@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Informações do Contribuinte</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=19">
+  <link rel="stylesheet" href="../design-system/ds.css?v=21">
   <script src="../design-system/ds-tailwind.js"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
@@ -51,10 +51,9 @@
     .card__h{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-6) var(--space-6) var(--space-6);justify-content:space-between}
     .card__h h2{font-size:var(--text-xl)!important;margin:0;font-weight:700!important}
     .card__hint{font-size:var(--text-sm);color:var(--color-text-muted);margin:var(--space-2) 0 0}
-    .tablewrap{overflow-x:auto}
     .table{margin:0}
     /* larguras estáveis: colunas não pulam ao trocar de cenário */
-    .table--fixed{table-layout:fixed;min-width:920px}
+    .table--fixed{table-layout:fixed;min-width:1080px}
     /* só as células de texto truncam; a coluna de ação nunca clipa o botão */
     .table--fixed td:not(.col-act){overflow:hidden;text-overflow:ellipsis}
     .table td{padding-top:var(--space-4);padding-bottom:var(--space-4)}
@@ -76,10 +75,7 @@
     .table td .rowbtn{white-space:nowrap}
     /* status nunca quebra em duas linhas (local, imune a cache do ds) */
     .status{white-space:nowrap;font-size:var(--text-sm)}
-    /* coluna de ação fixa à direita durante o scroll horizontal */
-    .col-act{text-align:right;width:1%;position:sticky;right:0;background:var(--color-surface);z-index:2;box-shadow:-1px 0 0 var(--color-border)}
-    .table th:last-child{position:sticky;right:0;background:var(--color-surface);z-index:3;box-shadow:-1px 0 0 var(--color-border)}
-    .table tbody tr[data-href]:hover .col-act{background:var(--color-primary-subtle)}
+    .col-act{text-align:right}
     .table th.sortable{white-space:nowrap}
     /* texto base da tabela a 16px; cabeçalhos ficam nos 12px do DS (--text-xs) */
     .table td{font-size:var(--text-base)}
@@ -202,10 +198,10 @@
                 <p class="card__hint">Situação da informação do contribuinte por empresa.</p>
               </div>
             </div>
-            <div class="tablewrap">
-              <table class="table table--fixed">
+            <div class="table-wrap">
+              <table class="table table--fixed table--stickyactions">
                 <colgroup>
-                  <col style="width:28%"><col style="width:18%"><col style="width:15%"><col style="width:15%"><col style="width:12%"><col style="width:12%">
+                  <col><col style="width:190px"><col style="width:140px"><col style="width:216px"><col style="width:168px"><col style="width:142px">
                 </colgroup>
                 <thead>
                   <tr>

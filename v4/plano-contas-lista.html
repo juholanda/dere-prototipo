@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Plano de Contas</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=19">
+  <link rel="stylesheet" href="../design-system/ds.css?v=21">
   <script src="../design-system/ds-tailwind.js"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
@@ -48,7 +48,6 @@
     .card__h{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-6) var(--space-6) var(--space-4);justify-content:space-between}
     .card__h h2{font-size:var(--text-lg)!important;margin:0;font-weight:700!important}
     .card__hint{font-size:var(--text-sm);color:var(--color-text-muted);margin:2px 0 0}
-    .tablewrap{overflow-x:auto}
     .table{margin:0}
     .table td{padding-top:var(--space-4);padding-bottom:var(--space-4)}
     .celltitle{font-size:var(--text-sm);font-weight:600;color:var(--color-heading);white-space:nowrap}
@@ -67,9 +66,7 @@
     /* status nunca quebra em duas linhas (local, imune a cache do ds) */
     .status{white-space:nowrap}
     /* coluna de ação fixa à direita durante o scroll horizontal */
-    .col-act{text-align:right;width:1%;position:sticky;right:0;background:var(--color-surface);z-index:2;box-shadow:-1px 0 0 var(--color-border)}
-    .table th:last-child{position:sticky;right:0;background:var(--color-surface);z-index:3;box-shadow:-1px 0 0 var(--color-border)}
-    .table tbody tr[data-href]:hover .col-act{background:var(--color-primary-subtle)}
+    .col-act{text-align:right;width:1%}
     .table th.sortable{cursor:pointer;user-select:none;white-space:nowrap}
     .table th.sortable:hover{color:var(--color-heading)}
     .table th.sortable:focus-visible{outline:none;box-shadow:var(--ring)}
@@ -195,8 +192,8 @@
                 <p class="card__hint">Situação do plano de contas por empresa.</p>
               </div>
             </div>
-            <div class="tablewrap">
-              <table class="table">
+            <div class="table-wrap">
+              <table class="table table--stickyactions">
                 <thead>
                   <tr>
                     <th scope="col" class="sortable" data-sort="emp" aria-sort="ascending" tabindex="0">Empresa</th>

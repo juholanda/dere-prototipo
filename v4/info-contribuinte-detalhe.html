@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Detalhe do contribuinte</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=19">
+  <link rel="stylesheet" href="../design-system/ds.css?v=21">
   <script src="../design-system/ds-tailwind.js"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
@@ -202,7 +202,7 @@
         <nav class="bc" aria-label="Trilha de navegação">
           <a href="info-contribuinte-lista.html" class="bc-hide">Informações do Contribuinte</a>
           <svg class="bc-hide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
-          <a href="info-contribuinte-empresa.html?emp=seg">MAG Seguros</a>
+          <a id="bcEmp" href="info-contribuinte-empresa.html?emp=seg">MAG Seguros</a>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
           <span id="bcVer">Versão 3</span>
         </nav>
@@ -243,7 +243,7 @@
           <section class="card" aria-labelledby="d-ident">
             <div class="card__h"><span class="card__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg></span><h2 id="d-ident">Identificação</h2></div>
             <dl class="rogrid">
-              <div class="roitem"><dt>Nome empresarial</dt><dd>MAG Seguros</dd></div>
+              <div class="roitem"><dt>Nome empresarial</dt><dd id="roNome">MAG Seguros</dd></div>
               <div class="roitem"><dt>CNPJ (raiz)</dt><dd>33.608.308</dd></div>
               <div class="roitem"><dt>Natureza jurídica</dt><dd>Sociedade Anônima</dd></div>
             </dl>
@@ -337,7 +337,7 @@
       '<p class="statusbar__desc">'+esc(s.desc)+'</p>'+comment+'</div>'+
       (s.cardActions?'<div class="statusbar__actions">'+s.cardActions+'</div>':'');
     if($('pageActions')) $('pageActions').innerHTML = s.topActions;
-    var company='<div><p class="submeta__k">Empresa</p><div class="submeta__v"><span class="submeta__logo"><img src="../Logos/MAG%20seguros.png" alt=""></span><span>MAG Seguros <span class="num" style="color:var(--color-text-muted);font-weight:400">· 33.608.308/0001-73</span></span></div></div>';
+    var _c=dco(); var company='<div><p class="submeta__k">Empresa</p><div class="submeta__v"><span class="submeta__logo"><img src="'+_c.logo+'" alt=""></span><span>'+_c.nome+' <span class="num" style="color:var(--color-text-muted);font-weight:400">· '+_c.cnpj+'</span></span></div></div>';
     $('submeta').innerHTML=company+s.meta.map(function(m){
       var v = m.by ? '<span class="avatar avatar--sm">'+initials(m.by)+'</span>'+esc(m.by)+(m.v?' <span class="num" style="color:var(--color-text-muted);font-weight:400">· '+esc(m.v)+'</span>':'') : '<span class="num">'+esc(m.v)+'</span>';
       return '<div><p class="submeta__k">'+esc(m.k)+'</p><div class="submeta__v">'+v+'</div></div>';
@@ -349,12 +349,27 @@
     document.querySelectorAll('[data-sc]').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-sc')===key); });
   }
   document.addEventListener('click',function(e){ var b=e.target.closest('[data-sc]'); if(b) render(b.getAttribute('data-sc')); });
+  /* empresas (mesmos dados da lista): o detalhe é de UMA empresa, escolhida por ?emp= */
+  var DCO={
+    seg:{nome:'MAG Seguros',       cnpj:'33.608.308/0001-73', logo:'../Logos/MAG%20seguros.png'},
+    fin:{nome:'MAG Finanças',      cnpj:'21.995.256/0001-56', logo:'../Logos/mag%20financas.jpeg'},
+    cap:{nome:'MAG Capitalização', cnpj:'52.780.551/0001-19', logo:'../Logos/mag%20capitalizacoes.jpeg'},
+    sic:{nome:'Sicoob Seguradora', cnpj:'26.314.512/0001-16', logo:'../Logos/sicoob.svg'},
+    s2u:{nome:'Simple2u',          cnpj:'40.997.879/0001-02', logo:'../Logos/simple2u.svg'}
+  };
   function dparam(k){ var m=new RegExp('[?&]'+k+'=([^&]+)').exec(location.search); return m?decodeURIComponent(m[1]):''; }
+  function dco(){ return DCO[dparam('emp')||'seg']||DCO.seg; }
   (function(){
     var emp=dparam('emp')||'seg';
     /* o detalhe é de uma versão de UMA empresa: o "Voltar" sobe um nível, para a página da empresa (ex.: MAG Seguros) */
     var _scnQ=dparam('scn')?('&scn='+dparam('scn')):'';
     var bl=$('backLink'); if(bl){ bl.setAttribute('href', 'info-contribuinte-empresa.html?emp='+emp+_scnQ); }
+    /* breadcrumb, nome da empresa e "Editar informações" seguem a empresa e o cenário da URL */
+    var _co=dco();
+    var bcE=$('bcEmp'); if(bcE){ bcE.setAttribute('href','info-contribuinte-empresa.html?emp='+emp+_scnQ); bcE.textContent=_co.nome; }
+    var bcL=document.querySelector('a.bc-hide'); if(bcL && dparam('scn')) bcL.setAttribute('href','info-contribuinte-lista.html?scn='+dparam('scn'));
+    var rn=$('roNome'); if(rn) rn.textContent=_co.nome;
+    document.addEventListener('click',function(e){ var a=e.target.closest('a[href^="info-contribuinte.html?modo=editar"]'); if(a && a.getAttribute('href').indexOf('emp=')<0){ a.setAttribute('href', a.getAttribute('href')+'&emp='+emp+_scnQ); } }, true);
     /* abre no estado real da versão clicada (não sempre "Em revisão") */
     var st=dparam('st'); render(STATES[st]?st:'revisao');
   })();

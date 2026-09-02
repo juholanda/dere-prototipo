@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Detalhe do Plano de Contas</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=19">
+  <link rel="stylesheet" href="../design-system/ds.css?v=21">
   <script src="../design-system/ds-tailwind.js"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
@@ -77,7 +77,7 @@
     #pageActions{gap:var(--space-6)}
     #pageActions .btn{height:var(--control-h-lg);font-size:var(--text-base);padding:0 var(--space-6)}
     /* todas as seções num único card branco, bem espaçadas */
-    .tablewrap{overflow-x:auto;scrollbar-width:thin;margin-top:var(--space-6)}
+    .table-wrap{margin-top:var(--space-6)}
     .ctmore{margin:var(--space-4) 0 0;font-size:var(--text-sm);color:var(--color-text-muted);display:flex;align-items:center;gap:var(--space-4)}
     .detbody{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-2xl);box-shadow:var(--shadow-sm);padding:var(--space-10)}
     .detbody > .card{background:none;border:0;box-shadow:none;border-radius:0;padding:0;overflow:visible}
@@ -263,7 +263,7 @@
               <div class="roitem"><dt>Classificadas (codTrib)</dt><dd id="ctOk">—</dd></div>
               <div class="roitem"><dt>Não tributáveis</dt><dd id="ctNt">—</dd></div>
             </dl>
-            <div class="tablewrap">
+            <div class="table-wrap">
               <table class="table" aria-label="Contas do plano">
                 <thead><tr>
                   <th scope="col">Código</th>
