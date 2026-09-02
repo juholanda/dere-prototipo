@@ -79,8 +79,10 @@
     .versec__h{display:flex;align-items:center;gap:var(--space-2);margin:0 0 var(--space-1)}
     .versec__h h2{font-size:var(--text-xl)!important;font-weight:700!important;color:var(--color-heading);margin:0}
     .versec__hint{font-size:var(--text-sm);color:var(--color-text-muted);margin:0 0 var(--space-4);line-height:1.5}
-    .versec__empty{display:flex;gap:var(--space-3);align-items:center;font-size:var(--text-sm);color:var(--color-text-muted);padding:var(--space-4);border:1px dashed var(--color-border-strong);border-radius:var(--radius-lg)}
-    .versec__empty svg{width:18px;height:18px;flex:0 0 auto;color:var(--color-text-muted)}
+    .versec__empty{display:flex;gap:var(--space-3);align-items:flex-start;font-size:var(--text-sm);color:var(--color-text-muted);padding:var(--space-4);border:1px dashed var(--color-border-strong);border-radius:var(--radius-lg)}
+    .versec__empty svg{width:18px;height:18px;flex:0 0 auto;color:var(--color-text-muted);margin-top:1px}
+    .versec__empty b{color:var(--color-heading);font-weight:600}
+    .versec__empty-sub{display:block;color:var(--color-text-muted);margin-top:2px}
 
     /* linha de versão: grid. Quando a seção tem largura (≥1000px), os campos ficam AO LADO do título;
        quando não tem, descem para baixo do título. Nunca cortam nem quebram texto. */
@@ -309,7 +311,7 @@
               </section>
               <section class="versec" aria-labelledby="h-prog">
                 <div class="versec__h"><h2 id="h-prog">Em andamento</h2></div>
-                <p class="versec__hint">Versão em elaboração ou em processo de revisão interna.</p>
+                <p class="versec__hint">Versão que está em processo de criação, revisão ou transmissão.</p>
                 <div id="secProg"></div>
               </section>
               <section class="versec" aria-labelledby="h-enc">
@@ -436,7 +438,7 @@
   function kv(k,v){ v=v||'—'; return '<div class="kv"><p class="kv__k">'+esc(k)+'</p><p class="kv__v" title="'+esc(v)+'">'+esc(v)+'</p></div>'; }
   /* regime da versão: nas processadas é o da empresa; em rascunho/revisão do primeiro acesso vem do que foi escolhido no formulário */
   function regimeOf(v){ if(v.vigrole==='now'||v.vigrole==='past') return CO.regime; if(SCN==='new') return (_d1Sent&&_sentRegime)||(_draft&&_draftRegime)||null; return (v.sit==='rascunho'&&_draftRegime)||CO.regime; }
-  function emptyBox(txt){ return '<div class="versec__empty">'+I.info+'<span>'+esc(txt)+'</span></div>'; }
+  function emptyBox(title, sub){ var body=sub?'<span><b>'+esc(title)+'</b><span class="versec__empty-sub">'+esc(sub)+'</span></span>':'<span>'+esc(title)+'</span>'; return '<div class="versec__empty">'+I.info+body+'</div>'; }
   /* Uma linha só para vigente, em andamento e encerradas: os mesmos cinco campos, sempre na mesma ordem. */
   function row(v, opts){
     opts=opts||{};
@@ -527,7 +529,7 @@
     /* em andamento (0 ou 1): a ação que o usuário precisa tomar é primária; só consultar é secundária */
     $('secProg').innerHTML = prog
       ? row(prog,{cta:(prog.sit==='ajustes')?'Ver ajustes':(prog.sit==='rascunho')?'Continuar':null, href:goOf(prog), primary:(prog.sit==='rascunho'||prog.sit==='ajustes')})
-      : emptyBox('Nenhuma versão em andamento. Só pode haver uma por vez: ao registrar uma nova versão, ela aparece aqui até ser processada.');
+      : emptyBox('Nenhuma versão em andamento.', 'Você pode registrar uma nova versão quando necessário.');
 
     /* encerradas */
     renderEnc(enc);
