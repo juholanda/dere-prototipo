@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Detalhe do contribuinte</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=37">
+  <link rel="stylesheet" href="../design-system/ds.css?v=38">
   <script src="../design-system/ds-tailwind.js"></script>
   <script src="../design-system/ds-dialog.js"></script>
   <style>
@@ -40,6 +40,18 @@
     .demobar{position:fixed;bottom:var(--space-4);left:50%;transform:translateX(-50%);z-index:200;display:flex;align-items:center;gap:var(--space-1);background:var(--slate-900);border:1px solid rgba(255,255,255,.14);border-radius:var(--radius-pill);padding:2px var(--space-1-5);box-shadow:var(--shadow-md);font-size:var(--text-xs)}
     .demobar__lbl{text-transform:uppercase;letter-spacing:.08em;font-weight:700;color:rgba(255,255,255,.5);padding:0 var(--space-1) 0 var(--space-2);font-size:var(--text-2xs)}
     .demobar__sep{width:1px;height:16px;background:rgba(255,255,255,.18)}
+    .demobar{flex-wrap:wrap;justify-content:center;max-width:calc(100vw - var(--space-8));row-gap:var(--space-1)}
+    .demobar__scn{display:flex;gap:2px;flex-wrap:wrap}
+    .notifwrap{position:fixed;top:var(--space-6);right:var(--space-6);z-index:210;display:flex;flex-direction:column;gap:var(--space-2);max-width:340px}
+    .notif{display:flex;gap:var(--space-3);align-items:flex-start;text-align:left;width:100%;background:var(--color-surface);border:1px solid var(--color-border);border-left:4px solid var(--color-primary);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);padding:var(--space-4);cursor:pointer;font-family:inherit;animation:notifIn .28s cubic-bezier(.2,.7,.2,1) both}
+    @keyframes notifIn{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:none}}
+    @media(prefers-reduced-motion:reduce){.notif{animation:none}}
+    .notif:hover{border-color:var(--color-primary);background:var(--color-primary-subtle)}
+    .notif__ic{width:36px;height:36px;border-radius:var(--radius-lg);flex:0 0 auto;display:grid;place-items:center;background:var(--color-primary-subtle);color:var(--color-primary)}
+    .notif__ic svg{width:18px;height:18px}
+    .notif__b{min-width:0;display:flex;flex-direction:column;gap:2px}
+    .notif__b strong{font-size:var(--text-sm);color:var(--color-heading);font-weight:600}
+    .notif__b span{font-size:var(--text-xs);color:var(--color-text-muted);line-height:1.4}
     .demobar button{background:none;border:0;color:rgba(255,255,255,.72);font-family:inherit;font-size:var(--text-xs);cursor:pointer;padding:var(--space-1) var(--space-2);border-radius:var(--radius-pill)}
     .demobar button:hover{color:rgba(255,255,255,1);background:rgba(255,255,255,.08)}
     .demobar button.on{background:rgba(255,255,255,.16);color:rgba(255,255,255,1);font-weight:600}
@@ -168,6 +180,9 @@
     .dalert__ic svg{width:20px;height:20px}
     .dalert--warning .dalert__ic{color:var(--color-warning)}
     .dalert--danger .dalert__ic{color:var(--color-danger)}
+    .dalert--info{border-left-color:var(--color-info)}
+    .dalert--info .dalert__ic{color:var(--color-info)}
+    .modal__lead-ic--primary{background:var(--color-primary-subtle);color:var(--color-primary)}
     .dalert__title{font-weight:700;color:var(--color-heading);margin:0;font-size:var(--text-base)}
     .dalert__text{font-size:var(--text-sm);color:var(--color-text-onmuted);margin:var(--space-1) 0 0;line-height:1.55}
 
@@ -445,8 +460,9 @@
   }
   function renderAlert(sit){
     var el=$('alertSlot'); if(!el) return;
+    if(curRole==='aprovador' && sit==='revisao'){ el.innerHTML=approverBanner(); return; }
     if(sit==='ajustes'){
-      el.innerHTML='<div class="dalert dalert--warning" role="status"><span class="dalert__ic">'+ALERT+'</span><div><p class="dalert__title">Ajustes solicitados por Ana Prado</p><p class="dalert__text">'+esc(EV.ajustes.extras?EV.ajustes.extras[0][1]:'')+'</p></div></div>';
+      el.innerHTML='<div class="dalert dalert--warning" role="status"><span class="dalert__ic">'+ALERT+'</span><div><p class="dalert__title">Ajustes solicitados por Ana Prado</p><p class="dalert__text">'+esc(_ajusteComment || (EV.ajustes.extras?EV.ajustes.extras[0][1]:''))+'</p></div></div>';
     } else if(sit==='rejeitado'){
       el.innerHTML='<div class="dalert dalert--danger" role="status"><span class="dalert__ic">'+ALERT+'</span><div><p class="dalert__title">Versão rejeitada pela Receita Federal</p><p class="dalert__text">'+esc(EV.rejeitada.extras?EV.rejeitada.extras[0][1]:'')+'</p></div></div>';
     } else { el.innerHTML=''; }
@@ -475,20 +491,104 @@
     }).join('');
     if($('histCount')) $('histCount').textContent = keys.length+(keys.length===1?' etapa':' etapas');
   }
+    /* ===== Visão do APROVADOR (role=aprovador) + operação (op=nova|alteracao|exclusao) — só demo ===== */
+  var curRole = (dparam('role')==='aprovador') ? 'aprovador' : 'preparador';
+  var curOp   = (['nova','alteracao','exclusao'].indexOf(dparam('op'))>=0) ? dparam('op') : 'nova';
+  var _ajusteComment = '';
+  function empId(){ return dparam('emp')||'seg'; }
+  var IC_CHK='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
+  var IC_MSG='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>';
+  var IC_INFO='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>';
+  function approverActions(){
+    var ajuste='<button class="btn btn--ghost btn--lg" type="button" data-open-ajuste>'+IC_MSG+'Solicitar ajustes</button>';
+    var aprovar=(curOp==='exclusao')
+      ? '<button class="btn btn--danger btn--lg" type="button" data-open-aprovar>'+IC_CHK+'Aprovar exclusão</button>'
+      : '<button class="btn btn--primary btn--lg" type="button" data-open-aprovar>'+IC_CHK+'Aprovar e transmitir</button>';
+    return ajuste+aprovar;
+  }
+  var APV_BANNER={
+    nova:['info','Nova versão aguardando sua aprovação','Revise as informações e aprove para transmitir à Receita Federal, ou solicite ajustes ao preparador.'],
+    alteracao:['info','Alteração de vigência aguardando sua aprovação','Ao aprovar, esta versão substitui a vigente: a anterior é encerrada e a nova é transmitida à Receita.'],
+    exclusao:['warning','Exclusão de vigência aguardando sua aprovação','Ao aprovar, a vigência é encerrada na Receita e a empresa fica sem declaração vigente até registrar uma nova.']
+  };
+  function approverBanner(){
+    var b=APV_BANNER[curOp]||APV_BANNER.nova;
+    return '<div class="dalert dalert--'+b[0]+'" role="status"><span class="dalert__ic">'+IC_INFO+'</span><div><p class="dalert__title">'+esc(b[1])+'</p><p class="dalert__text">'+esc(b[2])+'</p></div></div>';
+  }
+  function showToast(msg){
+    var w=$('toastWrap'); if(!w) return;
+    var t=document.createElement('div'); t.className='toast toast--success'; t.setAttribute('role','status');
+    t.innerHTML='<span class="toast__ic">'+IC_CHK+'</span><span>'+esc(msg)+'</span>';
+    w.appendChild(t);
+    setTimeout(function(){ if(t.parentNode) t.parentNode.removeChild(t); }, 3800);
+  }
+  function setScenario(o){
+    var pr=new URLSearchParams(location.search);
+    if(o.role!==undefined) pr.set('role',o.role);
+    if(o.op!==undefined) pr.set('op',o.op);
+    if(o.st!==undefined) pr.set('st',o.st);
+    if(o.sit!==undefined){ if(o.sit) pr.set('sit',o.sit); else pr.delete('sit'); }
+    try{ history.replaceState(null,'','?'+pr.toString()); }catch(e){}
+    curRole=(pr.get('role')==='aprovador')?'aprovador':'preparador';
+    curOp=(['nova','alteracao','exclusao'].indexOf(pr.get('op'))>=0)?pr.get('op'):'nova';
+    render(pr.get('st')||'revisao');
+  }
+  var BELL='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>';
+  var SCN_APROV=[
+    ['Aprovar nova versão',{role:'aprovador',st:'revisao',op:'nova',sit:''}],
+    ['Aprovar alteração',{role:'aprovador',st:'revisao',op:'alteracao',sit:''}],
+    ['Aprovar exclusão',{role:'aprovador',st:'revisao',op:'exclusao',sit:''}],
+    ['Em processamento',{role:'aprovador',st:'aprovado',sit:'processando'}],
+    ['Processado (vigente)',{role:'aprovador',st:'aprovado',sit:'sucesso'}],
+    ['Rejeitada',{role:'aprovador',st:'aprovado',sit:'rejeitado'}]
+  ];
+  var SCN_PREP=[
+    ['Em revisão',{role:'preparador',st:'revisao',sit:''}],
+    ['Ajustes solicitados',{role:'preparador',st:'ajuste',sit:''}],
+    ['Vigente',{role:'preparador',st:'aprovado',sit:'sucesso'}],
+    ['Rejeitada',{role:'preparador',st:'aprovado',sit:'rejeitado'}],
+    ['Encerrada',{role:'preparador',st:'aprovado',sit:'encerrada'}]
+  ];
+  function scnList(){ return (curRole==='aprovador')?SCN_APROV:SCN_PREP; }
+  function scnActive(o){
+    if(o.st!==curDetState) return false;
+    if(curDetState==='revisao') return (o.op||'nova')===curOp;
+    if(curDetState==='aprovado') return (o.sit||'')===sitFor('aprovado');
+    return true;
+  }
+  function syncDemo(){
+    document.querySelectorAll('[data-role]').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-role')===curRole); });
+    var wrap=$('demoScenarios'); if(wrap){ wrap.innerHTML=scnList().map(function(sc,i){ return '<button type="button" data-scn-i="'+i+'"'+(scnActive(sc[1])?' class="on"':'')+'>'+sc[0]+'</button>'; }).join(''); }
+  }
+  function resetDemo(){ try{ localStorage.removeItem('adere.d1001.approval.'+empId()); }catch(e){} _ajusteComment=''; setScenario({role:'aprovador',op:'nova',st:'revisao',sit:''}); showToast('Demonstração reiniciada.'); }
+  function showNotif(){
+    var w=$('notifWrap'); if(!w) return; var vnum=dparam('v')||'4';
+    var n=document.createElement('button'); n.type='button'; n.className='notif';
+    n.innerHTML='<span class="notif__ic">'+BELL+'</span><span class="notif__b"><strong>Nova submissão para aprovar</strong><span>MAG Seguros · Versão '+esc(vnum)+' aguardando sua aprovação</span></span>';
+    n.addEventListener('click',function(){ if(n.parentNode)n.parentNode.removeChild(n); setScenario({role:'aprovador',st:'revisao',sit:'',op:'nova'}); });
+    w.appendChild(n);
+    var bb=document.querySelector('.topbar .badge'); if(bb){ bb.textContent=String((parseInt(bb.textContent,10)||0)+1); }
+    setTimeout(function(){ if(n.parentNode) n.parentNode.removeChild(n); }, 9000);
+  }
     var curDetState='revisao';
   function render(key){
     curDetState=key;
     var s=STATES[key], sit=sitFor(key);
-    if($('pageActions')) $('pageActions').innerHTML = s.topActions;
+    if($('pageActions')) $('pageActions').innerHTML = (curRole==='aprovador') ? (sit==='revisao' ? approverActions() : '') : s.topActions;
     var vnum=dparam('v'); var vlabel=vnum?('Versão '+vnum):s.ver;
     if($('dTitle')) $('dTitle').textContent = vlabel+' · Informações do contribuinte';
     if($('bcVer')) $('bcVer').textContent = vlabel;
     if($('coVer')){ var _vig=(sit==='sucesso'||sit==='advertencias'); $('coVer').innerHTML = esc(vlabel)+(_vig?'<span class="vigtag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Vigente</span>':''); }
     if($('dBadge')){ var _st=SIT[sit]||{label:s.sub,pill:s.pill}; $('dBadge').innerHTML = '<span class="status '+_st.pill+'"><span class="status__dot"></span>'+esc(_st.label)+'</span>'; }
     renderPeople(sit); renderAlert(sit); renderTimeline(sit);
-    document.querySelectorAll('[data-sc]').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-sc')===key); });
+    syncDemo();
   }
-  document.addEventListener('click',function(e){ var b=e.target.closest('[data-sc]'); if(b) render(b.getAttribute('data-sc')); });
+  document.addEventListener('click',function(e){
+    var r=e.target.closest('[data-role]'); if(r){ var role=r.getAttribute('data-role'); setScenario(role==='aprovador'?{role:'aprovador',st:'revisao',op:'nova',sit:''}:{role:'preparador',st:'revisao',sit:''}); return; }
+    var sc=e.target.closest('[data-scn-i]'); if(sc){ var o=scnList()[+sc.getAttribute('data-scn-i')][1]; setScenario(o); return; }
+    if(e.target.closest('[data-reset]')){ resetDemo(); return; }
+    if(e.target.closest('[data-notif]')){ showNotif(); return; }
+  });
 
   /* abas: Informações da versão x Histórico */
   function selDTab(t){
@@ -598,6 +698,42 @@
       return;
     });
   });
+  /* Aprovador: modais de Aprovar e Solicitar ajustes */
+  document.addEventListener('DOMContentLoaded',function(){
+    var apM=$('aprovarModal'), ajM=$('ajusteModal'); if(!apM||!ajM) return;
+    function fillApprove(){
+      var vnum=dparam('v')||'4';
+      var T={ nova:['Aprovar e transmitir a Versão '+vnum+'?','A versão será enviada à Receita Federal e passa a valer quando for processada. Não dá para desfazer por aqui.','Aprovar e transmitir','btn--primary'],
+              alteracao:['Aprovar a alteração de vigência?','A Versão '+vnum+' substitui a vigente: a anterior é encerrada e a nova é transmitida à Receita, passando a valer quando processada.','Aprovar e transmitir','btn--primary'],
+              exclusao:['Aprovar a exclusão da vigência?','A vigência da Versão '+vnum+' será encerrada na Receita. A empresa fica sem declaração vigente até registrar uma nova. Não dá para desfazer por aqui.','Aprovar exclusão','btn--danger'] };
+      var t=T[curOp]||T.nova;
+      $('apTitle').textContent=t[0]; $('apLead').textContent=t[1];
+      var btn=$('confirmAprovar'); btn.textContent=t[2]; btn.className='btn btn--lg '+t[3];
+      $('apLeadIc').className='modal__lead-ic'+(curOp==='exclusao'?'':' modal__lead-ic--primary');
+    }
+    document.addEventListener('click',function(e){
+      if(e.target.closest('[data-open-aprovar]')){ fillApprove(); dsDialog.open(apM,{focus:$('confirmAprovar'),onOpen:function(){apM.hidden=false;document.body.style.overflow='hidden';},onClose:function(){apM.hidden=true;document.body.style.overflow='';}}); }
+      if(e.target.closest('[data-open-ajuste]')){ $('ajusteText').value=''; if($('ajusteErr'))$('ajusteErr').hidden=true; dsDialog.open(ajM,{focus:$('ajusteText'),onOpen:function(){ajM.hidden=false;document.body.style.overflow='hidden';},onClose:function(){ajM.hidden=true;document.body.style.overflow='';}}); }
+    });
+    apM.querySelectorAll('[data-close]').forEach(function(b){ b.addEventListener('click',function(){dsDialog.close();}); });
+    ajM.querySelectorAll('[data-close]').forEach(function(b){ b.addEventListener('click',function(){dsDialog.close();}); });
+    apM.addEventListener('click',function(e){ if(e.target===apM) dsDialog.close(); });
+    ajM.addEventListener('click',function(e){ if(e.target===ajM) dsDialog.close(); });
+    $('confirmAprovar').addEventListener('click',function(){
+      dsDialog.close();
+      try{ localStorage.setItem('adere.d1001.approval.'+empId(),'processing'); }catch(e){}
+      showToast(curOp==='exclusao'?'Exclusão aprovada e enviada à Receita Federal.':'Versão aprovada e transmitida à Receita Federal.');
+      setScenario({role:'aprovador',st:'aprovado',sit:'processando'});
+    });
+    $('confirmAjuste').addEventListener('click',function(){
+      var v=$('ajusteText').value.trim();
+      if(!v){ if($('ajusteErr'))$('ajusteErr').hidden=false; $('ajusteText').setAttribute('aria-invalid','true'); $('ajusteText').focus(); return; }
+      _ajusteComment=v; dsDialog.close();
+      try{ localStorage.setItem('adere.d1001.approval.'+empId(),'ajuste'); }catch(e){}
+      showToast('Ajustes solicitados. A versão voltou para o preparador.');
+      setScenario({role:'preparador',st:'ajuste'});
+    });
+  });
 </script>
 
   <div class="scrim" id="excluirModal" hidden>
@@ -640,13 +776,67 @@
     </div>
   </div>
 
+  <!-- Aprovar (aprovador) -->
+  <div class="scrim" id="aprovarModal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="apTitle">
+      <div class="modal__header" style="display:flex;align-items:flex-start;justify-content:space-between;gap:var(--space-3)">
+        <h3 class="modal__title" id="apTitle">Aprovar e transmitir a versão?</h3>
+        <button class="icon-btn" type="button" data-close aria-label="Fechar" style="flex:0 0 auto;margin:calc(-1 * var(--space-1)) calc(-1 * var(--space-1)) 0 0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg></button>
+      </div>
+      <div class="modal__body">
+        <div class="modal__lead">
+          <span class="modal__lead-ic modal__lead-ic--primary" id="apLeadIc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
+          <p id="apLead">A versão será enviada à Receita Federal.</p>
+        </div>
+      </div>
+      <div class="modal__footer">
+        <button class="btn btn--ghost btn--lg" type="button" data-close>Cancelar</button>
+        <button class="btn btn--primary btn--lg" type="button" id="confirmAprovar">Aprovar e transmitir</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Solicitar ajustes (aprovador) -->
+  <div class="scrim" id="ajusteModal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="ajTitle">
+      <div class="modal__header" style="display:flex;align-items:flex-start;justify-content:space-between;gap:var(--space-3)">
+        <h3 class="modal__title" id="ajTitle">Solicitar ajustes ao preparador?</h3>
+        <button class="icon-btn" type="button" data-close aria-label="Fechar" style="flex:0 0 auto;margin:calc(-1 * var(--space-1)) calc(-1 * var(--space-1)) 0 0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg></button>
+      </div>
+      <div class="modal__body">
+        <div class="modal__lead">
+          <span class="modal__lead-ic modal__lead-ic--primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+          <p>A versão volta para o preparador com o seu comentário. Nada é transmitido à Receita.</p>
+        </div>
+        <div class="mform">
+          <div class="field">
+            <label class="field__label" for="ajusteText">Comentário para o preparador</label>
+            <textarea class="input" id="ajusteText" rows="3" placeholder="Ex.: O regime secundário não se aplica. Remova a marcação e confirme a vigência antes de reenviar." aria-describedby="ajusteErr"></textarea>
+            <p class="field__msg field__msg--error" id="ajusteErr" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>Escreva um comentário para o preparador.</p>
+          </div>
+        </div>
+      </div>
+      <div class="modal__footer">
+        <button class="btn btn--ghost btn--lg" type="button" data-close>Cancelar</button>
+        <button class="btn btn--primary btn--lg" type="button" id="confirmAjuste">Solicitar ajustes</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-wrap" id="toastWrap" aria-live="polite" aria-atomic="false"></div>
+  <div class="notifwrap" id="notifWrap" aria-live="polite"></div>
+
   <!-- Ferramenta de DEMONSTRAÇÃO (não faz parte do produto): alterna o estado da versão -->
-  <div class="demobar" role="group" aria-label="Demonstração: alternar estado da versão">
-    <span class="demobar__lbl">Demo</span>
+  <div class="demobar" role="group" aria-label="Ferramenta de demonstração">
+    <span class="demobar__lbl">Demo · ver como</span>
+    <button type="button" data-role="preparador">Preparador</button>
+    <button type="button" data-role="aprovador">Aprovador</button>
     <span class="demobar__sep" aria-hidden="true"></span>
-    <button type="button" data-sc="revisao" class="on">Em revisão</button>
-    <button type="button" data-sc="ajuste">Ajustes</button>
-    <button type="button" data-sc="aprovado">Aprovado</button>
+    <span class="demobar__lbl">Cenário</span>
+    <span id="demoScenarios" class="demobar__scn"></span>
+    <span class="demobar__sep" aria-hidden="true"></span>
+    <button type="button" data-notif>Ver notificação</button>
+    <button type="button" data-reset>Resetar</button>
   </div>
 </body>
 </html>

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Design System · DeRE</title>
-  <link rel="stylesheet" href="ds.css?v=37">
+  <link rel="stylesheet" href="ds.css?v=38">
   <style>
     /* Layout do catálogo (só do doc, não é componente do DS) */
     .app{display:grid;grid-template-columns:236px 1fr;min-height:100vh}
@@ -331,6 +331,13 @@
           <div class="field">
             <label class="field__label" for="fd">Vencimento (data, abre o date picker)</label>
             <input id="fd" class="input" type="date" value="2026-09-20">
+          </div>
+          <div class="field">
+            <label class="field__label" for="fp">Senha (mostrar / ocultar)</label>
+            <div class="field-password">
+              <input id="fp" class="input" type="password" value="Senha1234" autocomplete="off">
+              <button class="field-password__toggle" type="button" aria-label="Mostrar senha" onclick="var b=this,i=b.previousElementSibling,s=i.type==='password';i.type=s?'text':'password';b.classList.toggle('is-showing',s);b.setAttribute('aria-label',s?'Ocultar senha':'Mostrar senha')"><svg class="ic-eye" aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg><svg class="ic-eyeoff" aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg></button>
+            </div>
           </div>
           <div class="field col-full">
             <label class="field__label" for="f5">Observação</label>
@@ -868,6 +875,18 @@
           <span class="dropzone__hint">NF-e em .xml ou .zip, até 20 MB por arquivo.</span>
           <input type="file" hidden multiple>
         </label>
+        <p class="sec__hint" style="margin-top:var(--space-6)">Depois de escolher, o arquivo aparece como <code>.filecard</code> (o par do dropzone): ícone + nome + meta + ações. Serve tanto para o arquivo recém-selecionado quanto para um já importado.</p>
+        <div class="filecard" style="max-width:440px">
+          <span class="filecard__icon"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6"/></svg></span>
+          <div class="filecard__body">
+            <div class="filecard__name">certificado-mag.pfx</div>
+            <div class="filecard__meta">PFX · 12,4 KB</div>
+          </div>
+          <div class="filecard__actions">
+            <button class="filecard__link" type="button">Substituir</button>
+            <button class="filecard__link filecard__link--danger" type="button">Remover</button>
+          </div>
+        </div>
       </section>
 
       <!-- AVATAR + MENU -->

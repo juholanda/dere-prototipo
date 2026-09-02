@@ -43,6 +43,10 @@
      Nunca carrega informação sozinha nem vira cor de status. */
   --color-accent-2:#e6007e;
   --color-accent-2-subtle:color-mix(in srgb, #e6007e 9%, var(--color-surface));
+  /* Chrome de autenticação (painel navy do login / onboarding / link-invalido).
+     O painel é sempre escuro (não inverte no dark), então estes tokens são fixos. */
+  --color-on-navy:#ffffff;                                                  /* texto/realce sempre branco sobre o painel navy */
+  --gradient-auth:linear-gradient(rgba(17,62,140,.93), rgba(10,40,96,.96)); /* véu navy sobre a foto de fundo do painel de autenticação */
 
   /* ---- Semânticos: superfície / texto / borda ---- */
   --color-bg:          #ffffff;            /* branco, como gov.br; blocos usam --color-surface-2 (cinza azulado) */
@@ -374,7 +378,7 @@ textarea.input{height:auto;padding:var(--space-2) var(--space-3);min-height:84px
 .selectcard-list{display:flex;flex-direction:column;gap:var(--space-4)}
 
 /* Card */
-.card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm)}
+.card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-2xl);box-shadow:var(--shadow-sm)}
 /* Corpo com respiro para cards de conteúdo/formulário (o .card puro é sem padding de propósito) */
 .card__body{padding:var(--space-6)}
 .card__body + .card__body{border-top:1px solid var(--color-border)}
@@ -620,6 +624,25 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
   border:0;border-radius:var(--radius-pill);background:transparent;color:var(--color-text-muted);cursor:pointer}
 .field-clear__x:hover{background:var(--color-border);color:var(--color-heading)}
 .field-clear__x:focus-visible{outline:none;box-shadow:var(--ring)}
+
+/* Campo de senha — input com botão mostrar/ocultar embutido à direita.
+   Combina com .field-icon (ícone à esquerda) no mesmo wrapper quando quiser os dois.
+   Estrutura: <div class="field-password"><input class="input" type="password">
+     <button class="field-password__toggle" type="button" aria-label="Mostrar senha">
+       <svg class="ic-eye">…</svg><svg class="ic-eyeoff">…</svg></button></div>
+   JS: alterna input.type, a classe .is-showing no botão (troca o ícone) e o aria-label. */
+.field-password{position:relative;display:flex;align-items:center}
+.field-password .input{padding-right:var(--space-10)}
+.field-password__toggle{position:absolute;right:var(--space-2);top:50%;transform:translateY(-50%);
+  display:grid;place-items:center;width:var(--control-h-sm);height:var(--control-h-sm);padding:0;
+  border:0;border-radius:var(--radius-base);background:transparent;color:var(--color-text-muted);
+  cursor:pointer;transition:color .12s,background .12s}
+.field-password__toggle:hover{color:var(--color-text);background:var(--color-border)}
+.field-password__toggle:focus-visible{outline:none;box-shadow:var(--ring)}
+.field-password__toggle svg{width:18px;height:18px}
+.field-password__toggle .ic-eyeoff{display:none}
+.field-password__toggle.is-showing .ic-eye{display:none}
+.field-password__toggle.is-showing .ic-eyeoff{display:block}
 .field-clear .input:placeholder-shown ~ .field-clear__x{display:none}
 
 /* Afixo de texto: prefixo (R$) / sufixo (% ou unidade) dentro do controle */
@@ -1023,6 +1046,26 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 .dropzone__icon{color:var(--color-primary)}
 .dropzone__title{font-weight:600;color:var(--color-heading)}
 .dropzone__hint{font-size:var(--text-xs)}
+
+/* Filecard — arquivo já selecionado/importado (o par do .dropzone). Ícone + nome + meta + ações.
+   Estrutura: <div class="filecard"><span class="filecard__icon"><svg…/></span>
+     <div class="filecard__body"><div class="filecard__name">arquivo.pfx</div>
+       <div class="filecard__meta">PFX · 12 KB</div></div>
+     <div class="filecard__actions"><button class="filecard__link">Substituir</button>
+       <button class="filecard__link filecard__link--danger">Remover</button></div></div> */
+.filecard{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-4);
+  border:1px solid var(--color-border);border-radius:var(--radius-base);background:var(--color-surface)}
+.filecard__icon{flex:0 0 auto;width:40px;height:40px;border-radius:var(--radius-base);
+  background:var(--color-primary-subtle);color:var(--color-primary);display:grid;place-items:center}
+.filecard__icon svg{width:20px;height:20px}
+.filecard__body{flex:1;min-width:0}
+.filecard__name{font-size:var(--text-sm);font-weight:600;color:var(--color-heading);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.filecard__meta{font-size:var(--text-xs);color:var(--color-text-onmuted);font-variant-numeric:tabular-nums}
+.filecard__actions{display:flex;align-items:center;gap:var(--space-4);flex:0 0 auto}
+.filecard__link{background:none;border:0;font-family:inherit;font-size:var(--text-sm);font-weight:600;color:var(--color-primary);cursor:pointer;padding:0}
+.filecard__link:hover{text-decoration:underline}
+.filecard__link:focus-visible{outline:none;box-shadow:var(--ring);border-radius:var(--radius-sm)}
+.filecard__link--danger{color:var(--color-danger)}
 
 /* =============================================================================
    Context switcher (dropdown) — troca entre Escritório e Contribuintes.

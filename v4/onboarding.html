@@ -7,7 +7,9 @@
   <meta http-equiv="Expires" content="0">
   <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>a-DeRE · Primeiro acesso</title>
-<link rel="stylesheet" href="../design-system/ds.css?v=37">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="../design-system/ds.css?v=38">
+<script src="../design-system/ds-tailwind.js"></script>
 <style>
   body{margin:0;font-family:var(--font-sans);color:var(--color-text)}
   [hidden]{display:none !important}
@@ -15,22 +17,23 @@
   .wrap{height:100vh;display:grid;grid-template-columns:minmax(340px,42%) 1fr}
 
   /* ===== Painel esquerdo (navy + prédio) ===== */
-  .aside{position:relative;display:flex;flex-direction:column;overflow:hidden;padding:var(--space-12);color:#fff;
-    background:linear-gradient(rgba(17,62,140,.93),rgba(10,40,96,.96)), url('img/fazenda.png') center bottom/cover no-repeat, var(--color-primary-hover)}
+  .aside{position:relative;display:flex;flex-direction:column;overflow:hidden;padding:var(--space-12);color:var(--color-on-navy);
+    background:var(--gradient-auth), url('img/fazenda.png') center bottom/cover no-repeat, var(--color-primary-hover)}
   .aside__wm{font-size:var(--text-xl);font-weight:800;letter-spacing:-.01em}
   .aside__mid{flex:1;display:flex;flex-direction:column;justify-content:center}
-  .steps{display:flex;flex-direction:column}
-  .step{display:flex;gap:14px;position:relative;align-items:flex-start}
-  .step:not(:last-child){padding-bottom:24px}
-  .step:not(:last-child)::before{content:"";position:absolute;left:16px;transform:translateX(-50%);top:36px;bottom:6px;width:2px;background:rgba(255,255,255,.25);transition:background .25s}
-  .step--done:not(:last-child)::before{background:rgba(255,255,255,.55)}
-  .step__n{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:var(--text-sm);line-height:1;flex:0 0 auto;position:relative;z-index:1;transition:background .25s,border-color .25s,color .25s}
-  .step--active .step__n,.step--done .step__n{background:#fff;color:var(--color-primary-darker)}
-  .step--todo .step__n{background:transparent;border:2px solid rgba(255,255,255,.45);color:rgba(255,255,255,.7)}
-  .step__t{padding-top:5px}
-  .step__t b{display:block;color:#fff;font-size:var(--text-lg);font-weight:700;line-height:1.3}
-  .step--todo .step__t b{color:rgba(255,255,255,.85);font-weight:600}
-  .step__t span{display:block;color:rgba(255,255,255,.6);font-size:var(--text-sm);line-height:1.35;margin-top:var(--space-1)}
+  /* Trilho de etapas — namespace próprio (NÃO é o .stepper/.step do DS, que é horizontal) */
+  .wizrail{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+  .wizrail__step{display:flex;gap:var(--space-3);position:relative;align-items:flex-start}
+  .wizrail__step:not(:last-child){padding-bottom:var(--space-6)}
+  .wizrail__step:not(:last-child)::before{content:"";position:absolute;left:var(--space-4);transform:translateX(-50%);top:calc(var(--space-8) + var(--space-1));bottom:var(--space-1-5);width:2px;background:rgba(255,255,255,.25);transition:background .25s}
+  .wizrail__step--done:not(:last-child)::before{background:rgba(255,255,255,.55)}
+  .wizrail__num{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:var(--text-sm);line-height:1;flex:0 0 auto;position:relative;z-index:1;transition:background .25s,border-color .25s,color .25s}
+  .wizrail__step--active .wizrail__num,.wizrail__step--done .wizrail__num{background:var(--color-on-navy);color:var(--color-primary-darker)}
+  .wizrail__step--todo .wizrail__num{background:transparent;border:2px solid rgba(255,255,255,.45);color:rgba(255,255,255,.7)}
+  .wizrail__txt{padding-top:var(--space-1)}
+  .wizrail__txt b{display:block;color:var(--color-on-navy);font-size:var(--text-lg);font-weight:700;line-height:1.3}
+  .wizrail__step--todo .wizrail__txt b{color:rgba(255,255,255,.85);font-weight:600}
+  .wizrail__txt span{display:block;color:rgba(255,255,255,.6);font-size:var(--text-sm);line-height:1.35;margin-top:var(--space-1)}
   .aside__foot{color:rgba(255,255,255,.6);font-size:var(--text-xs)}
 
   /* ===== Painel direito ===== */
@@ -47,67 +50,38 @@
   .form__ic svg{width:84px;height:84px;display:block}
 
   .head{display:flex;flex-direction:column;align-items:center;gap:var(--space-1)}
-  .head h1{font-size:var(--text-3xl);font-weight:700 !important;line-height:1.26;color:var(--color-heading);margin:0;text-align:center}
+  .head h1{line-height:1.26;color:var(--color-heading);margin:0;text-align:center}
   .head .lead{font-size:var(--text-lg);font-weight:400;line-height:1.5;color:var(--color-text-muted);text-align:center;margin:0}
-  .view--senha .head h1,.view--senha .head .lead{white-space:nowrap}
   .view--empresas .head h1{max-width:380px}
+  /* "Passo X de 3" visível no painel direito (o trilho lateral some no mobile) */
+  .stepcount{font-size:var(--text-xs);font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--color-primary);margin:0;text-align:center}
 
   /* ---- senha ---- */
-  .roemail{width:100%;display:flex;align-items:center;gap:10px;background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:8px;padding:var(--space-3) 14px;box-sizing:border-box}
-  .roemail .ic{width:34px;height:34px;border-radius:50%;background:var(--color-border);display:grid;place-items:center;color:var(--color-text-muted);flex:0 0 auto}
-  .roemail .ic svg{width:18px;height:18px}
-  .roemail .m{min-width:0;display:flex;flex-direction:column;gap:2px}
-  .roemail .m label{font-size:var(--text-xs);color:var(--color-text-muted);font-weight:600}
-  .roemail .m .v{color:var(--color-heading);font-size:var(--text-sm);font-weight:400;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .f{width:100%;display:flex;flex-direction:column;gap:var(--space-1-5)}
-  .f > label{font-size:var(--text-sm);font-weight:600;color:var(--color-heading);line-height:1.5}
-  .pw{position:relative}
-  .pw .input{padding-right:var(--space-10)}
-  .pw .eye{position:absolute;right:var(--space-2);top:50%;transform:translateY(-50%);background:none;border:0;padding:var(--space-1-5);cursor:pointer;color:var(--color-text-muted);display:grid;place-items:center;border-radius:var(--radius-base)}
-  .pw .eye:hover{color:var(--color-text)}
-  .pw .eye svg{width:18px;height:18px}
-  .pw .eye .ic-eyeoff{display:none}
-  .pw .eye.showing .ic-eye{display:none}
-  .pw .eye.showing .ic-eyeoff{display:block}
+  /* Campo de senha usa o componente .field-password do DS; erro/ajuda usam .field__msg do DS. */
+  .field__msg svg{width:14px;height:14px;flex:0 0 auto}
+  /* No painel direito o conteúdo é centralizado; os campos do DS ocupam a largura toda */
+  .view .field,.view .readonly-field{width:100%}
   .input.is-error{border-color:var(--color-danger);box-shadow:0 0 0 3px color-mix(in srgb,var(--color-danger) 20%,transparent)}
-  .reqs{list-style:none;margin:0;padding:4px 0 0;display:flex;flex-direction:column;gap:5px}
-  .req{display:flex;align-items:center;gap:7px;font-size:var(--text-sm);color:var(--color-text-onmuted);line-height:1.5;transition:color .15s}
+  /* Requisitos de senha (checklist específico desta tela) */
+  .reqs{list-style:none;margin:0;padding:var(--space-1) 0 0;display:flex;flex-direction:column;gap:var(--space-1-5)}
+  .req{display:flex;align-items:center;gap:var(--space-2);font-size:var(--text-sm);color:var(--color-text-onmuted);line-height:1.5;transition:color .15s}
   .req .rico{width:16px;height:16px;border-radius:50%;border:1.5px solid var(--color-field-border);display:grid;place-items:center;color:transparent;flex:0 0 auto;transition:all .15s}
   .req .rico svg{width:11px;height:11px}
   .req.ok{color:var(--green-700);font-weight:600}
   .req.ok .rico{background:var(--green-600);border-color:var(--green-600);color:#fff}
-  .fieldmsg{display:flex;align-items:center;gap:var(--space-1-5);margin:0;color:var(--color-danger);font-size:var(--text-xs);max-height:0;opacity:0;overflow:hidden;transition:opacity .2s ease,max-height .2s ease,margin-top .2s ease}
-  .fieldmsg.show{max-height:3rem;opacity:1}
-  .fieldmsg svg{width:14px;height:14px;flex:0 0 auto}
   .termsblock{width:100%}
-  .termsblock .fieldmsg.show{margin-top:var(--space-1-5)}
-  .terms{width:100%;display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:var(--text-sm);color:var(--color-text);line-height:1.45}
-  .terms input{position:absolute;opacity:0;width:0;height:0}
-  .terms .box{width:18px;height:18px;border:1px solid var(--color-field-border);border-radius:var(--radius-base);display:grid;place-items:center;color:transparent;flex:0 0 auto;margin-top:1px;transition:all .15s}
-  .terms .box svg{width:12px;height:12px}
-  .terms input:checked + .box{background:var(--color-primary);border-color:var(--color-primary);color:#fff}
-  .terms:hover input:not(:checked) + .box{border-color:var(--color-text-muted)}
-  .terms:hover input:checked + .box{background:var(--color-primary-hover);border-color:var(--color-primary-hover)}
-  .terms input:focus-visible + .box{box-shadow:0 0 0 3px color-mix(in srgb,var(--color-primary) 25%,transparent)}
-  .terms.is-error .box{border-color:var(--color-danger)}
-  .terms a{color:var(--color-primary);font-weight:600;text-decoration:none}
-  .terms a:hover{text-decoration:underline}
-  .secure{width:100%;display:flex;align-items:center;justify-content:center;gap:7px;color:var(--color-text-muted);font-size:var(--text-xs);line-height:1.45}
+  .termsblock .field__msg{margin-top:var(--space-1-5)}
+  .secure{width:100%;display:flex;align-items:center;justify-content:center;gap:var(--space-2);color:var(--color-text-muted);font-size:var(--text-xs);line-height:1.45}
   .secure svg{width:14px;height:14px;flex:0 0 auto}
 
   /* ---- empresas ---- */
-  .card{width:100%;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-2xl);box-shadow:var(--shadow-sm);box-sizing:border-box;padding:var(--space-6);display:flex;flex-direction:column;gap:var(--space-6)}
-  .evazio{display:flex;flex-direction:column;align-items:center;gap:var(--space-4)}
-  .evazio__ic{width:56px;height:56px;border-radius:50%;background:var(--color-border);display:grid;place-items:center;color:var(--color-text-muted)}
-  .evazio__ic svg{width:26px;height:26px}
-  .evazio__t{text-align:center;display:flex;flex-direction:column;gap:var(--space-1)}
-  .evazio__t b{font-size:var(--text-lg);font-weight:600;color:var(--color-text)}
-  .evazio__t span{font-size:var(--text-sm);color:var(--color-text-muted);line-height:1.5}
+  /* O container é o .card + .card__body do DS (raio 4px, igual ao resto do produto).
+     Estado vazio = .empty do DS; arquivo de certificado = .filecard do DS. */
   .card__count{font-size:var(--text-xs);color:var(--color-text-onmuted);font-weight:600}
   .filled{display:flex;flex-direction:column;gap:var(--space-4)}
   .colist{display:flex;flex-direction:column;gap:var(--space-4)}
   .co{display:flex;align-items:center;gap:var(--space-3)}
-  .co__logo{width:44px;height:44px;border-radius:var(--radius-base);background:var(--color-primary);color:#fff;display:grid;place-items:center;font-weight:800;font-size:var(--text-sm);letter-spacing:.02em;flex:0 0 auto;overflow:hidden}
+  .co__logo{width:44px;height:44px;border-radius:var(--radius-base);background:var(--color-primary);color:var(--color-primary-contrast);display:grid;place-items:center;font-weight:800;font-size:var(--text-sm);letter-spacing:.02em;flex:0 0 auto;overflow:hidden}
   .co__logo img{width:100%;height:100%;object-fit:cover}
   .co__b{flex:1;min-width:0}
   .co__name{font-size:var(--text-base);font-weight:600;color:var(--color-heading);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -119,70 +93,27 @@
   .certlist .co:last-child{padding-bottom:0}
   .certlist .co + .co{border-top:1px solid var(--color-border)}
   .co__top{display:flex;align-items:center;gap:var(--space-3)}
-  /* certificado importado: bloco abaixo do nome/CNPJ, com ícone de arquivo + ações link-text */
-  .certblock{display:flex;align-items:center;gap:var(--space-3);background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-base);padding:var(--space-3) var(--space-4)}
-  .certblock__ic{flex:0 0 auto;color:var(--color-text-muted);display:flex}
-  .certblock__ic svg{width:20px;height:20px}
-  .certblock__name{flex:1;min-width:0;font-size:var(--text-sm);font-weight:500;color:var(--color-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .certblock__act{display:flex;align-items:center;gap:var(--space-4);flex:0 0 auto}
-  .certblock__act button{background:none;border:0;font-family:inherit;font-size:var(--text-sm);font-weight:600;cursor:pointer;padding:0}
-  .certblock__act .cert-redo{color:var(--color-primary)}
-  .certblock__act .cert-redo:hover{text-decoration:underline}
-  .certblock__act .cert-del{color:var(--color-danger)}
-  .certblock__act .cert-del:hover{text-decoration:underline}
   .cform{display:flex;flex-direction:column;gap:var(--space-6)}
   .cinfo{display:flex;gap:var(--space-3);background:var(--color-primary-subtle);border-radius:var(--radius-base);padding:var(--space-4)}
   .cinfo__ic{flex:0 0 auto;color:var(--color-primary);display:flex}
   .cinfo__ic svg{width:20px;height:20px}
   .cinfo__d{font-size:var(--text-sm);color:var(--color-text-onmuted);line-height:1.5;margin:0}
-  .filecard{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-4);border:1px solid var(--color-border);border-radius:var(--radius-base);background:var(--color-surface)}
-  .filecard__ic{flex:0 0 auto;width:40px;height:40px;border-radius:var(--radius-base);background:var(--color-primary-subtle);color:var(--color-primary);display:grid;place-items:center}
-  .filecard__ic svg{width:20px;height:20px}
-  .filecard__b{flex:1;min-width:0}
-  .filecard__name{font-size:var(--text-sm);font-weight:600;color:var(--color-heading);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .filecard__meta{font-size:var(--text-xs);color:var(--color-text-onmuted);font-variant-numeric:tabular-nums}
-  .filecard__act{display:flex;align-items:center;gap:var(--space-4);flex:0 0 auto}
-  .filecard__act button{background:none;border:0;font-family:inherit;font-size:var(--text-sm);font-weight:600;cursor:pointer;padding:0}
-  .filecard__act .edit{color:var(--color-primary)}
-  .filecard__act .edit:hover{text-decoration:underline}
-  .filecard__act .rm{color:var(--color-danger)}
-  .filecard__act .rm:hover{text-decoration:underline}
   .co__act button:not(.btn){background:none;border:0;font-family:inherit;font-size:var(--text-sm);font-weight:600;cursor:pointer;padding:0}
   .co__act .edit{color:var(--color-primary)}
   .co__act .edit:hover{text-decoration:underline}
   .co__act .rm{color:var(--color-danger)}
   .co__act .rm:hover{text-decoration:underline}
   .actions{width:100%;display:flex;flex-direction:column;gap:var(--space-1)}
-  .voltar{width:100%;padding:var(--space-3);background:none;border:0;font-family:inherit;font-size:var(--text-sm);font-weight:600;color:var(--color-heading);cursor:pointer;border-radius:var(--radius-base)}
-  .voltar:hover{background:var(--color-surface-2)}
 
   /* ---- drawer: shell 100% do DS (.drawer-backdrop / .drawer / .drawer__header · __body · __footer, tamanho .drawer--md, foco via ds-dialog.js). Aqui só o que o DS não cobre. ---- */
   .drawer__header p{margin:var(--space-1) 0 0;font-size:var(--text-sm);color:var(--color-text-muted)}
   .drawer__x{flex:0 0 auto}
   .drawer__x svg{width:20px;height:20px}
   .drawer__body{display:flex;flex-direction:column;gap:var(--space-8)}
-  .dz{display:flex;align-items:center;gap:var(--space-4)}
-  .dz__thumb{width:64px;height:64px;border-radius:var(--radius-base);background:var(--color-surface-2);border:1px dashed var(--color-border-strong);display:grid;place-items:center;color:var(--color-text-onmuted);flex:0 0 auto;overflow:hidden}
-  .dz__thumb img{width:100%;height:100%;object-fit:cover}
-  .dz__thumb svg{width:24px;height:24px}
-  .dz__t b{display:block;font-size:var(--text-sm);color:var(--color-heading);font-weight:600}
-  .dz__t span{font-size:var(--text-xs);color:var(--color-text-onmuted)}
-  .dz__btn{margin-top:var(--space-1-5);font-size:var(--text-sm);color:var(--color-primary);font-weight:600;background:none;border:0;padding:0;cursor:pointer;font-family:inherit}
-  .fld{display:flex;flex-direction:column;gap:var(--space-1-5)}
-  .fld > label{font-size:var(--text-sm);font-weight:600;color:var(--color-heading)}
-  .fldmsg{display:none;align-items:center;gap:var(--space-1-5);margin:0;color:var(--color-danger);font-size:var(--text-xs)}
-  .fldmsg.show{display:flex}
-  .fldmsg svg{width:14px;height:14px}
+  /* Dados da Receita (somente leitura) — grade que revela/anima; as linhas usam .readonly-field do DS */
   .ro{background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-base);padding:var(--space-4);display:none;grid-template-columns:1fr 1fr;gap:var(--space-4)}
   .ro.show{display:grid}
-  .ro__row{display:flex;flex-direction:column;gap:2px;min-width:0}
-  .ro__row--full{grid-column:1 / -1}
-  .ro__row label{font-size:var(--text-xs);color:var(--color-text-onmuted);font-weight:600}
-  .ro__row .v{font-size:var(--text-sm);color:var(--color-text);font-weight:400;word-break:break-word}
-  .sec__h{display:flex;align-items:center;justify-content:space-between;gap:var(--space-2)}
-  .sec__h b{font-size:var(--text-sm);font-weight:700;color:var(--color-heading)}
-  .sec__h span{font-size:var(--text-xs);color:var(--color-text-onmuted)}
-  .divider{height:1px;background:var(--color-border);margin:0}
+  .ro__full{grid-column:1 / -1}
   .resplist{display:flex;flex-direction:column;gap:var(--space-2)}
   .resp{display:flex;align-items:flex-start;gap:var(--space-3);padding:var(--space-4);border:1px solid var(--color-border);border-radius:var(--radius-lg);transition:border-color .12s,background-color .12s}
   .resp:not(.resp--edit):hover{border-color:var(--color-border-strong);background:var(--color-surface-2)}
@@ -193,8 +124,6 @@
   .resp__name b{font-size:var(--text-base);color:var(--color-heading);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .resp__mail{font-size:var(--text-sm);color:var(--color-text-onmuted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .resp__perfis{display:flex;flex-wrap:wrap;gap:var(--space-1-5);margin-top:var(--space-1-5)}
-  .pchip{font-size:var(--text-xs);font-weight:600;color:var(--color-text-onmuted);background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-pill);padding:2px var(--space-2)}
-  .pchip--none{color:var(--color-text-muted);border-style:dashed}
   .resp__act{display:flex;gap:var(--space-4);flex:0 0 auto;align-self:center}
   .resp__act button{background:none;border:0;font-family:inherit;font-size:var(--text-sm);font-weight:600;cursor:pointer;padding:0}
   .resp__act .edit{color:var(--color-primary)}
@@ -207,18 +136,6 @@
   .rf-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:var(--space-3)}
   .rf-perfis{display:flex;flex-wrap:wrap;gap:var(--space-4);padding-top:2px}
   .rf__act{display:flex;justify-content:flex-end;margin-top:var(--space-1)}
-  .seg{display:flex;gap:var(--space-2)}
-  .seg label{flex:1;position:relative}
-  .seg input{position:absolute;opacity:0}
-  .seg .opt{display:flex;align-items:center;justify-content:center;gap:var(--space-2);padding:var(--space-2) var(--space-3);border:1px solid var(--color-field-border);border-radius:var(--radius-base);font-size:var(--text-sm);color:var(--color-text);cursor:pointer;font-weight:600}
-  .seg input:checked + .opt{border-color:var(--color-primary);background:var(--color-primary-subtle);color:var(--color-primary)}
-  .seg input:focus-visible + .opt{box-shadow:0 0 0 3px color-mix(in srgb,var(--color-primary) 25%,transparent)}
-  .addself{width:100%;display:flex;align-items:center;justify-content:center;gap:var(--space-2);padding:var(--space-3);background:var(--color-surface-2);border:1px dashed var(--color-border-strong);border-radius:var(--radius-base);color:var(--color-heading);font-family:inherit;font-size:var(--text-sm);font-weight:600;cursor:pointer}
-  .addself:hover{background:color-mix(in srgb,var(--color-primary) 5%,var(--color-surface))}
-  .addself svg{width:16px;height:16px}
-  .addself[disabled]{opacity:.5;cursor:not-allowed}
-  .invite{display:flex;flex-direction:column;gap:var(--space-3);padding:var(--space-4);border:1px solid var(--color-border);border-radius:var(--radius-base);background:var(--color-surface-2)}
-  .invite__h{font-size:var(--text-xs);font-weight:700;color:var(--color-text-onmuted);text-transform:uppercase;letter-spacing:.04em}
   .dsec{display:flex;flex-direction:column;gap:var(--space-4)}
   .dsec__hd{display:flex;flex-direction:column;gap:2px}
   .dsec__h{font-size:var(--text-lg);font-weight:600;color:var(--color-heading);margin:0}
@@ -227,22 +144,10 @@
   .logo__thumb{width:72px;height:72px;border-radius:var(--radius-base);background:var(--color-surface-2);border:1px dashed var(--color-border-strong);display:grid;place-items:center;color:var(--color-text-onmuted);flex:0 0 auto;overflow:hidden}
   .logo__thumb img{width:100%;height:100%;object-fit:cover}
   .logo__thumb svg{width:26px;height:26px}
-  .logo__side{flex:1;min-width:0;display:flex;flex-direction:column;gap:var(--space-3);align-items:flex-start}
-  .logo__txt{display:flex;flex-direction:column;gap:2px}
-  .logo__label{font-size:var(--text-sm);font-weight:600;color:var(--color-heading);margin:0}
-  .logo__rules{font-size:var(--text-xs);color:var(--color-text-onmuted);line-height:1.5;margin:0}
   .logo__act{display:flex;gap:var(--space-2)}
   .logo__thumb.has-img{border-style:solid;border-color:var(--color-border)}
   .dsec__rule{border:0;border-top:1px solid var(--color-divider);margin:0}
-  .fld__help{font-size:var(--text-xs);color:var(--color-text-onmuted);line-height:1.4;margin:0}
   .dsec__n{color:var(--color-text-onmuted);font-weight:600}
-  .ro__hint{font-size:var(--text-xs);color:var(--color-text-onmuted);margin:0}
-  .dsec__htop{display:flex;align-items:baseline;justify-content:space-between;gap:var(--space-2)}
-  .dsec__meta{font-size:var(--text-xs);color:var(--color-text-onmuted);font-weight:600}
-  .linkbtn{align-self:flex-start;background:none;border:0;color:var(--color-primary);font-weight:600;font-size:var(--text-sm);cursor:pointer;padding:0;display:inline-flex;align-items:center;gap:var(--space-1-5);font-family:inherit}
-  .linkbtn:hover{text-decoration:underline}
-  .linkbtn svg{width:16px;height:16px}
-  .linkbtn[disabled]{color:var(--color-text-onmuted);cursor:not-allowed;text-decoration:none}
 
   @media(max-width:860px){.wrap{grid-template-columns:1fr}.aside{display:none}}
 
@@ -293,25 +198,26 @@
     <aside class="aside">
       <div class="aside__wm">a-DeRE</div>
       <div class="aside__mid">
-        <div class="steps">
-          <div class="step step--active">
-            <span class="step__n">1</span>
-            <span class="step__t"><b>Crie sua senha</b><span>Defina uma senha para acessar a plataforma.</span></span>
-          </div>
-          <div class="step step--todo">
-            <span class="step__n">2</span>
-            <span class="step__t"><b>Adicione empresas</b><span>Informe as empresas que farão parte da sua conta.</span></span>
-          </div>
-          <div class="step step--todo">
-            <span class="step__n">3</span>
-            <span class="step__t"><b>Cadastre o certificado digital</b><span>Configure o certificado de cada empresa para transmissão.</span></span>
-          </div>
-        </div>
+        <ol class="wizrail">
+          <li class="wizrail__step wizrail__step--active" aria-current="step">
+            <span class="wizrail__num">1</span>
+            <span class="wizrail__txt"><b>Crie sua senha</b><span>Defina uma senha para acessar a plataforma.</span></span>
+          </li>
+          <li class="wizrail__step wizrail__step--todo">
+            <span class="wizrail__num">2</span>
+            <span class="wizrail__txt"><b>Adicione empresas</b><span>Informe as empresas que farão parte da sua conta.</span></span>
+          </li>
+          <li class="wizrail__step wizrail__step--todo">
+            <span class="wizrail__num">3</span>
+            <span class="wizrail__txt"><b>Cadastre o certificado digital</b><span>Configure o certificado de cada empresa para transmissão.</span></span>
+          </li>
+        </ol>
       </div>
       <div class="aside__foot">a-DeRE, uma solução Axians</div>
     </aside>
 
     <main class="panel">
+      <p class="sr-only" id="stepLive" aria-live="polite"></p>
       <!-- ===== View 1: senha ===== -->
       <form class="view view--senha is-active" id="view1" novalidate>
         <div class="form__ic">
@@ -326,42 +232,42 @@
           </svg>
         </div>
         <div class="head">
-          <h1>Crie sua senha</h1>
+          <p class="stepcount">Passo 1 de 3</p>
+          <h1 tabindex="-1">Crie sua senha</h1>
           <p class="lead">Defina uma senha para os seus próximos acessos à a-DeRE.</p>
         </div>
         <div class="sp"></div>
-        <div class="roemail">
-          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
-          <span class="m"><label>E-mail cadastrado</label><span class="v">ricardo.alves@magseguros.com.br</span></span>
+        <div class="readonly-field" style="width:100%">
+          <span class="readonly-field__label">E-mail cadastrado</span>
+          <span class="readonly-field__value" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">ricardo.alves@magseguros.com.br</span>
         </div>
-        <div class="f">
-          <label for="pw">Senha</label>
-          <div class="pw">
-            <input class="input input--lg" id="pw" type="password" placeholder="Digite uma senha forte" autocomplete="new-password" aria-describedby="reqs">
-            <button class="eye" type="button" aria-label="Mostrar senha" data-for="pw"><svg class="ic-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg><svg class="ic-eyeoff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg></button>
+        <div class="field">
+          <label class="field__label" for="pw">Senha</label>
+          <div class="field-password">
+            <input class="input input--lg" id="pw" type="password" placeholder="Digite uma senha forte" autocomplete="new-password" aria-describedby="pwmsg reqs">
+            <button class="field-password__toggle" type="button" aria-label="Mostrar senha" data-for="pw"><svg class="ic-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg><svg class="ic-eyeoff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg></button>
           </div>
-          <p class="fieldmsg" id="pwmsg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> A senha não cumpre todos os requisitos.</p>
+          <p class="field__msg field__msg--error" id="pwmsg" role="alert" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> A senha não cumpre todos os requisitos.</p>
           <ul class="reqs" id="reqs">
             <li class="req" data-req="len"><span class="rico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>Pelo menos 8 caracteres</li>
             <li class="req" data-req="upper"><span class="rico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>Pelo menos uma letra maiúscula</li>
             <li class="req" data-req="num"><span class="rico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>Pelo menos um número</li>
           </ul>
         </div>
-        <div class="f">
-          <label for="pw2">Confirmar senha</label>
-          <div class="pw">
+        <div class="field">
+          <label class="field__label" for="pw2">Confirmar senha</label>
+          <div class="field-password">
             <input class="input input--lg" id="pw2" type="password" placeholder="Repita a senha" autocomplete="new-password" aria-describedby="pw2msg">
-            <button class="eye" type="button" aria-label="Mostrar senha" data-for="pw2"><svg class="ic-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg><svg class="ic-eyeoff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg></button>
+            <button class="field-password__toggle" type="button" aria-label="Mostrar senha" data-for="pw2"><svg class="ic-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg><svg class="ic-eyeoff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg></button>
           </div>
-          <p class="fieldmsg" id="pw2msg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> As senhas não conferem.</p>
+          <p class="field__msg field__msg--error" id="pw2msg" role="alert" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> As senhas não conferem.</p>
         </div>
         <div class="termsblock">
-          <label class="terms" id="terms">
-            <input type="checkbox" id="tc">
-            <span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+          <label class="check" id="terms" style="align-items:flex-start">
+            <input type="checkbox" id="tc" aria-describedby="tcmsg">
             <span>Li e aceito os <a href="#">Termos de Uso</a> e a <a href="#">Política de Privacidade</a>.</span>
           </label>
-          <p class="fieldmsg" id="tcmsg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Este campo é obrigatório.</p>
+          <p class="field__msg field__msg--error" id="tcmsg" role="alert" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Este campo é obrigatório.</p>
         </div>
         <button class="btn btn--primary btn--lg" type="submit">Continuar</button>
         <div class="secure"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Conexão segura. A a-DeRE nunca pede sua senha por telefone ou e-mail.</div>
@@ -381,31 +287,32 @@
           </svg>
         </div>
         <div class="head">
-          <h1>Defina as empresas e os responsáveis</h1>
+          <p class="stepcount">Passo 2 de 3</p>
+          <h1 tabindex="-1">Defina as empresas e os responsáveis</h1>
           <p class="lead">Você pode adicionar até 5 empresas.</p>
         </div>
         <div class="sp"></div>
-        <div class="card">
-          <div class="card__count" id="count">0 de 5 empresas adicionadas</div>
-          <div class="evazio" id="empty">
-            <span class="evazio__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg></span>
-            <div class="evazio__t">
-              <b>Nenhuma empresa adicionada</b>
-              <span>Cadastre as empresas que farão as declarações na a-DeRE e indique os responsáveis por cada uma.</span>
+        <div class="card" style="width:100%">
+          <div class="card__body flex flex-col gap-6">
+            <div class="card__count" id="count">0 de 5 empresas adicionadas</div>
+            <div class="empty" id="empty">
+              <span class="empty__icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg></span>
+              <p class="empty__title">Nenhuma empresa adicionada</p>
+              <p style="margin:0">Cadastre as empresas que farão as declarações na a-DeRE e indique os responsáveis por cada uma.</p>
             </div>
+            <div class="filled" id="filled" hidden>
+              <div class="colist" id="colist"></div>
+            </div>
+            <button class="btn btn--dashed btn--lg btn--block" id="addBtn" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Adicionar empresa
+            </button>
           </div>
-          <div class="filled" id="filled" hidden>
-            <div class="colist" id="colist"></div>
-          </div>
-          <button class="btn btn--dashed btn--lg btn--block" id="addBtn" type="button">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Adicionar empresa
-          </button>
         </div>
         <div class="sp"></div>
         <div class="actions">
           <button class="btn btn--primary btn--lg" type="button" id="continuar2">Continuar</button>
-          <p class="fieldmsg" id="emprMsg" style="justify-content:center;align-self:center;text-align:center"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Adicione pelo menos uma empresa para continuar.</p>
+          <p class="field__msg field__msg--error" id="emprMsg" role="alert" hidden style="justify-content:center;align-self:center;text-align:center"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Adicione pelo menos uma empresa para continuar.</p>
           <button class="btn btn--ghost btn--lg" type="button" id="voltar2">Voltar</button>
         </div>
       </div>
@@ -423,13 +330,16 @@
           </svg>
         </div>
         <div class="head">
-          <h1>Cadastre o certificado por empresa</h1>
+          <p class="stepcount">Passo 3 de 3</p>
+          <h1 tabindex="-1">Cadastre o certificado por empresa</h1>
           <p class="lead">Cada empresa utiliza seu próprio certificado digital (ICP-Brasil) para assinar e transmitir as declarações.</p>
         </div>
         <div class="sp"></div>
-        <div class="card">
-          <div class="card__count" id="certCount">0 de 3 certificados cadastrados</div>
-          <div class="certlist" id="certlist"></div>
+        <div class="card" style="width:100%">
+          <div class="card__body flex flex-col gap-6">
+            <div class="card__count" id="certCount">0 de 3 certificados cadastrados</div>
+            <div class="certlist" id="certlist"></div>
+          </div>
         </div>
         <div class="sp"></div>
         <div class="actions">
@@ -450,7 +360,7 @@
           </svg>
         </div>
         <div class="head">
-          <h1>Conta ativada!</h1>
+          <h1 tabindex="-1">Conta ativada!</h1>
           <p class="lead">Sua conta a-DeRE está pronta. Agora você pode começar a preparar as declarações.</p>
         </div>
         <div class="sp"></div>
@@ -482,18 +392,18 @@
           </div>
           <input type="file" id="logoInput" accept="image/*" hidden>
         </div>
-        <div class="fld">
-          <label for="cnpj">CNPJ <span class="field__req">*</span></label>
-          <input class="input input--lg" id="cnpj" inputmode="numeric" placeholder="Ex.: 33.608.308/0001-73" autocomplete="off" required aria-required="true">
-          <p class="fldmsg" id="cnpjmsg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Informe um CNPJ válido (14 dígitos).</p>
-          <p class="fld__help" id="cnpjHelp">Os dados cadastrais da empresa serão preenchidos automaticamente.</p>
+        <div class="field">
+          <label class="field__label" for="cnpj">CNPJ <span class="field__req">*</span></label>
+          <input class="input input--lg" id="cnpj" inputmode="numeric" placeholder="Ex.: 33.608.308/0001-73" autocomplete="off" required aria-required="true" aria-describedby="cnpjmsg cnpjHelp">
+          <p class="field__msg field__msg--error" id="cnpjmsg" role="alert" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> <span id="cnpjmsgTxt">Informe um CNPJ válido (14 dígitos).</span></p>
+          <p class="field__msg" id="cnpjHelp">Os dados cadastrais da empresa serão preenchidos automaticamente.</p>
         </div>
         <div class="ro" id="ro">
-          <div class="ro__row"><label>CNPJ</label><span class="v" id="roCnpj">—</span></div>
-          <div class="ro__row"><label>Razão social</label><span class="v" id="roRazao">—</span></div>
-          <div class="ro__row"><label>Nome fantasia</label><span class="v" id="roFant">—</span></div>
-          <div class="ro__row"><label>Situação cadastral</label><span class="v" id="roSit">Ativa</span></div>
-          <div class="ro__row ro__row--full"><label>Natureza jurídica</label><span class="v" id="roNat">—</span></div>
+          <div class="readonly-field"><span class="readonly-field__label">CNPJ</span><span class="readonly-field__value" id="roCnpj">—</span></div>
+          <div class="readonly-field"><span class="readonly-field__label">Razão social</span><span class="readonly-field__value" id="roRazao">—</span></div>
+          <div class="readonly-field"><span class="readonly-field__label">Nome fantasia</span><span class="readonly-field__value" id="roFant">—</span></div>
+          <div class="readonly-field"><span class="readonly-field__label">Situação cadastral</span><span class="readonly-field__value" id="roSit">Ativa</span></div>
+          <div class="readonly-field ro__full"><span class="readonly-field__label">Natureza jurídica</span><span class="readonly-field__value" id="roNat">—</span></div>
         </div>
       </section>
 
@@ -503,7 +413,7 @@
         <div class="dsec__hd"><h3 class="dsec__h">Responsáveis <span class="dsec__n" id="respCount">(1)</span></h3><p class="dsec__sub">Pessoas responsáveis por realizar e acompanhar as atividades da empresa no sistema.</p></div>
         <div class="resplist" id="resplist"></div>
         <button class="btn btn--link" id="addPersonBtn" type="button" style="align-self:flex-start"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Convidar responsável</button>
-        <p class="fieldmsg" id="respMsg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Defina ao menos um preparador e um aprovador entre os responsáveis.</p>
+        <p class="field__msg field__msg--error" id="respMsg" role="alert" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Defina ao menos um preparador e um aprovador entre os responsáveis.</p>
       </section>
     </div>
     <div class="drawer__footer">
@@ -535,25 +445,25 @@
           <span class="dropzone__hint">Certificado ICP-Brasil · .pfx ou .p12 · até 5 MB</span>
         </label>
         <div class="filecard" id="certFileCard" hidden>
-          <span class="filecard__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6"/></svg></span>
-          <div class="filecard__b">
+          <span class="filecard__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6"/></svg></span>
+          <div class="filecard__body">
             <div class="filecard__name" id="certFileName">arquivo.pfx</div>
             <div class="filecard__meta" id="certFileMeta">PFX · 0 KB</div>
           </div>
-          <div class="filecard__act">
-            <button class="rm" type="button" id="certRemoveFile" aria-label="Remover arquivo">Remover</button>
-            <button class="edit" type="button" id="certReplace">Substituir</button>
+          <div class="filecard__actions">
+            <button class="filecard__link" type="button" id="certReplace">Substituir</button>
+            <button class="filecard__link filecard__link--danger" type="button" id="certRemoveFile" aria-label="Remover arquivo">Remover</button>
           </div>
         </div>
         <input type="file" id="certFile" hidden>
-        <div class="fld">
-          <label for="certPw">Senha do certificado</label>
-          <div class="pw">
-            <input class="input" id="certPw" type="password" placeholder="Ex.: senha do arquivo .pfx" autocomplete="off">
-            <button class="eye" type="button" aria-label="Mostrar senha" data-for="certPw"><svg class="ic-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg><svg class="ic-eyeoff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg></button>
+        <div class="field">
+          <label class="field__label" for="certPw">Senha do certificado</label>
+          <div class="field-password">
+            <input class="input" id="certPw" type="password" placeholder="Ex.: senha do arquivo .pfx" autocomplete="off" aria-describedby="certPwMsg certPwHelp">
+            <button class="field-password__toggle" type="button" aria-label="Mostrar senha" data-for="certPw"><svg class="ic-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg><svg class="ic-eyeoff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg></button>
           </div>
-          <p class="fldmsg" id="certPwMsg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Informe o arquivo e a senha do certificado.</p>
-          <p class="fld__help" id="certPwHelp">Informe a senha usada para abrir o arquivo do certificado.</p>
+          <p class="field__msg field__msg--error" id="certPwMsg" role="alert" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Informe o arquivo e a senha do certificado.</p>
+          <p class="field__msg" id="certPwHelp">Informe a senha usada para abrir o arquivo do certificado.</p>
         </div>
       </div>
     </div>
@@ -564,18 +474,37 @@
   </aside>
   </div>
 
+  <!-- ===== Confirmação: descartar alterações do drawer ===== -->
+  <div class="modal-backdrop" id="discardBd" hidden style="z-index:60">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="discardTitle" aria-describedby="discardText">
+      <div class="confirm">
+        <span class="confirm__icon confirm__icon--warning"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></span>
+        <div>
+          <h2 class="confirm__title" id="discardTitle" tabindex="-1">Descartar as alterações desta empresa?</h2>
+          <p class="confirm__text" id="discardText">As informações preenchidas não serão salvas.</p>
+        </div>
+      </div>
+      <div class="modal__footer">
+        <button class="btn btn--ghost" type="button" id="discardKeep">Continuar editando</button>
+        <button class="btn btn--danger" type="button" id="discardConfirm">Descartar</button>
+      </div>
+    </div>
+  </div>
+
   <script src="../design-system/ds-dialog.js"></script>
   <script>
     var $=function(id){return document.getElementById(id)};
 
     /* ===================== ROTEADOR (wizard sem reload) ===================== */
     function setStepper(n){
-      var steps=document.querySelectorAll('.steps .step');
+      var steps=document.querySelectorAll('.wizrail .wizrail__step');
       steps.forEach(function(s,i){
-        var idx=i+1; s.classList.remove('step--active','step--done','step--todo');
-        s.classList.add(idx<n?'step--done':(idx===n?'step--active':'step--todo'));
+        var idx=i+1; s.classList.remove('wizrail__step--active','wizrail__step--done','wizrail__step--todo');
+        s.classList.add(idx<n?'wizrail__step--done':(idx===n?'wizrail__step--active':'wizrail__step--todo'));
+        if(idx===n){ s.setAttribute('aria-current','step'); } else { s.removeAttribute('aria-current'); }
       });
     }
+    var STEP_LABELS={1:'Crie sua senha',2:'Adicione empresas',3:'Cadastre o certificado digital',4:'Conta ativada'};
     function goStep(n){
       var map={1:'view1',2:'view2',3:'view3',4:'view4'};
       var next=$(map[n]); if(!next) return;
@@ -588,6 +517,8 @@
         requestAnimationFrame(function(){ next.style.opacity='1'; });
         setStepper(n);
         var p=document.querySelector('.panel'); if(p) p.scrollTop=0;
+        var live=$('stepLive'); if(live){ live.textContent=(n<4?('Passo '+n+' de 3: '):'')+(STEP_LABELS[n]||''); }
+        var h=next.querySelector('h1'); if(h){ h.focus({preventScroll:true}); }
       }, cur?170:0);
     }
 
@@ -596,17 +527,17 @@
     var reqs={len:function(v){return v.length>=8}, upper:function(v){return /[A-Z]/.test(v)}, num:function(v){return /[0-9]/.test(v)}};
     function allReqs(v){return reqs.len(v)&&reqs.upper(v)&&reqs.num(v)}
     function paintReqs(){var v=pw.value;document.querySelectorAll('.req').forEach(function(li){li.classList.toggle('ok', reqs[li.dataset.req](v));});}
-    function showErr(input,msgId){input.classList.add('is-error');input.setAttribute('aria-invalid','true');$(msgId).classList.add('show');}
-    function clearErr(input,msgId){input.classList.remove('is-error');input.setAttribute('aria-invalid','false');$(msgId).classList.remove('show');}
-    function clearAll(){ clearErr(pw,'pwmsg'); clearErr(pw2,'pw2msg'); $('terms').classList.remove('is-error'); $('tcmsg').classList.remove('show'); }
+    function showErr(input,msgId){input.classList.add('is-error');input.setAttribute('aria-invalid','true');$(msgId).hidden=false;}
+    function clearErr(input,msgId){input.classList.remove('is-error');input.setAttribute('aria-invalid','false');$(msgId).hidden=true;}
+    function clearAll(){ clearErr(pw,'pwmsg'); clearErr(pw2,'pw2msg'); tc.setAttribute('aria-invalid','false'); $('tcmsg').hidden=true; }
     pw.addEventListener('input', function(){ paintReqs(); clearAll(); });
     pw2.addEventListener('input', function(){ clearAll(); });
     tc.addEventListener('change', clearAll);
-    document.querySelectorAll('.eye').forEach(function(b){
+    document.querySelectorAll('.field-password__toggle').forEach(function(b){
       b.addEventListener('click', function(){
         var i=$(b.dataset.for), show=i.type==='password';
         i.type=show?'text':'password';
-        b.classList.toggle('showing', show);
+        b.classList.toggle('is-showing', show);
         b.setAttribute('aria-label', show?'Ocultar senha':'Mostrar senha');
       });
     });
@@ -618,11 +549,11 @@
       var okTerms=tc.checked;
       if(!okPw) showErr(pw,'pwmsg'); else clearErr(pw,'pwmsg');
       if(!okMatch) showErr(pw2,'pw2msg'); else clearErr(pw2,'pw2msg');
-      $('terms').classList.toggle('is-error', !okTerms);
-      $('tcmsg').classList.toggle('show', !okTerms);
+      tc.setAttribute('aria-invalid', okTerms?'false':'true');
+      $('tcmsg').hidden=okTerms;
       if(!okPw){ pw.focus(); return; }
       if(!okMatch){ pw2.focus(); return; }
-      if(!okTerms){ return; }
+      if(!okTerms){ tc.focus(); return; }
       goStep(2);
     });
 
@@ -642,11 +573,16 @@
       if(d.length>8)o=d.slice(0,2)+'.'+d.slice(2,5)+'.'+d.slice(5,8)+'/'+d.slice(8);
       if(d.length>12)o=d.slice(0,2)+'.'+d.slice(2,5)+'.'+d.slice(5,8)+'/'+d.slice(8,12)+'-'+d.slice(12);
       return o;}
+    function setCnpjError(txt){ if($('cnpjmsgTxt'))$('cnpjmsgTxt').textContent=txt; $('cnpjmsg').hidden=false; $('cnpj').classList.add('is-error'); $('cnpj').setAttribute('aria-invalid','true'); }
+    function clearCnpjError(){ $('cnpjmsg').hidden=true; $('cnpj').classList.remove('is-error'); $('cnpj').setAttribute('aria-invalid','false'); }
     $('cnpj').addEventListener('input',function(){
       this.value=maskCNPJ(this.value);
-      $('cnpjmsg').classList.remove('show'); this.classList.remove('is-error');
+      clearCnpjError();
       var d=onlyDigits(this.value);
-      if(d.length===14){ fillFromCNPJ(d); } else { $('ro').classList.remove('show'); if($('cnpjHelp'))$('cnpjHelp').hidden=false; }
+      if(d.length===14){
+        if(CNPJDB[d]){ fillFromCNPJ(d); }
+        else { $('ro').classList.remove('show'); if($('cnpjHelp'))$('cnpjHelp').hidden=false; setCnpjError('CNPJ não encontrado. Confira o número e tente novamente.'); }
+      } else { $('ro').classList.remove('show'); if($('cnpjHelp'))$('cnpjHelp').hidden=false; }
     });
     function showRo(){
       var ro=$('ro'); var was=ro.classList.contains('show');
@@ -660,16 +596,10 @@
       setTimeout(function(){ ro.style.transition=''; ro.style.height=''; ro.style.overflow=''; ro.style.opacity=''; }, 340);
     }
     function fillFromCNPJ(d){
-      /* Protótipo: a consulta à Receita devolve sempre uma empresa real.
-         CNPJ conhecido → seus dados; CNPJ qualquer → a próxima empresa MAG ainda não adicionada. */
-      var rec=CNPJDB[d], shownCnpj=d;
-      if(!rec){
-        var usados={}; companies.forEach(function(c){ usados[onlyDigits(c.cnpj)]=1; });
-        var livre=Object.keys(CNPJDB).filter(function(k){ return !usados[k]; });
-        var pick=(livre[0]||Object.keys(CNPJDB)[0]);
-        rec=CNPJDB[pick]; shownCnpj=pick;
-      }
-      $('roCnpj').textContent=maskCNPJ(shownCnpj); $('roRazao').textContent=rec.razao; $('roFant').textContent=rec.fant||'—'; $('roNat').textContent=rec.nat||'—';
+      /* Protótipo: a "consulta à Receita" reconhece só os CNPJs conhecidos (CNPJDB).
+         CNPJ fora da base não preenche nada (ver setCnpjError no listener/saveCompany). */
+      var rec=CNPJDB[d]; if(!rec) return;
+      $('roCnpj').textContent=maskCNPJ(d); $('roRazao').textContent=rec.razao; $('roFant').textContent=rec.fant||'—'; $('roNat').textContent=rec.nat||'—';
       showRo(); if($('cnpjHelp'))$('cnpjHelp').hidden=true;
     }
     var LOGO_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>';
@@ -689,24 +619,34 @@
         if(p._edit){
           el.className='resp resp--edit';
           var checks=(p.admin?'<label class="check"><input type="checkbox" checked disabled> Administrador</label>':'')+PERFIS.map(function(pf){var on=p.perfis.indexOf(pf.k)>=0;return '<label class="check"><input type="checkbox" data-k="'+pf.k+'"'+(on?' checked':'')+'> '+pf.k+'</label>';}).join('');
+          var ERRIC='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
           el.innerHTML=
             '<div class="rf-head"><span class="rf-title">'+(p._new?'Novo responsável':'Editar responsável')+'</span><button class="icon-btn icon-btn--sm rf-cancel" type="button" data-tooltip="Cancelar" aria-label="Cancelar edição"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div>'+
-            '<div class="rf-grid"><div class="fld"><label>Nome</label><input class="input rf-nome" value="'+esc(p.nome)+'" placeholder="Ex.: Nome da pessoa"></div><div class="fld"><label>E-mail</label><input class="input rf-mail" type="email" value="'+esc(p.email)+'" placeholder="Ex.: nome@empresa.com"'+(p.admin?' disabled':'')+'></div></div>'+
-            '<div class="fld"><label>Perfis</label><div class="rf-perfis">'+checks+'</div></div>'+
+            '<div class="rf-grid">'+
+              '<div class="field"><label class="field__label">Nome</label><input class="input rf-nome" aria-label="Nome do responsável" value="'+esc(p.nome)+'" placeholder="Ex.: Nome da pessoa"><p class="field__msg field__msg--error rf-nome-msg" role="alert" hidden>'+ERRIC+' Informe o nome.</p></div>'+
+              '<div class="field"><label class="field__label">E-mail</label><input class="input rf-mail" type="email" aria-label="E-mail do responsável" value="'+esc(p.email)+'" placeholder="Ex.: nome@empresa.com"'+(p.admin?' disabled':'')+'><p class="field__msg field__msg--error rf-mail-msg" role="alert" hidden>'+ERRIC+' Informe um e-mail válido.</p></div>'+
+            '</div>'+
+            '<div class="field"><label class="field__label">Perfis</label><div class="rf-perfis">'+checks+'</div></div>'+
             '<div class="rf__act"><button class="btn btn--secondary btn--sm rf-save" type="button">Confirmar responsável</button></div>';
+          var nomeI=el.querySelector('.rf-nome'), mailI=el.querySelector('.rf-mail');
+          nomeI.addEventListener('input',function(){ el.querySelector('.rf-nome-msg').hidden=true; nomeI.setAttribute('aria-invalid','false'); });
+          mailI.addEventListener('input',function(){ el.querySelector('.rf-mail-msg').hidden=true; mailI.setAttribute('aria-invalid','false'); });
           el.querySelector('.rf-save').addEventListener('click',function(){
-            var nome=el.querySelector('.rf-nome').value.trim();
-            var mail=el.querySelector('.rf-mail').value.trim();
+            var nome=nomeI.value.trim();
+            var mail=mailI.value.trim();
             var perfis=[].slice.call(el.querySelectorAll('.rf-perfis input[data-k]:checked')).map(function(c){return c.getAttribute('data-k');});
-            if(!nome){ el.querySelector('.rf-nome').focus(); return; }
-            if(!/.+@.+\..+/.test(mail)){ el.querySelector('.rf-mail').focus(); return; }
+            var okNome=!!nome, okMail=/.+@.+\..+/.test(mail);
+            el.querySelector('.rf-nome-msg').hidden=okNome; nomeI.setAttribute('aria-invalid', okNome?'false':'true');
+            el.querySelector('.rf-mail-msg').hidden=okMail; mailI.setAttribute('aria-invalid', okMail?'false':'true');
+            if(!okNome){ nomeI.focus(); return; }
+            if(!okMail){ mailI.focus(); return; }
             p.nome=nome; p.email=mail; p.perfis=perfis; p._edit=false; p._new=false; swapToCard(el,p,i);
           });
           el.querySelector('.rf-cancel').addEventListener('click',function(){ if(p._new){ resp.splice(i,1); } else { p._edit=false; } renderResp(); });
         } else {
           el.className='resp';
-          var chips=(p.admin?'<span class="pchip">Admin</span>':'')+p.perfis.map(function(k){return '<span class="pchip">'+k+'</span>';}).join('');
-          if(!chips) chips='<span class="pchip pchip--none">Sem perfil</span>';
+          var chips=(p.admin?'<span class="tag">Admin</span>':'')+p.perfis.map(function(k){return '<span class="tag">'+esc(k)+'</span>';}).join('');
+          if(!chips) chips='<span class="tag" style="border-style:dashed;color:var(--color-text-muted)">Sem perfil</span>';
           el.innerHTML=
             '<span class="resp__av">'+initials(p.nome)+'</span>'+
             '<div class="resp__b"><div class="resp__name"><b>'+esc(p.nome)+'</b></div><span class="resp__mail">'+esc(p.email)+'</span><div class="resp__perfis">'+chips+'</div></div>'+
@@ -725,11 +665,11 @@
       var wrap=$('resplist'); wrap.innerHTML='';
       resp.forEach(function(p,i){ wrap.appendChild(buildResp(p,i)); });
       $('respCount').textContent='('+resp.length+')';
-      if($('respMsg')){ var hp=resp.some(function(p){return (p.perfis||[]).indexOf('Preparador')>=0;}), ha=resp.some(function(p){return (p.perfis||[]).indexOf('Aprovador')>=0;}); if(hp&&ha)$('respMsg').classList.remove('show'); }
+      if($('respMsg')){ var hp=resp.some(function(p){return (p.perfis||[]).indexOf('Preparador')>=0;}), ha=resp.some(function(p){return (p.perfis||[]).indexOf('Aprovador')>=0;}); if(hp&&ha)$('respMsg').hidden=true; }
     }
     /* Confirmar: fecha o form de preenchimento e revela o card com transição (colapsa o form, expande o card). */
     function swapToCard(el,p,i){
-      if($('respMsg')){ var hp=resp.some(function(x){return (x.perfis||[]).indexOf('Preparador')>=0;}), ha=resp.some(function(x){return (x.perfis||[]).indexOf('Aprovador')>=0;}); if(hp&&ha)$('respMsg').classList.remove('show'); }
+      if($('respMsg')){ var hp=resp.some(function(x){return (x.perfis||[]).indexOf('Preparador')>=0;}), ha=resp.some(function(x){return (x.perfis||[]).indexOf('Aprovador')>=0;}); if(hp&&ha)$('respMsg').hidden=true; }
       var card=buildResp(p,i);
       el.parentNode.replaceChild(card, el);            /* swap instantâneo */
       if(!matchMedia('(prefers-reduced-motion:reduce)').matches){
@@ -758,32 +698,51 @@
       if(!reduce) el.scrollIntoView({behavior:'smooth',block:'nearest'});
     });
     function openDrawer(edit){
-      if($('respMsg'))$('respMsg').classList.remove('show');
+      if($('respMsg'))$('respMsg').hidden=true;
       if(!edit){
         editIndex=-1; resetLogo();
-        $('cnpj').value=''; $('cnpj').classList.remove('is-error'); $('ro').classList.remove('show'); if($('cnpjHelp'))$('cnpjHelp').hidden=false; $('cnpjmsg').classList.remove('show');
+        $('cnpj').value=''; clearCnpjError(); $('ro').classList.remove('show'); if($('cnpjHelp'))$('cnpjHelp').hidden=false;
         $('drawerTitle').textContent='Adicionar empresa'; resetResp();
       }
       dsDialog.open($('drawerBd'), {focus: $('drawerTitle')});
     }
     function closeDrawer(){ dsDialog.close(); }
+    /* Descarte: se o drawer tem dados preenchidos, confirma antes de fechar (Cancelar / X / clique no fundo) */
+    var _discardCb=null;
+    function openDiscard(cb, title){
+      _discardCb=cb;
+      $('discardTitle').textContent=title||'Descartar as alterações desta empresa?';
+      dsDialog.open($('discardBd'), {focus: $('discardKeep')});
+    }
+    $('discardKeep').addEventListener('click',function(){ dsDialog.close(); _discardCb=null; });
+    $('discardConfirm').addEventListener('click',function(){ dsDialog.close(); var cb=_discardCb; _discardCb=null; if(cb) cb(); });
+    $('discardBd').addEventListener('click',function(e){ if(e.target===this){ dsDialog.close(); _discardCb=null; } });
+    function isCompanyDrawerDirty(){
+      if(($('cnpj').value||'').trim()!=='') return true;
+      if(logoData) return true;
+      if(resp.length>1) return true;
+      if(resp[0] && (resp[0].perfis||[]).length>0) return true;
+      return false;
+    }
+    function requestCloseDrawer(){ if(isCompanyDrawerDirty()){ openDiscard(function(){ closeDrawer(); }); } else { closeDrawer(); } }
     $('addBtn').addEventListener('click',function(){openDrawer(false)});
-    $('drawerX').addEventListener('click',closeDrawer);
-    $('cancelDrawer').addEventListener('click',closeDrawer);
-    $('drawerBd').addEventListener('click',function(e){ if(e.target===this) closeDrawer(); });
-    $('certBd').addEventListener('click',function(e){ if(e.target===this) closeCertDrawer(); });
+    $('drawerX').addEventListener('click',requestCloseDrawer);
+    $('cancelDrawer').addEventListener('click',requestCloseDrawer);
+    $('drawerBd').addEventListener('click',function(e){ if(e.target===this) requestCloseDrawer(); });
+    $('certBd').addEventListener('click',function(e){ if(e.target===this) requestCloseCertDrawer(); });
     $('saveCompany').addEventListener('click',function(){
       var d=onlyDigits($('cnpj').value);
-      if(d.length!==14){ $('cnpjmsg').classList.add('show'); $('cnpj').classList.add('is-error'); $('cnpj').focus(); return; }
+      if(d.length!==14){ setCnpjError('Informe um CNPJ válido (14 dígitos).'); $('cnpj').focus(); return; }
+      if(!CNPJDB[d]){ setCnpjError('CNPJ não encontrado. Confira o número e tente novamente.'); $('cnpj').focus(); return; }
       var hasPrep=resp.some(function(p){return (p.perfis||[]).indexOf('Preparador')>=0;});
       var hasAprov=resp.some(function(p){return (p.perfis||[]).indexOf('Aprovador')>=0;});
-      if(!hasPrep||!hasAprov){ $('respMsg').classList.add('show'); return; }
+      if(!hasPrep||!hasAprov){ $('respMsg').hidden=false; return; }
       var obj={ cnpj:$('roCnpj').textContent||maskCNPJ(d), razao:$('roRazao').textContent, resp:resp.filter(function(p){return !p._new;}).map(function(p){return {nome:p.nome,email:p.email,perfis:(p.perfis||[]).slice(),admin:p.admin};}), logo:logoData };
       if(editIndex>=0){ companies[editIndex]=obj; } else { companies.push(obj); }
       closeDrawer(); renderCompanies();
     });
     function renderCompanies(){
-      var list=$('colist'), em=$('emprMsg'); if(em && companies.length>0) em.classList.remove('show');
+      var list=$('colist'), em=$('emprMsg'); if(em && companies.length>0) em.hidden=true;
       $('count').textContent=companies.length+' de '+MAX+' empresas adicionadas';
       if(companies.length===0){ $('empty').hidden=false; $('filled').hidden=true; $('count').hidden=true; list.innerHTML=''; $('addBtn').style.display=''; return; }
       $('empty').hidden=true; $('filled').hidden=false; $('count').hidden=false; list.innerHTML='';
@@ -809,7 +768,7 @@
       if(c.logo){ setLogo(c.logo); } else { resetLogo(); }
     }
     $('voltar2').addEventListener('click',function(){ goStep(1); });
-    $('continuar2').addEventListener('click',function(){ if(companies.length===0){ $('emprMsg').classList.add('show'); return; } $('emprMsg').classList.remove('show'); goStep(3); });
+    $('continuar2').addEventListener('click',function(){ if(companies.length===0){ $('emprMsg').hidden=false; return; } $('emprMsg').hidden=true; goStep(3); });
 
     /* ===================== STEP 3 · CERTIFICADO (3 empresas fixas) ===================== */
     var CERTS=[
@@ -823,7 +782,7 @@
       CERTS.forEach(function(c,i){
         var el=document.createElement('div'); el.className='co';
         var importBtn = '<div class="co__act"><button class="btn btn--secondary btn--sm cert-send" type="button" style="gap:var(--space-2)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg> Importar certificado</button></div>';
-        var certBlock = '<div class="certblock"><span class="certblock__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v5h5"/><path d="M9 13h6"/><path d="M9 17h6"/></svg></span><span class="certblock__name" title="'+esc(c.file||'')+'">'+esc(c.file||'')+'</span><span class="certblock__act"><button class="cert-redo" type="button">Substituir</button><button class="cert-del" type="button">Remover</button></span></div>';
+        var certBlock = '<div class="filecard"><span class="filecard__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v5h5"/><path d="M9 13h6"/><path d="M9 17h6"/></svg></span><div class="filecard__body"><div class="filecard__name" title="'+esc(c.file||'')+'">'+esc(c.file||'')+'</div><div class="filecard__meta">Certificado importado</div></div><div class="filecard__actions"><button class="filecard__link cert-redo" type="button">Substituir</button><button class="filecard__link filecard__link--danger cert-del" type="button">Remover</button></div></div>';
         el.innerHTML='<div class="co__top"><span class="co__logo">MAG</span>'+
           '<div class="co__b"><div class="co__name">'+esc(c.nome)+'</div><div class="co__meta">'+esc(c.cnpj)+'</div></div>'+
           (c.file ? '' : importBtn)+
@@ -853,21 +812,23 @@
       $('certSub').textContent = 'Certificado digital (ICP-Brasil) da '+c.nome+'.';
       $('certFile').value=''; $('certPw').value='';
       showCertFile(null);
-      $('certPwMsg').classList.remove('show'); $('certPw').classList.remove('is-error');
+      $('certPwMsg').hidden=true; $('certPw').classList.remove('is-error'); $('certPw').setAttribute('aria-invalid','false');
       dsDialog.open($('certBd'), {focus: $('certTitle')});
     }
     function closeCertDrawer(){ dsDialog.close(); }
-    $('certFile').addEventListener('change',function(){ if(this.files && this.files[0]){ showCertFile(this.files[0]); $('certPwMsg').classList.remove('show'); } });
+    function isCertDrawerDirty(){ return ($('certFile').files && $('certFile').files.length>0) || ($('certPw').value||'').trim()!==''; }
+    function requestCloseCertDrawer(){ if(isCertDrawerDirty()){ openDiscard(function(){ closeCertDrawer(); }, 'Descartar o certificado?'); } else { closeCertDrawer(); } }
+    $('certFile').addEventListener('change',function(){ if(this.files && this.files[0]){ showCertFile(this.files[0]); $('certPwMsg').hidden=true; } });
     $('certReplace').addEventListener('click',function(){ $('certFile').click(); });
     $('certRemoveFile').addEventListener('click',function(){ $('certFile').value=''; showCertFile(null); });
     $('certConfirm').addEventListener('click',function(){
       var f=$('certFile').files[0], pw=$('certPw').value.trim();
-      if(!f || !pw){ $('certPwMsg').classList.add('show'); if(!pw){ $('certPw').classList.add('is-error'); $('certPw').focus(); } return; }
+      if(!f || !pw){ $('certPwMsg').hidden=false; if(!pw){ $('certPw').classList.add('is-error'); $('certPw').setAttribute('aria-invalid','true'); $('certPw').focus(); } return; }
       CERTS[certTarget].file=f.name; CERTS[certTarget].hasPw=true;
       closeCertDrawer(); renderCerts();
     });
-    $('certCancel').addEventListener('click',closeCertDrawer);
-    $('certX').addEventListener('click',closeCertDrawer);
+    $('certCancel').addEventListener('click',requestCloseCertDrawer);
+    $('certX').addEventListener('click',requestCloseCertDrawer);
     $('voltar3').addEventListener('click',function(){ goStep(2); });
     $('concluir').addEventListener('click',function(){ goStep(4); });
     $('irPainel').addEventListener('click',function(){ window.location.href='login.html'; });

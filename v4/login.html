@@ -7,16 +7,18 @@
   <meta http-equiv="Expires" content="0">
   <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>a-DeRE · Entrar</title>
-<link rel="stylesheet" href="../design-system/ds.css?v=37">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="../design-system/ds.css?v=38">
+<script src="../design-system/ds-tailwind.js"></script>
 <style>
   body{margin:0;font-family:var(--font-sans);color:var(--color-text)}
   [hidden]{display:none !important}
   .auth{min-height:100vh;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr)}
-  .aside{background:linear-gradient(rgba(17,62,140,.93),rgba(10,40,96,.96)), url('img/fazenda.png') center bottom/cover no-repeat, var(--color-primary-hover);padding:var(--space-12);display:flex;flex-direction:column;justify-content:space-between;gap:var(--space-10)}
-  .aside .wm{font-size:var(--text-xl);font-weight:800;letter-spacing:-.01em;color:#fff}
-  .aside h2{font-size:var(--text-2xl);margin:0 0 var(--space-3);line-height:1.3;color:#fff;font-weight:700;max-width:20ch}
-  .aside p{margin:0;color:color-mix(in srgb,#fff 72%,transparent);font-size:var(--text-base);line-height:1.6;max-width:38ch}
-  .aside .foot{color:color-mix(in srgb,#fff 55%,transparent);font-size:var(--text-xs)}
+  .aside{background:var(--gradient-auth), url('img/fazenda.png') center bottom/cover no-repeat, var(--color-primary-hover);padding:var(--space-12);display:flex;flex-direction:column;justify-content:space-between;gap:var(--space-10)}
+  .aside .wm{font-size:var(--text-xl);font-weight:800;letter-spacing:-.01em;color:var(--color-on-navy)}
+  .aside h2{font-size:var(--text-2xl);margin:0 0 var(--space-3);line-height:1.3;color:var(--color-on-navy);font-weight:700;max-width:20ch}
+  .aside p{margin:0;color:color-mix(in srgb,var(--color-on-navy) 72%,transparent);font-size:var(--text-base);line-height:1.6;max-width:38ch}
+  .aside .foot{color:color-mix(in srgb,var(--color-on-navy) 55%,transparent);font-size:var(--text-xs)}
   .panel{background:var(--color-surface);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:var(--space-12) var(--space-6)}
   .form{width:100%;max-width:400px}
   .brand{text-align:center;font-size:var(--text-xl);font-weight:800;letter-spacing:-.01em;color:var(--color-heading);margin-bottom:var(--space-8)}
@@ -29,10 +31,7 @@
   .field-icon__i svg{width:18px;height:18px}
   .field__msg svg{width:14px;height:14px}
 
-  .pw .input{padding-right:var(--space-10)}
-  .pw .toggle{position:absolute;right:var(--space-2);top:50%;transform:translateY(-50%);background:none;border:0;padding:var(--space-1-5);cursor:pointer;color:var(--color-text-onmuted);display:grid;place-items:center;border-radius:var(--radius-base)}
-  .pw .toggle:hover{color:var(--color-text)}
-  .pw .toggle svg{width:18px;height:18px}
+  /* Campo de senha: botão mostrar/ocultar vem do componente .field-password do DS */
 
   .forgot-row{margin-top:calc(-1 * var(--space-2));text-align:right}
   .forgot{font-size:var(--text-sm);font-weight:600;color:var(--color-primary);text-decoration:none}
@@ -40,7 +39,7 @@
 
   .actions{margin-top:var(--space-4)}
   .actions .btn{width:100%;justify-content:center}
-  .secure{margin-top:var(--space-6);display:flex;align-items:center;justify-content:center;gap:7px;color:var(--color-text-muted);font-size:var(--text-xs);line-height:1.45}
+  .secure{margin-top:var(--space-6);display:flex;align-items:center;justify-content:center;gap:var(--space-2);color:var(--color-text-muted);font-size:var(--text-xs);line-height:1.45}
   .secure svg{width:14px;height:14px;flex:0 0 auto}
 
   .hint{margin-top:var(--space-6);padding:var(--space-3) var(--space-4);background:color-mix(in srgb,var(--color-primary) 5%,var(--color-surface));border:1px solid var(--color-border);border-radius:var(--radius-base);font-size:var(--text-xs);color:var(--color-text-onmuted);line-height:1.5}
@@ -124,10 +123,10 @@
 
         <div class="field" id="fSenha">
           <label class="field__label" for="senha">Senha</label>
-          <div class="field-icon pw">
+          <div class="field-icon field-password">
             <span class="field-icon__i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
             <input class="input input--lg" id="senha" type="password" autocomplete="current-password" placeholder="Sua senha" aria-describedby="senhaMsg">
-            <button type="button" class="toggle" id="toggle" aria-label="Mostrar senha" onclick="tog()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>
+            <button type="button" class="field-password__toggle" id="toggle" aria-label="Mostrar senha" onclick="tog()"><svg class="ic-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg><svg class="ic-eyeoff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg></button>
           </div>
           <p class="field__msg field__msg--error" id="senhaMsg" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg> <span></span></p>
         </div>
@@ -143,18 +142,20 @@
 
       <div class="soon" id="soon" hidden>
         <div class="soon__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="8" rx="1"/><path d="M17 14v7"/><path d="M7 14v7"/><path d="M17 3v3"/><path d="M7 3v3"/><path d="M10 14 2.3 6.3"/><path d="m14 6 7.7 7.7"/><path d="m8 6 8 8"/></svg></div>
-        <h1>Em construção</h1>
+        <h1 id="soonTitle" tabindex="-1">Em construção</h1>
         <p class="lead">Estamos finalizando esta área da plataforma. Em breve você poderá acessar sua conta por aqui.</p>
       </div>
     </main>
   </div>
 
+  <script src="../design-system/ds-dialog.js"></script>
   <script>
     function $(id){ return document.getElementById(id); }
     function tog(){
       var i=$('senha'), b=$('toggle');
       var show=i.type==='password';
       i.type=show?'text':'password';
+      b.classList.toggle('is-showing', show);
       b.setAttribute('aria-label',show?'Ocultar senha':'Mostrar senha');
     }
     function setErr(fieldId, msgId, text){
@@ -192,6 +193,7 @@
       $('loginForm').hidden=true;
       var dh=document.querySelector('.demo-hint'); if(dh) dh.hidden=true;
       $('soon').hidden=false;
+      $('soonTitle').focus();
       return false;
     }
   </script>
@@ -211,10 +213,9 @@
   <script>
     (function(){
       var bd=document.getElementById('acessosBd');
-      document.getElementById('acessosOpen').addEventListener('click',function(){ bd.hidden=false; document.getElementById('acessosClose').focus(); });
-      document.getElementById('acessosClose').addEventListener('click',function(){ bd.hidden=true; });
-      bd.addEventListener('click',function(e){ if(e.target===bd) bd.hidden=true; });
-      document.addEventListener('keydown',function(e){ if(e.key==='Escape' && !bd.hidden) bd.hidden=true; });
+      document.getElementById('acessosOpen').addEventListener('click',function(){ dsDialog.open(bd); });
+      document.getElementById('acessosClose').addEventListener('click',function(){ dsDialog.close(); });
+      bd.addEventListener('click',function(e){ if(e.target===bd) dsDialog.close(); });
     })();
   </script>
 </body>
