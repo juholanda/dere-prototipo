@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Detalhe do contribuinte</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=30">
+  <link rel="stylesheet" href="../design-system/ds.css?v=31">
   <script src="../design-system/ds-tailwind.js"></script>
   <script src="../design-system/ds-dialog.js"></script>
   <style>
@@ -26,7 +26,7 @@
     /* conteúdo cresce até 1600px; margem lateral nunca menor que 40px (padding) */
     .wrap{padding:var(--space-8) var(--space-10);max-width:1600px;width:100%;margin:0 auto;box-sizing:border-box}
     .page-h{background:var(--color-surface);border-bottom:1px solid var(--color-border)}
-    .page-h .wrap{padding-top:var(--space-6);padding-bottom:var(--space-6)}
+    .page-h .wrap{padding-top:var(--space-8);padding-bottom:var(--space-8)}
     .page-h__row{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--space-6);flex-wrap:wrap}
     .page-h__row > div{min-width:0}
     .eyebrow{margin:0 0 var(--space-1-5)}
@@ -174,25 +174,23 @@
     .dcard .tabs{margin:var(--space-6) var(--space-6) 0}
     .dcard .tabs__panel{padding:var(--space-6)}
     /* acordeão de informações da versão */
-    .accicon{width:30px;height:30px;border-radius:var(--radius-lg);background:var(--color-primary-subtle);color:var(--color-primary);display:grid;place-items:center;flex:0 0 auto}
-    .accicon svg{width:17px;height:17px}
-    .accordion__head{font-size:var(--text-base);font-weight:600;color:var(--color-heading);padding:var(--space-4) var(--space-6)}
+    /* acordeão: base do DS; aqui só o respiro maior no cabeçalho e no painel (tokens do DS) */
+    #dacc .accordion__head{font-size:var(--text-base);font-weight:600;color:var(--color-heading);padding:var(--space-4) var(--space-6)}
     #dacc .accordion__panel{padding:var(--space-6)}
-    .acchd{display:flex;align-items:center;gap:var(--space-3);min-width:0}
     .seelink{display:inline-flex;align-items:center;gap:var(--space-1-5);margin-top:var(--space-4);font-size:var(--text-sm);font-weight:600;color:var(--color-primary);background:none;border:0;cursor:pointer;padding:0}
     .seelink:hover{text-decoration:underline}
     .seelink svg{width:16px;height:16px}
 
     /* ===== histórico / linha do tempo do ciclo de vida ===== */
     .histhead{display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);flex-wrap:wrap;margin-bottom:var(--space-6)}
-    .histhead__desc{font-size:var(--text-base);color:var(--color-text-onmuted);margin:0;max-width:56ch;line-height:1.5}
+    .histhead__desc{font-size:var(--text-sm);color:var(--color-text-muted);margin:0;font-weight:600}
     /* bolinhas neutras (uma cor só, pra não poluir) */
     #tl .timeline__dot{border-color:var(--color-border-strong)}
     .tl__body{min-width:0}
     #tl .timeline__item{padding-bottom:var(--space-10)}
     .tl__head{display:flex;align-items:baseline;gap:var(--space-6)}
     .tl__title{font-size:var(--text-base);font-weight:600;color:var(--color-heading);margin:0;line-height:1.3}
-    .tl__time{font-size:var(--text-xs);color:var(--color-text-muted);flex:0 0 auto;font-variant-numeric:tabular-nums;white-space:nowrap}
+    .tl__time{font-size:var(--text-sm);font-weight:400;color:var(--color-text-muted);flex:0 0 auto;font-variant-numeric:tabular-nums;white-space:nowrap}
     .tl__fields{margin-top:var(--space-3);display:flex;flex-direction:column;gap:var(--space-4)}
     .tl__field{display:flex;gap:var(--space-3);align-items:baseline}
     .tl__field dt{font-size:var(--text-sm);color:var(--color-text-muted);font-weight:600;flex:0 0 auto;min-width:104px}
@@ -323,7 +321,7 @@
             <div class="tabs__panel" id="dp-info" role="tabpanel" aria-labelledby="dt-info" tabindex="0">
               <div class="accordion" id="dacc">
                 <div class="accordion__item is-open">
-                  <button class="accordion__head" type="button" aria-expanded="true"><span class="acchd"><span class="accicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg></span>Identificação</span><span class="accordion__chev" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button>
+                  <button class="accordion__head" type="button" aria-expanded="true"><span class="accordion__label"><span class="accordion__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg></span>Identificação</span><span class="accordion__chev" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button>
                   <div class="accordion__panel"><dl class="rogrid">
                     <div class="roitem"><dt>Nome empresarial</dt><dd id="roNome">MAG Seguros</dd></div>
                     <div class="roitem"><dt>CNPJ (raiz)</dt><dd id="roCnpjRaiz">33.608.308</dd></div>
@@ -331,14 +329,14 @@
                   </dl></div>
                 </div>
                 <div class="accordion__item is-open">
-                  <button class="accordion__head" type="button" aria-expanded="true"><span class="acchd"><span class="accicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>Vigência</span><span class="accordion__chev" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button>
+                  <button class="accordion__head" type="button" aria-expanded="true"><span class="accordion__label"><span class="accordion__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>Vigência</span><span class="accordion__chev" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button>
                   <div class="accordion__panel"><dl class="rogrid">
                     <div class="roitem"><dt>Início da vigência</dt><dd>01/01/2026</dd></div>
                     <div class="roitem"><dt>Fim da vigência</dt><dd>Sem data de fim</dd></div>
                   </dl></div>
                 </div>
                 <div class="accordion__item is-open">
-                  <button class="accordion__head" type="button" aria-expanded="true"><span class="acchd"><span class="accicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10M12 3v18M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg></span>Regime tributário</span><span class="accordion__chev" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button>
+                  <button class="accordion__head" type="button" aria-expanded="true"><span class="accordion__label"><span class="accordion__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10M12 3v18M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg></span>Regime tributário</span><span class="accordion__chev" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button>
                   <div class="accordion__panel"><dl class="rogrid">
                     <div class="roitem"><dt>CNAE principal</dt><dd>65.11-1/01 · Seguros de vida</dd></div>
                     <div class="roitem"><dt>Regime principal</dt><dd><span class="ronum">1</span>Serviços Financeiros</dd></div>
@@ -347,7 +345,7 @@
                   </dl></div>
                 </div>
                 <div class="accordion__item is-open">
-                  <button class="accordion__head" type="button" aria-expanded="true"><span class="acchd"><span class="accicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8M13 12h8M13 18h8"/></svg></span>Atividades</span><span class="accordion__chev" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button>
+                  <button class="accordion__head" type="button" aria-expanded="true"><span class="accordion__label"><span class="accordion__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8M13 12h8M13 18h8"/></svg></span>Atividades</span><span class="accordion__chev" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button>
                   <div class="accordion__panel"><dl class="rogrid">
                     <div class="roitem rogrid__full"><dt>Serviços Financeiros<span class="rotab">Tabela 21</span></dt>
                       <dd><div class="ropicks">
@@ -362,7 +360,7 @@
             </div>
 
             <div class="tabs__panel" id="dp-hist" role="tabpanel" aria-labelledby="dt-hist" tabindex="0" hidden>
-              <div class="histhead"><p class="histhead__desc">Cada etapa do processamento desta versão, do preenchimento ao retorno da Receita Federal.</p><button class="btn btn--secondary" type="button"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/></svg>Baixar histórico</button></div>
+              <div class="histhead"><p class="histhead__desc" id="histCount"></p><button class="btn btn--secondary" type="button"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/></svg>Baixar histórico</button></div>
               <ol class="timeline" id="tl"></ol>
             </div>
           </section>
@@ -428,13 +426,13 @@
   };
   var TL={
     rascunho:     ['criada'],
-    revisao:      ['criada','enviada'],
-    ajustes:      ['criada','enviada','ajustes'],
-    processando:  ['criada','enviada','aprovada','processando'],
-    sucesso:      ['criada','enviada','ajustes','reenviada','aprovada','processada'],
-    advertencias: ['criada','enviada','ajustes','reenviada','aprovada','processada_adv'],
-    rejeitado:    ['criada','enviada','aprovada','rejeitada'],
-    encerrada:    ['criada','enviada','aprovada','processada']
+    revisao:      ['enviada'],
+    ajustes:      ['enviada','ajustes'],
+    processando:  ['enviada','aprovada','processando'],
+    sucesso:      ['enviada','ajustes','reenviada','aprovada','processada'],
+    advertencias: ['enviada','ajustes','reenviada','aprovada','processada_adv'],
+    rejeitado:    ['enviada','aprovada','rejeitada'],
+    encerrada:    ['enviada','aprovada','processada']
   };
   function personBlock(label, who, date){
     return '<div class="person"><p class="person__k">'+USER+esc(label)+'</p><div class="person__v"><span class="avatar avatar--sm">'+initials(who)+'</span><div><p class="person__name">'+esc(who)+'</p>'+(date?'<p class="person__date">'+esc(date)+'</p>':'')+'</div></div></div>';
@@ -456,7 +454,10 @@
   }
   function renderTimeline(sit){
     var el=$('tl'); if(!el) return;
-    var keys=TL[sit]||TL.revisao;
+    var keys=(TL[sit]||TL.revisao).slice();
+    /* "Versão criada" (rascunho) só aparece se houve rascunho salvo; senão começa em "Enviada para revisão" */
+    var hadDraft=false; try{ hadDraft=(dparam('draft')==='1')||!!localStorage.getItem('adere.d1001.draft.'+(dparam('emp')||'seg')); }catch(e){}
+    if(sit!=='rascunho' && hadDraft && keys[0]!=='criada') keys.unshift('criada');
     el.innerHTML=keys.map(function(k){
       var e=EV[k]; if(!e) return '';
       var st=e.status||['',''];
@@ -472,6 +473,7 @@
         '</dl>'+
       '</div></li>';
     }).join('');
+    if($('histCount')) $('histCount').textContent = keys.length+(keys.length===1?' etapa':' etapas');
   }
     var curDetState='revisao';
   function render(key){

@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Versões · MAG Seguros</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=30">
+  <link rel="stylesheet" href="../design-system/ds.css?v=31">
   <script src="../design-system/ds-tailwind.js"></script>
   <script src="../design-system/ds-dialog.js"></script>
   <style>
@@ -132,7 +132,7 @@
     .verrow__sep{width:1px;align-self:stretch;background:var(--color-border);margin:0 var(--space-2)}
     .verlist{display:flex;flex-direction:column;gap:var(--space-3)}
     /* pílula de status na linha de versão: 12px (pedido do PO nesta tela) */
-    .status{white-space:nowrap;font-size:var(--text-xs)}
+    .status{white-space:nowrap}
     .status--neutral{background:var(--color-surface-2);color:var(--color-text-onmuted)}
 
     /* rodapé padrão (contagem + paginador) embaixo da lista de encerradas */
@@ -452,7 +452,7 @@
     var kvs=[['Vigência',v.vig],['Regime principal',v.regime||regimeOf(v)],['Processada em',day(v.proc)],['Recibo',v.recibo]]
       .map(function(p){ return kv(p[0],(p[1]&&p[1]!=='—')?p[1]:'—'); }).join('');
     return '<div class="verrow'+(opts.current?' verrow--current':'')+'" data-href="'+hrefOf(v)+'">'+badge+
-      '<div class="verrow__main"><div class="verrow__top"><span class="verrow__title">Versão '+v.n+'</span><span class="status '+s.pill+'"><span class="status__dot"></span>'+esc(s.label)+'</span></div>'+
+      '<div class="verrow__main"><div class="verrow__top"><span class="verrow__title">Versão '+v.n+'</span><span class="status status--sm '+s.pill+'"><span class="status__dot"></span>'+esc(s.label)+'</span></div>'+
       '<div class="verrow__kvs">'+kvs+'</div></div>'+
       '<span class="verrow__sep" aria-hidden="true"></span>'+
       /* só consultar = botão-ícone com seta (nome acessível no aria-label); agir (Continuar, Ver ajustes) = botão com texto */
