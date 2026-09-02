@@ -111,21 +111,8 @@
     <div class="col">
       <div class="flow">
         <div class="flow__head">
-          <span class="flow__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></span>
-          <div><span class="flow__n">Fluxo 3</span><h2>Painel de monitoramento</h2><p>Ações pendentes e eventos das empresas, nas trilhas a-DeRE e Receita. Ponto de partida da operação.</p></div>
-        </div>
-        <div class="flow__scn">
-          <span class="flow__scn-lbl">Cenários</span>
-          <a class="scn scn--main" href="painel.html?scn=novo">Primeiro acesso <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
-          <a class="scn" href="painel.html?scn=operando">Em operação</a>
-          <a class="scn" href="painel.html?scn=operando">Balancete rejeitado</a>
-        </div>
-      </div>
-
-      <div class="flow">
-        <div class="flow__head">
           <span class="flow__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg></span>
-          <div><span class="flow__n">Fluxo 4</span><h2>Informações do contribuinte (D-1001)</h2><p>Lista das empresas, versões, detalhe e os fluxos de alteração e exclusão, com aprovação antes da Receita.</p></div>
+          <div><span class="flow__n">Fluxo 3</span><h2>Informações do contribuinte (D-1001)</h2><p>Lista das empresas, versões, detalhe e os fluxos de alteração e exclusão, com aprovação antes da Receita.</p></div>
         </div>
         <div class="flow__scn">
           <span class="flow__scn-lbl">Cenários</span>
@@ -138,27 +125,6 @@
           <a class="scn" href="info-contribuinte-detalhe.html?emp=seg&v=4&st=ajuste">Detalhe · ajustes solicitados</a>
           <a class="scn" href="info-contribuinte.html?modo=nova">Formulário · nova versão</a>
           <a class="scn" href="info-contribuinte.html?modo=alteracao">Formulário · alteração</a>
-        </div>
-      </div>
-
-      <div class="flow">
-        <div class="flow__head">
-          <span class="flow__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M7 12h14M7 18h14M3 12h.01M3 18h.01"/></svg></span>
-          <div><span class="flow__n">Fluxo 5</span><h2>Plano de contas (D-1011)</h2><p>Plano de contas comentado por empresa. Importar ou montar as contas, a IA sugere a classificação e você valida linha a linha. Transmite depois do D-1001 processado.</p></div>
-        </div>
-        <div class="flow__scn">
-          <span class="flow__scn-lbl">Cenários</span>
-          <a class="scn scn--main" href="plano-contas-lista.html">Lista <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
-          <a class="scn" href="plano-contas-empresa.html?emp=seg">Empresa · versões (Registrar nova versão = alterar a vigente)</a>
-          <a class="scn" href="plano-contas-classificar.html?emp=seg&modo=nova&big=1&demo=zero">1 · Criar do zero: importar → triagem por grupo</a>
-          <a class="scn" href="plano-contas-assistente.html?emp=seg&big=1&demo=fresh">2A · Classificar no ASSISTENTE (3 painéis, fila guiada)</a>
-          <a class="scn" href="plano-contas-classificar.html?emp=seg&modo=nova&big=1&mesa=1&demo=fresh">2B · Classificar na MESA (tabela, linha expande no lugar)</a>
-          <a class="scn" href="plano-contas-classificar.html?emp=seg&modo=nova&big=1&check=1">3 · Verificação pré-envio e envio (continue de 2A ou 2B)</a>
-          <a class="scn" href="plano-contas-revisao.html">4 · Aprovador (Ana): revisar, assinar e transmitir</a>
-          <a class="scn" href="plano-contas-detalhe.html?emp=seg&v=1">5 · Detalhe do D-1011: em revisão → processando → vigente/rejeitado</a>
-          <a class="scn" href="plano-contas-assistente.html?emp=fin&fix=vig&conta=3.1.01.001">6 · Correção pós-rejeição da Receita (MS1080, vigência da conta)</a>
-          <a class="scn" href="plano-contas-classificar.html?emp=seg&sit=rascunho">Extra · Rascunho pequeno (10 contas)</a>
-          <a class="scn" href="plano-contas-classificar.html?emp=s2u&modo=nova">Extra · Aguardando D-1001 (gating da transmissão)</a>
         </div>
       </div>
     </div>
