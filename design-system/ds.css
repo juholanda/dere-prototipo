@@ -206,6 +206,7 @@ a{color:var(--color-primary);text-decoration:none}
 .btn--outline{background:var(--color-surface);color:var(--color-primary);border-color:var(--color-border-strong)}
 .btn--dashed{background:var(--color-surface-2);color:var(--color-primary);border:1px dashed var(--color-primary)}
 .btn--dashed:hover:not(:disabled){background:color-mix(in srgb, var(--color-primary) 12%, var(--color-surface));border-color:var(--color-primary-hover);color:var(--color-primary-hover)}
+.btn--block{width:100%}
 .btn--outline:hover:not(:disabled){background:var(--color-primary-subtle);border-color:var(--color-primary)}
 /* Link */
 .btn--link{background:transparent;border-color:transparent;color:var(--color-primary);padding:0 var(--space-1);gap:var(--space-2)}
@@ -590,9 +591,14 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 .drawer__header{display:flex;align-items:center;justify-content:space-between;padding:var(--space-4) var(--space-8);border-bottom:1px solid var(--color-border)}
 /* título de drawer e de modal: MESMO tamanho (20px) e peso (700) — o !important vence o heading genérico h1–h6 */
 .drawer__header h2,.drawer__title{font-size:var(--text-2xl) !important;font-weight:700 !important;margin:0;color:var(--color-heading)}
-.drawer__body{padding:var(--space-8);overflow:auto;flex:1}
+.drawer__body{padding:var(--space-8);overflow:auto;flex:1;scrollbar-width:thin;scrollbar-color:color-mix(in srgb, var(--color-border-strong) 70%, transparent) transparent}
+.drawer__body::-webkit-scrollbar{width:8px}
+.drawer__body::-webkit-scrollbar-thumb{background:color-mix(in srgb, var(--color-border-strong) 70%, transparent);border-radius:999px;border:2px solid transparent;background-clip:padding-box}
+.drawer__body::-webkit-scrollbar-thumb:hover{background:var(--color-border-strong);background-clip:padding-box}
+.drawer__body::-webkit-scrollbar-track{background:transparent}
 .drawer__footer{display:flex;justify-content:flex-end;gap:var(--space-2);padding:var(--space-4) var(--space-8);border-top:1px solid var(--color-border)}
 .drawer__footer > .btn:first-child:not(:last-child){margin-right:auto}
+.drawer__footer .btn{height:var(--control-h-lg);font-size:var(--text-base);padding:0 var(--space-6)}
 /* tamanhos do drawer: pequeno · médio (padrão) · grande */
 .drawer--sm{--drawer-w:440px}
 .drawer--md{--drawer-w:560px}

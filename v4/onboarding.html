@@ -7,7 +7,7 @@
   <meta http-equiv="Expires" content="0">
   <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>a-DeRE · Primeiro acesso</title>
-<link rel="stylesheet" href="../design-system/ds.css?v=36">
+<link rel="stylesheet" href="../design-system/ds.css?v=37">
 <style>
   body{margin:0;font-family:var(--font-sans);color:var(--color-text)}
   [hidden]{display:none !important}
@@ -103,8 +103,6 @@
   .evazio__t{text-align:center;display:flex;flex-direction:column;gap:var(--space-1)}
   .evazio__t b{font-size:var(--text-lg);font-weight:600;color:var(--color-text)}
   .evazio__t span{font-size:var(--text-sm);color:var(--color-text-muted);line-height:1.5}
-  .adddash{width:100%;justify-content:center;gap:var(--space-2)}
-  .adddash svg{width:16px;height:16px}
   .card__count{font-size:var(--text-xs);color:var(--color-text-onmuted);font-weight:600}
   .filled{display:flex;flex-direction:column;gap:var(--space-4)}
   .colist{display:flex;flex-direction:column;gap:var(--space-4)}
@@ -158,19 +156,11 @@
   .voltar{width:100%;padding:var(--space-3);background:none;border:0;font-family:inherit;font-size:var(--text-sm);font-weight:600;color:var(--color-heading);cursor:pointer;border-radius:var(--radius-base)}
   .voltar:hover{background:var(--color-surface-2)}
 
-  /* ---- drawer ---- */
-  .scrim{position:fixed;inset:0;background:rgba(15,23,42,.46);opacity:0;visibility:hidden;transition:opacity .2s ease,visibility .2s ease;z-index:40}
-  .scrim.open{opacity:1;visibility:visible}
-  /* largura padronizada pelo DS: --drawer-md=560 (M). Trocar p/ drawer--lg (760, G) ou drawer--sm (440, P) na classe do elemento. */
-  .drawer{position:fixed;top:0;right:0;height:100vh;width:min(var(--drawer-w,560px),94vw);background:var(--color-surface);box-shadow:-8px 0 24px rgba(15,23,42,.14);display:flex;flex-direction:column;transform:translateX(100%);visibility:hidden;transition:transform .24s ease,visibility 0s linear .24s;z-index:50}
-  .drawer.open{transform:translateX(0);visibility:visible;transition:transform .24s ease}
-  .drawer__head{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--space-3);padding:var(--space-6);border-bottom:1px solid var(--color-border)}
-  .drawer__head h2{font-size:var(--text-xl);font-weight:700 !important;color:var(--color-heading);margin:0}
-  .drawer__head p{margin:var(--space-1) 0 0;font-size:var(--text-sm);color:var(--color-text-muted)}
+  /* ---- drawer: shell 100% do DS (.drawer-backdrop / .drawer / .drawer__header · __body · __footer, tamanho .drawer--md, foco via ds-dialog.js). Aqui só o que o DS não cobre. ---- */
+  .drawer__header p{margin:var(--space-1) 0 0;font-size:var(--text-sm);color:var(--color-text-muted)}
   .drawer__x{flex:0 0 auto}
   .drawer__x svg{width:20px;height:20px}
-  .drawer__body{flex:1;overflow:auto;padding:var(--space-6);display:flex;flex-direction:column;gap:var(--space-8)}
-  .drawer__foot{display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);padding:var(--space-4) var(--space-6);border-top:1px solid var(--color-border)}
+  .drawer__body{display:flex;flex-direction:column;gap:var(--space-8)}
   .dz{display:flex;align-items:center;gap:var(--space-4)}
   .dz__thumb{width:64px;height:64px;border-radius:var(--radius-base);background:var(--color-surface-2);border:1px dashed var(--color-border-strong);display:grid;place-items:center;color:var(--color-text-onmuted);flex:0 0 auto;overflow:hidden}
   .dz__thumb img{width:100%;height:100%;object-fit:cover}
@@ -407,7 +397,7 @@
           <div class="filled" id="filled" hidden>
             <div class="colist" id="colist"></div>
           </div>
-          <button class="btn btn--dashed btn--lg adddash" id="addBtn" type="button">
+          <button class="btn btn--dashed btn--lg btn--block" id="addBtn" type="button">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Adicionar empresa
           </button>
@@ -472,11 +462,11 @@
   </div>
 
   <!-- ===== Drawer ===== -->
-  <div class="scrim" id="scrim"></div>
-  <aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
-    <div class="drawer__head">
+  <div class="drawer-backdrop" id="drawerBd" hidden>
+  <aside class="drawer drawer--md" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
+    <div class="drawer__header">
       <div>
-        <h2 id="drawerTitle">Adicionar empresa</h2>
+        <h2 id="drawerTitle" tabindex="-1">Adicionar empresa</h2>
         <p>Preencha os dados da empresa e defina os responsáveis pela declaração.</p>
       </div>
       <button class="icon-btn drawer__x" id="drawerX" type="button" aria-label="Fechar" data-tooltip="Fechar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
@@ -516,17 +506,19 @@
         <p class="fieldmsg" id="respMsg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Defina ao menos um preparador e um aprovador entre os responsáveis.</p>
       </section>
     </div>
-    <div class="drawer__foot">
+    <div class="drawer__footer">
       <button class="btn btn--ghost btn--lg" type="button" id="cancelDrawer">Cancelar</button>
       <button class="btn btn--primary btn--lg" type="button" id="saveCompany">Adicionar empresa</button>
     </div>
   </aside>
+  </div>
 
   <!-- ===== Drawer: certificado ===== -->
-  <aside class="drawer" id="certDrawer" role="dialog" aria-modal="true" aria-labelledby="certTitle">
-    <div class="drawer__head">
+  <div class="drawer-backdrop" id="certBd" hidden>
+  <aside class="drawer drawer--md" id="certDrawer" role="dialog" aria-modal="true" aria-labelledby="certTitle">
+    <div class="drawer__header">
       <div>
-        <h2 id="certTitle">Importar certificado</h2>
+        <h2 id="certTitle" tabindex="-1">Importar certificado</h2>
         <p id="certSub">Certificado digital da empresa.</p>
       </div>
       <button class="icon-btn drawer__x" id="certX" type="button" aria-label="Fechar" data-tooltip="Fechar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
@@ -565,12 +557,14 @@
         </div>
       </div>
     </div>
-    <div class="drawer__foot">
+    <div class="drawer__footer">
       <button class="btn btn--ghost btn--lg" type="button" id="certCancel">Cancelar</button>
       <button class="btn btn--primary btn--lg" type="button" id="certConfirm">Importar certificado</button>
     </div>
   </aside>
+  </div>
 
+  <script src="../design-system/ds-dialog.js"></script>
   <script>
     var $=function(id){return document.getElementById(id)};
 
@@ -770,13 +764,14 @@
         $('cnpj').value=''; $('cnpj').classList.remove('is-error'); $('ro').classList.remove('show'); if($('cnpjHelp'))$('cnpjHelp').hidden=false; $('cnpjmsg').classList.remove('show');
         $('drawerTitle').textContent='Adicionar empresa'; resetResp();
       }
-      $('scrim').classList.add('open'); $('drawer').classList.add('open');
+      dsDialog.open($('drawerBd'), {focus: $('drawerTitle')});
     }
-    function closeDrawer(){ $('scrim').classList.remove('open'); $('drawer').classList.remove('open'); }
+    function closeDrawer(){ dsDialog.close(); }
     $('addBtn').addEventListener('click',function(){openDrawer(false)});
     $('drawerX').addEventListener('click',closeDrawer);
     $('cancelDrawer').addEventListener('click',closeDrawer);
-    $('scrim').addEventListener('click',function(){ closeDrawer(); if(typeof closeCertDrawer==='function') closeCertDrawer(); });
+    $('drawerBd').addEventListener('click',function(e){ if(e.target===this) closeDrawer(); });
+    $('certBd').addEventListener('click',function(e){ if(e.target===this) closeCertDrawer(); });
     $('saveCompany').addEventListener('click',function(){
       var d=onlyDigits($('cnpj').value);
       if(d.length!==14){ $('cnpjmsg').classList.add('show'); $('cnpj').classList.add('is-error'); $('cnpj').focus(); return; }
@@ -859,9 +854,9 @@
       $('certFile').value=''; $('certPw').value='';
       showCertFile(null);
       $('certPwMsg').classList.remove('show'); $('certPw').classList.remove('is-error');
-      $('scrim').classList.add('open'); $('certDrawer').classList.add('open');
+      dsDialog.open($('certBd'), {focus: $('certTitle')});
     }
-    function closeCertDrawer(){ $('scrim').classList.remove('open'); $('certDrawer').classList.remove('open'); }
+    function closeCertDrawer(){ dsDialog.close(); }
     $('certFile').addEventListener('change',function(){ if(this.files && this.files[0]){ showCertFile(this.files[0]); $('certPwMsg').classList.remove('show'); } });
     $('certReplace').addEventListener('click',function(){ $('certFile').click(); });
     $('certRemoveFile').addEventListener('click',function(){ $('certFile').value=''; showCertFile(null); });
