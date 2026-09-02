@@ -385,10 +385,9 @@
   /* Fluxo de exclusão (tpOper=3): abre modal, coleta motivo (motExcl) e envia para aprovação */
   document.addEventListener('DOMContentLoaded',function(){
     var modal=$('excluirModal'); if(!modal) return;
-    var sel=$('motExcl'), procField=$('nrProcField'), lastFocus=null;
+    var sel=$('motExcl'), procField=$('nrProcField');
     if(sel) sel.addEventListener('change',function(){ if(procField) procField.hidden=(sel.value!=='1'); });
     function open(){
-      lastFocus=document.activeElement; modal.hidden=false; document.body.style.overflow='hidden';
       var naoTx=(curDetState!=='aprovado'); /* em revisão/ajuste: nada foi transmitido à Receita */
       $('exTitle').textContent = naoTx ? 'Tem certeza de que deseja excluir esta versão?' : 'Excluir a informação do contribuinte?';
       $('exLead').innerHTML = naoTx
@@ -398,13 +397,14 @@
       if($('motExclHint')) $('motExclHint').hidden=naoTx;                        /* aviso de lacuna só na vigência */
       if($('confirmExcluir')) $('confirmExcluir').textContent = naoTx ? 'Excluir versão' : 'Enviar exclusão para aprovação';
       if(sel){ sel.value=''; sel.removeAttribute('aria-invalid'); }
-      setTimeout(function(){ var f=naoTx?$('confirmExcluir'):(sel||$('confirmExcluir')); if(f) f.focus(); },0);
+      dsDialog.open(modal,{focus:(naoTx?$('confirmExcluir'):(sel||$('confirmExcluir'))),
+        onOpen:function(){ modal.hidden=false; document.body.style.overflow='hidden'; },
+        onClose:function(){ modal.hidden=true; document.body.style.overflow=''; }});
     }
-    function close(){ modal.hidden=true; document.body.style.overflow=''; if(lastFocus&&lastFocus.focus) lastFocus.focus(); }
+    function close(){ dsDialog.close(); }
     document.addEventListener('click',function(e){ if(e.target.closest('[data-open-excluir]')) open(); });
     modal.querySelectorAll('[data-close-excluir]').forEach(function(b){ b.addEventListener('click',close); });
     modal.addEventListener('click',function(e){ if(e.target===modal) close(); });
-    document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&!modal.hidden) close(); });
     var confirmBtn=$('confirmExcluir');
     if(confirmBtn) confirmBtn.addEventListener('click',function(){
       var naoTx=(curDetState!=='aprovado');

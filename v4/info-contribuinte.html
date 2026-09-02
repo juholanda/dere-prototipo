@@ -10,6 +10,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="../design-system/ds.css?v=25">
   <script src="../design-system/ds-tailwind.js"></script>
+  <script src="../design-system/ds-dialog.js"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     /* ===== App shell (mesmo do painel) ===== */
@@ -638,15 +639,14 @@
       listEl.querySelectorAll('[data-toggle]').forEach(function(btn){ btn.addEventListener('click',function(){ var sec=btn.closest('.atvcatsec'), col=sec.classList.toggle('is-collapsed'); btn.setAttribute('aria-expanded',String(!col)); }); });
       listEl.querySelectorAll('.atvitem input').forEach(function(inp){ inp.addEventListener('change',function(){ var reg=inp.getAttribute('data-reg'), c=inp.value, lab=inp.closest('.atvitem'); if(!temp[reg])temp[reg]=[]; var i=temp[reg].indexOf(c); if(inp.checked){ if(i<0)temp[reg].push(c); lab.classList.add('is-sel'); } else { if(i>=0)temp[reg].splice(i,1); lab.classList.remove('is-sel'); } var sec=inp.closest('.atvcatsec'); if(sec){ var n=sec.querySelectorAll('.atvitem input:checked').length, head=sec.querySelector('.atvcat'), cntEl=sec.querySelector('.atvcat__count'); if(n>0){ if(!cntEl){ cntEl=document.createElement('span'); cntEl.className='atvcat__count'; head.appendChild(cntEl); } cntEl.textContent=n+' selecionada'+(n>1?'s':''); } else if(cntEl){ cntEl.remove(); } } updateFooter(); }); });
     }
-    function openDrawer(reg){ curReg=reg; temp={}; temp[reg]=sel[reg].slice(); searchEl.value=''; if(suggChk)suggChk.checked=false; $('atvDrawerTitle').textContent='Atividades de '+TAB[reg].name; renderList(); updateFooter(); drawer.hidden=false; }
-    function closeDrawer(){ drawer.hidden=true; }
+    function openDrawer(reg){ curReg=reg; temp={}; temp[reg]=sel[reg].slice(); searchEl.value=''; if(suggChk)suggChk.checked=false; $('atvDrawerTitle').textContent='Atividades de '+TAB[reg].name; renderList(); updateFooter(); dsDialog.open(drawer,{dialog:drawer.querySelector('[role="dialog"]')}); }
+    function closeDrawer(){ dsDialog.close(); }
     drawer.querySelectorAll('[data-atv-close]').forEach(function(b){ b.addEventListener('click',closeDrawer); });
     drawer.addEventListener('click',function(e){ if(e.target===drawer) closeDrawer(); });
     searchEl.addEventListener('input',renderList);
     if(suggChk) suggChk.addEventListener('change',renderList);
     clearBtn.addEventListener('click',function(){ temp[curReg]=[]; renderList(); updateFooter(); });
     confirmBtn.addEventListener('click',function(){ var o=orderMap(curReg); sel[curReg]=(temp[curReg]||[]).slice().sort(function(x,y){return o[x]-o[y];}); renderSelected(); closeDrawer(); });
-    document.addEventListener('keydown',function(e){ if(e.key==='Escape' && !drawer.hidden) closeDrawer(); });
 
     regprins.forEach(function(r){ r.addEventListener('change',function(){ syncSec(); renderSelected(); }); });
     document.querySelectorAll('#secStack input[name="regsec"]').forEach(function(i){ i.addEventListener('change',renderSelected); });
@@ -661,11 +661,10 @@
   /* Modal de confirmação: submeter para revisão */
   (function(){
     var modal=$('confirmModal'), openB=$('submitBtn'); if(!modal||!openB) return;
-    function close(){ modal.hidden=true; }
-    openB.addEventListener('click',function(){ modal.hidden=false; });
+    function close(){ dsDialog.close(); }
+    openB.addEventListener('click',function(){ dsDialog.open(modal); });
     modal.querySelectorAll('[data-confirm-close]').forEach(function(b){ b.addEventListener('click',close); });
     modal.addEventListener('click',function(e){ if(e.target===modal) close(); });
-    document.addEventListener('keydown',function(e){ if(e.key==='Escape' && !modal.hidden) close(); });
     $('confirmSubmit').addEventListener('click',function(){ var q=function(k){var m=new RegExp('[?&]'+k+'=([^&]+)').exec(location.search);return m?decodeURIComponent(m[1]):'';}; try{ localStorage.setItem('adere.sent.d1001', q('emp')||'seg'); localStorage.setItem('adere.sent.d1001.t', String(Date.now())); var _rp=document.querySelector('input[name="regprin"]:checked'), _rl=_rp&&_rp.closest('.selectcard')&&_rp.closest('.selectcard').querySelector('.selectcard__title'); if(_rl) localStorage.setItem('adere.sent.d1001.regime', _rl.textContent.replace(/^Regime Específico de /,'').trim()); }catch(e){} window.location.href='info-contribuinte-detalhe.html?v=1&st=revisao&from=lista'+(q('scn')?('&scn='+q('scn')):'')+(q('emp')?('&emp='+q('emp')):''); });
   })();
 
@@ -739,7 +738,7 @@
       var baseline='', pending=null;
       setTimeout(function(){ try{ baseline=JSON.stringify(snapshot()); }catch(e){} }, 60);
       function isDirty(){ try{ return !!baseline && JSON.stringify(snapshot())!==baseline; }catch(e){ return false; } }
-      function closeLeave(){ leaveM.hidden=true; pending=null; }
+      function closeLeave(){ dsDialog.close(); pending=null; }
       function leavesPage(a){
         var h=a.getAttribute('href')||'';
         return !!h && h.charAt(0)!=='#' && !/^javascript:/i.test(h) && a.target!=='_blank' && !leaveM.contains(a);
@@ -748,11 +747,10 @@
         var a=e.target.closest ? e.target.closest('a[href]') : null;
         if(!a || !leavesPage(a) || !isDirty()) return;
         e.preventDefault(); e.stopPropagation();
-        pending=a.getAttribute('href'); leaveM.hidden=false; document.getElementById('leaveSaveExit').focus();
+        pending=a.getAttribute('href'); dsDialog.open(leaveM,{focus:document.getElementById('leaveSaveExit')});
       }, true);
       leaveM.querySelectorAll('[data-leave-close]').forEach(function(b){ b.addEventListener('click',closeLeave); });
       leaveM.addEventListener('click',function(e){ if(e.target===leaveM) closeLeave(); });
-      document.addEventListener('keydown',function(e){ if(e.key==='Escape' && !leaveM.hidden) closeLeave(); });
       var dest=function(){ return pending||cancelBtn.getAttribute('href'); };
       $('leaveSaveExit').addEventListener('click',function(){ try{ localStorage.setItem(KEY, JSON.stringify(snapshot())); }catch(e){} window.location.href=dest(); });
       $('leaveDiscard').addEventListener('click',function(){ window.location.href=dest(); });

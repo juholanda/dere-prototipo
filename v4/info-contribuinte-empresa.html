@@ -10,6 +10,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="../design-system/ds.css?v=25">
   <script src="../design-system/ds-tailwind.js"></script>
+  <script src="../design-system/ds-dialog.js"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -66,6 +67,8 @@
     /* abas no topo do card de versões: com respiro em cima e nas laterais (a linha das abas fica dentro da margem do card) */
     .card .tabs{margin:var(--space-6) var(--space-6) 0}
     .tabs__panel{padding-top:0}
+    /* respiro maior acima da primeira seção, logo abaixo das abas */
+    #vp-tab .versec:first-child{padding-top:var(--space-10)}
 
     /* seções: vigente · em andamento · encerradas */
     .versec{padding:var(--space-6) var(--space-6) 0}
@@ -73,7 +76,7 @@
     /* entre uma seção e a próxima: 48px (24 de padding + 24 de margem), pra cada bloco respirar */
     .versec + .versec{margin-top:var(--space-6)}
     /* título da seção (18px) + subtítulo de uma linha (14px), 16px entre eles e 16px até as linhas */
-    .versec__h{display:flex;align-items:center;gap:var(--space-2);margin:0 0 var(--space-4)}
+    .versec__h{display:flex;align-items:center;gap:var(--space-2);margin:0 0 var(--space-2)}
     .versec__h h2{font-size:var(--text-xl)!important;font-weight:700!important;color:var(--color-heading);margin:0}
     .versec__hint{font-size:var(--text-sm);color:var(--color-text-muted);margin:0 0 var(--space-4);line-height:1.5}
     .versec__empty{display:flex;gap:var(--space-3);align-items:center;font-size:var(--text-sm);color:var(--color-text-muted);padding:var(--space-4);border:1px dashed var(--color-border-strong);border-radius:var(--radius-lg)}
@@ -120,7 +123,8 @@
     .verrow__act .icon-btn svg{width:18px;height:18px}
     .verrow__sep{width:1px;align-self:stretch;background:var(--color-border);margin:0 var(--space-2)}
     .verlist{display:flex;flex-direction:column;gap:var(--space-3)}
-    .status{white-space:nowrap;font-size:var(--text-sm)}
+    /* pílula de status na linha de versão: 12px (pedido do PO nesta tela) */
+    .status{white-space:nowrap;font-size:var(--text-xs)}
     .status--neutral{background:var(--color-surface-2);color:var(--color-text-onmuted)}
 
     /* rodapé padrão (contagem + paginador) embaixo da lista de encerradas */
@@ -164,6 +168,16 @@
     .demobar button:hover{color:rgba(255,255,255,1);background:rgba(255,255,255,.08)}
     .demobar button.on{background:rgba(255,255,255,.16);color:rgba(255,255,255,1);font-weight:600}
 
+    /* modal (bloqueio de nova versão) */
+    .scrim{position:fixed;inset:0;background:var(--color-scrim);display:flex;align-items:center;justify-content:center;padding:var(--space-6);z-index:120}
+    .scrim[hidden]{display:none}
+    .modal{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);width:min(520px,100%)}
+    .modal__header{padding:var(--space-8) var(--space-8) var(--space-2)}
+    .modal__lead{display:flex;gap:var(--space-3);align-items:flex-start}
+    .modal__lead-ic{width:36px;height:36px;border-radius:var(--radius-lg);flex:0 0 auto;display:grid;place-items:center;background:var(--color-info-bg);color:var(--color-info-fg)}
+    .modal__lead-ic svg{width:20px;height:20px}
+    .modal__body{padding:var(--space-4) var(--space-8) var(--space-2);color:var(--color-text-onmuted);font-size:var(--text-base);line-height:1.55}
+    .modal__footer{display:flex;justify-content:flex-end;gap:var(--space-3);padding:var(--space-8)}
     .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
   </style>
 </head>
@@ -316,6 +330,15 @@
     </div>
   </div>
 
+  <!-- Bloqueio: já existe uma versão em andamento -->
+  <div class="scrim" id="blockModal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="blockTitle" aria-describedby="blockDesc">
+      <div class="modal__header"><div class="modal__lead"><span class="modal__lead-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span><h2 class="modal__title" id="blockTitle">Já existe uma versão em andamento</h2></div></div>
+      <div class="modal__body" id="blockDesc"><p id="blockText" style="margin:0"></p></div>
+      <div class="modal__footer"><button class="btn btn--ghost" type="button" data-block-close>Fechar</button><a class="btn btn--primary" id="blockGo" href="#">Ver a versão em andamento</a></div>
+    </div>
+  </div>
+
 <script>
   var $=function(id){return document.getElementById(id);};
   function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
@@ -424,7 +447,7 @@
       '<span class="verrow__sep" aria-hidden="true"></span>'+
       /* só consultar = botão-ícone com seta (nome acessível no aria-label); agir (Continuar, Ver ajustes) = botão com texto */
       '<div class="verrow__act">'+(opts.cta
-        ? '<a class="btn '+(opts.primary?'btn--primary':'btn--secondary')+'" href="'+hrefOf(v)+'">'+esc(opts.cta)+I.chev+'</a>'
+        ? '<a class="btn '+(opts.primary?'btn--primary':'btn--secondary')+'" href="'+(opts.href||hrefOf(v))+'">'+esc(opts.cta)+I.chev+'</a>'
         : '<a class="icon-btn" href="'+hrefOf(v)+'" aria-label="Ver Versão '+v.n+'">'+I.chev+'</a>')+'</div>'+
     '</div>';
   }
@@ -462,11 +485,17 @@
     var slot=$('headerActSlot');
     if(!has){ slot.innerHTML=''; }
     else if(prog){
-      /* aria-disabled (não disabled): o botão continua focável e o motivo chega por teclado e leitor de tela (aria-describedby) */
-      slot.innerHTML='<span class="tooltip tooltip--end"><button class="btn btn--primary" type="button" aria-disabled="true" aria-describedby="tip-nova">'+I.plus+'Registrar nova versão</button><span class="tooltip__bubble tooltip__bubble--stack" role="tooltip" id="tip-nova"><strong>Já existe uma versão em andamento</strong>Conclua ou cancele a Versão '+prog.n+' antes de registrar outra.</span></span>';
-      slot.querySelector('button').addEventListener('click',function(e){ e.preventDefault(); });
+      /* botão habilitado: ao clicar, a modal explica por que não dá pra criar outra agora */
+      slot.innerHTML='<button class="btn btn--primary btn--lg" type="button" id="headerAct">'+I.plus+'Registrar nova versão</button>';
+      var lbl=(prog.sit==='ajustes')?'Ver ajustes':(prog.sit==='rascunho')?'Continuar a versão':'Ver a versão';
+      var pill=(SIT[prog.sit]||{}).label||'em andamento';
+      $('headerAct').addEventListener('click',function(){
+        $('blockText').textContent='A Versão '+prog.n+' está \u201c'+pill+'\u201d e ainda não foi concluída. Só pode haver uma versão em andamento por vez. Conclua ou cancele essa versão antes de registrar uma nova.';
+        var go=$('blockGo'); go.textContent=lbl; go.setAttribute('href',hrefOf(prog));
+        dsDialog.open($('blockModal'));
+      });
     } else {
-      slot.innerHTML='<a class="btn btn--primary" id="headerAct" href="'+hrefNova()+'">'+I.plus+'Registrar nova versão</a>';
+      slot.innerHTML='<a class="btn btn--primary btn--lg" id="headerAct" href="'+hrefNova()+'">'+I.plus+'Registrar nova versão</a>';
     }
     $('emptyAct').setAttribute('href',hrefNova());
 
@@ -559,6 +588,14 @@
     if(ev.key==='ArrowRight') n=tabs[(i+1)%tabs.length]; else if(ev.key==='ArrowLeft') n=tabs[(i-1+tabs.length)%tabs.length]; else if(ev.key==='Home') n=tabs[0]; else if(ev.key==='End') n=tabs[tabs.length-1];
     if(n){ ev.preventDefault(); selectTab(n); n.focus(); }
   });
+
+  /* Modal de bloqueio: fechar pelo botão, pelo fundo e pelo Esc (Esc é do helper) */
+  (function(){
+    var bm=$('blockModal'); if(!bm) return;
+    bm.querySelectorAll('[data-block-close]').forEach(function(b){ b.addEventListener('click',function(){ dsDialog.close(); }); });
+    bm.addEventListener('click',function(e){ if(e.target===bm) dsDialog.close(); });
+    $('blockGo').addEventListener('click',function(){ dsDialog.close(); });
+  })();
 
   /* Shell */
   document.querySelectorAll('[data-menu]').forEach(function(menu){
