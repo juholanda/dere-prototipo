@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Informações do Contribuinte</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=22">
+  <link rel="stylesheet" href="../design-system/ds.css?v=23">
   <script src="../design-system/ds-tailwind.js"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
@@ -690,11 +690,12 @@
       });
       var chk=document.getElementById('vigAberta'); if(chk) chk.dispatchEvent(new Event('change'));
     }
+    /* Salvar rascunho = guarda e SAI do formulário (volta pra onde o Cancelar levaria, com aviso "Rascunho salvo" na chegada) */
     var btn=document.getElementById('saveDraftBtn');
     if(btn) btn.addEventListener('click',function(){
       try{ localStorage.setItem(KEY, JSON.stringify(snapshot())); }catch(e){}
-      var old=btn.textContent; btn.textContent='Rascunho salvo';
-      setTimeout(function(){ btn.textContent=old; }, 1600);
+      var cb=$('cancelBtn'), to=(cb&&cb.getAttribute('href'))||'info-contribuinte-lista.html';
+      window.location.href=to+(to.indexOf('?')>=0?'&':'?')+'saved=rascunho&emp='+encodeURIComponent(qs('emp')||'seg');
     });
     /* restaura só ao criar nova versão (edição carrega da versão em revisão) */
     if(qs('modo')!=='editar'){

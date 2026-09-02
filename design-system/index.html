@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Design System · DeRE</title>
-  <link rel="stylesheet" href="ds.css?v=22">
+  <link rel="stylesheet" href="ds.css?v=23">
   <style>
     /* Layout do catálogo (só do doc, não é componente do DS) */
     .app{display:grid;grid-template-columns:236px 1fr;min-height:100vh}
@@ -795,8 +795,8 @@
             <div class="skeleton" style="height:36px;width:112px;margin-top:6px"></div>
           </div></div>
           <div class="stack">
-            <div class="toast toast--success"><span class="status__dot" style="color:var(--color-success);margin-top:6px"></span><div><div style="font-weight:600;color:var(--color-heading);font-size:14px">Salvo</div><div style="font-size:13px;color:var(--color-text-muted)">Apuração gravada.</div></div></div>
-            <div class="toast toast--danger"><span class="status__dot" style="color:var(--color-danger);margin-top:6px"></span><div><div style="font-weight:600;color:var(--color-heading);font-size:14px">Falhou</div><div style="font-size:13px;color:var(--color-text-muted)">Verifique a conexão.</div></div></div>
+            <div class="toast toast--success"><span class="toast__icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.8 10A10 10 0 1 1 17 3.3"/><path d="m9 11 3 3L22 4"/></svg></span><div><p class="toast__title">Salvo</p><p class="toast__text">Apuração gravada.</p></div></div>
+            <div class="toast toast--danger"><span class="toast__icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg></span><div><p class="toast__title">Falhou</p><p class="toast__text">Verifique a conexão.</p></div></div>
           </div>
         </div>
         <div class="card" style="margin-top:12px"><div class="card__body stack" style="gap:14px">
@@ -917,7 +917,7 @@
 <!-- Drawer -->
 <div id="bd" class="drawer-backdrop" style="display:none" onclick="fecharDrawer()"></div>
 <div id="dwr" class="drawer" style="display:none" role="dialog" aria-modal="true" aria-labelledby="dwr-title" tabindex="-1">
-  <div class="drawer__header"><h3 id="dwr-title" style="font-size:16px;margin:0">Editar documento</h3><span class="tooltip"><button class="icon-btn icon-btn--sm" aria-label="Fechar" onclick="fecharDrawer()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button><span class="tooltip__bubble" role="tooltip">Fechar</span></span></div>
+  <div class="drawer__header"><h3 id="dwr-title" class="drawer__title">Editar documento</h3><span class="tooltip"><button class="icon-btn icon-btn--sm" aria-label="Fechar" onclick="fecharDrawer()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button><span class="tooltip__bubble" role="tooltip">Fechar</span></span></div>
   <div class="drawer__body stack" style="gap:20px">
     <div class="field"><label class="field__label" for="d1">Documento</label><input id="d1" class="input" value="NF-e 12.345"></div>
     <div class="field"><label class="field__label" for="d2">Situação</label><select id="d2" class="select"><option>Conforme</option><option>Pendente</option><option>Divergente</option></select></div>
@@ -1178,7 +1178,7 @@
 
   /* Mensagens de status (aria-live): anuncia o resultado sem mover o foco */
   (function(){
-    var OK='<div class="toast toast--success"><span class="status__dot" style="color:var(--color-success);margin-top:6px"></span><div><div style="font-weight:600;color:var(--color-heading);font-size:14px">Apuração concluída</div><div style="font-size:13px;color:var(--color-text-muted)">Competência 08/2026 processada, sem divergências.</div></div></div>';
+    var OK='<div class="toast toast--success"><span class="toast__icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.8 10A10 10 0 1 1 17 3.3"/><path d="m9 11 3 3L22 4"/></svg></span><div><p class="toast__title">Apuração concluída</p><p class="toast__text">Competência 08/2026 processada, sem divergências.</p></div></div>';
     var ERR='<div class="alert alert--danger"><span class="alert__icon"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></svg></span><div class="alert__body"><p class="alert__title">Falha no processamento</p><p class="alert__text">Não foi possível concluir. Tente reenviar o arquivo.</p></div></div>';
     var status=document.querySelector('[data-live-status]'), alerta=document.querySelector('[data-live-alert]');
     function announce(region, html){ if(!region) return; region.innerHTML=''; setTimeout(function(){ region.innerHTML=html; }, 60); }

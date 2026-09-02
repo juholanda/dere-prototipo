@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Informações do Contribuinte</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=22">
+  <link rel="stylesheet" href="../design-system/ds.css?v=23">
   <script src="../design-system/ds-tailwind.js"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
@@ -104,6 +104,8 @@
     .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
     @media(max-width:1000px){.stats{grid-template-columns:repeat(2,1fr)}}
     @media(max-width:560px){.stats{grid-template-columns:1fr}}
+    /* toasts acima da barra de demo (que também fica fixa embaixo e, em tela estreita, quebra em 2 linhas) */
+    .toast-wrap{bottom:calc(var(--space-14) + var(--space-6))}
   </style>
 </head>
 <body>
@@ -230,6 +232,8 @@
     </div>
   </div>
 
+  <div class="toast-wrap" id="toasts" aria-live="polite"></div>
+
   <script>
   var esc=function(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');};
   function code(n){return (n||'?').replace(/[^A-Za-zÀ-ú ]/g,'').trim().split(/\s+/)[0].slice(0,3).toUpperCase();}
@@ -275,6 +279,10 @@
     EMP_NEW.forEach(function(e){
       if(_sentId===e.id){ e.sit='revisao'; e.emrev={ver:1}; e.regime='Serviços Financeiros'; e.at='01/09/2026, 14:32'; e.ts=9999; }
       else if(localStorage.getItem('adere.d1001.draft.'+e.id)){ e.sit='rascunho'; e.rascunho=true; e.at='01/09/2026, 14:32'; e.ts=9998; }
+    });
+    /* populado: só quem ainda não tem versão vira "Rascunho" (quem já tem versão mantém o status da vigente) */
+    EMP_POP.forEach(function(e){
+      if(e.sit==='naoenviada' && localStorage.getItem('adere.d1001.draft.'+e.id)){ e.sit='rascunho'; e.rascunho=true; e.at='01/09/2026, 14:32'; e.ts=9998; }
     });
   }catch(e){}
   function curEmp(){ return scenario==='new'?EMP_NEW:EMP_POP; }
@@ -365,6 +373,19 @@
 
   function renderAll(){ renderRows(); }
   renderAll();
+
+  /* Chegada após "Salvar rascunho" no formulário: aviso com o toast do DS; limpa a URL pra não repetir no reload */
+  (function(){
+    if(!/[?&]saved=rascunho/.test(location.search)) return;
+    var empId=((/[?&]emp=([^&]*)/.exec(location.search)||[])[1]);
+    var e=curEmp().filter(function(x){return x.id===empId;})[0];
+    var wrap=document.getElementById('toasts'); if(!wrap) return;
+    var el=document.createElement('div'); el.className='toast toast--success'; el.setAttribute('role','status');
+    el.innerHTML='<span class="toast__icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.8 10A10 10 0 1 1 17 3.3"/><path d="m9 11 3 3L22 4"/></svg></span><div><p class="toast__title">Rascunho salvo</p><p class="toast__text">'+(e?esc(e.nome)+'. ':'')+'Continue o preenchimento quando quiser.</p></div>';
+    wrap.appendChild(el);
+    setTimeout(function(){ el.remove(); }, 6000);
+    try{ history.replaceState(null,'','info-contribuinte-lista.html?scn='+scenario); }catch(err){}
+  })();
 
   /* Cenário (só demonstração): Populado x Primeiro acesso — overlay flutuante, fora da interface */
   document.addEventListener('DOMContentLoaded',function(){
