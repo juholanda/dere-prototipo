@@ -449,6 +449,19 @@
   var $=function(id){return document.getElementById(id);};
   function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
 
+  /* Perfil por empresa (regime + CNAE + atividades reais da Tabela 21). Fonte da verdade ao
+     EDITAR/ALTERAR uma versão já existente: o formulário carrega o que a empresa já declarou,
+     não os dados de outra. Espelha o DCO da tela de detalhe. */
+  var PERFIL={
+    seg:{reg:'1', cnae:'65.11-1/01 · Seguros de vida',                            ativ:['11A','11B','13A']},
+    fin:{reg:'1', cnae:'64.99-9/99 · Outras atividades de serviços financeiros',  ativ:['01A']},
+    cap:{reg:'1', cnae:'65.50-2/00 · Capitalização',                              ativ:['14A']},
+    sic:{reg:'1', cnae:'65.12-0/00 · Seguros não-vida',                           ativ:['11A']},
+    s2u:{reg:'1', cnae:'64.63-8/00 · Outras sociedades de participação',          ativ:[]}
+  };
+  function empId(){ var m=new RegExp('[?&]emp=([^&]*)').exec(location.search); return m?decodeURIComponent(m[1]):'seg'; }
+  function perfil(){ return PERFIL[empId()]||PERFIL.seg; }
+
   /* Modo do formulário: nova versão (padrão) x editar versão existente (?modo=editar&v=N) */
   (function(){
     function param(k){ var m=new RegExp('[?&]'+k+'=([^&]+)').exec(location.search); return m?decodeURIComponent(m[1]):''; }
@@ -613,8 +626,8 @@
     }
 
     /* Grupos de atividade: um por regime selecionado */
-    /* Sugestões da IA (por CNAE), por regime */
-    var SUGG={'1':['11A','11B','13A'],'2':[],'3':[]};
+    /* Sugestões da IA (por CNAE), por regime — derivadas do perfil da empresa (não fixas) */
+    var SUGG=(function(){ var pf=perfil(), o={'1':[],'2':[],'3':[]}; if(o[pf.reg]) o[pf.reg]=pf.ativ.slice(); return o; })();
     function isSugg(reg,c){ return (SUGG[reg]||[]).indexOf(c)>=0; }
     var SPARK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 3 11 8l5 1.5-5 1.5L9.5 16 8 11l-5-1.5L8 8Z"/></svg>';
     function descOf(a){ return a.d||a.t||''; }
@@ -707,7 +720,7 @@
   /* Tooltip da sugestão da IA (position:fixed para escapar o recorte do drawer) */
   (function(){
     var tip=document.createElement('div'); tip.className='suggtip'; tip.setAttribute('role','tooltip'); tip.hidden=true;
-    tip.textContent='O CNAE principal (65.11-1/01 · Seguros de vida) indica atividade de seguros e previdência, que no regime de Serviços Financeiros corresponde a estes tipos da Tabela 21.';
+    tip.textContent='O CNAE principal ('+perfil().cnae+') indica a atividade do contribuinte, que no regime de Serviços Financeiros corresponde a estes tipos da Tabela 21.';
     document.body.appendChild(tip);
     function show(el){ tip.hidden=false; var r=el.getBoundingClientRect(), tw=tip.offsetWidth, th=tip.offsetHeight; var left=Math.min(Math.max(8,r.left), window.innerWidth-tw-8); var top=r.top-th-8; if(top<8) top=r.bottom+8; tip.style.left=left+'px'; tip.style.top=top+'px'; }
     function hide(){ tip.hidden=true; }
@@ -762,10 +775,21 @@
       var _to='info-contribuinte-detalhe.html?emp='+encodeURIComponent(_e)+'&v='+encodeURIComponent(_v)+'&st=rascunho'+(qs('scn')?('&scn='+qs('scn')):'')+(qs('cenario')?('&cenario='+qs('cenario')):'');
       window.location.href=_to+'&saved=rascunho';
     });
-    /* restaura só ao criar nova versão (edição carrega da versão em revisão) */
-    if(qs('modo')!=='editar'){
-      try{ restore(JSON.parse(localStorage.getItem(KEY)||'null')); }catch(e){}
+    /* Pré-carregar as atividades + regime reais da empresa ao editar/alterar uma versão que já existe. */
+    function preloadPerfil(){
+      var pf=perfil();
+      var rr=document.querySelector('input[name="regprin"][value="'+pf.reg+'"]');
+      if(rr && !rr.checked){ rr.checked=true; rr.dispatchEvent(new Event('change')); }
+      if(window.__d1001Atv){ var s={'1':[],'2':[],'3':[]}; if(s[pf.reg]) s[pf.reg]=pf.ativ.slice(); window.__d1001Atv.set(s); }
     }
+    /* Precedência ao abrir o formulário:
+       1) rascunho salvo desta empresa (ainda não transmitido) vence — traz as escolhas em andamento;
+       2) senão, editando/alterando/corrigindo uma versão que já existe → carrega o perfil real da empresa;
+       3) senão (primeiro acesso, sem rascunho) → começa em branco. */
+    var _draft=null; try{ _draft=JSON.parse(localStorage.getItem(KEY)||'null'); }catch(e){}
+    var _existente = qs('modo')==='editar' || !!qs('op') || location.search.indexOf('from=detalhe')>=0 || qs('scn')==='pop';
+    if(qs('modo')!=='editar' && _draft){ restore(_draft); }
+    else if(_existente){ preloadPerfil(); }
     /* enviado para revisão = rascunho consumido */
     var cs=document.getElementById('confirmSubmit'); if(cs) cs.addEventListener('click',function(){ try{ localStorage.removeItem(KEY); }catch(e){} });
 
@@ -884,7 +908,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788462355';
+  var MYV='1788463728';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
