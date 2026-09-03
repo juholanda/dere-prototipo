@@ -390,7 +390,7 @@
       {n:1, current:false, sit:'sucesso',      vigrole:'past', vig:'01/01/2025 a 31/05/2025', recibo:'RC-2025.0001', quando:'31/05/2025, 23:59', env:'04/01/2025, 10:30', proc:'05/01/2025, 09:00', resp:'Ricardo Alves'}
     ]},
     fin:{nome:'MAG Finanças', cnpj:'21.995.256/0001-56', logo:'../Logos/mag%20financas.jpeg', regime:'Serviços Financeiros', versions:[
-      {n:4, current:false, sit:'revisao',      vigrole:null,   vig:'—',                       recibo:'—',            quando:'hoje, 10:20', env:'', resp:'Ricardo Alves'},
+      {n:4, current:false, sit:'revisao',      vigrole:null,   vig:'—',                       recibo:'—',            quando:'03/09/2026 10:20', env:'', resp:'Ricardo Alves'},
       {n:3, current:true,  sit:'sucesso',      vigrole:'now',  vig:'01/01/2026 a 31/12/2026', recibo:'RC-2026.0003', quando:'22/08/2026, 16:40', env:'21/08/2026, 10:20', proc:'22/08/2026, 16:40'},
       {n:2, current:false, sit:'sucesso',      vigrole:'past', vig:'01/07/2025 a 31/12/2025', recibo:'RC-2025.0002', quando:'31/12/2025, 23:59', env:'30/06/2025, 09:00', proc:'01/07/2025, 09:00', resp:'Ricardo Alves'},
       {n:1, current:false, sit:'sucesso',      vigrole:'past', vig:'01/01/2025 a 30/06/2025', recibo:'RC-2025.0001', quando:'30/06/2025, 23:59', env:'02/01/2025, 08:45', proc:'03/01/2025, 09:00', resp:'Ricardo Alves'}
@@ -400,16 +400,16 @@
       {n:2, current:false, sit:'sucesso',      vigrole:'past', vig:'01/07/2025 a 31/12/2025', recibo:'RC-2025.0002', quando:'31/12/2025, 23:59', env:'30/06/2025, 15:20', proc:'01/07/2025, 09:00', resp:'Ricardo Alves'},
       {n:1, current:false, sit:'sucesso',      vigrole:'past', vig:'01/01/2025 a 30/06/2025', recibo:'RC-2025.0001', quando:'30/06/2025, 23:59', env:'01/01/2025, 12:00', proc:'02/01/2025, 09:00', resp:'Ricardo Alves'}
     ]},
-    s2u:{nome:'Simple2u', cnpj:'40.997.879/0001-02', logo:'../Logos/simple2u.svg', regime:null, versions:[]}
+    s2u:{nome:'Simple2u', cnpj:'40.997.879/0001-02', logo:'../Logos/logo_simple-2u_j7QQ4s.png', regime:null, versions:[]}
   };
   /* Ciclo de vida único (interno → Receita). A pílula mostra o estágio; "vigente" é a seção, não um estado. */
   var SIT={
     rascunho:    {label:'Rascunho',               pill:'status--draft',   tone:'draft',   ic:I.pen,   lead:'Última alteração em'},
-    revisao:     {label:'Em revisão',             pill:'status--info',    tone:'info',    ic:I.clock, lead:'Enviada para revisão em'},
-    ajustes:     {label:'Ajustes solicitados',    pill:'status--warning', tone:'warning', ic:I.alert, lead:'Devolvida em'},
-    processando: {label:'Em processamento',       pill:'status--info',    tone:'info',    ic:I.clock, lead:'Transmitida em'},
+    revisao:     {label:'Em revisão',             pill:'status--draft',   tone:'draft',   ic:I.clock, lead:'Enviada para revisão em'},
+    ajustes:     {label:'Ajustes solicitados',    pill:'status--draft',   tone:'draft',   ic:I.alert, lead:'Devolvida em'},
+    processando: {label:'Em processamento',       pill:'status--draft',   tone:'draft',   ic:I.clock, lead:'Transmitida em'},
     sucesso:     {label:'Processado com sucesso', pill:'status--success', tone:'success', ic:I.check, lead:'Processada em'},
-    advertencias:{label:'Processado com advertências', pill:'status--warning', tone:'success', ic:I.check, lead:'Processada em'},
+    advertencias:{label:'Processado com advertências', pill:'status--info', tone:'success', ic:I.check, lead:'Processada em'},
     rejeitado:   {label:'Rejeitada',              pill:'status--danger',  tone:'danger',  ic:I.x,     lead:'Rejeitada em'}
   };
   var ENC={label:'Encerrada', pill:'status--neutral'};
@@ -512,7 +512,7 @@
     /* primeiro acesso: o regime só existe depois que alguém escolheu no formulário (rascunho ou envio) */
     $('coRegime').textContent=(SCN==='new')?((_d1Sent&&_sentRegime)||(_draft&&_draftRegime)||'—'):(CO.regime||'—');
     $('coVig').textContent=vig?('Versão '+vig.n):'Nenhuma';
-    $('coAt').textContent=(prog||vig||VERSIONS[0]||{}).quando||'—';
+    var _q=(prog||vig||VERSIONS[0]||{}).quando||'—'; $('coAt').textContent=_q.replace('hoje,','03/09/2026').replace('ontem,','02/09/2026').replace(/,\s+/,' ');
 
     /* ação principal: só cabe UMA versão em andamento; com uma aberta o botão fica desabilitado e explica */
     var slot=$('headerActSlot');
@@ -676,7 +676,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788441607';
+  var MYV='1788443722';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

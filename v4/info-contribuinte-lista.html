@@ -90,14 +90,15 @@
     .table th:first-child,.table td:first-child{padding-left:var(--space-6)}
     .table th:last-child,.table td:last-child{padding-right:var(--space-6)}
     /* Situação com a Receita: ícone + texto (não pílula) */
-    .sitcell{display:inline-flex;align-items:center;gap:var(--space-2);font-size:var(--text-base);font-weight:500;color:var(--color-text);white-space:nowrap}
+    .sitcell{display:inline-flex;align-items:center;gap:var(--space-2);font-size:var(--text-base);font-weight:500;white-space:nowrap}
     .sitcell svg{width:18px;height:18px;flex:0 0 auto}
-    /* a cor fica só no ícone; o texto é preto em todos os estados */
-    .sitcell--success svg{color:var(--color-success-fg)}
-    .sitcell--warning svg{color:var(--color-warning-fg)}
-    .sitcell--danger svg{color:var(--color-danger-fg)}
-    .sitcell--neutral svg{color:var(--color-text-muted)}
-    .sitcell--muted svg{color:var(--color-text-onmuted)}
+    /* texto e ícone na cor do estado (verde / laranja / vermelho / cinza) */
+    .sitcell--success{color:var(--color-success-fg)}
+    .sitcell--info{color:var(--color-info-fg)}
+    .sitcell--andamento{color:var(--color-draft-fg)}
+    .sitcell--danger{color:var(--color-danger-fg)}
+    .sitcell--neutral{color:var(--color-text-muted)}
+    .sitcell--muted{color:var(--color-text-onmuted)}
     .table tbody tr:last-child td{border-bottom:0}
     .cnpj-col{font-variant-numeric:tabular-nums;color:var(--color-text)}
     /* Overlay de DEMONSTRAÇÃO (dev) — flutua por cima da interface, não faz parte do produto */
@@ -213,14 +214,14 @@
             <div class="table-wrap">
               <table class="table table--fixed table--stickyactions">
                 <colgroup>
-                  <col><col style="width:190px"><col style="width:140px"><col style="width:244px"><col style="width:200px"><col style="width:142px">
+                  <col><col style="width:190px"><col style="width:244px"><col style="width:140px"><col style="width:200px"><col style="width:142px">
                 </colgroup>
                 <thead>
                   <tr>
                     <th scope="col" class="sortable is-sorted" data-sort="emp" aria-sort="ascending" tabindex="0" role="button">Empresa <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></th>
                     <th scope="col" class="sortable" data-sort="regime" aria-sort="none" tabindex="0" role="button">Regime principal <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></th>
-                    <th scope="col" class="sortable" data-sort="ver" aria-sort="none" tabindex="0" role="button">Versão vigente <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></th>
                     <th scope="col" class="sortable" data-sort="sit" aria-sort="none" tabindex="0" role="button">Situação com a Receita <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></th>
+                    <th scope="col" class="sortable" data-sort="ver" aria-sort="none" tabindex="0" role="button">Versão vigente <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></th>
                     <th scope="col" class="sortable" data-sort="at" aria-sort="none" tabindex="0" role="button">Última atualização <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></th>
                     <th scope="col"><span class="sr-only">Ações</span></th>
                   </tr>
@@ -247,7 +248,7 @@
   <script>
   var esc=function(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');};
   function code(n){return (n||'?').replace(/[^A-Za-zÀ-ú ]/g,'').trim().split(/\s+/)[0].slice(0,3).toUpperCase();}
-  var LOGOS={seg:'../Logos/MAG%20seguros.png', fin:'../Logos/mag%20financas.jpeg', cap:'../Logos/mag%20capitalizacoes.jpeg', sic:'../Logos/sicooboficial_logo.jpeg', s2u:'../Logos/simple2u.svg'};
+  var LOGOS={seg:'../Logos/MAG%20seguros.png', fin:'../Logos/mag%20financas.jpeg', cap:'../Logos/mag%20capitalizacoes.jpeg', sic:'../Logos/sicooboficial_logo.jpeg', s2u:'../Logos/logo_simple-2u_j7QQ4s.png'};
   function logoHtml(e){
     var url=LOGOS[e.id];
     if(url) return '<span class="co-logo co-logo--img"><img src="'+url+'" alt="Logo '+esc(e.nome)+'"></span>';
@@ -269,13 +270,13 @@
 
   var EMP_POP=[
     /* aceitas na Receita — vigência em aberto (sem fim) */
-    {id:'cap', nome:'MAG Capitalização', cnpj:'52.780.551/0001-19', regime:'Serviços Financeiros', vigente:{ver:3, since:'01/01/2026', until:null},         sit:'sucesso',    draft:null,      at:'ontem, 09:15', ts:200},
+    {id:'cap', nome:'MAG Capitalização', cnpj:'52.780.551/0001-19', regime:'Serviços Financeiros', vigente:{ver:3, since:'01/01/2026', until:null},         sit:'sucesso',    draft:null,      at:'02/09/2026 09:15', ts:200},
     /* vigência com fim definido */
-    {id:'fin', nome:'MAG Finanças',      cnpj:'21.995.256/0001-56', regime:'Serviços Financeiros', vigente:{ver:3, since:'01/01/2026', until:'31/12/2026'}, sit:'sucesso',    draft:'revisao', at:'hoje, 10:20', ts:1020},
+    {id:'fin', nome:'MAG Finanças',      cnpj:'21.995.256/0001-56', regime:'Serviços Financeiros', vigente:{ver:3, since:'01/01/2026', until:'31/12/2026'}, sit:'sucesso',    draft:'revisao', at:'03/09/2026 10:20', ts:1020},
     /* processado com avisos (aceito, mas com ressalvas) + nova versão (v4) em revisão */
-    {id:'seg', nome:'MAG Seguros',       cnpj:'33.608.308/0001-73', regime:'Serviços Financeiros', vigente:{ver:3, since:'01/01/2026', until:null},         sit:'avisos',     draft:null,      at:'hoje, 14:32', ts:1432},
+    {id:'seg', nome:'MAG Seguros',       cnpj:'33.608.308/0001-73', regime:'Serviços Financeiros', vigente:{ver:3, since:'01/01/2026', until:null},         sit:'avisos',     draft:null,      at:'03/09/2026 14:32', ts:1432},
     /* transmitida e rejeitada pela Receita: ainda sem versão aceita */
-    {id:'sic', nome:'Sicoob Seguradora', cnpj:'26.314.512/0001-16', regime:'Serviços Financeiros', vigente:null,                       sit:'rejeitado',  draft:null,      at:'hoje, 11:05', ts:1105},
+    {id:'sic', nome:'Sicoob Seguradora', cnpj:'26.314.512/0001-16', regime:'Serviços Financeiros', vigente:null,                       sit:'rejeitado',  draft:null,      at:'03/09/2026 11:05', ts:1105},
     /* nunca transmitida à Receita */
     {id:'s2u', nome:'Simple2u',          cnpj:'40.997.879/0001-02', regime:null,                    vigente:null,                       sit:'naoenviada', draft:null,      at:null,           ts:0}
   ];
@@ -306,17 +307,17 @@
      Sem vigente: o problema (rejeitada) ou a pendência (em andamento) ou nunca enviou. */
   var RIC={
     check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>',
-    warn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4M12 17h.01"/></svg>',
+    info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>',
     clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>',
     x:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></svg>',
     dash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke-dasharray="4 3"/></svg>'
   };
   function receitaSit(e){
     var andamento = e.draft || e.emrev || e.rascunho || e.sit==='revisao' || e.sit==='rascunho';
-    if(e.vigente && e.sit==='avisos') return {key:'avisos',    cls:'warning', ic:RIC.warn,  label:'Vigente com adv.'};
+    if(e.vigente && e.sit==='avisos') return {key:'avisos',    cls:'info',    ic:RIC.info,  label:'Vigente com adv.'};
     if(e.vigente)                     return {key:'vigente',   cls:'success', ic:RIC.check, label:'Vigente na Receita'};
     if(e.sit==='rejeitado')           return {key:'rejeitado', cls:'danger',  ic:RIC.x,     label:'Versão rejeitada'};
-    if(andamento)                     return {key:'andamento', cls:'neutral', ic:RIC.clock, label:'Em andamento'};
+    if(andamento)                     return {key:'andamento', cls:'andamento', ic:RIC.clock, label:'Em andamento'};
     return                                   {key:'nenhuma',   cls:'muted',   ic:RIC.dash,  label:'Nenhuma versão enviada'};
   }
   function situacaoCell(e){
@@ -389,8 +390,8 @@
       return '<tr data-href="'+href+'">'+
         '<td><div class="evemp">'+logoHtml(e)+'<div><div class="celltitle">'+esc(e.nome)+'</div><div class="cellcnpj">'+esc(e.cnpj)+'</div></div></div></td>'+
         '<td>'+regime+'</td>'+
-        '<td>'+versao+'</td>'+
         '<td>'+situacaoCell(e)+'</td>'+
+        '<td>'+versao+'</td>'+
         '<td>'+at+'</td>'+
         '<td class="col-act">'+btn+'</td>'+
       '</tr>';
@@ -474,7 +475,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788441607';
+  var MYV='1788443722';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
