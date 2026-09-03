@@ -406,7 +406,7 @@
   var SIT={
     rascunho:    {label:'Rascunho',               pill:'status--draft',   tone:'draft',   ic:I.pen,   lead:'Última alteração em'},
     revisao:     {label:'Em revisão',             pill:'status--draft',   tone:'draft',   ic:I.clock, lead:'Enviada para revisão em'},
-    ajustes:     {label:'Ajustes solicitados',    pill:'status--draft',   tone:'draft',   ic:I.alert, lead:'Devolvida em'},
+    ajustes:     {label:'Ajustes solicitados',    pill:'status--danger',  tone:'danger',  ic:I.alert, lead:'Devolvida em'},
     processando: {label:'Em processamento',       pill:'status--draft',   tone:'draft',   ic:I.clock, lead:'Transmitida em'},
     sucesso:     {label:'Processado com sucesso', pill:'status--success', tone:'success', ic:I.check, lead:'Processada em'},
     advertencias:{label:'Processado com advertências', pill:'status--info', tone:'success', ic:I.check, lead:'Processada em'},
@@ -676,7 +676,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788443722';
+  var MYV='1788443844';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
