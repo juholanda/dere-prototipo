@@ -98,6 +98,9 @@
     .sitcell--proc{color:var(--sky-800)}
     .sitcell--muted{color:var(--color-text-muted)}
     .sitprog{display:block;font-size:var(--text-xs);color:var(--color-text-muted);margin-top:2px;padding-left:calc(18px + var(--space-2))}
+    .vigwarn{display:inline-flex;vertical-align:middle;margin-left:var(--space-1-5);color:var(--color-warning);cursor:help}
+    .vigwarn svg{width:16px;height:16px}
+    .vigwarn:focus-visible{outline:none;box-shadow:var(--ring);border-radius:var(--radius-pill)}
     .sitcell--danger{color:var(--color-danger-fg)}
     .sitcell--neutral{color:var(--color-text-muted)}
     .sitcell--muted{color:var(--color-text-onmuted)}
@@ -260,8 +263,8 @@
   /* o status real é da VERSÃO; a empresa mostra o estado principal (cadastro) + uma pendência opcional */
   /* estados oficiais do retorno da Receita (cdRetorno) + estado interno "não enviada" */
   var SIT={
-    sucesso:   {label:'Processado com sucesso', pill:'status--success'},
-    avisos:    {label:'Processado com advertências', pill:'status--warning'},
+    sucesso:   {label:'Processada com sucesso', pill:'status--success'},
+    avisos:    {label:'Processada com advertências', pill:'status--warning'},
     rejeitado: {label:'Rejeitada',              pill:'status--danger'},
     revisao:   {label:'Em revisão',              pill:'status--info'},
     rascunho:  {label:'Rascunho',                pill:'status--draft'},
@@ -272,7 +275,7 @@
 
   var EMP_POP=[
     /* aceitas na Receita — vigência em aberto (sem fim) */
-    {id:'cap', nome:'MAG Capitalização', cnpj:'52.780.551/0001-19', regime:'Serviços Financeiros', vigente:{ver:3, since:'01/01/2026', until:null},         sit:'sucesso',    draft:null,      at:'02/09/2026 09:15', ts:200},
+    {id:'cap', nome:'MAG Capitalização', cnpj:'52.780.551/0001-19', regime:'Serviços Financeiros', vigente:{ver:3, since:'01/01/2026', until:'30/09/2026'}, sit:'sucesso',    draft:null,      at:'02/09/2026 09:15', ts:200},
     /* vigência com fim definido */
     {id:'fin', nome:'MAG Finanças',      cnpj:'21.995.256/0001-56', regime:'Serviços Financeiros', vigente:{ver:3, since:'01/01/2026', until:'31/12/2026'}, sit:'sucesso',    draft:'revisao', at:'03/09/2026 10:20', ts:1020},
     /* processado com avisos (aceito, mas com ressalvas) + nova versão (v4) em revisão */
@@ -330,6 +333,7 @@
     var n = e.vigente ? ((e.vigente.ver||0)+1) : ((e.emrev&&e.emrev.ver)||1);
     return {n:n, label:M[st]};
   }
+  function nearEnd(v){ if(!v||!v.until) return false; var m=/(\d{2})\/(\d{2})\/(\d{4})/.exec(v.until); if(!m) return false; var end=new Date(+m[3],+m[2]-1,+m[1]), today=new Date(2026,8,3); var d=(end-today)/86400000; return d>=0 && d<=60; }
   function situacaoCell(e){
     var r=receitaSit(e), pr=progressoInfo(e);
     var sub = pr ? '<span class="sitprog">Versão '+pr.n+' '+pr.label+'</span>' : '';
@@ -388,9 +392,10 @@
       var href=(semversao||isRascunho)?('info-contribuinte.html?modo=nova&emp='+e.id+'&scn='+scenario):('info-contribuinte-empresa.html?emp='+e.id+'&scn='+scenario);
       var regime=e.regime?esc(e.regime):'<span class="muted">—</span>';
       var periodo=e.vigente ? (e.vigente.until ? 'até '+esc(e.vigente.until) : 'em aberto') : '';
+      var vigWarn=nearEnd(e.vigente) ? ' <span class="vigwarn" tabindex="0" role="img" aria-label="O prazo de vigência está perto do fim. Envie uma nova versão." title="O prazo de vigência está perto do fim. Envie uma nova versão."><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg></span>' : '';
       /* só há "versão vigente" quando alguma versão foi processada com sucesso; em revisão/rascunho NÃO é vigente */
       var versao=e.vigente
-        ? '<span style="font-weight:600;color:var(--color-heading)">Versão '+e.vigente.ver+'</span><div class="cellsub" style="margin-top:2px">'+periodo+'</div>'
+        ? '<span style="font-weight:600;color:var(--color-heading)">Versão '+e.vigente.ver+'</span>'+vigWarn+'<div class="cellsub" style="margin-top:2px">'+periodo+'</div>'
         : '<span class="muted">—</span>';
       var at=e.at?esc(e.at):'<span class="muted">—</span>';
       var btn=semversao
@@ -434,6 +439,8 @@
 
   /* Cenário (só demonstração): Populado x Primeiro acesso — overlay flutuante, fora da interface */
   document.addEventListener('DOMContentLoaded',function(){
+    /* demo=0: chega por um fluxo específico (ex.: alerta de vigência) sem a barra de demo */
+    if(/[?&]demo=0\b/.test(location.search)){ var _db=document.getElementById('demobar'); if(_db) _db.remove(); return; }
     document.querySelectorAll('[data-scn]').forEach(function(b){
       b.addEventListener('click',function(){
         var scn=b.getAttribute('data-scn');
@@ -477,7 +484,7 @@
   </script>
 
   <!-- Ferramenta de DEMONSTRAÇÃO (não faz parte do produto): alterna o cenário da lista -->
-  <div class="demobar" role="group" aria-label="Demonstração: alternar cenário">
+  <div class="demobar" id="demobar" role="group" aria-label="Demonstração: alternar cenário">
     <span class="demobar__lbl">Demo</span>
     <span class="demobar__sep" aria-hidden="true"></span>
     <button type="button" data-scn="pop">Populado</button>
@@ -487,7 +494,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788446968';
+  var MYV='1788447928';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

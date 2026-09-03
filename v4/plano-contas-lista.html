@@ -233,8 +233,8 @@
     naoiniciado: {label:'Não iniciado',              pill:'status--neutral'},
     rascunho:    {label:'Rascunho',                   pill:'status--neutral'},
     revisao:     {label:'Em revisão',                 pill:'status--info'},
-    sucesso:     {label:'Processado com sucesso',     pill:'status--success'},
-    advertencias:{label:'Processado com adv.',pill:'status--warning'},
+    sucesso:     {label:'Processada com sucesso',     pill:'status--success'},
+    advertencias:{label:'Processada com adv.',pill:'status--warning'},
     rejeitado:   {label:'Rejeitado',                  pill:'status--danger'}
   };
 
@@ -372,7 +372,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788446968';
+  var MYV='1788447928';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

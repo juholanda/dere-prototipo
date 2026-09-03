@@ -849,8 +849,8 @@
   /* estado da versão (para o subtítulo e as ações) */
   var VSTATE={
     rascunho:    {label:'Rascunho', can:'revisar'},
-    sucesso:     {label:'Vigente · Processado com sucesso', can:'alterar'},
-    advertencias:{label:'Vigente · Processado com advertências', can:'alterar'},
+    sucesso:     {label:'Vigente · Processada com sucesso', can:'alterar'},
+    advertencias:{label:'Vigente · Processada com advertências', can:'alterar'},
     revisao:     {label:'Em revisão', can:'aprovar'},
     rejeitado:   {label:'Rejeitado', can:'corrigir'}
   };
@@ -1841,7 +1841,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788446968';
+  var MYV='1788447928';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

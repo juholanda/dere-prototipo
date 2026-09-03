@@ -375,8 +375,8 @@
     revisao:    {label:'Em revisão',             pill:'status--info',    track:'adere', ord:2},
     ajuste:     {label:'Ajustes solicitados',    pill:'status--warning', track:'adere', ord:1},
     processando:{label:'Em processamento',       pill:'status--warning', track:'receita', ord:3},
-    avisos:     {label:'Processado com avisos',  pill:'status--warning', track:'receita', ord:4},
-    sucesso:    {label:'Processado com sucesso', pill:'status--success', track:'receita', ord:5},
+    avisos:     {label:'Processada com avisos',  pill:'status--warning', track:'receita', ord:4},
+    sucesso:    {label:'Processada com sucesso', pill:'status--success', track:'receita', ord:5},
     rejeitado:  {label:'Rejeitado',              pill:'status--danger',  track:'receita', ord:0},
     reenviar:   {label:'Pronto para reenviar',   pill:'status--warning', track:'adere',   ord:1}
   };
@@ -756,7 +756,7 @@
     var OPTS={
       emp:[['','Todas as empresas'],['seg','MAG Seguros'],['fin','MAG Finanças'],['cap','MAG Capitalização'],['sic','Sicoob Seguradora'],['sim','Simple2u']],
       tipo:[['','Todos os eventos'],['D-1001','Informações do Contribuinte'],['D-1011','Plano de contas'],['D-1101','Balancete']],
-      sit:[['','Todas as situações'],['processando','Em processamento'],['sucesso','Processado com sucesso'],['avisos','Processado com avisos'],['rejeitado','Rejeitado'],['revisao','Em revisão']]
+      sit:[['','Todas as situações'],['processando','Em processamento'],['sucesso','Processada com sucesso'],['avisos','Processada com avisos'],['rejeitado','Rejeitado'],['revisao','Em revisão']]
     };
     var CHEVI='<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
     var CHECKI='<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
@@ -837,7 +837,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788446968';
+  var MYV='1788447928';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

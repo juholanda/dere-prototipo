@@ -422,7 +422,7 @@
     }
   };
   /* MESMOS status da lista (label + cor): o badge do título usa exatamente estes */
-  var SIT={ rascunho:{label:'Rascunho',pill:'status--neutral'}, revisao:{label:'Em revisão',pill:'status--warning'}, ajustes:{label:'Ajustes solicitados',pill:'status--danger'}, processando:{label:'Em processamento',pill:'status--info'}, sucesso:{label:'Processado com sucesso',pill:'status--success'}, advertencias:{label:'Processado com advertências',pill:'status--azul'}, rejeitado:{label:'Rejeitada pela Receita',pill:'status--danger'}, encerrada:{label:'Encerrada',pill:'status--neutral'} };
+  var SIT={ rascunho:{label:'Rascunho',pill:'status--neutral'}, revisao:{label:'Em revisão',pill:'status--warning'}, ajustes:{label:'Ajustes solicitados',pill:'status--danger'}, processando:{label:'Em processamento',pill:'status--info'}, sucesso:{label:'Processada com sucesso',pill:'status--success'}, advertencias:{label:'Processada com advertências',pill:'status--azul'}, rejeitado:{label:'Rejeitada pela Receita',pill:'status--danger'}, encerrada:{label:'Encerrada',pill:'status--neutral'} };
   function sitFor(key){ if(key==='revisao') return 'revisao'; if(key==='ajuste') return 'ajustes'; if(key==='rascunho') return 'rascunho'; var us=dparam('sit'); return (['sucesso','advertencias','encerrada','processando','rejeitado','rascunho'].indexOf(us)>=0)?us:'sucesso'; }
   function initials(n){return n.split(/\s+/).slice(0,2).map(function(w){return w[0];}).join('').toUpperCase();}
   function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
@@ -442,8 +442,8 @@
     ajustes:     {t:'02/09/2026 · 14:32', title:'Ajustes solicitados',           status:['Ajustes solicitados','status--danger'],     who:'Ana Prado', role:'Aprovadora', extras:[['Comentário','O regime secundário não se aplica a esta empresa. Remova a marcação e confirme a vigência antes de reenviar.']]},
     reenviada:   {t:'03/09/2026 · 09:10', title:'Reenviada para revisão',        status:['Em revisão','status--warning'],             who:'Ricardo Alves', role:'Preparador'},
     aprovada:    {t:'03/09/2026 · 11:20', title:'Aprovada e transmitida à Receita Federal', status:['Em processamento','status--info'], who:'Ana Prado', role:'Aprovadora'},
-    processada:  {t:'03/09/2026 · 11:27', title:'Processada pela Receita Federal', status:['Processado com sucesso','status--success'], who:'Receita Federal', role:'Sistema', extras:[['Recibo',REC]]},
-    processada_adv:{t:'03/09/2026 · 11:27', title:'Processada pela Receita Federal', status:['Processado com advertências','status--azul'], who:'Receita Federal', role:'Sistema', extras:[['Advertência','MS1094 · A data de início da validade é anterior ao início da DeRE (aviso, não impeditivo).'],['Recibo',REC]]},
+    processada:  {t:'03/09/2026 · 11:27', title:'Processada pela Receita Federal', status:['Processada com sucesso','status--success'], who:'Receita Federal', role:'Sistema', extras:[['Recibo',REC]]},
+    processada_adv:{t:'03/09/2026 · 11:27', title:'Processada pela Receita Federal', status:['Processada com advertências','status--azul'], who:'Receita Federal', role:'Sistema', extras:[['Advertência','MS1094 · A data de início da validade é anterior ao início da DeRE (aviso, não impeditivo).'],['Recibo',REC]]},
     rejeitada:   {t:'03/09/2026 · 11:27', title:'Processada pela Receita Federal', status:['Rejeitada','status--danger'], who:'Receita Federal', role:'Sistema', extras:[['Erro','MS1097 · A validade informada se sobrepõe a um período já existente. Ajuste as datas e reenvie.']]}
   };
   var TL={
@@ -800,8 +800,8 @@
         <button class="icon-btn" type="button" data-close-excluir aria-label="Fechar" style="flex:0 0 auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg></button>
       </div>
       <div class="modal__body">
-        <p id="exLead" style="margin:0 0 var(--space-6);line-height:1.5">A exclusão encerra a vigência ativa do D-1001 na Receita. Ela não é imediata: entra como um evento de exclusão que <strong>passa pela aprovação de Ana Prado</strong> antes de ser transmitido.</p>
-        <div class="mform">
+        <p id="exLead" style="margin:0 0 var(--space-6);line-height:1.5;font-size:var(--text-base)">A exclusão encerra a vigência ativa do D-1001 na Receita. Ela não é imediata: entra como um evento de exclusão que <strong>passa pela aprovação de Ana Prado</strong> antes de ser transmitido.</p>
+        <div class="mform" style="margin-bottom:var(--space-4)">
           <div class="field">
             <label class="field__label" for="motExcl">Motivo da exclusão</label>
             <select class="select" id="motExcl" aria-describedby="motExclHint">
@@ -891,7 +891,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788446968';
+  var MYV='1788447928';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

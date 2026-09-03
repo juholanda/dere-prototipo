@@ -408,8 +408,8 @@
     revisao:     {label:'Em revisão',             pill:'status--warning', tone:'warning', ic:I.clock, lead:'Enviada para revisão em'},
     ajustes:     {label:'Ajustes solicitados',    pill:'status--danger',  tone:'danger',  ic:I.alert, lead:'Devolvida em'},
     processando: {label:'Em processamento',       pill:'status--info',    tone:'info',    ic:I.clock, lead:'Transmitida em'},
-    sucesso:     {label:'Processado com sucesso', pill:'status--success', tone:'success', ic:I.check, lead:'Processada em'},
-    advertencias:{label:'Processado com advertências', pill:'status--azul', tone:'success', ic:I.check, lead:'Processada em'},
+    sucesso:     {label:'Processada com sucesso', pill:'status--success', tone:'success', ic:I.check, lead:'Processada em'},
+    advertencias:{label:'Processada com advertências', pill:'status--azul', tone:'success', ic:I.check, lead:'Processada em'},
     rejeitado:   {label:'Rejeitada pela Receita', pill:'status--danger',  tone:'danger',  ic:I.x,     lead:'Rejeitada em'}
   };
   var ENC={label:'Encerrada', pill:'status--neutral'};
@@ -676,7 +676,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788446968';
+  var MYV='1788447928';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
