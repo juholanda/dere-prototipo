@@ -379,7 +379,7 @@
      (rascunho, em revisão, ajustes solicitados, em processamento ou rejeitada aguardando correção). */
   var COMPANIES={
     seg:{nome:'MAG Seguros', cnpj:'33.608.308/0001-73', logo:'../Logos/MAG%20seguros.png', regime:'Serviços Financeiros', versions:[
-      {n:4, current:false, sit:'revisao',      vigrole:null,   vig:'—',                       recibo:'—',            quando:'01/09/2026, 14:32', resp:'Ricardo Alves'},
+      {n:4, current:false, sit:'processando',  vigrole:null,   vig:'—',                       recibo:'—',            quando:'03/09/2026, 14:32', env:'03/09/2026, 14:30', resp:'Ricardo Alves'},
       {n:3, current:true,  sit:'advertencias', vigrole:'now',  vig:'01/01/2026 · em aberto',  recibo:'RC-2026.0003', quando:'16/08/2026, 09:12', env:'15/08/2026, 15:40', proc:'16/08/2026, 09:12'},
       {n:2, current:false, sit:'sucesso',      vigrole:'past', vig:'01/09/2025 a 31/12/2025', recibo:'RC-2025.0002', quando:'31/12/2025, 23:59', env:'28/08/2025, 10:14', proc:'29/08/2025, 09:00', resp:'Ricardo Alves'},
       {n:1, current:false, sit:'sucesso',      vigrole:'past', vig:'01/01/2025 a 31/08/2025', recibo:'RC-2025.0001', quando:'31/08/2025, 23:59', env:'09/01/2025, 09:20', proc:'10/01/2025, 09:00', resp:'Ricardo Alves'}
@@ -396,9 +396,10 @@
       {n:1, current:false, sit:'sucesso',      vigrole:'past', vig:'01/01/2025 a 30/06/2025', recibo:'RC-2025.0001', quando:'30/06/2025, 23:59', env:'02/01/2025, 08:45', proc:'03/01/2025, 09:00', resp:'Ricardo Alves'}
     ]},
     sic:{nome:'Sicoob Seguradora', cnpj:'26.314.512/0001-16', logo:'../Logos/sicooboficial_logo.jpeg', regime:'Serviços Financeiros', versions:[
-      {n:3, current:false, sit:'rejeitado',    vigrole:null,   vig:'—',                       recibo:'—',            quando:'01/09/2026, 08:40', resp:'Ricardo Alves'},
-      {n:2, current:false, sit:'sucesso',      vigrole:'past', vig:'01/07/2025 a 31/12/2025', recibo:'RC-2025.0002', quando:'31/12/2025, 23:59', env:'30/06/2025, 15:20', proc:'01/07/2025, 09:00', resp:'Ricardo Alves'},
-      {n:1, current:false, sit:'sucesso',      vigrole:'past', vig:'01/01/2025 a 30/06/2025', recibo:'RC-2025.0001', quando:'30/06/2025, 23:59', env:'01/01/2025, 12:00', proc:'02/01/2025, 09:00', resp:'Ricardo Alves'}
+      {n:4, current:false, sit:'rejeitado',    vigrole:null,   vig:'—',                       recibo:'—',            quando:'03/09/2026, 11:05', env:'03/09/2026, 10:50', resp:'Ricardo Alves'},
+      {n:3, current:true,  sit:'sucesso',      vigrole:'now',  vig:'01/01/2026 · em aberto',  recibo:'RC-2026.0003', quando:'20/08/2026, 09:00', env:'19/08/2026, 14:00', proc:'20/08/2026, 09:00'},
+      {n:2, current:false, sit:'sucesso',      vigrole:'past', vig:'01/06/2025 a 31/12/2025', recibo:'RC-2025.0002', quando:'31/12/2025, 23:59', env:'30/05/2025, 15:20', proc:'01/06/2025, 09:00', resp:'Ricardo Alves'},
+      {n:1, current:false, sit:'sucesso',      vigrole:'past', vig:'01/01/2025 a 31/05/2025', recibo:'RC-2025.0001', quando:'31/05/2025, 23:59', env:'01/01/2025, 12:00', proc:'02/01/2025, 09:00', resp:'Ricardo Alves'}
     ]},
     s2u:{nome:'Simple2u', cnpj:'40.997.879/0001-02', logo:'../Logos/logo_simple-2u_j7QQ4s.png', regime:null, versions:[]}
   };
@@ -676,7 +677,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788454337';
+  var MYV='1788454609';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
