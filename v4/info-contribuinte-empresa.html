@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Versões · MAG Seguros</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=44">
+  <link rel="stylesheet" href="../design-system/ds.css?v=47">
   <script src="../design-system/ds-tailwind.js"></script>
   <script src="../design-system/ds-dialog.js"></script>
   <style>
@@ -404,12 +404,12 @@
   };
   /* Ciclo de vida único (interno → Receita). A pílula mostra o estágio; "vigente" é a seção, não um estado. */
   var SIT={
-    rascunho:    {label:'Rascunho',               pill:'status--draft',   tone:'draft',   ic:I.pen,   lead:'Última alteração em'},
-    revisao:     {label:'Em revisão',             pill:'status--draft',   tone:'draft',   ic:I.clock, lead:'Enviada para revisão em'},
+    rascunho:    {label:'Rascunho',               pill:'status--neutral', tone:'draft',   ic:I.pen,   lead:'Última alteração em'},
+    revisao:     {label:'Em revisão',             pill:'status--warning', tone:'warning', ic:I.clock, lead:'Enviada para revisão em'},
     ajustes:     {label:'Ajustes solicitados',    pill:'status--danger',  tone:'danger',  ic:I.alert, lead:'Devolvida em'},
-    processando: {label:'Em processamento',       pill:'status--draft',   tone:'draft',   ic:I.clock, lead:'Transmitida em'},
+    processando: {label:'Em processamento',       pill:'status--info',    tone:'info',    ic:I.clock, lead:'Transmitida em'},
     sucesso:     {label:'Processado com sucesso', pill:'status--success', tone:'success', ic:I.check, lead:'Processada em'},
-    advertencias:{label:'Processado com advertências', pill:'status--info', tone:'success', ic:I.check, lead:'Processada em'},
+    advertencias:{label:'Processado com advertências', pill:'status--azul', tone:'success', ic:I.check, lead:'Processada em'},
     rejeitado:   {label:'Rejeitada pela Receita', pill:'status--danger',  tone:'danger',  ic:I.x,     lead:'Rejeitada em'}
   };
   var ENC={label:'Encerrada', pill:'status--neutral'};
@@ -535,9 +535,9 @@
     /* pendência que exige ação */
     var al='';
     if(prog && prog.sit==='ajustes'){
-      al='<div class="alert alert--warning" role="status"><span class="alert__icon">'+I.alert+'</span><div class="alert__body"><p class="alert__title">Ajustes solicitados na Versão '+prog.n+'</p><p class="alert__text">O revisor devolveu a versão com pedidos de ajuste. Faça as correções e reenvie para revisão. Nada foi transmitido à Receita.</p></div><span class="alert__act"><a class="btn btn--secondary" href="'+hrefOf(prog)+'">Ver ajustes'+I.chev+'</a></span></div>';
+      al='<div class="dalert dalert--danger" role="status"><span class="dalert__ic">'+I.alert+'</span><div class="dalert__body"><p class="dalert__title">Ajustes solicitados na Versão '+prog.n+'</p><p class="dalert__text">O revisor devolveu a versão com pedidos de ajuste. Faça as correções e reenvie para revisão. Nada foi transmitido à Receita.</p></div><a class="btn btn--secondary dalert__act" href="'+hrefOf(prog)+'">Ver ajustes'+I.chev+'</a></div>';
     } else if(prog && prog.sit==='rejeitado'){
-      al='<div class="alert alert--danger" role="status"><span class="alert__icon">'+I.x+'</span><div class="alert__body"><p class="alert__title">Versão '+prog.n+' rejeitada pela Receita</p><p class="alert__text">A transmissão foi rejeitada. Consulte o motivo, corrija as informações e reenvie. A versão vigente continua valendo.</p></div><span class="alert__act"><a class="btn btn--secondary" href="'+hrefOf(prog)+'">Ver motivo'+I.chev+'</a></span></div>';
+      al='<div class="dalert dalert--danger" role="status"><span class="dalert__ic">'+I.x+'</span><div class="dalert__body"><p class="dalert__title">Versão '+prog.n+' rejeitada pela Receita</p><p class="dalert__text">A transmissão foi rejeitada. Consulte o motivo, corrija as informações e reenvie. A versão vigente continua valendo.</p></div><a class="btn btn--secondary dalert__act" href="'+hrefOf(prog)+'">Ver motivo'+I.chev+'</a></div>';
     }
     $('alertSlot').innerHTML=al;
 
@@ -676,7 +676,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788446435';
+  var MYV='1788446968';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
