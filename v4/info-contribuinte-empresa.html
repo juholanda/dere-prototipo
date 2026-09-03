@@ -172,6 +172,14 @@
     .tl__bar--vig{background:var(--color-success-bg);color:var(--color-success-fg);border:1px solid var(--color-success-fg)}
     .tl__bar--ina{background:var(--color-border);color:var(--color-text-onmuted);border:1px solid var(--color-border-strong)}
     .tl__bar--open::after{content:"";position:absolute;right:0;top:0;bottom:0;width:22px;background:linear-gradient(90deg,transparent,var(--color-success-bg))}
+    /* vigência futura: barra verde tracejada (aceita, ainda não em vigor) */
+    .tl__bar--fut{background:color-mix(in srgb,var(--color-success-bg) 55%,var(--color-surface));color:var(--color-success-fg);border:1px dashed var(--color-success-fg)}
+    .tl__bar--fut.tl__bar--open::after{background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--color-success-bg) 55%,var(--color-surface)))}
+    .tl__sw--fut{background:color-mix(in srgb,var(--color-success-bg) 55%,var(--color-surface));border:1px dashed var(--color-success-fg)}
+    /* marcador "hoje" na faixa + tick destacado */
+    .tl__today{position:absolute;top:0;bottom:0;border-left:2px solid var(--color-heading);z-index:3;pointer-events:none}
+    .tl__tick--today .tl__tickv{color:var(--color-heading);font-weight:700}
+    .tl__tick--today::before{background:var(--color-heading);height:11px}
     .tl__gap{position:absolute;top:0;bottom:0;background:repeating-linear-gradient(45deg,color-mix(in srgb,var(--color-danger) 22%,transparent) 0 5px,transparent 5px 10px);border-left:1px dashed var(--color-danger);border-right:1px dashed var(--color-danger)}
     .tl__gap-lbl{position:absolute;top:-2px;font-size:var(--text-2xs);font-weight:700;color:var(--color-danger);white-space:nowrap}
     .tl__ticks{position:relative;height:36px;margin-top:var(--space-2)}
@@ -607,15 +615,20 @@
     VERSIONS.forEach(function(v){ var p=parseVig(v.vig); if(p&&p.from) items.push({ver:v.n, current:v.current, from:p.from, to:p.to, open:p.open, vig:v.vig, href:hrefOf(v)}); });
     if(items.length<1){ el.innerHTML='<div class="empty"><div class="empty__icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><rect width="4" height="7" x="7" y="10" rx="1"/><rect width="4" height="12" x="15" y="5" rx="1"/></svg></div><p class="empty__title">Nenhuma vigência ainda</p><p class="empty__text">A linha do tempo aparece quando houver uma versão processada com sucesso na Receita.</p></div>'; return; }
     items.sort(function(a,b){ return a.from-b.from; });
-    var today=new Date();
+    var today=new Date(2026,8,3); var DAY=86400000;   /* hoje do protótipo */
+    /* fim visual de uma barra aberta: hoje (se já começou) ou início + ~6 meses (se é futura) */
+    function isFut(i){ return i.from.getTime()>today.getTime(); }
+    function endOfBar(i){ return i.to ? i.to.getTime() : (isFut(i) ? i.from.getTime()+DAY*180 : today.getTime()); }
+    var hasFut=items.some(isFut);
     var minT=items[0].from.getTime();
-    var maxT=Math.max.apply(null, items.map(function(i){ return (i.to||today).getTime(); }));
-    var span=Math.max(maxT-minT, 86400000*60); var DAY=86400000;
+    var maxT=Math.max(today.getTime(), Math.max.apply(null, items.map(endOfBar)));
+    var span=Math.max(maxT-minT, DAY*60);
     function pct(t){ return ((t-minT)/span)*100; }
     var bars='', gaps='', hasGap=false, hasOverlap=false;
     items.forEach(function(i){
-      var end=(i.to||today).getTime(), l=pct(i.from.getTime()), w=Math.max(pct(end)-l,6);
-      bars+='<a class="tl__bar '+(i.current?'tl__bar--vig':'tl__bar--ina')+(i.open?' tl__bar--open':'')+'" href="'+i.href+'" style="left:'+l.toFixed(2)+'%;width:'+w.toFixed(2)+'%" title="Versão '+i.ver+' · '+esc(i.vig||'')+' · abrir detalhe">v'+i.ver+'</a>';
+      var end=endOfBar(i), l=pct(i.from.getTime()), w=Math.max(pct(end)-l,6);
+      var cls=isFut(i)?'tl__bar--fut':(i.current?'tl__bar--vig':'tl__bar--ina');
+      bars+='<a class="tl__bar '+cls+(i.open?' tl__bar--open':'')+'" href="'+i.href+'" style="left:'+l.toFixed(2)+'%;width:'+w.toFixed(2)+'%" title="Versão '+i.ver+' · '+esc(i.vig||'')+' · abrir detalhe">v'+i.ver+'</a>';
     });
     for(var k=0;k<items.length-1;k++){
       var a=items[k], b=items[k+1];
@@ -626,17 +639,20 @@
     }
     var fmt=function(d){ return ('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2)+'/'+d.getFullYear(); };
     var last=items[items.length-1];
+    var hoje='<div class="tl__today" style="left:'+pct(today.getTime()).toFixed(2)+'%"></div>';
     var ticks='';
     items.forEach(function(i,idx){
       var l=pct(i.from.getTime());
       ticks+='<div class="tl__tick'+(idx===0?' tl__tick--start':'')+'" style="left:'+l.toFixed(2)+'%"><span class="tl__tickv">v'+i.ver+'</span><span class="tl__tickd">'+fmt(i.from)+'</span></div>';
     });
-    ticks+='<div class="tl__tick tl__tick--end" style="left:100%"><span class="tl__tickv">'+(last.open?'hoje':'fim')+'</span><span class="tl__tickd">'+(last.open?'em aberto':fmt(new Date(maxT)))+'</span></div>';
+    ticks+='<div class="tl__tick tl__tick--today" style="left:'+pct(today.getTime()).toFixed(2)+'%"><span class="tl__tickv">hoje</span><span class="tl__tickd">'+fmt(today)+'</span></div>';
+    ticks+='<div class="tl__tick tl__tick--end" style="left:100%"><span class="tl__tickv">'+(last.open?(isFut(last)?'em diante':'hoje'):'fim')+'</span><span class="tl__tickd">'+((last.open&&!isFut(last))?'em aberto':fmt(new Date(maxT)))+'</span></div>';
     var status = hasGap ? '<span style="color:var(--color-danger);font-weight:600;font-size:var(--text-xs)">Há lacuna de vigência</span>'
       : hasOverlap ? '<span style="color:var(--color-warning);font-weight:600;font-size:var(--text-xs)">Há sobreposição de vigência</span>'
       : '';
-    el.innerHTML='<div class="tl__cap"><div class="tl__legend"><span><span class="tl__sw tl__sw--vig"></span>Vigente</span><span><span class="tl__sw tl__sw--ina"></span>Encerrada</span></div></div>'+
-      '<div class="tl__track">'+bars+gaps+'</div>'+
+    var legend='<span><span class="tl__sw tl__sw--vig"></span>Vigente</span>'+(hasFut?'<span><span class="tl__sw tl__sw--fut"></span>Vigência futura</span>':'')+'<span><span class="tl__sw tl__sw--ina"></span>Encerrada</span>';
+    el.innerHTML='<div class="tl__cap"><div class="tl__legend">'+legend+'</div></div>'+
+      '<div class="tl__track">'+bars+gaps+hoje+'</div>'+
       '<div class="tl__ticks">'+ticks+'</div>'+
       (status?'<div class="tl__note">'+status+'</div>':'');
   }
@@ -711,7 +727,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788456273';
+  var MYV='1788456650';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
