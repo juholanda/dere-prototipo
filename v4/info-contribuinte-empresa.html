@@ -410,7 +410,7 @@
     processando: {label:'Em processamento',       pill:'status--draft',   tone:'draft',   ic:I.clock, lead:'Transmitida em'},
     sucesso:     {label:'Processado com sucesso', pill:'status--success', tone:'success', ic:I.check, lead:'Processada em'},
     advertencias:{label:'Processado com advertências', pill:'status--info', tone:'success', ic:I.check, lead:'Processada em'},
-    rejeitado:   {label:'Rejeitada',              pill:'status--danger',  tone:'danger',  ic:I.x,     lead:'Rejeitada em'}
+    rejeitado:   {label:'Rejeitada pela Receita', pill:'status--danger',  tone:'danger',  ic:I.x,     lead:'Rejeitada em'}
   };
   var ENC={label:'Encerrada', pill:'status--neutral'};
 
@@ -676,7 +676,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788444077';
+  var MYV='1788444412';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
