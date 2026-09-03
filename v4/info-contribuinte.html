@@ -251,6 +251,7 @@
           </div>
 
           <div class="wrap">
+            <div id="corrBanner"></div>
             <div class="cadwrap">
               <div class="cadform">
 
@@ -840,9 +841,19 @@
       });
     })();
   </script>
+  <script>
+  (function(){
+    function p(k){var m=new RegExp('[?&]'+k+'=([^&]*)').exec(location.search);return m?decodeURIComponent(m[1]):'';}
+    var corr=p('corr'); var el=document.getElementById('corrBanner'); if(!corr||!el) return;
+    var M={ ajustes:['Ajustes solicitados por Ana Prado','O regime secundário não se aplica a esta empresa. Remova a marcação e confirme a vigência antes de reenviar.'],
+            rejeitado:['Versão rejeitada pela Receita Federal','MS1097 · A validade informada se sobrepõe a um período já existente. Ajuste as datas e reenvie.'] };
+    var m=M[corr]; if(!m) return;
+    el.innerHTML='<div class="alert alert--danger" role="status" style="margin-bottom:var(--space-6)"><span class="alert__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4M12 17h.01"/></svg></span><div class="alert__body"><p class="alert__title">'+m[0]+'</p><p class="alert__text">'+m[1]+'</p></div></div>';
+  })();
+  </script>
 <script>
 (function(){
-  var MYV='1788444412';
+  var MYV='1788444642';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
