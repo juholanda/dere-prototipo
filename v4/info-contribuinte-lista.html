@@ -61,7 +61,15 @@
     .table td{padding-top:var(--space-4);padding-bottom:var(--space-4)}
     .celltitle{font-size:var(--text-base);font-weight:600;color:var(--color-heading);white-space:nowrap}
     .cellcnpj{font-size:var(--text-sm);color:var(--color-text-muted);font-variant-numeric:tabular-nums;margin-top:2px;white-space:nowrap}
-    .cellsub{font-size:var(--text-sm);color:var(--color-text-muted);font-variant-numeric:tabular-nums;margin-top:2px;line-height:1.3}
+    .cellsub{font-size:var(--text-xs);color:var(--color-text-muted);font-variant-numeric:tabular-nums;margin-top:2px;line-height:1.3}
+    /* sublinha da versão em processo: bolinha da etapa (cor = etapa) + texto */
+    .cellsub--stage{display:flex;align-items:center;font-variant-numeric:normal}
+    .stagedot{width:8px;height:8px;border-radius:50%;margin-right:var(--space-2);flex:0 0 auto}
+    .stagedot--rascunho{background:var(--color-text-muted)}
+    .stagedot--revisao{background:var(--color-warning)}
+    .stagedot--ajustes{background:var(--color-danger)}
+    .stagedot--processando{background:var(--sky-800)}
+    .stagedot--rejeitado{background:var(--color-danger)}
     .evemp{display:flex;align-items:center;gap:var(--space-3)}
     .evemp > div{min-width:0}
     .muted{color:var(--color-text-muted)}
@@ -96,6 +104,7 @@
     .sitcell svg{width:18px;height:18px;flex:0 0 auto}
     /* texto e ícone na cor do estado (verde / laranja / vermelho / cinza) */
     .sitcell--success{color:var(--color-success-fg)}
+    .sitcell--azul{color:var(--color-azul)}
     .sitcell--info{color:var(--color-info-fg)}
     .sitcell--proc{color:var(--sky-800)}
     .sitcell--muted{color:var(--color-text-muted)}
@@ -223,7 +232,7 @@
             <div class="table-wrap">
               <table class="table table--fixed table--stickyactions">
                 <colgroup>
-                  <col><col style="width:190px"><col style="width:244px"><col style="width:140px"><col style="width:200px"><col style="width:142px">
+                  <col><col style="width:172px"><col style="width:195px"><col style="width:215px"><col style="width:160px"><col style="width:130px">
                 </colgroup>
                 <thead>
                   <tr>
@@ -277,20 +286,25 @@
   /* pendência = nova versão em andamento sobre um cadastro que já tem versão aceita */
   var PEND={revisao:'Nova versão em revisão', ajuste:'Nova versão em ajustes'};
 
+  /* Modelo (validado nos docs oficiais):
+     - Situação na Receita (empresa) = SÓ a foto do vigente: Vigente / Vigente com avisos / Sem vigência.
+     - flight = a versão em processo (tentativa), mostrada como sublinha na coluna Versão com bolinha da etapa.
+       etapas internas: rascunho, revisao, ajustes | etapas na Receita: processando, rejeitado.
+       (rejeição NÃO derruba a vigente; processamento também não — a vigente só cai quando a nova é ACEITA.) */
   var EMP_POP=[
-    /* aceitas na Receita — vigência em aberto (sem fim) */
-    {id:'cap', nome:'MAG Capitalização', cnpj:'52.780.551/0001-19', regime:'Serviços Financeiros', vigente:{ver:3, since:'01/01/2026', until:'30/09/2026'}, sit:'sucesso',    draft:null,      at:'02/09/2026 09:15', ts:200},
-    /* vigência com fim definido */
-    {id:'fin', nome:'MAG Finanças',      cnpj:'21.995.256/0001-56', regime:'Serviços Financeiros', vigente:{ver:3, since:'01/01/2026', until:'31/12/2026'}, sit:'sucesso',    draft:'revisao', at:'03/09/2026 10:20', ts:1020},
-    /* processado com avisos (aceito, mas com ressalvas) + nova versão (v4) em revisão */
-    {id:'seg', nome:'MAG Seguros',       cnpj:'33.608.308/0001-73', regime:'Serviços Financeiros', vigente:{ver:3, since:'01/01/2026', until:null},         sit:'avisos',     draft:null,      at:'03/09/2026 14:32', ts:1432},
-    /* transmitida e rejeitada pela Receita: ainda sem versão aceita */
-    {id:'sic', nome:'Sicoob Seguradora', cnpj:'26.314.512/0001-16', regime:'Serviços Financeiros', vigente:null,                       sit:'rejeitado',  draft:null,      at:'03/09/2026 11:05', ts:1105},
-    /* nunca transmitida à Receita */
-    {id:'s2u', nome:'Simple2u',          cnpj:'40.997.879/0001-02', regime:null,                    vigente:null,                       sit:'naoenviada', draft:null,      at:null,           ts:0}
+    /* Vigente, perto do fim, sem nova em curso → sublinha = período + alerta */
+    {id:'cap', nome:'MAG Capitalização', cnpj:'52.780.551/0001-19', regime:'Serviços Financeiros', vigente:{ver:3, since:'01/01/2026', until:'30/09/2026'}, sit:'sucesso',    flight:null,                     at:'02/09/2026 09:15', ts:200},
+    /* Vigente + nova (v4) em revisão (interna) */
+    {id:'fin', nome:'MAG Finanças',      cnpj:'21.995.256/0001-56', regime:'Serviços Financeiros', vigente:{ver:3, since:'01/01/2026', until:'31/12/2026'}, sit:'sucesso',    flight:{ver:4, st:'revisao'},    at:'03/09/2026 10:20', ts:1020},
+    /* Vigente com avisos + nova (v4) transmitida, em processamento na Receita */
+    {id:'seg', nome:'MAG Seguros',       cnpj:'33.608.308/0001-73', regime:'Serviços Financeiros', vigente:{ver:3, since:'01/01/2026', until:null},         sit:'avisos',     flight:{ver:4, st:'processando'}, at:'03/09/2026 14:32', ts:1432},
+    /* Sem vigente + a tentativa (v3) foi rejeitada pela Receita (não gravada) */
+    {id:'sic', nome:'Sicoob Seguradora', cnpj:'26.314.512/0001-16', regime:'Serviços Financeiros', vigente:null,                       sit:'rejeitado',  flight:{ver:3, st:'rejeitado'},  at:'03/09/2026 11:05', ts:1105},
+    /* Nunca transmitida à Receita */
+    {id:'s2u', nome:'Simple2u',          cnpj:'40.997.879/0001-02', regime:null,                    vigente:null,                       sit:'naoenviada', flight:null,                     at:null,           ts:0}
   ];
   /* cenário PRIMEIRO ACESSO (só via overlay de demonstração): todas as empresas vazias, a preencher */
-  var EMP_NEW=EMP_POP.map(function(e){ return {id:e.id, nome:e.nome, cnpj:e.cnpj, regime:null, vigente:null, sit:'naoenviada', draft:null, at:null, ts:0}; });
+  var EMP_NEW=EMP_POP.map(function(e){ return {id:e.id, nome:e.nome, cnpj:e.cnpj, regime:null, vigente:null, sit:'naoenviada', flight:null, at:null, ts:0}; });
   var scenario=((/[?&]scn=(new|pop)/.exec(location.search)||[])[1])||'new';
   /* persistência do fluxo: enviei o D-1001 da MAG Seguros → ela aparece com a 1ª versão em revisão */
   /* primeiro acesso: o flag guarda o id da empresa enviada; rascunho é por empresa */
@@ -321,30 +335,28 @@
     x:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></svg>',
     dash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke-dasharray="4 3"/></svg>'
   };
+  /* Situação na Receita (empresa) = SÓ a foto do vigente (Extrato de Eventos Vigentes).
+     Rejeitada e Em processamento descrevem a TENTATIVA, não a empresa → vão pra coluna Versão. */
   function receitaSit(e){
-    if(e.vigente && e.sit==='avisos') return {key:'avisos',      cls:'azul',      ic:RIC.info,  label:'Vigente com adv.'};
-    if(e.vigente)                     return {key:'vigente',     cls:'success',   ic:RIC.check, label:'Vigente na Receita'};
-    if(e.sit==='rejeitado')           return {key:'rejeitado',   cls:'danger',    ic:RIC.x,     label:'Versão rejeitada'};
-    if(e.sit==='processando')         return {key:'processando', cls:'proc',      ic:RIC.clock, label:'Em processamento'};
-    /* rascunho / em revisão / ajustes = trabalho interno: nada foi transmitido à Receita ainda */
-    return                                   {key:'nenhuma',     cls:'muted',     ic:RIC.dash,  label:'Nenhuma versão enviada'};
+    if(e.vigente && e.sit==='avisos') return {key:'avisos',  cls:'azul',    ic:RIC.info,  label:'Vigente com avisos'};
+    if(e.vigente)                     return {key:'vigente', cls:'success', ic:RIC.check, label:'Vigente'};
+    /* sem vigente: nenhuma versão em vigor agora (nunca aceitou OU teve e venceu = lacuna; o porquê vem na coluna Versão) */
+    return                                   {key:'nenhuma', cls:'muted',   ic:RIC.dash,  label:'Sem versão vigente'};
   }
-  /* versão em preparo interno (além da vigente): vira sublinha discreta, não muda o status da Receita */
-  function progressoInfo(e){
-    var M={revisao:'em revisão', ajuste:'em ajustes', ajustes:'em ajustes', rascunho:'em rascunho'};
-    var st = e.draft || (e.emrev?'revisao':null) || (e.rascunho?'rascunho':null) || ((!e.vigente && M[e.sit])?e.sit:null);
-    if(!M[st]) return null;
-    var n = e.vigente ? ((e.vigente.ver||0)+1) : ((e.emrev&&e.emrev.ver)||1);
-    return {n:n, label:M[st]};
+  /* versão em processo (tentativa), além da vigente: sublinha na coluna Versão com bolinha da etapa.
+     etapas internas: rascunho / revisao / ajustes  ·  etapas na Receita: processando / rejeitado */
+  function flightInfo(e){
+    if(!e.flight) return null;
+    var L={rascunho:'em rascunho', revisao:'em revisão', ajustes:'em ajustes', processando:'em processamento', rejeitado:'rejeitada'};
+    return {n:e.flight.ver, label:L[e.flight.st]||e.flight.st, dot:e.flight.st};
   }
   function nearEnd(v){ if(!v||!v.until) return false; var m=/(\d{2})\/(\d{2})\/(\d{4})/.exec(v.until); if(!m) return false; var end=new Date(+m[3],+m[2]-1,+m[1]), today=new Date(2026,8,3); var d=(end-today)/86400000; return d>=0 && d<=60; }
   function situacaoCell(e){
-    var r=receitaSit(e), pr=progressoInfo(e);
-    var sub = pr ? '<span class="sitprog">Versão '+pr.n+' '+pr.label+'</span>' : '';
-    return '<span class="sitcell sitcell--'+r.cls+'">'+r.ic+'<span>'+esc(r.label)+'</span></span>'+sub;
+    var r=receitaSit(e);
+    return '<span class="sitcell sitcell--'+r.cls+'">'+r.ic+'<span>'+esc(r.label)+'</span></span>';
   }
   /* ordenação: problema primeiro, depois pendência, depois ok */
-  var SITRANK={rejeitado:0, processando:1, nenhuma:2, avisos:3, vigente:4};
+  var SITRANK={nenhuma:0, avisos:1, vigente:2};
   function sitRank(e){ var k=receitaSit(e).key; return SITRANK[k]!=null?SITRANK[k]:9; }
 
   function count(fn){return curEmp().filter(fn).length;}
@@ -395,12 +407,18 @@
          Passa o cenário para a página de versões refletir primeiro acesso vs. populado. */
       var href=(semversao||isRascunho)?('info-contribuinte.html?modo=nova&emp='+e.id+'&scn='+scenario):('info-contribuinte-empresa.html?emp='+e.id+'&scn='+scenario);
       var regime=e.regime?esc(e.regime):'<span class="muted">—</span>';
+      var fl=flightInfo(e);
       var periodo=e.vigente ? (e.vigente.until ? 'até '+esc(e.vigente.until) : 'em aberto') : '';
-      var vigWarn=nearEnd(e.vigente) ? ' <span class="tooltip tooltip--top vigwarn-wrap"><span class="vigwarn" tabindex="0" role="img" aria-label="O prazo de vigência está perto do fim. Envie uma nova versão."><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg></span><span class="tooltip__bubble tooltip__bubble--stack">O prazo de vigência está perto do fim. Envie uma nova versão.</span></span>' : '';
-      /* só há "versão vigente" quando alguma versão foi processada com sucesso; em revisão/rascunho NÃO é vigente */
-      var versao=e.vigente
-        ? '<span class="vercell-top"><span style="font-weight:600;color:var(--color-heading)">Versão '+e.vigente.ver+'</span>'+vigWarn+'</span><div class="cellsub">'+periodo+'</div>'
-        : '<span class="muted">—</span>';
+      /* alerta de vigência só quando NÃO há nova versão em curso (com uma em curso, o operador já agiu) */
+      var vigWarn=(nearEnd(e.vigente) && !fl) ? ' <span class="tooltip tooltip--top vigwarn-wrap"><span class="vigwarn" tabindex="0" role="img" aria-label="O prazo de vigência está perto do fim. Envie uma nova versão."><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg></span><span class="tooltip__bubble tooltip__bubble--stack">O prazo de vigência está perto do fim. Envie uma nova versão.</span></span>' : '';
+      /* sublinha = SÓ a versão em processo (bolinha da etapa). Sem versão em curso, não há sublinha (o período não entra aqui) */
+      var verSub=fl
+        ? '<div class="cellsub cellsub--stage"><span class="stagedot stagedot--'+fl.dot+'" aria-hidden="true"></span>Versão '+fl.n+' '+esc(fl.label)+'</div>'
+        : '';
+      /* linha 1: a versão vigente; sem vigente mas com tentativa, mostra o traço (a tentativa vem na sublinha) */
+      var versao=(e.vigente
+        ? '<span class="vercell-top"><span style="font-weight:600;color:var(--color-heading)">Versão '+e.vigente.ver+'</span>'+vigWarn+'</span>'
+        : (fl ? '<span class="vercell-top"><span class="muted">—</span></span>' : '<span class="muted">—</span>')) + verSub;
       var at=e.at?esc(e.at):'<span class="muted">—</span>';
       var btn=semversao
         ? '<a class="btn btn--primary rowbtn" href="'+href+'">Preencher</a>'
@@ -498,7 +516,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788451248';
+  var MYV='1788453429';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
