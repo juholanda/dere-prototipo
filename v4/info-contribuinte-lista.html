@@ -323,6 +323,8 @@
     /* populado: só quem ainda não tem versão vira "Rascunho" (quem já tem versão mantém o status da vigente) */
     EMP_POP.forEach(function(e){
       if(e.sit==='naoenviada' && localStorage.getItem('adere.d1001.draft.'+e.id)){ var _d=draftInfo(e.id); e.sit='rascunho'; e.rascunho=true; if(_d.regime) e.regime=_d.regime; e.at=_d.at||'01/09/2026, 14:32'; e.ts=9998; }
+      /* vigência excluída na Receita: a empresa perde a foto de vigente (a versão em curso, se houver, segue na sublinha) */
+      if(localStorage.getItem('adere.d1001.vigexcluida.'+e.id)){ e.vigente=null; e.vigexcluida=true; }
     });
   }catch(e){}
   function curEmp(){ return scenario==='new'?EMP_NEW:EMP_POP; }
@@ -498,7 +500,7 @@
   <script>(function(){ var bar=document.getElementById('demobar'); if(!bar) return; var tog=bar.querySelector('[data-demo-toggle]'); if(!tog) return; function set(open){ bar.classList.toggle('is-collapsed', !open); tog.setAttribute('aria-expanded', String(open)); tog.setAttribute('aria-label', open?'Recolher ferramenta de demonstração':'Abrir ferramenta de demonstração de cenários'); try{ localStorage.setItem('adere.demo.open', open?'1':'0'); }catch(e){} } var open=false; try{ open=localStorage.getItem('adere.demo.open')==='1'; }catch(e){} set(open); tog.addEventListener('click',function(){ set(bar.classList.contains('is-collapsed')); }); })();</script>
 <script>
 (function(){
-  var MYV='1788466052';
+  var MYV='1788468444';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

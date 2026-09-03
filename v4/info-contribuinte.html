@@ -883,7 +883,7 @@
       function fToast(msg){ var w=document.getElementById('fToastWrap'); if(!w) return; var t=document.createElement('div'); t.className='toast toast--success'; t.setAttribute('role','status'); t.innerHTML='<span class="toast__ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span>'+msg+'</span>'; w.appendChild(t); setTimeout(function(){ if(t.parentNode)t.parentNode.removeChild(t); },3200); }
       document.getElementById('fdemoReset').addEventListener('click',function(){
         /* limpa o rascunho/estado do cenário */
-        try{ localStorage.removeItem('adere.d1001.draft.'+emp); localStorage.removeItem('adere.sent.d1001'); localStorage.removeItem('adere.sent.d1001.t'); localStorage.removeItem('adere.d1001.approval.'+emp); localStorage.removeItem('adere.d1001.excluded.'+emp); }catch(e){}
+        try{ localStorage.removeItem('adere.d1001.draft.'+emp); localStorage.removeItem('adere.sent.d1001'); localStorage.removeItem('adere.sent.d1001.t'); localStorage.removeItem('adere.d1001.approval.'+emp); localStorage.removeItem('adere.d1001.excluded.'+emp); localStorage.removeItem('adere.d1001.vigexcluida.'+emp); }catch(e){}
         /* zera os campos do formulário, voltando ao estado inicial */
         var form=document.querySelector('.cadform');
         if(form){ Array.prototype.forEach.call(form.querySelectorAll('input,textarea,select'),function(el){
@@ -920,7 +920,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788466052';
+  var MYV='1788468444';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

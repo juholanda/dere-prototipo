@@ -433,7 +433,8 @@
     sucesso:     {label:'Processada com sucesso', pill:'status--success', tone:'success', ic:I.check, lead:'Processada em'},
     advertencias:{label:'Processada com advertências', pill:'status--azul', tone:'success', ic:I.check, lead:'Processada em'},
     futura:      {label:'Vigência futura',           pill:'status--success', tone:'success', ic:I.calendar, lead:'Aceita em'},
-    rejeitado:   {label:'Rejeitada pela Receita', pill:'status--danger',  tone:'danger',  ic:I.x,     lead:'Rejeitada em'}
+    rejeitado:   {label:'Rejeitada pela Receita', pill:'status--danger',  tone:'danger',  ic:I.x,     lead:'Rejeitada em'},
+    excluida:    {label:'Vigência excluída',      pill:'status--neutral', tone:'draft',   ic:I.x,     lead:'Excluída em'}
   };
   var ENC={label:'Encerrada', pill:'status--neutral'};
 
@@ -474,6 +475,9 @@
   }
   var _excluded=false; try{ _excluded=!!localStorage.getItem('adere.d1001.excluded.'+EMP); }catch(e){}
   if(_excluded){ var _pg=['rascunho','revisao','ajustes','processando','rejeitado']; _base=_base.filter(function(v){ return _pg.indexOf(v.sit)<0; }); }
+  /* vigência excluída na Receita (aprovada a exclusão): a vigente vira "Vigência excluída" e some da foto de vigente */
+  var _vigExc=null; try{ _vigExc=JSON.parse(localStorage.getItem('adere.d1001.vigexcluida.'+EMP)||'null'); }catch(e){}
+  if(_vigExc){ _base.forEach(function(v){ if(v.vigrole==='now'){ v.vigrole='excluded'; v.sit='excluida'; v.exclMotivo=_vigExc.motivo; } }); }
   var VERSIONS=_base.sort(function(a,b){ if(a.current!==b.current) return a.current?-1:1; return b.n-a.n; });
 
   function endOf(vig){ var m=(vig||'').match(/\d{2}\/\d{2}\/\d{4}/g)||[]; return m[1]||'—'; }
@@ -541,8 +545,9 @@
     var has=VERSIONS.length>0;
     var vig=VERSIONS.filter(function(v){ return v.vigrole==='now'; })[0]||null;
     var fut=VERSIONS.filter(function(v){ return v.vigrole==='future'; })[0]||null;
-    var prog=VERSIONS.filter(function(v){ return v.vigrole!=='now' && v.vigrole!=='past' && v.vigrole!=='future'; })[0]||null;
-    var enc=VERSIONS.filter(function(v){ return v.vigrole==='past'; });
+    var prog=VERSIONS.filter(function(v){ return v.vigrole!=='now' && v.vigrole!=='past' && v.vigrole!=='future' && v.vigrole!=='excluded'; })[0]||null;
+    var enc=VERSIONS.filter(function(v){ return v.vigrole==='past' || v.vigrole==='excluded'; });
+    var exc=VERSIONS.filter(function(v){ return v.vigrole==='excluded'; })[0]||null;
 
     /* empresa (contexto) */
     $('coNome').textContent=CO.nome;
@@ -550,7 +555,7 @@
     $('coLogo').innerHTML=CO.logo?'<img src="'+CO.logo+'" alt="Logo '+esc(CO.nome)+'">':'<span class="co-code">'+code(CO.nome)+'</span>';
     /* primeiro acesso: o regime só existe depois que alguém escolheu no formulário (rascunho ou envio) */
     $('coRegime').textContent=(SCN==='new')?((_d1Sent&&_sentRegime)||(_draft&&_draftRegime)||'—'):(CO.regime||'—');
-    $('coVig').textContent=vig?('Versão '+vig.n):'—';
+    $('coVig').textContent=vig?('Versão '+vig.n):(exc?'Sem versão vigente':'—');
     var _q=(prog||vig||VERSIONS[0]||{}).quando||'—'; $('coAt').textContent=_q.replace('hoje,','03/09/2026').replace('ontem,','02/09/2026').replace(/,\s+/,' ');
 
     /* ação principal: só cabe UMA versão em andamento; com uma aberta o botão fica desabilitado e explica */
@@ -577,6 +582,8 @@
       al='<div class="dalert dalert--danger" role="status"><span class="dalert__ic">'+I.alert+'</span><div class="dalert__body"><p class="dalert__title">Ajustes solicitados na Versão '+prog.n+'</p><p class="dalert__text">O revisor devolveu a versão com pedidos de ajuste. Faça as correções e reenvie para revisão. Nada foi transmitido à Receita.</p></div><a class="btn btn--secondary dalert__act" href="'+hrefOf(prog)+'">Ver ajustes'+I.chev+'</a></div>';
     } else if(prog && prog.sit==='rejeitado'){
       al='<div class="dalert dalert--danger" role="status"><span class="dalert__ic">'+I.x+'</span><div class="dalert__body"><p class="dalert__title">Versão '+prog.n+' rejeitada pela Receita</p><p class="dalert__text">A transmissão foi rejeitada. Consulte o motivo, corrija as informações e reenvie. A versão vigente continua valendo.</p></div><a class="btn btn--secondary dalert__act" href="'+hrefOf(prog)+'">Ver motivo'+I.chev+'</a></div>';
+    } else if(exc){
+      al='<div class="dalert dalert--warning" role="status"><span class="dalert__ic">'+I.alert+'</span><div class="dalert__body"><p class="dalert__title">Vigência excluída na Receita Federal</p><p class="dalert__text">'+(exc.exclMotivo?('Motivo: <strong>'+esc(exc.exclMotivo)+'</strong>. '):'')+'O contribuinte está <strong>sem declaração vigente</strong> do D-1001. Se ainda é obrigado à DeRE, registre uma nova versão.</p></div><a class="btn btn--primary dalert__act" href="'+hrefNova()+'">'+I.plus+'Nova versão D-1001</a></div>';
     }
     $('alertSlot').innerHTML=al;
 
@@ -586,7 +593,7 @@
 
     /* vigente */
     /* a vigência futura mora DENTRO do bloco de vigente, logo abaixo da atual, marcada como "Vigência futura" (com respiro entre elas) */
-    var _vigHtml = vig ? row(vig,{current:true}) : emptyBox('Nenhuma versão vigente. A primeira versão processada com sucesso pela Receita aparece aqui.');
+    var _vigHtml = vig ? row(vig,{current:true}) : emptyBox(exc?'Sem versão vigente. A vigência foi excluída na Receita Federal; registre uma nova versão para o contribuinte voltar a ter declaração vigente.':'Nenhuma versão vigente. A primeira versão processada com sucesso pela Receita aparece aqui.');
     $('secVig').innerHTML = fut ? '<div class="verlist" style="gap:var(--space-4)">'+_vigHtml+row(fut,{})+'</div>' : _vigHtml;
 
     /* em andamento (0 ou 1): a ação que o usuário precisa tomar é primária; só consultar é secundária */
@@ -729,7 +736,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788466052';
+  var MYV='1788468444';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
