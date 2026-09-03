@@ -183,12 +183,12 @@
     .tl__empty{margin:0;padding:var(--space-8) var(--space-4);text-align:center;color:var(--color-text-muted);font-size:var(--text-base)}
 
     /* Overlay de DEMONSTRAÇÃO (dev): cenário acompanha a navegação, flutua por cima, não é parte do produto */
-    .demobar{position:fixed;bottom:var(--space-4);right:var(--space-4);z-index:200;display:flex;align-items:center;gap:var(--space-1);background:var(--slate-900);border:1px solid rgba(255,255,255,.14);border-radius:var(--radius-pill);padding:2px var(--space-1-5);box-shadow:var(--shadow-md);font-size:var(--text-xs);opacity:.92;flex-wrap:wrap;justify-content:flex-end;max-width:calc(100vw - var(--space-8));row-gap:var(--space-1)}
+    .demobar{position:fixed;bottom:var(--space-4);left:50%;transform:translateX(-50%);z-index:200;display:flex;align-items:center;gap:var(--space-1);background:var(--slate-900);border:1px solid rgba(255,255,255,.14);border-radius:var(--radius-pill);padding:2px var(--space-1-5);box-shadow:var(--shadow-md);font-size:var(--text-xs);opacity:.92;flex-wrap:wrap;justify-content:center;max-width:calc(100vw - var(--space-8));row-gap:var(--space-1)}
     .demobar:hover{opacity:1}
     .demobar__toggle{display:inline-flex;align-items:center;gap:var(--space-1);background:none;border:0;color:rgba(255,255,255,.72);font-family:inherit;font-size:var(--text-2xs);font-weight:700;text-transform:uppercase;letter-spacing:.08em;cursor:pointer;padding:var(--space-1) var(--space-1-5);border-radius:var(--radius-pill)}
     .demobar__toggle:hover{color:#fff;background:rgba(255,255,255,.08)}
     .demobar__toggle svg{width:14px;height:14px;opacity:.8}
-    .demobar__body{display:flex;align-items:center;gap:var(--space-1);flex-wrap:wrap;justify-content:flex-end;row-gap:var(--space-1)}
+    .demobar__body{display:flex;align-items:center;gap:var(--space-1);flex-wrap:wrap;justify-content:center;row-gap:var(--space-1)}
     .demobar.is-collapsed{padding:2px}
     .demobar.is-collapsed .demobar__body{display:none}
     .demobar__lbl{text-transform:uppercase;letter-spacing:.08em;font-weight:700;color:rgba(255,255,255,.5);padding:0 var(--space-1) 0 var(--space-2);font-size:var(--text-2xs)}
@@ -725,7 +725,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788472882';
+  var MYV='1788473541';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
