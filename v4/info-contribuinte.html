@@ -262,11 +262,11 @@
                   </div>
                   <div class="cadrow">
                     <div class="cadrow__label"><span class="lb">CNPJ (raiz)</span><p class="cadrow__hint">Identifica o contribuinte pela raiz de 8 dígitos do CNPJ.</p></div>
-                    <div class="cadrow__field"><p class="roval">33.608.308</p></div>
+                    <div class="cadrow__field"><p class="roval" data-co-cnpjraiz>33.608.308</p></div>
                   </div>
                   <div class="cadrow">
                     <div class="cadrow__label"><span class="lb">Natureza jurídica</span><p class="cadrow__hint">Classificação jurídica do contribuinte conforme seu cadastro.</p></div>
-                    <div class="cadrow__field"><p class="roval">Sociedade Anônima</p></div>
+                    <div class="cadrow__field"><p class="roval" data-co-natureza>Sociedade Anônima</p></div>
                   </div>
                 </section>
 
@@ -293,7 +293,7 @@
                   <div class="card__h"><span class="card__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10M12 3v18M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg></span><h2 id="h-reg">Regime tributário</h2></div>
                   <div class="cadrow">
                     <div class="cadrow__label"><span class="lb">CNAE principal</span><p class="cadrow__hint">Vem do Cartão CNPJ. É a base para sugerir o regime.</p></div>
-                    <div class="cadrow__field"><p class="roval">65.11-1/01 · Seguros de vida</p></div>
+                    <div class="cadrow__field"><p class="roval" data-co-cnae>65.11-1/01 · Seguros de vida</p></div>
                   </div>
                   <div class="cadrow">
                     <div class="cadrow__label"><span class="lb">Regime principal<span class="req" aria-hidden="true">*</span></span><p class="cadrow__hint">Regime da atividade preponderante: a que sujeita ao regulador (BCB, ANS ou SUSEP). Sem regulador, a de maior faturamento no ano anterior.</p></div>
@@ -343,10 +343,10 @@
                   <div class="card__h"><span class="card__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg></span><h2 id="h-rev">Revisão e envio</h2></div>
                   <dl class="cadsum">
                     <div><dt>Contribuinte</dt><dd data-co-nome>MAG Seguros</dd></div>
-                    <div><dt>CNPJ (raiz)</dt><dd>33.608.308</dd></div>
-                    <div><dt>Natureza jurídica</dt><dd>Sociedade Anônima</dd></div>
+                    <div><dt>CNPJ (raiz)</dt><dd data-co-cnpjraiz>33.608.308</dd></div>
+                    <div><dt>Natureza jurídica</dt><dd data-co-natureza>Sociedade Anônima</dd></div>
                     <div><dt>Vigência</dt><dd>01/01/2026 · sem data de fim</dd></div>
-                    <div><dt>CNAE principal</dt><dd>65.11-1/01 · Seguros de vida</dd></div>
+                    <div><dt>CNAE principal</dt><dd data-co-cnae>65.11-1/01 · Seguros de vida</dd></div>
                     <div><dt>Regime principal</dt><dd>Serviços Financeiros</dd></div>
                     <div><dt>Regimes secundários</dt><dd>Nenhum</dd></div>
                     <div><dt>Natureza da tributação</dt><dd>Tributação regular</dd></div>
@@ -488,7 +488,7 @@
 
   /* Empresa do contexto (?emp=): trilha, "Contribuinte" e revisão seguem a empresa, nunca a MAG Seguros fixa; links de saída preservam o cenário */
   (function(){
-    var DCO={seg:{nome:'MAG Seguros',cnpj:'33.608.308/0001-73'},fin:{nome:'MAG Finanças',cnpj:'21.995.256/0001-56'},cap:{nome:'MAG Capitalização',cnpj:'52.780.551/0001-19'},sic:{nome:'Sicoob Seguradora',cnpj:'26.314.512/0001-16'},s2u:{nome:'Simple2u',cnpj:'40.997.879/0001-02'}};
+    var DCO={seg:{nome:'MAG Seguros',cnpj:'33.608.308/0001-73',natureza:'Sociedade Anônima',cnae:'65.11-1/01 · Seguros de vida'},fin:{nome:'MAG Finanças',cnpj:'21.995.256/0001-56',natureza:'Sociedade Anônima',cnae:'64.99-9/99 · Outras atividades de serviços financeiros'},cap:{nome:'MAG Capitalização',cnpj:'52.780.551/0001-19',natureza:'Sociedade Anônima',cnae:'65.50-2/00 · Capitalização'},sic:{nome:'Sicoob Seguradora',cnpj:'26.314.512/0001-16',natureza:'Cooperativa',cnae:'65.12-0/00 · Seguros não-vida'},s2u:{nome:'Simple2u',cnpj:'40.997.879/0001-02',natureza:'Sociedade Empresária Limitada',cnae:'64.63-8/00 · Outras sociedades de participação'}};
     var m=/[?&]emp=([^&]+)/.exec(location.search), emp=m?decodeURIComponent(m[1]):'seg', co=DCO[emp]||DCO.seg;
     var scn=(/[?&]scn=(new|pop)/.exec(location.search)||[])[1];
     var bc=document.querySelector('.bc a[href^="info-contribuinte-empresa.html"]');
@@ -496,6 +496,9 @@
     if(scn) document.querySelectorAll('.bc a.bc-hide, .sidenav a[href^="info-contribuinte-lista.html"]').forEach(function(a){ a.setAttribute('href','info-contribuinte-lista.html?scn='+scn); });
     document.querySelectorAll('[data-co-nome]').forEach(function(el){ el.textContent=co.nome; });
     document.querySelectorAll('[data-co-cnpj]').forEach(function(el){ el.textContent=co.cnpj; });
+    document.querySelectorAll('[data-co-cnpjraiz]').forEach(function(el){ el.textContent=(co.cnpj||'').split('/')[0]; });
+    document.querySelectorAll('[data-co-natureza]').forEach(function(el){ el.textContent=co.natureza||'—'; });
+    document.querySelectorAll('[data-co-cnae]').forEach(function(el){ el.textContent=co.cnae||'—'; });
   })();
 
   /* Vigência em aberto → habilita/limpa o Fim */
@@ -862,7 +865,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788461561';
+  var MYV='1788462039';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

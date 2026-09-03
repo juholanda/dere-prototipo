@@ -329,7 +329,7 @@
                   <div class="accordion__panel"><dl class="rogrid">
                     <div class="roitem"><dt>Nome empresarial</dt><dd id="roNome">MAG Seguros</dd></div>
                     <div class="roitem"><dt>CNPJ (raiz)</dt><dd id="roCnpjRaiz">33.608.308</dd></div>
-                    <div class="roitem"><dt>Natureza jurídica</dt><dd>Sociedade Anônima</dd></div>
+                    <div class="roitem"><dt>Natureza jurídica</dt><dd id="roNatJur">Sociedade Anônima</dd></div>
                   </dl></div>
                 </div>
                 <div class="accordion__item is-open">
@@ -342,16 +342,16 @@
                 <div class="accordion__item is-open">
                   <button class="accordion__head" type="button" aria-expanded="true"><span class="accordion__label"><span class="accordion__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10M12 3v18M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg></span>Regime tributário</span><span class="accordion__chev" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button>
                   <div class="accordion__panel"><dl class="rogrid">
-                    <div class="roitem"><dt>CNAE principal</dt><dd>65.11-1/01 · Seguros de vida</dd></div>
-                    <div class="roitem"><dt>Regime principal</dt><dd><span class="ronum">1</span>Serviços Financeiros</dd></div>
-                    <div class="roitem"><dt>Regimes secundários</dt><dd>Nenhum</dd></div>
-                    <div class="roitem"><dt>Natureza da tributação</dt><dd>Tributação regular</dd></div>
+                    <div class="roitem"><dt>CNAE principal</dt><dd id="roCnae">65.11-1/01 · Seguros de vida</dd></div>
+                    <div class="roitem"><dt>Regime principal</dt><dd id="roRegPrinc"><span class="ronum">1</span>Serviços Financeiros</dd></div>
+                    <div class="roitem"><dt>Regimes secundários</dt><dd id="roRegSec">Nenhum</dd></div>
+                    <div class="roitem"><dt>Natureza da tributação</dt><dd id="roNatTrib">Tributação regular</dd></div>
                   </dl></div>
                 </div>
                 <div class="accordion__item is-open">
                   <button class="accordion__head" type="button" aria-expanded="true"><span class="accordion__label"><span class="accordion__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8M13 12h8M13 18h8"/></svg></span>Atividades</span><span class="accordion__chev" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button>
                   <div class="accordion__panel"><dl class="rogrid">
-                    <div class="roitem rogrid__full"><dt>Serviços Financeiros<span class="rotab">Tabela 21</span></dt>
+                    <div class="roitem rogrid__full" id="roAtivItem"><dt>Serviços Financeiros<span class="rotab">Tabela 21</span></dt>
                       <dd><div class="ropicks">
                         <div class="ropick"><span class="ropick__cod">11A</span><span class="ropick__desc">Operações de seguros de ramos elementares e seguros de pessoas sem cobertura por sobrevivência, com exceção dos seguros de saúde de que trata o Capítulo III do Título V da Lei Complementar nº 214/2025</span></div>
                         <div class="ropick"><span class="ropick__cod">11B</span><span class="ropick__desc">Operações de seguros de pessoas com cobertura por sobrevivência, com exceção dos seguros de saúde de que trata o Capítulo III do Título V da Lei Complementar nº 214/2025</span></div>
@@ -683,12 +683,13 @@
   });
 
   /* empresa do contexto (?emp=) + estado inicial (?st=/?sit=) */
+  /* perfil por empresa (identificação, CNAE, regime, atividades) — antes tudo era hardcoded como MAG Seguros */
   var DCO={
-    seg:{nome:'MAG Seguros',       cnpj:'33.608.308/0001-73', logo:'../Logos/MAG%20seguros.png'},
-    fin:{nome:'MAG Finanças',      cnpj:'21.995.256/0001-56', logo:'../Logos/mag%20financas.jpeg'},
-    cap:{nome:'MAG Capitalização', cnpj:'52.780.551/0001-19', logo:'../Logos/mag%20capitalizacoes.jpeg'},
-    sic:{nome:'Sicoob Seguradora', cnpj:'26.314.512/0001-16', logo:'../Logos/sicooboficial_logo.jpeg'},
-    s2u:{nome:'Simple2u',          cnpj:'40.997.879/0001-02', logo:'../Logos/logo_simple-2u_j7QQ4s.png'}
+    seg:{nome:'MAG Seguros',       cnpj:'33.608.308/0001-73', logo:'../Logos/MAG%20seguros.png',        natureza:'Sociedade Anônima', cnae:'65.11-1/01 · Seguros de vida',                    regNum:'1', regNome:'Serviços Financeiros', regSec:'Nenhum', natTrib:'Tributação regular', tab:'Tabela 21', ativ:[['11A','Seguros de ramos elementares e de pessoas, sem cobertura por sobrevivência'],['11B','Seguros de pessoas com cobertura por sobrevivência'],['13A','Previdência complementar aberta']]},
+    fin:{nome:'MAG Finanças',      cnpj:'21.995.256/0001-56', logo:'../Logos/mag%20financas.jpeg',       natureza:'Sociedade Anônima', cnae:'64.99-9/99 · Outras atividades de serviços financeiros', regNum:'1', regNome:'Serviços Financeiros', regSec:'Nenhum', natTrib:'Tributação regular', tab:'Tabela 21', ativ:[['16A','Demais serviços financeiros do regime específico']]},
+    cap:{nome:'MAG Capitalização', cnpj:'52.780.551/0001-19', logo:'../Logos/mag%20capitalizacoes.jpeg', natureza:'Sociedade Anônima', cnae:'65.50-2/00 · Capitalização',                       regNum:'1', regNome:'Serviços Financeiros', regSec:'Nenhum', natTrib:'Tributação regular', tab:'Tabela 21', ativ:[['14A','Operações de capitalização']]},
+    sic:{nome:'Sicoob Seguradora', cnpj:'26.314.512/0001-16', logo:'../Logos/sicooboficial_logo.jpeg',   natureza:'Cooperativa',       cnae:'65.12-0/00 · Seguros não-vida',                   regNum:'1', regNome:'Serviços Financeiros', regSec:'Nenhum', natTrib:'Tributação regular', tab:'Tabela 21', ativ:[['11A','Seguros de ramos elementares e de pessoas, sem cobertura por sobrevivência']]},
+    s2u:{nome:'Simple2u',          cnpj:'40.997.879/0001-02', logo:'../Logos/logo_simple-2u_j7QQ4s.png', natureza:'Sociedade Empresária Limitada', cnae:'64.63-8/00 · Outras sociedades de participação', regNum:'1', regNome:'Serviços Financeiros', regSec:'Nenhum', natTrib:'Tributação regular', tab:'Tabela 21', ativ:[]}
   };
   function dparam(k){ var m=new RegExp('[?&]'+k+'=([^&]+)').exec(location.search); return m?decodeURIComponent(m[1]):''; }
   function dco(){ return DCO[dparam('emp')||'seg']||DCO.seg; }
@@ -703,6 +704,17 @@
     if($('coCnpj')) $('coCnpj').textContent='CNPJ '+_co.cnpj;
     if($('coLogo')) $('coLogo').innerHTML='<img src="'+_co.logo+'" alt="Logo '+esc(_co.nome)+'">';
     if($('roCnpjRaiz')) $('roCnpjRaiz').textContent=(_co.cnpj||'').split('/')[0];
+    /* accordion (identificação/regime/atividades) por empresa, não mais fixo como MAG Seguros */
+    if($('roNatJur')) $('roNatJur').textContent=_co.natureza||'—';
+    if($('roCnae')) $('roCnae').textContent=_co.cnae||'—';
+    if($('roRegPrinc')) $('roRegPrinc').innerHTML='<span class="ronum">'+esc(_co.regNum||'')+'</span>'+esc(_co.regNome||'');
+    if($('roRegSec')) $('roRegSec').textContent=_co.regSec||'Nenhum';
+    if($('roNatTrib')) $('roNatTrib').textContent=_co.natTrib||'—';
+    if($('roAtivItem')){
+      $('roAtivItem').innerHTML=(_co.ativ&&_co.ativ.length)
+        ? '<dt>'+esc(_co.regNome||'')+'<span class="rotab">'+esc(_co.tab||'')+'</span></dt><dd><div class="ropicks">'+_co.ativ.map(function(a){ return '<div class="ropick"><span class="ropick__cod">'+esc(a[0])+'</span><span class="ropick__desc">'+esc(a[1])+'</span></div>'; }).join('')+'</div></dd>'
+        : '<dt>Atividades</dt><dd><span class="muted">Nenhuma atividade informada.</span></dd>';
+    }
     /* "Editar informações" aponta para a versão certa (corrige o v pela URL) e leva empresa+cenário */
     document.addEventListener('click',function(e){ var a=e.target.closest('a[href^="info-contribuinte.html?modo=editar"]'); if(!a) return; var h=a.getAttribute('href'); var v=dparam('v'); if(v) h=h.replace(/([?&])v=\d+/, '$1v='+v); if(h.indexOf('emp=')<0) h+='&emp='+emp+_scnQ; if(dparam('cenario') && h.indexOf('cenario=')<0) h+='&cenario='+dparam('cenario'); a.setAttribute('href', h); }, true);
     var _cen=curCenario();
@@ -974,7 +986,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788461561';
+  var MYV='1788462039';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
