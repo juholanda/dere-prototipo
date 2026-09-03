@@ -698,6 +698,9 @@
       else setScenario(_cen.start);
     } else { var st=dparam('st'); render(STATES[st]?st:'revisao'); }
   })();
+  document.addEventListener('DOMContentLoaded',function(){
+    if(dparam('sent')==='1'){ showToast('Enviado para revisão interna.'); try{ var _ps=new URLSearchParams(location.search); _ps.delete('sent'); history.replaceState(null,'','?'+_ps.toString()); }catch(e){} }
+  });
 
   /* Botão "Mais ações" (dropdown): abre o painel; fecha ao escolher, clicar fora ou Esc */
   document.addEventListener('click',function(e){
