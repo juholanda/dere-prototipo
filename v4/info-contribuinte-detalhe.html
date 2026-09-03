@@ -42,6 +42,7 @@
     .optag{margin-left:var(--space-3)}
     /* skeleton de carregamento ao salvar rascunho (cobre a área de conteúdo por ~2s) */
     .content{position:relative}
+    body.has-decisionbar .content{scroll-padding-bottom:96px}
     .detskel{position:absolute;inset:0;background:var(--color-bg);z-index:20;overflow:auto;transition:opacity .25s;padding:var(--space-8) var(--space-10)}
     .detskel__wrap{max-width:1600px;margin:0 auto;display:flex;flex-direction:column;gap:var(--space-4)}
     .detskel .skeleton{border-radius:var(--radius-lg)}
@@ -368,7 +369,7 @@
             </div>
           </section>
         </div>
-        <div class="decisionbar" id="decisionbar" hidden><div class="decisionbar__inner" id="decisionActions"></div></div>
+        <div class="decisionbar" id="decisionbar" role="region" aria-label="Decisão da versão" hidden><div class="decisionbar__inner" id="decisionActions"></div></div>
       </main>
     </div>
   </div>
@@ -973,7 +974,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788460602';
+  var MYV='1788461561';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

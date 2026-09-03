@@ -55,7 +55,7 @@
   --color-border:      var(--slate-200);
   --color-border-strong:var(--slate-300);
   --color-scrim: color-mix(in srgb, var(--slate-900) 50%, transparent);
-  --color-field-border: var(--slate-400);
+  --color-field-border: color-mix(in srgb, var(--slate-400) 45%, var(--slate-500));
   --color-divider:     var(--color-border); /* tracinhos/divisores sobre branco — SEMPRE esta cor */
   --color-text:        var(--slate-800);
   --color-heading:     var(--slate-900);
@@ -399,6 +399,8 @@ textarea.input{height:auto;padding:var(--space-2) var(--space-3);min-height:84px
 .status--danger{background:var(--color-danger-bg);color:var(--color-danger-fg)}
 .status--info{background:var(--color-info-bg);color:var(--color-info-fg)}
 .status--neutral{background:var(--color-surface-2);color:var(--color-text-onmuted)}
+/* foco visível também no Modo de Alto Contraste do Windows (box-shadow não renderiza em forced-colors) */
+@media (forced-colors: active){ :focus-visible{ outline:2px solid CanvasText; outline-offset:2px } }
 .status--azul{background:var(--color-azul-bg);color:var(--color-azul-fg)} /* ok com ressalva (advertências) */
 .status--draft{background:var(--color-draft-bg);color:var(--color-draft-fg)} /* rascunho */
 /* Tamanhos do badge: pequeno / médio (padrão) / grande */

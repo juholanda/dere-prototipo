@@ -80,6 +80,8 @@
     .status{white-space:nowrap;font-size:var(--text-sm)}
     .col-act{text-align:right}
     .table th.sortable{white-space:nowrap}
+    .th-btn{background:none;border:0;margin:0;padding:0;font:inherit;color:inherit;letter-spacing:inherit;text-transform:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:var(--space-1-5)}
+    .th-btn:focus-visible{outline:none;box-shadow:var(--ring);border-radius:var(--radius-sm)}
     /* texto base da tabela a 16px; cabeçalhos ficam nos 12px do DS (--text-xs) */
     .table td{font-size:var(--text-base)}
     /* rodapé da tabela: contagem + paginador (padrão do app) */
@@ -104,7 +106,7 @@
     .sitprog{display:block;font-size:var(--text-sm);color:var(--color-text-muted);margin-top:2px;line-height:1.3;padding-left:calc(18px + var(--space-2))}
     .vigwarn-wrap{margin-left:var(--space-1-5);vertical-align:middle}
     .vigwarn-wrap .tooltip__bubble{max-width:300px;text-align:left}
-    .vigwarn{display:inline-flex;color:var(--color-warning)}
+    .vigwarn{display:inline-flex;color:var(--color-warning);padding:var(--space-1)}
     .vigwarn svg{width:16px;height:16px}
     .vigwarn:focus-visible{outline:none;box-shadow:var(--ring);border-radius:var(--radius-pill)}
     .sitcell--danger{color:var(--color-danger-fg)}
@@ -228,11 +230,11 @@
                 </colgroup>
                 <thead>
                   <tr>
-                    <th scope="col" class="sortable is-sorted" data-sort="emp" aria-sort="ascending" tabindex="0" role="button">Empresa <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></th>
-                    <th scope="col" class="sortable" data-sort="regime" aria-sort="none" tabindex="0" role="button">Regime principal <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></th>
-                    <th scope="col" class="sortable" data-sort="sit" aria-sort="none" tabindex="0" role="button">Situação na Receita <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></th>
-                    <th scope="col" class="sortable" data-sort="ver" aria-sort="none" tabindex="0" role="button">Versão vigente <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></th>
-                    <th scope="col" class="sortable" data-sort="at" aria-sort="none" tabindex="0" role="button">Última atualização <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></th>
+                    <th scope="col" class="sortable is-sorted" data-sort="emp" aria-sort="ascending"><button type="button" class="th-btn">Empresa <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
+                    <th scope="col" class="sortable" data-sort="regime" aria-sort="none"><button type="button" class="th-btn">Regime principal <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
+                    <th scope="col" class="sortable" data-sort="sit" aria-sort="none"><button type="button" class="th-btn">Situação na Receita <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
+                    <th scope="col" class="sortable" data-sort="ver" aria-sort="none"><button type="button" class="th-btn">Versão vigente <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
+                    <th scope="col" class="sortable" data-sort="at" aria-sort="none"><button type="button" class="th-btn">Última atualização <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
                     <th scope="col"><span class="sr-only">Ações</span></th>
                   </tr>
                 </thead>
@@ -461,8 +463,7 @@
     function updateHeaders(){ ths.forEach(function(th){ var on=th.getAttribute('data-sort')===listSort.key; th.setAttribute('aria-sort', on?(listSort.dir==='asc'?'ascending':'descending'):'none'); th.classList.toggle('is-sorted', on); }); }
     ths.forEach(function(th){
       function toggle(){ var k=th.getAttribute('data-sort'); if(listSort.key===k){ listSort.dir=listSort.dir==='asc'?'desc':'asc'; } else { listSort.key=k; listSort.dir='asc'; } renderRows(); updateHeaders(); }
-      th.addEventListener('click', toggle);
-      th.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggle(); } });
+      (th.querySelector('.th-btn')||th).addEventListener('click', toggle);
     });
     updateHeaders();
   })();
@@ -486,7 +487,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788460602';
+  var MYV='1788461561';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
