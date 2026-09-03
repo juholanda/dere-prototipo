@@ -535,12 +535,16 @@
   }
   var APV_BANNER={
     nova:['info','Nova versão aguardando sua aprovação','Revise as informações e aprove para transmitir à Receita Federal, ou solicite ajustes ao preparador.'],
-    alteracao:['info','Alteração das informações do contribuinte aguardando sua aprovação','Ao aprovar, esta versão substitui a vigente: a anterior é encerrada e a nova é transmitida à Receita.'],
-    exclusao:['warning','Exclusão de vigência aguardando sua aprovação','Ao aprovar, a vigência é encerrada na Receita e a empresa fica sem declaração vigente até registrar uma nova.']
+    alteracao:['warning','Alteração das informações do contribuinte aguardando sua aprovação','Ao aprovar, esta versão substitui a vigente: a anterior é encerrada e a nova é transmitida à Receita.'],
+    exclusao:['danger','Exclusão de vigência aguardando sua aprovação','Ao aprovar, a vigência é encerrada na Receita e a empresa fica sem declaração vigente até registrar uma nova.']
   };
+  /* motivo da exclusão (motExcl escolhido pelo preparador): mostrado no banner do aprovador */
+  function exclMotivo(){ var m=''; try{ m=localStorage.getItem('adere.d1001.exclmotivo.'+empId())||''; }catch(e){} return m||'Encerramento de atividade'; }
   function approverBanner(){
     var b=APV_BANNER[curOp]||APV_BANNER.nova;
-    return '<div class="dalert dalert--'+b[0]+'" role="status"><span class="dalert__ic">'+IC_INFO+'</span><div><p class="dalert__title">'+esc(b[1])+'</p><p class="dalert__text">'+esc(b[2])+'</p></div></div>';
+    var _txt=(curOp==='exclusao') ? ('Motivo informado pelo preparador: <b>'+esc(exclMotivo())+'</b>. '+esc(b[2])) : esc(b[2]);
+    var _ic=(b[0]==='info')?IC_INFO:ALERT;
+    return '<div class="dalert dalert--'+b[0]+'" role="status"><span class="dalert__ic">'+_ic+'</span><div><p class="dalert__title">'+esc(b[1])+'</p><p class="dalert__text">'+_txt+'</p></div></div>';
   }
   function showToast(msg){
     var w=$('toastWrap'); if(!w) return;
@@ -969,7 +973,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788460312';
+  var MYV='1788460602';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
