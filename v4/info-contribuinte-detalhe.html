@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Detalhe do contribuinte</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=43">
+  <link rel="stylesheet" href="../design-system/ds.css?v=44">
   <script src="../design-system/ds-tailwind.js"></script>
   <script src="../design-system/ds-dialog.js"></script>
   <style>
@@ -191,17 +191,7 @@
     .rf-wait svg{width:16px;height:16px;flex:0 0 auto}
 
     /* ===== alerta de pendência: fundo branco + traço lateral vivo, feedback direto ===== */
-    .dalert{display:flex;gap:var(--space-3);align-items:flex-start;background:var(--color-surface);border:1px solid var(--color-border);border-left:4px solid var(--color-warning);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:var(--space-4) var(--space-6);margin-bottom:var(--space-6)}
-    .dalert--danger{border-left-color:var(--color-danger)}
-    .dalert__ic{flex:0 0 auto;margin-top:1px}
-    .dalert__ic svg{width:20px;height:20px}
-    .dalert--warning .dalert__ic{color:var(--color-warning)}
-    .dalert--danger .dalert__ic{color:var(--color-danger)}
-    .dalert--info{border-left-color:var(--color-info)}
-    .dalert--info .dalert__ic{color:var(--color-info)}
     .modal__lead-ic--primary{background:var(--color-primary-subtle);color:var(--color-primary)}
-    .dalert__title{font-weight:700;color:var(--color-heading);margin:0;font-size:var(--text-base)}
-    .dalert__text{font-size:var(--text-sm);color:var(--color-text-onmuted);margin:var(--space-1) 0 0;line-height:1.55}
 
     /* ===== card com abas ===== */
     .dcard{padding:0;overflow:hidden}
@@ -901,7 +891,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788444642';
+  var MYV='1788444871';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
