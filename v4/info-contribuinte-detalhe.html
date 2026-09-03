@@ -41,6 +41,11 @@
     .vigchip svg{width:14px;height:14px}
     /* optag agora vem do DS (ds.css); aqui fica só o espaçamento em relação ao status */
     .optag{margin-left:var(--space-3)}
+    /* skeleton de carregamento ao salvar rascunho (cobre a área de conteúdo por ~2s) */
+    .content{position:relative}
+    .detskel{position:absolute;inset:0;background:var(--color-bg);z-index:20;overflow:auto;transition:opacity .25s;padding:var(--space-8) var(--space-10)}
+    .detskel__wrap{max-width:1600px;margin:0 auto;display:flex;flex-direction:column;gap:var(--space-4)}
+    .detskel .skeleton{border-radius:var(--radius-lg)}
     .page-h p{color:var(--color-text-muted);font-size:var(--text-base);margin:var(--space-2) 0 0;line-height:1.5}
     .scenario{display:inline-flex;gap:2px;padding:var(--space-1);background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-pill);flex:0 0 auto}
     /* Overlay de DEMONSTRAÇÃO (dev) — flutua por cima da interface, não faz parte do produto */
@@ -811,6 +816,22 @@
       setScenario({role:'preparador',st:'ajuste'});
     });
   });
+
+  /* Skeleton de ~2s ao chegar de "salvar rascunho": indica carregamento antes de mostrar a versão */
+  (function(){
+    if(dparam('saved')!=='rascunho') return;
+    var host=document.getElementById('conteudo'); if(!host) return;
+    var sk=document.createElement('div'); sk.className='detskel'; sk.setAttribute('aria-hidden','true');
+    sk.innerHTML='<div class="detskel__wrap">'+
+      '<div class="skeleton" style="height:34px;width:200px"></div>'+
+      '<div class="skeleton" style="height:16px;width:360px"></div>'+
+      '<div class="skeleton" style="height:112px;width:100%;margin-top:var(--space-4)"></div>'+
+      '<div class="skeleton" style="height:44px;width:100%"></div>'+
+      '<div class="skeleton" style="height:280px;width:100%"></div>'+
+      '</div>';
+    host.appendChild(sk);
+    setTimeout(function(){ sk.style.opacity='0'; setTimeout(function(){ sk.remove(); }, 260); }, 2000);
+  })();
 </script>
 
   <div class="scrim" id="excluirModal" hidden>
@@ -912,7 +933,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788457699';
+  var MYV='1788458104';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

@@ -580,11 +580,9 @@
     if(!has) return;
 
     /* vigente */
-    /* a vigência futura mora DENTRO do bloco de vigente, logo abaixo da atual, marcada como "Vigência futura" */
-    $('secVig').innerHTML = (vig
-      ? row(vig,{current:true})
-      : emptyBox('Nenhuma versão vigente. A primeira versão processada com sucesso pela Receita aparece aqui.'))
-      + (fut ? row(fut,{}) : '');
+    /* a vigência futura mora DENTRO do bloco de vigente, logo abaixo da atual, marcada como "Vigência futura" (com respiro entre elas) */
+    var _vigHtml = vig ? row(vig,{current:true}) : emptyBox('Nenhuma versão vigente. A primeira versão processada com sucesso pela Receita aparece aqui.');
+    $('secVig').innerHTML = fut ? '<div class="verlist" style="gap:var(--space-4)">'+_vigHtml+row(fut,{})+'</div>' : _vigHtml;
 
     /* em andamento (0 ou 1): a ação que o usuário precisa tomar é primária; só consultar é secundária */
     $('secProg').innerHTML = prog
@@ -720,7 +718,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788457699';
+  var MYV='1788458104';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
