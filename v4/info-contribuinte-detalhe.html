@@ -418,8 +418,8 @@
     }
   };
   /* MESMOS status da lista (label + cor): o badge do título usa exatamente estes */
-  var SIT={ rascunho:{label:'Rascunho',pill:'status--neutral'}, revisao:{label:'Em revisão',pill:'status--warning'}, ajustes:{label:'Ajustes solicitados',pill:'status--danger'}, processando:{label:'Em processamento',pill:'status--info'}, sucesso:{label:'Processada com sucesso',pill:'status--success'}, advertencias:{label:'Processada com advertências',pill:'status--azul'}, rejeitado:{label:'Rejeitada pela Receita',pill:'status--danger'}, futura:{label:'Vigência futura',pill:'status--success'}, encerrada:{label:'Encerrada',pill:'status--neutral'} };
-  function sitFor(key){ if(key==='revisao') return 'revisao'; if(key==='ajuste') return 'ajustes'; if(key==='rascunho') return 'rascunho'; var us=dparam('sit'); return (['sucesso','advertencias','encerrada','processando','rejeitado','rascunho','futura'].indexOf(us)>=0)?us:'sucesso'; }
+  var SIT={ rascunho:{label:'Rascunho',pill:'status--neutral'}, revisao:{label:'Em revisão',pill:'status--warning'}, ajustes:{label:'Ajustes solicitados',pill:'status--danger'}, processando:{label:'Em processamento',pill:'status--info'}, sucesso:{label:'Processada com sucesso',pill:'status--success'}, advertencias:{label:'Processada com advertências',pill:'status--azul'}, rejeitado:{label:'Rejeitada pela Receita',pill:'status--danger'}, futura:{label:'Vigência futura',pill:'status--success'}, encerrada:{label:'Encerrada',pill:'status--neutral'}, excluida:{label:'Vigência excluída',pill:'status--neutral'} };
+  function sitFor(key){ if(key==='revisao') return 'revisao'; if(key==='ajuste') return 'ajustes'; if(key==='rascunho') return 'rascunho'; var us=dparam('sit'); return (['sucesso','advertencias','encerrada','processando','rejeitado','rascunho','futura','excluida'].indexOf(us)>=0)?us:'sucesso'; }
   function initials(n){return n.split(/\s+/).slice(0,2).map(function(w){return w[0];}).join('').toUpperCase();}
   function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
   var RECEITA='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6M9 12h.01M15 12h.01"/></svg>';
@@ -440,7 +440,10 @@
     aprovada:    {t:'03/09/2026 · 11:20', title:'Aprovada e transmitida à Receita Federal', status:['Em processamento','status--info'], who:'Ana Prado', role:'Aprovadora'},
     processada:  {t:'03/09/2026 · 11:27', title:'Processada pela Receita Federal', status:['Processada com sucesso','status--success'], who:'Receita Federal', role:'Sistema', extras:[['Recibo',REC]]},
     processada_adv:{t:'03/09/2026 · 11:27', title:'Processada pela Receita Federal', status:['Processada com advertências','status--azul'], who:'Receita Federal', role:'Sistema', extras:[['Advertência','MS1094 · A data de início da validade é anterior ao início da DeRE (aviso, não impeditivo).'],['Recibo',REC]]},
-    rejeitada:   {t:'03/09/2026 · 11:27', title:'Processada pela Receita Federal', status:['Rejeitada','status--danger'], who:'Receita Federal', role:'Sistema', extras:[['Erro','MS1097 · A validade informada se sobrepõe a um período já existente. Ajuste as datas e reenvie.']]}
+    rejeitada:   {t:'03/09/2026 · 11:27', title:'Processada pela Receita Federal', status:['Rejeitada','status--danger'], who:'Receita Federal', role:'Sistema', extras:[['Erro','MS1097 · A validade informada se sobrepõe a um período já existente. Ajuste as datas e reenvie.']]},
+    excl_enviada:  {t:'03/09/2026 · 16:05', title:'Exclusão enviada para aprovação',           status:['Em revisão','status--warning'],       who:'Ricardo Alves', role:'Preparador'},
+    excl_aprovada: {t:'03/09/2026 · 16:40', title:'Exclusão aprovada e transmitida à Receita Federal', status:['Em processamento','status--info'], who:'Ana Prado', role:'Aprovadora'},
+    excl_feita:    {t:'03/09/2026 · 16:47', title:'Vigência excluída na Receita Federal',        status:['Vigência excluída','status--neutral'], who:'Receita Federal', role:'Sistema', extras:[['Motivo',''],['Recibo (exclusão)',REC]]}
   };
   var TL={
     rascunho:     ['criada'],
@@ -451,7 +454,8 @@
     advertencias: ['enviada','ajustes','reenviada','aprovada','processada_adv'],
     rejeitado:    ['enviada','aprovada','rejeitada'],
     futura:       ['enviada','aprovada','processada'],
-    encerrada:    ['enviada','aprovada','processada']
+    encerrada:    ['enviada','aprovada','processada'],
+    excluida:     ['enviada','aprovada','processada','excl_enviada','excl_aprovada','excl_feita']
   };
   var XMARK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></svg>';
   var LOADER='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>';
@@ -462,10 +466,10 @@
   function sysVal(who, date){ return '<div class="person__v"><span class="avatar avatar--sm avatar--sys">'+RECEITA+'</span><div><span class="person__name">'+esc(who)+'</span>'+(date?'<p class="person__date">'+esc(date)+'</p>':'')+'</div></div>'; }
   function renderPeople(sit){
     var el=$('peopleCard'); if(!el) return;
-    var approved=['sucesso','advertencias','encerrada','processando','rejeitado','futura'].indexOf(sit)>=0;
+    var approved=['sucesso','advertencias','encerrada','processando','rejeitado','futura','excluida'].indexOf(sit)>=0;
     /* três marcos sempre visíveis; pendente = "Aguardando" */
     var html='';
-    var processed=['sucesso','advertencias','encerrada','rejeitado','futura'].indexOf(sit)>=0;
+    var processed=['sucesso','advertencias','encerrada','rejeitado','futura','excluida'].indexOf(sit)>=0;
     html+=field('Enviado para revisão por', (sit!=='rascunho')?personVal('Ricardo Alves','02/09/2026, 11:15'):waitVal(), SEND);
     if(sit==='ajustes'){ html+=field('Revisado por', personVal('Ana Prado','03/09/2026, 11:20'), IC_MSG); }
     else { html+=field('Revisado por', approved?personVal('Ana Prado','03/09/2026, 11:20'):waitVal(), APPROVE); }
@@ -492,11 +496,20 @@
     } else if(sit==='rejeitado'){
       el.innerHTML='<div class="dalert dalert--danger" role="status"><span class="dalert__ic">'+ALERT+'</span><div><p class="dalert__title">Versão rejeitada pela Receita Federal</p><p class="dalert__text">'+esc(EV.rejeitada.extras?EV.rejeitada.extras[0][1]:'')+'</p></div></div>';
     } else if(sit==='processando'){
-      el.innerHTML='<div class="dalert dalert--info" role="status"><span class="dalert__ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span><div><p class="dalert__title">Transmitida à Receita, em processamento</p><p class="dalert__text">O processamento é assíncrono. O recibo é gerado quando a Receita concluir; uma transmissão em andamento não pode ser cancelada.</p></div></div>';
+      var _exTx = (curOp==='exclusao')
+        ? 'A exclusão foi transmitida e está em processamento. O processamento é assíncrono; a vigência é encerrada quando a Receita concluir. Uma transmissão em andamento não pode ser cancelada.'
+        : 'O processamento é assíncrono. O recibo é gerado quando a Receita concluir; uma transmissão em andamento não pode ser cancelada.';
+      var _exTt = (curOp==='exclusao') ? 'Exclusão transmitida à Receita, em processamento' : 'Transmitida à Receita, em processamento';
+      el.innerHTML='<div class="dalert dalert--info" role="status"><span class="dalert__ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span><div><p class="dalert__title">'+_exTt+'</p><p class="dalert__text">'+_exTx+'</p></div></div>';
+    } else if(sit==='excluida'){
+      var _hN='info-contribuinte.html?modo=nova&emp='+empId()+(dparam('scn')?('&scn='+dparam('scn')):'')+'&from=detalhe';
+      var _PL='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5v14"/></svg>';
+      el.innerHTML='<div class="dalert dalert--warning" role="status"><span class="dalert__ic">'+ALERT+'</span><div class="dalert__body"><p class="dalert__title">Vigência excluída na Receita Federal</p><p class="dalert__text">Motivo: <strong>'+esc(exclMotivo())+'</strong>. O contribuinte ficou <strong>sem declaração vigente</strong> do D-1001. Se ele continua obrigado à DeRE, registre uma nova versão para não ficar irregular.</p></div><a class="btn btn--primary dalert__act" href="'+_hN+'">'+_PL+'Nova versão D-1001</a></div>';
     } else { el.innerHTML=''; }
   }
   function renderTimeline(sit){
     var el=$('tl'); if(!el) return;
+    if(sit==='excluida' && EV.excl_feita.extras){ EV.excl_feita.extras[0][1]=exclMotivo(); }
     var keys=(TL[sit]||TL.revisao).slice();
     /* "Versão criada" (rascunho) só aparece se houve rascunho salvo; senão começa em "Enviada para revisão" */
     var hadDraft=false; try{ hadDraft=(dparam('draft')==='1')||!!localStorage.getItem('adere.d1001.draft.'+(dparam('emp')||'seg')); }catch(e){}
@@ -576,6 +589,8 @@
       opts:[ ['Em revisão',{role:'aprovador',st:'revisao',op:'nova',sit:''}], ['Alteração',{role:'aprovador',st:'revisao',op:'alteracao',sit:''}], ['Exclusão',{role:'aprovador',st:'revisao',op:'exclusao',sit:''}] ] },
     corrigir:{ label:'Corrigir versão', start:{role:'preparador',st:'ajuste',sit:'',op:'nova'},
       opts:[ ['Ajustes do aprovador',{role:'preparador',st:'ajuste',sit:'',op:'nova'}], ['Rejeitada pela Receita',{role:'preparador',st:'aprovado',sit:'rejeitado',op:'nova'}] ] },
+    excluir:{ label:'Excluir vigência', start:{role:'preparador',st:'aprovado',sit:'sucesso',op:'nova'},
+      opts:[ ['1 · Vigente',{role:'preparador',st:'aprovado',sit:'sucesso',op:'nova'}], ['2 · Aprovar exclusão',{role:'aprovador',st:'revisao',op:'exclusao',sit:''}], ['3 · Em processamento',{role:'preparador',st:'aprovado',sit:'processando',op:'exclusao'}], ['4 · Vigência excluída',{role:'preparador',st:'aprovado',sit:'excluida',op:'exclusao'}] ] },
     estados:{ label:'Estados da versão', dropdown:true, start:{role:'preparador',st:'rascunho',sit:'',op:'nova'},
       opts:[ ['Rascunho',{role:'preparador',st:'rascunho',sit:'',op:'nova'}], ['Em revisão',{role:'preparador',st:'revisao',sit:'',op:'nova'}], ['Ajustes solicitados',{role:'preparador',st:'ajuste',sit:'',op:'nova'}], ['Em processamento',{role:'preparador',st:'aprovado',sit:'processando',op:'nova'}], ['Processada com sucesso',{role:'preparador',st:'aprovado',sit:'sucesso',op:'nova'}], ['Processada com advertências',{role:'preparador',st:'aprovado',sit:'advertencias',op:'nova'}], ['Rejeitada',{role:'preparador',st:'aprovado',sit:'rejeitado',op:'nova'}] ] }
   };
@@ -632,7 +647,7 @@
     else if(sit==='rejeitado' || sit==='ajustes'){ var _vr=dparam('v')||'4'; _acts='<button class="btn btn--danger-outline" type="button" data-open-excluir><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M10 11v6M14 11v6"/></svg>Excluir versão</button><a class="btn btn--primary" href="info-contribuinte.html?modo=editar&v='+_vr+'&corr='+sit+'"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>Corrigir e reenviar</a>'; }
     /* em processamento = já transmitida à Receita. Doc só prevê aguardar (não há cancelar/abortar/excluir). Sem ação: só o aviso de espera. */
     else if(sit==='processando'){ _acts=''; }
-    else if(sit==='encerrada'){ _acts='<button class="btn btn--secondary" type="button" data-open-comprovante><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>Ver comprovante</button>'; }
+    else if(sit==='encerrada' || sit==='excluida'){ _acts='<button class="btn btn--secondary" type="button" data-open-comprovante><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>Ver comprovante</button>'; }
     else { _acts=s.topActions; }
     if($('pageActions')) $('pageActions').innerHTML=_acts;
     var _db=$('decisionbar');
@@ -724,7 +739,9 @@
       /* o cenário PERSISTE: reflete o que foi feito (enviado/rascunho/aprovação); só o Resetar volta ao início */
       var _sent=false,_draft=false,_appr=null;
       try{ _sent=localStorage.getItem('adere.sent.d1001')===empId(); _draft=!!localStorage.getItem('adere.d1001.draft.'+empId()); _appr=localStorage.getItem('adere.d1001.approval.'+empId()); }catch(e){}
-      if(_appr==='processing') setScenario({role:(_cen.start.role||'preparador'), st:'aprovado', sit:'processando', op:(_cen.start.op||'nova')});
+      /* deep-link de exclusão (handoff preparador→aprovador e refresh nos passos da jornada): honra o passo explícito da URL em vez de voltar ao início do cenário */
+      if(dparam('op')==='exclusao'){ setScenario({role:(dparam('role')||'preparador'), st:(dparam('st')||'revisao'), op:'exclusao', sit:(dparam('sit')||'')}); }
+      else if(_appr==='processing') setScenario({role:(_cen.start.role||'preparador'), st:'aprovado', sit:'processando', op:(_cen.start.op||'nova')});
       else if(_appr==='ajuste') setScenario({role:'preparador', st:'ajuste', op:'nova', sit:''});
       else if(_sent) setScenario({role:(_cen.start.role||'preparador'), st:'revisao', op:(_cen.start.op||'nova'), sit:''});
       else if(_draft) setScenario({role:'preparador', st:'rascunho', op:'nova', sit:''});
@@ -733,6 +750,7 @@
   })();
   document.addEventListener('DOMContentLoaded',function(){
     if(dparam('sent')==='1'){ showToast('Enviado para revisão interna.'); try{ var _ps=new URLSearchParams(location.search); _ps.delete('sent'); history.replaceState(null,'','?'+_ps.toString()); }catch(e){} }
+    if(dparam('exsent')==='1'){ showToast('Exclusão enviada para aprovação de Ana Prado.'); try{ var _pe=new URLSearchParams(location.search); _pe.delete('exsent'); history.replaceState(null,'','?'+_pe.toString()); }catch(e){} }
   });
 
   /* Botão "Mais ações" (dropdown): abre o painel; fecha ao escolher, clicar fora ou Esc */
@@ -788,9 +806,14 @@
         window.location.href='info-contribuinte-empresa.html?emp='+_e+(dparam('scn')?('&scn='+dparam('scn')):'')+'&excl=1'+(dparam('cenario')?('&cenario='+dparam('cenario')):'');
         return;
       }
-      /* vigente: a exclusão vira um evento que passa pelo aprovador; volta à página da empresa, onde aparece como pendente */
-      dsDialog.close();
-      window.location.href='info-contribuinte-empresa.html?emp='+(dparam('emp')||'seg')+(dparam('scn')?('&scn='+dparam('scn')):'');
+      /* vigente: a exclusão (tpOper=3) vira um evento que passa pelo aprovador. Salva o motivo (motExcl)
+         e leva à tela de aprovação da Ana, onde o motivo aparece no banner vermelho. */
+      var _e=dparam('emp')||'seg', _mot='';
+      if(sel){ var _opt=sel.options[sel.selectedIndex]; _mot=(_opt?_opt.text:'').replace(/^\s*\d+\s*·\s*/,''); }
+      if(sel && sel.value==='1' && $('nrProc') && $('nrProc').value.trim()){ _mot+=' (processo '+$('nrProc').value.trim()+')'; }
+      try{ localStorage.setItem('adere.d1001.exclmotivo.'+_e, _mot); }catch(e){}
+      var _v=dparam('v')||'3';
+      window.location.href='info-contribuinte-detalhe.html?emp='+_e+'&v='+_v+'&role=aprovador&op=exclusao&st=revisao&cenario=excluir&exsent=1'+(dparam('scn')?('&scn='+dparam('scn')):'');
       return;
     });
   });
@@ -986,7 +1009,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788463728';
+  var MYV='1788464500';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
