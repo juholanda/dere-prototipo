@@ -843,7 +843,14 @@
   (function(){ var btn=document.querySelector('[data-theme-toggle]'); if(!btn) return; var icon=btn.querySelector('[data-theme-icon]'), tip=document.querySelector('[data-theme-tip]'); var MOON='<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>'; var SUN='<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>'; function sync(){ var d=document.documentElement.classList.contains('dark'); icon.innerHTML=d?SUN:MOON; btn.setAttribute('aria-label',d?'Alternar para modo claro':'Alternar para modo escuro'); if(tip) tip.textContent=d?'Modo claro':'Modo escuro'; } btn.addEventListener('click',function(){ document.documentElement.classList.toggle('dark'); sync(); }); sync(); })();
 </script>
   <style>
-    .demobar{position:fixed;bottom:var(--space-4);left:50%;transform:translateX(-50%);z-index:200;display:flex;align-items:center;gap:var(--space-1);background:var(--slate-900);border:1px solid rgba(255,255,255,.14);border-radius:var(--radius-pill);padding:2px var(--space-1-5);box-shadow:var(--shadow-md);font-size:var(--text-xs);flex-wrap:wrap;justify-content:center;max-width:calc(100vw - var(--space-8));row-gap:var(--space-1)}
+    .demobar{position:fixed;bottom:var(--space-4);right:var(--space-4);z-index:200;display:flex;align-items:center;gap:var(--space-1);background:var(--slate-900);border:1px solid rgba(255,255,255,.14);border-radius:var(--radius-pill);padding:2px var(--space-1-5);box-shadow:var(--shadow-md);font-size:var(--text-xs);opacity:.92;flex-wrap:wrap;justify-content:flex-end;max-width:calc(100vw - var(--space-8));row-gap:var(--space-1)}
+    .demobar:hover{opacity:1}
+    .demobar__toggle{display:inline-flex;align-items:center;gap:var(--space-1);background:none;border:0;color:rgba(255,255,255,.72);font-family:inherit;font-size:var(--text-2xs);font-weight:700;text-transform:uppercase;letter-spacing:.08em;cursor:pointer;padding:var(--space-1) var(--space-1-5);border-radius:var(--radius-pill)}
+    .demobar__toggle:hover{color:#fff;background:rgba(255,255,255,.08)}
+    .demobar__toggle svg{width:14px;height:14px;opacity:.8}
+    .demobar__body{display:flex;align-items:center;gap:var(--space-1);flex-wrap:wrap;justify-content:flex-end;row-gap:var(--space-1)}
+    .demobar.is-collapsed{padding:2px}
+    .demobar.is-collapsed .demobar__body{display:none}
     .demobar[hidden]{display:none}
     .demobar__lbl{text-transform:uppercase;letter-spacing:.08em;font-weight:700;color:rgba(255,255,255,.5);padding:0 var(--space-1) 0 var(--space-2);font-size:var(--text-2xs)}
     .demobar__sep{width:1px;height:16px;background:rgba(255,255,255,.18)}
@@ -851,12 +858,17 @@
     .demobar button{background:none;border:0;color:rgba(255,255,255,.72);font-family:inherit;font-size:var(--text-xs);cursor:pointer;padding:var(--space-1) var(--space-2);border-radius:var(--radius-pill)}
     .demobar button:hover{color:#fff;background:rgba(255,255,255,.08)}
   </style>
-  <div class="demobar" id="fdemobar" role="group" aria-label="Ferramenta de demonstração" hidden>
-    <span class="demobar__lbl">Demo</span>
-    <strong id="fdemoLbl">Cenário</strong>
-    <span class="demobar__sep" aria-hidden="true"></span>
-    <button type="button" id="fdemoReset">Resetar</button>
+  <div class="demobar is-collapsed" id="fdemobar" role="group" aria-label="Ferramenta de demonstração" hidden>
+    <button type="button" class="demobar__toggle" data-demo-toggle aria-expanded="false" aria-label="Abrir ferramenta de demonstração de cenários">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2v6.5L4.8 17a2 2 0 0 0 1.7 3h11a2 2 0 0 0 1.7-3L14 8.5V2"/><path d="M8.5 2h7"/><path d="M7 14h10"/></svg><span>Demo</span>
+    </button>
+    <span class="demobar__body">
+      <strong id="fdemoLbl">Cenário</strong>
+      <span class="demobar__sep" aria-hidden="true"></span>
+      <button type="button" id="fdemoReset">Resetar</button>
+    </span>
   </div>
+  <script>(function(){ var bar=document.getElementById('fdemobar'); if(!bar) return; var tog=bar.querySelector('[data-demo-toggle]'); if(!tog) return; function set(open){ bar.classList.toggle('is-collapsed', !open); tog.setAttribute('aria-expanded', String(open)); tog.setAttribute('aria-label', open?'Recolher ferramenta de demonstração':'Abrir ferramenta de demonstração de cenários'); try{ localStorage.setItem('adere.demo.open', open?'1':'0'); }catch(e){} } var open=false; try{ open=localStorage.getItem('adere.demo.open')==='1'; }catch(e){} set(open); tog.addEventListener('click',function(){ set(bar.classList.contains('is-collapsed')); }); })();</script>
   <div class="toast-wrap" id="fToastWrap" aria-live="polite" aria-atomic="false"></div>
   <script>
     (function(){
@@ -908,7 +920,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788464500';
+  var MYV='1788466052';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
