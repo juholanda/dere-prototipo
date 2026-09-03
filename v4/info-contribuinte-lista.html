@@ -60,7 +60,7 @@
     .table td{padding-top:var(--space-4);padding-bottom:var(--space-4)}
     .celltitle{font-size:var(--text-base);font-weight:600;color:var(--color-heading);white-space:nowrap}
     .cellcnpj{font-size:var(--text-sm);color:var(--color-text-muted);font-variant-numeric:tabular-nums;margin-top:2px;white-space:nowrap}
-    .cellsub{font-size:var(--text-xs);color:var(--color-text-muted);font-variant-numeric:tabular-nums;margin-top:2px}
+    .cellsub{font-size:var(--text-sm);color:var(--color-text-muted);font-variant-numeric:tabular-nums;margin-top:2px;line-height:1.3}
     .evemp{display:flex;align-items:center;gap:var(--space-3)}
     .evemp > div{min-width:0}
     .muted{color:var(--color-text-muted)}
@@ -90,15 +90,18 @@
     .table th:first-child,.table td:first-child{padding-left:var(--space-6)}
     .table th:last-child,.table td:last-child{padding-right:var(--space-6)}
     /* Situação com a Receita: ícone + texto (não pílula) */
-    .sitcell{display:inline-flex;align-items:center;gap:var(--space-2);font-size:var(--text-base);font-weight:500;white-space:nowrap}
+    .sitcell{display:inline-flex;align-items:center;gap:var(--space-2);min-height:22px;line-height:22px;font-size:var(--text-base);font-weight:500;white-space:nowrap}
+    .vercell-top{display:inline-flex;align-items:center;min-height:22px;line-height:22px}
     .sitcell svg{width:18px;height:18px;flex:0 0 auto}
     /* texto e ícone na cor do estado (verde / laranja / vermelho / cinza) */
     .sitcell--success{color:var(--color-success-fg)}
     .sitcell--info{color:var(--color-info-fg)}
     .sitcell--proc{color:var(--sky-800)}
     .sitcell--muted{color:var(--color-text-muted)}
-    .sitprog{display:block;font-size:var(--text-xs);color:var(--color-text-muted);margin-top:2px;padding-left:calc(18px + var(--space-2))}
-    .vigwarn{display:inline-flex;vertical-align:middle;margin-left:var(--space-1-5);color:var(--color-warning);cursor:help}
+    .sitprog{display:block;font-size:var(--text-sm);color:var(--color-text-muted);margin-top:2px;line-height:1.3;padding-left:calc(18px + var(--space-2))}
+    .vigwarn-wrap{margin-left:var(--space-1-5);vertical-align:middle}
+    .vigwarn-wrap .tooltip__bubble{max-width:300px;text-align:left}
+    .vigwarn{display:inline-flex;color:var(--color-warning)}
     .vigwarn svg{width:16px;height:16px}
     .vigwarn:focus-visible{outline:none;box-shadow:var(--ring);border-radius:var(--radius-pill)}
     .sitcell--danger{color:var(--color-danger-fg)}
@@ -392,10 +395,10 @@
       var href=(semversao||isRascunho)?('info-contribuinte.html?modo=nova&emp='+e.id+'&scn='+scenario):('info-contribuinte-empresa.html?emp='+e.id+'&scn='+scenario);
       var regime=e.regime?esc(e.regime):'<span class="muted">—</span>';
       var periodo=e.vigente ? (e.vigente.until ? 'até '+esc(e.vigente.until) : 'em aberto') : '';
-      var vigWarn=nearEnd(e.vigente) ? ' <span class="vigwarn" tabindex="0" role="img" aria-label="O prazo de vigência está perto do fim. Envie uma nova versão." title="O prazo de vigência está perto do fim. Envie uma nova versão."><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg></span>' : '';
+      var vigWarn=nearEnd(e.vigente) ? ' <span class="tooltip vigwarn-wrap"><span class="vigwarn" tabindex="0" role="img" aria-label="O prazo de vigência está perto do fim. Envie uma nova versão."><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg></span><span class="tooltip__bubble tooltip__bubble--stack">O prazo de vigência está perto do fim. Envie uma nova versão.</span></span>' : '';
       /* só há "versão vigente" quando alguma versão foi processada com sucesso; em revisão/rascunho NÃO é vigente */
       var versao=e.vigente
-        ? '<span style="font-weight:600;color:var(--color-heading)">Versão '+e.vigente.ver+'</span>'+vigWarn+'<div class="cellsub" style="margin-top:2px">'+periodo+'</div>'
+        ? '<span class="vercell-top"><span style="font-weight:600;color:var(--color-heading)">Versão '+e.vigente.ver+'</span>'+vigWarn+'</span><div class="cellsub">'+periodo+'</div>'
         : '<span class="muted">—</span>';
       var at=e.at?esc(e.at):'<span class="muted">—</span>';
       var btn=semversao
@@ -494,7 +497,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788447928';
+  var MYV='1788450620';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

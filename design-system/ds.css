@@ -1046,7 +1046,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 /* Alinha o balão à direita do gatilho (evita estourar a borda direita da tela) */
 .tooltip--end .tooltip__bubble{left:auto;right:0;transform:none}
 /* Balão em 2 linhas: nome (negrito) em cima, detalhe embaixo */
-.tooltip__bubble--stack{white-space:normal;max-width:230px;line-height:1.35}
+.tooltip__bubble--stack{white-space:normal;width:max-content;max-width:230px;line-height:1.35}
 .tooltip__bubble--stack strong{display:block;font-weight:600}
 
 /* Dropdown menu (ações) */
