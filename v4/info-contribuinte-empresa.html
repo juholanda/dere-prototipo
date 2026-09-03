@@ -628,13 +628,14 @@
     }
     var fmt=function(d){ return ('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2)+'/'+d.getFullYear(); };
     var last=items[items.length-1];
-    var hoje='<div class="tl__today" style="left:'+pct(today.getTime()).toFixed(2)+'%"></div>';
+    /* marcador/tick "hoje" só quando há vigência futura (senão "hoje" = fim do eixo e colidiria com o tick final) */
+    var hoje=hasFut?'<div class="tl__today" style="left:'+pct(today.getTime()).toFixed(2)+'%"></div>':'';
     var ticks='';
     items.forEach(function(i,idx){
       var l=pct(i.from.getTime());
       ticks+='<div class="tl__tick'+(idx===0?' tl__tick--start':'')+'" style="left:'+l.toFixed(2)+'%"><span class="tl__tickv">v'+i.ver+'</span><span class="tl__tickd">'+fmt(i.from)+'</span></div>';
     });
-    ticks+='<div class="tl__tick tl__tick--today" style="left:'+pct(today.getTime()).toFixed(2)+'%"><span class="tl__tickv">hoje</span><span class="tl__tickd">'+fmt(today)+'</span></div>';
+    if(hasFut){ ticks+='<div class="tl__tick tl__tick--today" style="left:'+pct(today.getTime()).toFixed(2)+'%"><span class="tl__tickv">hoje</span><span class="tl__tickd">'+fmt(today)+'</span></div>'; }
     ticks+='<div class="tl__tick tl__tick--end" style="left:100%"><span class="tl__tickv">'+(last.open?(isFut(last)?'em diante':'hoje'):'fim')+'</span><span class="tl__tickd">'+((last.open&&!isFut(last))?'em aberto':fmt(new Date(maxT)))+'</span></div>';
     var status = hasGap ? '<span style="color:var(--color-danger);font-weight:600;font-size:var(--text-xs)">Há lacuna de vigência</span>'
       : hasOverlap ? '<span style="color:var(--color-warning);font-weight:600;font-size:var(--text-xs)">Há sobreposição de vigência</span>'
@@ -716,7 +717,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788459427';
+  var MYV='1788460312';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

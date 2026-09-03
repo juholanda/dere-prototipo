@@ -844,7 +844,16 @@
   <script>
   (function(){
     function p(k){var m=new RegExp('[?&]'+k+'=([^&]*)').exec(location.search);return m?decodeURIComponent(m[1]):'';}
-    var corr=p('corr'); var el=document.getElementById('corrBanner'); if(!corr||!el) return;
+    var corr=p('corr'), op=p('op'); var el=document.getElementById('corrBanner'); if(!el) return;
+    /* intent vindo do popup "Alterar a versão vigente" */
+    if(op==='corrigir' || op==='novavig'){
+      var OM={ corrigir:['Corrigindo a versão vigente','A vigência atual continua a mesma. Você corrige os dados sem mudar quando vale — a versão vigente é substituída pela corrigida.'],
+               novavig:['Nova vigência a partir de outra data','Defina a nova data de início. A versão vigente será encerrada nessa data (corte automático).'] };
+      var o=OM[op];
+      el.innerHTML='<div class="dalert dalert--info" role="status"><span class="dalert__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span><div><p class="dalert__title">'+o[0]+'</p><p class="dalert__text">'+o[1]+'</p></div></div>';
+      return;
+    }
+    if(!corr) return;
     var M={ ajustes:['Ajustes solicitados por Ana Prado','O regime secundário não se aplica a esta empresa. Remova a marcação e confirme a vigência antes de reenviar.'],
             rejeitado:['Versão rejeitada pela Receita Federal','MS1097 · A validade informada se sobrepõe a um período já existente. Ajuste as datas e reenvie.'] };
     var m=M[corr]; if(!m) return;
@@ -853,7 +862,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788459427';
+  var MYV='1788460312';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
