@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Versões · MAG Seguros</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=47">
+  <link rel="stylesheet" href="../design-system/ds.css?v=48">
   <script src="../design-system/ds-tailwind.js"></script>
   <script src="../design-system/ds-dialog.js"></script>
   <style>
@@ -17,7 +17,7 @@
     .shell > .sidenav{border:0;border-radius:0;padding:0;position:relative!important;transform:none!important;visibility:visible!important;z-index:auto!important;transition:width .18s ease}
     .brandrow{height:64px;flex:0 0 auto;display:flex;align-items:center;gap:var(--space-3);padding:0 var(--space-4) 0 var(--space-6);border-bottom:1px solid var(--color-border)}
     .brandrow .wm{font-weight:800;font-size:var(--text-lg);letter-spacing:-.01em;color:var(--color-heading)}
-    .brandrow .avatar{background:rgba(255,255,255,.14);color:#fff;width:34px;height:34px;font-size:var(--text-sm);flex:0 0 auto;font-weight:800}
+    .brandrow .avatar{background:color-mix(in srgb, var(--color-on-navy) 14%, transparent);color:var(--color-on-navy);width:34px;height:34px;font-size:var(--text-sm);flex:0 0 auto;font-weight:800}
     .navlist{flex:1;overflow:auto;min-height:0;padding:var(--space-3) var(--space-3) 0;display:flex;flex-direction:column;gap:2px}
     .col{flex:1;display:flex;flex-direction:column;min-width:0;min-height:0}
     .topbar{height:64px;flex:0 0 auto;background:var(--color-surface);border-bottom:1px solid var(--color-border);display:flex;align-items:center;gap:var(--space-4);padding:0 var(--space-6)}
@@ -147,7 +147,6 @@
     .verlist{display:flex;flex-direction:column;gap:var(--space-3)}
     /* pílula de status na linha de versão: 12px (pedido do PO nesta tela) */
     .status{white-space:nowrap}
-    .status--neutral{background:var(--color-surface-2);color:var(--color-text-onmuted)}
 
     /* rodapé padrão (contagem + paginador) embaixo da lista de encerradas */
     .tablefoot{display:flex;justify-content:space-between;align-items:center;gap:var(--space-3);padding:var(--space-4) 0 0;margin-top:var(--space-4);border-top:1px solid var(--color-border);font-size:var(--text-sm);color:var(--color-text-muted);flex-wrap:wrap}
@@ -277,7 +276,6 @@
         </nav>
         <div class="flex items-center gap-1" style="margin-left:auto">
           <span class="tooltip"><button class="icon-btn" type="button" aria-label="Buscar"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></button><span class="tooltip__bubble" role="tooltip">Buscar</span></span>
-          <span class="tooltip"><button class="icon-btn" type="button" data-theme-toggle aria-label="Alternar para modo escuro"><svg data-theme-icon width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg></button><span class="tooltip__bubble" role="tooltip" data-theme-tip>Modo escuro</span></span>
           <span class="tooltip"><button class="icon-btn" aria-label="Notificações, 3 pendências" style="position:relative"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="badge badge--danger" style="position:absolute;top:3px;right:3px">3</span></button><span class="tooltip__bubble" role="tooltip">Notificações</span></span>
         </div>
         <span aria-hidden="true" style="width:1px;height:22px;background:var(--color-divider);flex:0 0 auto"></span>
@@ -718,7 +716,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788458104';
+  var MYV='1788459427';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

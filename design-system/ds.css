@@ -67,6 +67,7 @@
   --color-warning:var(--amber-600); --color-warning-bg:var(--amber-100); --color-warning-fg:var(--amber-700);
   --color-danger: var(--red-700);   --color-danger-bg: var(--red-100);   --color-danger-fg: var(--red-700);   --color-danger-contrast:#fff;   --color-danger-hover:var(--red-800);
   --color-info:   var(--sky-600);   --color-info-bg:   var(--sky-100);   --color-info-fg:   var(--sky-700);
+  --color-processing: var(--color-info-fg); /* etapa "em processamento": um azul só no fluxo (segue o info-fg no dark) */
   --color-azul: var(--blue-700); --color-azul-bg: var(--blue-100); --color-azul-fg: var(--blue-800);
   /* rascunho (trabalho iniciado e não enviado): lilás, pra não se confundir com o neutro (não iniciada) nem com o azul (em revisão) */
   --color-draft:  var(--violet-600); --color-draft-bg:  var(--violet-100); --color-draft-fg:  var(--violet-700);
@@ -397,6 +398,7 @@ textarea.input{height:auto;padding:var(--space-2) var(--space-3);min-height:84px
 .status--warning{background:var(--color-warning-bg);color:var(--color-warning-fg)}
 .status--danger{background:var(--color-danger-bg);color:var(--color-danger-fg)}
 .status--info{background:var(--color-info-bg);color:var(--color-info-fg)}
+.status--neutral{background:var(--color-surface-2);color:var(--color-text-onmuted)}
 .status--azul{background:var(--color-azul-bg);color:var(--color-azul-fg)} /* ok com ressalva (advertências) */
 .status--draft{background:var(--color-draft-bg);color:var(--color-draft-fg)} /* rascunho */
 /* Tamanhos do badge: pequeno / médio (padrão) / grande */
