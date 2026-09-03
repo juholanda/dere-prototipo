@@ -480,7 +480,8 @@
     var html='';
     var processed=['sucesso','advertencias','encerrada','rejeitado'].indexOf(sit)>=0;
     html+=field('Enviado para revisão por', (sit!=='rascunho')?personVal('Ricardo Alves','02/09/2026, 11:15'):waitVal(), SEND);
-    html+=field('Aprovado por', approved?personVal('Ana Prado','03/09/2026, 11:20'):waitVal(), APPROVE);
+    if(sit==='ajustes'){ html+=field('Revisado por', personVal('Ana Prado','03/09/2026, 11:20'), IC_MSG); }
+    else { html+=field('Aprovado por', approved?personVal('Ana Prado','03/09/2026, 11:20'):waitVal(), APPROVE); }
     html+=field('Processado por', processed?sysVal('Receita Federal','03/09/2026, 11:27'):waitVal(), FILECOG);
     el.innerHTML=html;
   }
@@ -488,7 +489,7 @@
     var el=$('alertSlot'); if(!el) return;
     if(curRole==='aprovador' && sit==='revisao'){ el.innerHTML=approverBanner(); return; }
     if(sit==='ajustes'){
-      el.innerHTML='<div class="dalert dalert--warning" role="status"><span class="dalert__ic">'+ALERT+'</span><div><p class="dalert__title">Ajustes solicitados por Ana Prado</p><p class="dalert__text">'+esc(_ajusteComment || (EV.ajustes.extras?EV.ajustes.extras[0][1]:''))+'</p></div></div>';
+      el.innerHTML='<div class="dalert dalert--danger" role="status"><span class="dalert__ic">'+ALERT+'</span><div><p class="dalert__title">Ajustes solicitados por Ana Prado</p><p class="dalert__text">'+esc(_ajusteComment || (EV.ajustes.extras?EV.ajustes.extras[0][1]:''))+'</p></div></div>';
     } else if(sit==='rejeitado'){
       el.innerHTML='<div class="dalert dalert--danger" role="status"><span class="dalert__ic">'+ALERT+'</span><div><p class="dalert__title">Versão rejeitada pela Receita Federal</p><p class="dalert__text">'+esc(EV.rejeitada.extras?EV.rejeitada.extras[0][1]:'')+'</p></div></div>';
     } else { el.innerHTML=''; }
@@ -900,7 +901,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788443844';
+  var MYV='1788444077';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
