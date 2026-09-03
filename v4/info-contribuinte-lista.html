@@ -86,9 +86,9 @@
     .tpager{display:inline-flex;align-items:center;gap:var(--space-2)}
     .tpager button:disabled{opacity:.4;cursor:default}
     /* mesmas margens do cabeçalho do card (space-6) nas extremidades da tabela */
-    .card__h{padding:var(--space-6) var(--space-4) var(--space-6)}
-    .table th:first-child,.table td:first-child{padding-left:var(--space-4)}
-    .table th:last-child,.table td:last-child{padding-right:var(--space-4)}
+    .card__h{padding:var(--space-6)}
+    .table th:first-child,.table td:first-child{padding-left:var(--space-6)}
+    .table th:last-child,.table td:last-child{padding-right:var(--space-6)}
     /* Situação com a Receita: ícone + texto (não pílula) */
     .sitcell{display:inline-flex;align-items:center;gap:var(--space-2);font-size:var(--text-base);font-weight:500;color:var(--color-text);white-space:nowrap}
     .sitcell svg{width:18px;height:18px;flex:0 0 auto}
@@ -474,7 +474,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788441499';
+  var MYV='1788441607';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
