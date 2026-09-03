@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Assistente de classificação</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=42">
+  <link rel="stylesheet" href="../design-system/ds.css?v=43">
   <script src="../design-system/ds-tailwind.js"></script>
   <style>
     html,body{height:100%}
@@ -188,7 +188,7 @@
 
   <a class="skip-link" href="#conteudo">Ir para o conteúdo</a>
   <div class="shell">
-    <nav class="sidenav sidenav--navy" data-sidenav aria-label="Navegação principal">
+    <nav class="sidenav sidenav--navy" data-sidenav aria-label="Navegação principal"><script>try{if(localStorage.getItem('adere.nav.collapsed')==='1'){var _n=document.querySelector('[data-sidenav]');if(_n)_n.classList.add('is-collapsed');}}catch(e){}</script>
       <div class="brandrow"><span class="avatar">a</span><span class="sidenav__label wm">a-DeRE</span></div>
       <div class="navlist">
         <p class="sidenav__group">Principal</p>
@@ -682,7 +682,7 @@
   }
 
   /* shell */
-  document.querySelectorAll('[data-sidenav-toggle]').forEach(function(btn){ var nav=btn.closest('[data-sidenav]'); btn.addEventListener('click',function(){ var c=nav.classList.toggle('is-collapsed'); btn.setAttribute('aria-expanded',String(!c)); }); });
+  document.querySelectorAll('[data-sidenav-toggle]').forEach(function(btn){ var nav=btn.closest('[data-sidenav]'); if(nav.classList.contains('is-collapsed')) btn.setAttribute('aria-expanded','false'); btn.addEventListener('click',function(){ var c=nav.classList.toggle('is-collapsed'); btn.setAttribute('aria-expanded',String(!c)); try{ localStorage.setItem('adere.nav.collapsed', c?'1':'0'); }catch(e){} }); });
   document.querySelectorAll('[data-theme-toggle]').forEach(function(btn){ btn.addEventListener('click',function(){ var dark=document.documentElement.classList.toggle('dark'); document.documentElement.setAttribute('data-theme',dark?'dark':'light'); }); });
   document.querySelectorAll('[data-menu]').forEach(function(m){ var b=m.querySelector('.avatar'), p=m.querySelector('.menu__panel'); if(!b||!p) return; b.addEventListener('click',function(){ var open=p.hasAttribute('hidden'); if(open){p.removeAttribute('hidden');b.setAttribute('aria-expanded','true');}else{p.setAttribute('hidden','');b.setAttribute('aria-expanded','false');} }); document.addEventListener('click',function(ev){ if(!m.contains(ev.target)){p.setAttribute('hidden','');b.setAttribute('aria-expanded','false');} }); });
 
@@ -690,7 +690,7 @@
 </script>
 <script>
 (function(){
-  var MYV='1788438386';
+  var MYV='1788441499';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Plano de Contas</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=42">
+  <link rel="stylesheet" href="../design-system/ds.css?v=43">
   <script src="../design-system/ds-tailwind.js"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
@@ -135,7 +135,7 @@
 
   <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
   <div class="shell">
-    <nav class="sidenav sidenav--navy" data-sidenav aria-label="Navegação principal">
+    <nav class="sidenav sidenav--navy" data-sidenav aria-label="Navegação principal"><script>try{if(localStorage.getItem('adere.nav.collapsed')==='1'){var _n=document.querySelector('[data-sidenav]');if(_n)_n.classList.add('is-collapsed');}}catch(e){}</script>
       <div class="brandrow"><span class="avatar">a</span><span class="sidenav__label wm">a-DeRE</span></div>
       <div class="navlist">
         <p class="sidenav__group">Principal</p>
@@ -219,7 +219,7 @@
   var esc=function(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');};
   function code(n){return (n||'?').replace(/[^A-Za-zÀ-ú ]/g,'').trim().split(/\s+/)[0].slice(0,3).toUpperCase();}
   function nf(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,'.');}
-  var LOGOS={seg:'../Logos/MAG%20seguros.png', fin:'../Logos/mag%20financas.jpeg', cap:'../Logos/mag%20capitalizacoes.jpeg', sic:'../Logos/sicoob.svg', s2u:'../Logos/simple2u.svg'};
+  var LOGOS={seg:'../Logos/MAG%20seguros.png', fin:'../Logos/mag%20financas.jpeg', cap:'../Logos/mag%20capitalizacoes.jpeg', sic:'../Logos/sicooboficial_logo.jpeg', s2u:'../Logos/simple2u.svg'};
   function logoHtml(e){
     var url=LOGOS[e.id];
     if(url) return '<span class="co-logo co-logo--img"><img src="'+url+'" alt="Logo '+esc(e.nome)+'"></span>';
@@ -356,7 +356,7 @@
   })();
 
   /* sidenav collapse */
-  document.querySelectorAll('[data-sidenav-toggle]').forEach(function(btn){ var nav=btn.closest('[data-sidenav]'); btn.addEventListener('click',function(){ var c=nav.classList.toggle('is-collapsed'); btn.setAttribute('aria-expanded',String(!c)); btn.setAttribute('aria-label', c?'Expandir menu':'Colapsar menu'); btn.setAttribute('data-tip', c?'Expandir menu':'Colapsar menu'); }); });
+  document.querySelectorAll('[data-sidenav-toggle]').forEach(function(btn){ var nav=btn.closest('[data-sidenav]'); try{ if(localStorage.getItem('adere.nav.collapsed')==='1'){ nav.classList.add('is-collapsed'); btn.setAttribute('aria-expanded','false'); btn.setAttribute('aria-label','Expandir menu'); btn.setAttribute('data-tip','Expandir menu'); } }catch(e){} btn.addEventListener('click',function(){ var c=nav.classList.toggle('is-collapsed'); btn.setAttribute('aria-expanded',String(!c)); btn.setAttribute('aria-label', c?'Expandir menu':'Colapsar menu'); btn.setAttribute('data-tip', c?'Expandir menu':'Colapsar menu'); try{ localStorage.setItem('adere.nav.collapsed', c?'1':'0'); }catch(e){} }); });
   /* theme toggle */
   document.querySelectorAll('[data-theme-toggle]').forEach(function(btn){ btn.addEventListener('click',function(){ var dark=document.documentElement.classList.toggle('dark'); document.documentElement.setAttribute('data-theme',dark?'dark':'light'); var tip=btn.parentElement.querySelector('[data-theme-tip]'); if(tip) tip.textContent=dark?'Modo claro':'Modo escuro'; btn.setAttribute('aria-label',dark?'Alternar para modo claro':'Alternar para modo escuro'); }); });
   /* user menu */
@@ -372,7 +372,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788438386';
+  var MYV='1788441499';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

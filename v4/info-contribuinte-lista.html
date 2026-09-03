@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Informações do Contribuinte</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=42">
+  <link rel="stylesheet" href="../design-system/ds.css?v=43">
   <script src="../design-system/ds-tailwind.js"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
@@ -89,6 +89,15 @@
     .card__h{padding:var(--space-6) var(--space-4) var(--space-6)}
     .table th:first-child,.table td:first-child{padding-left:var(--space-4)}
     .table th:last-child,.table td:last-child{padding-right:var(--space-4)}
+    /* Situação com a Receita: ícone + texto (não pílula) */
+    .sitcell{display:inline-flex;align-items:center;gap:var(--space-2);font-size:var(--text-base);font-weight:500;color:var(--color-text);white-space:nowrap}
+    .sitcell svg{width:18px;height:18px;flex:0 0 auto}
+    /* a cor fica só no ícone; o texto é preto em todos os estados */
+    .sitcell--success svg{color:var(--color-success-fg)}
+    .sitcell--warning svg{color:var(--color-warning-fg)}
+    .sitcell--danger svg{color:var(--color-danger-fg)}
+    .sitcell--neutral svg{color:var(--color-text-muted)}
+    .sitcell--muted svg{color:var(--color-text-onmuted)}
     .table tbody tr:last-child td{border-bottom:0}
     .cnpj-col{font-variant-numeric:tabular-nums;color:var(--color-text)}
     /* Overlay de DEMONSTRAÇÃO (dev) — flutua por cima da interface, não faz parte do produto */
@@ -146,7 +155,7 @@
 
   <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
   <div class="shell">
-    <nav class="sidenav sidenav--navy" data-sidenav aria-label="Navegação principal">
+    <nav class="sidenav sidenav--navy" data-sidenav aria-label="Navegação principal"><script>try{if(localStorage.getItem('adere.nav.collapsed')==='1'){var _n=document.querySelector('[data-sidenav]');if(_n)_n.classList.add('is-collapsed');}}catch(e){}</script>
       <div class="brandrow"><span class="avatar">a</span><span class="sidenav__label wm">a-DeRE</span></div>
       <div class="navlist">
         <p class="sidenav__group">Principal</p>
@@ -211,7 +220,7 @@
                     <th scope="col" class="sortable is-sorted" data-sort="emp" aria-sort="ascending" tabindex="0" role="button">Empresa <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></th>
                     <th scope="col" class="sortable" data-sort="regime" aria-sort="none" tabindex="0" role="button">Regime principal <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></th>
                     <th scope="col" class="sortable" data-sort="ver" aria-sort="none" tabindex="0" role="button">Versão vigente <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></th>
-                    <th scope="col" class="sortable" data-sort="sit" aria-sort="none" tabindex="0" role="button">Status <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></th>
+                    <th scope="col" class="sortable" data-sort="sit" aria-sort="none" tabindex="0" role="button">Situação com a Receita <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></th>
                     <th scope="col" class="sortable" data-sort="at" aria-sort="none" tabindex="0" role="button">Última atualização <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></th>
                     <th scope="col"><span class="sr-only">Ações</span></th>
                   </tr>
@@ -238,7 +247,7 @@
   <script>
   var esc=function(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');};
   function code(n){return (n||'?').replace(/[^A-Za-zÀ-ú ]/g,'').trim().split(/\s+/)[0].slice(0,3).toUpperCase();}
-  var LOGOS={seg:'../Logos/MAG%20seguros.png', fin:'../Logos/mag%20financas.jpeg', cap:'../Logos/mag%20capitalizacoes.jpeg', sic:'../Logos/sicoob.svg', s2u:'../Logos/simple2u.svg'};
+  var LOGOS={seg:'../Logos/MAG%20seguros.png', fin:'../Logos/mag%20financas.jpeg', cap:'../Logos/mag%20capitalizacoes.jpeg', sic:'../Logos/sicooboficial_logo.jpeg', s2u:'../Logos/simple2u.svg'};
   function logoHtml(e){
     var url=LOGOS[e.id];
     if(url) return '<span class="co-logo co-logo--img"><img src="'+url+'" alt="Logo '+esc(e.nome)+'"></span>';
@@ -292,13 +301,31 @@
     });
   }catch(e){}
   function curEmp(){ return scenario==='new'?EMP_NEW:EMP_POP; }
-  /* a empresa é contexto; o status é sempre da VERSÃO vigente (não um "estado da empresa") */
-  function situacaoCell(e){
-    var s=SIT[e.draft || e.sit] || SIT[e.sit];
-    return '<span class="status '+s.pill+'"><span class="status__dot"></span>'+esc(s.label)+'</span>';
+  /* Situação com a Receita = nível EMPRESA: responde "essa empresa está ok com a Receita?".
+     Ter vigente vence (uma nova versão em andamento é detalhe de versão, aparece dentro).
+     Sem vigente: o problema (rejeitada) ou a pendência (em andamento) ou nunca enviou. */
+  var RIC={
+    check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>',
+    warn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4M12 17h.01"/></svg>',
+    clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>',
+    x:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></svg>',
+    dash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke-dasharray="4 3"/></svg>'
+  };
+  function receitaSit(e){
+    var andamento = e.draft || e.emrev || e.rascunho || e.sit==='revisao' || e.sit==='rascunho';
+    if(e.vigente && e.sit==='avisos') return {key:'avisos',    cls:'warning', ic:RIC.warn,  label:'Vigente com adv.'};
+    if(e.vigente)                     return {key:'vigente',   cls:'success', ic:RIC.check, label:'Vigente na Receita'};
+    if(e.sit==='rejeitado')           return {key:'rejeitado', cls:'danger',  ic:RIC.x,     label:'Versão rejeitada'};
+    if(andamento)                     return {key:'andamento', cls:'neutral', ic:RIC.clock, label:'Em andamento'};
+    return                                   {key:'nenhuma',   cls:'muted',   ic:RIC.dash,  label:'Nenhuma versão enviada'};
   }
-  var SITRANK={rejeitado:0, naoenviada:1, avisos:2, sucesso:3};
-  function sitRank(e){ return SITRANK[e.sit]!=null?SITRANK[e.sit]:9; }
+  function situacaoCell(e){
+    var r=receitaSit(e);
+    return '<span class="sitcell sitcell--'+r.cls+'">'+r.ic+'<span>'+esc(r.label)+'</span></span>';
+  }
+  /* ordenação: problema primeiro, depois pendência, depois ok */
+  var SITRANK={rejeitado:0, nenhuma:1, andamento:2, avisos:3, vigente:4};
+  function sitRank(e){ var k=receitaSit(e).key; return SITRANK[k]!=null?SITRANK[k]:9; }
 
   function count(fn){return curEmp().filter(fn).length;}
   function buildStats(){ return [
@@ -429,7 +456,7 @@
   })();
 
   /* sidenav collapse */
-  document.querySelectorAll('[data-sidenav-toggle]').forEach(function(btn){ var nav=btn.closest('[data-sidenav]'); btn.addEventListener('click',function(){ var c=nav.classList.toggle('is-collapsed'); btn.setAttribute('aria-expanded',String(!c)); btn.setAttribute('aria-label', c?'Expandir menu':'Colapsar menu'); btn.setAttribute('data-tip', c?'Expandir menu':'Colapsar menu'); }); });
+  document.querySelectorAll('[data-sidenav-toggle]').forEach(function(btn){ var nav=btn.closest('[data-sidenav]'); try{ if(localStorage.getItem('adere.nav.collapsed')==='1'){ nav.classList.add('is-collapsed'); btn.setAttribute('aria-expanded','false'); btn.setAttribute('aria-label','Expandir menu'); btn.setAttribute('data-tip','Expandir menu'); } }catch(e){} btn.addEventListener('click',function(){ var c=nav.classList.toggle('is-collapsed'); btn.setAttribute('aria-expanded',String(!c)); btn.setAttribute('aria-label', c?'Expandir menu':'Colapsar menu'); btn.setAttribute('data-tip', c?'Expandir menu':'Colapsar menu'); try{ localStorage.setItem('adere.nav.collapsed', c?'1':'0'); }catch(e){} }); });
   /* theme toggle */
   document.querySelectorAll('[data-theme-toggle]').forEach(function(btn){ btn.addEventListener('click',function(){ var dark=document.documentElement.classList.toggle('dark'); document.documentElement.setAttribute('data-theme',dark?'dark':'light'); var tip=btn.parentElement.querySelector('[data-theme-tip]'); if(tip) tip.textContent=dark?'Modo claro':'Modo escuro'; btn.setAttribute('aria-label',dark?'Alternar para modo claro':'Alternar para modo escuro'); }); });
   /* user menu */
@@ -447,7 +474,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788438386';
+  var MYV='1788441499';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
