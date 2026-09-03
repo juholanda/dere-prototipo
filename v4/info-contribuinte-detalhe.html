@@ -162,15 +162,14 @@
     .mnote svg{width:16px;height:16px;flex:0 0 auto;color:var(--color-text-muted);margin-top:2px}
 
     /* ===== contexto: empresa (cocard) e pessoas do processo ===== */
-    .cocard{display:block;padding:var(--space-6)}
-    .cometa{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--space-8) var(--space-12);align-items:start;border-top:1px solid var(--color-divider);padding-top:var(--space-6);margin-top:var(--space-6)}
-    @media(max-width:1200px){.cometa{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    .cocard{display:flex;align-items:center;gap:var(--space-10);padding:var(--space-6);flex-wrap:wrap}
+    .cometa{display:flex;gap:var(--space-12);flex-wrap:wrap;align-items:flex-start}
     .cofield__k{display:flex;align-items:center;gap:var(--space-1-5);font-size:var(--text-sm);color:var(--color-text-muted);font-weight:600;margin:0 0 var(--space-3);white-space:nowrap}
     .cofield__k svg{width:14px;height:14px;flex:0 0 auto}
     .vigtag{display:flex;align-items:center;gap:3px;color:var(--color-success-fg);font-weight:700;font-size:var(--text-xs);margin-top:var(--space-1)}
     .vigtag svg{width:13px;height:13px}
     .cofield__v{font-size:var(--text-base);color:var(--color-heading);font-weight:500;margin:0;line-height:1.3}
-    .cocard__id{display:flex;align-items:center;gap:var(--space-3);min-width:0;flex:1 1 240px}
+    .cocard__id{display:flex;align-items:center;gap:var(--space-3);min-width:0;flex:1 1 280px}
     .cocard__logo{width:var(--space-12);height:var(--space-12);border-radius:var(--radius-lg);overflow:hidden;background:var(--color-surface);border:1px solid var(--color-border);flex:0 0 auto;display:grid;place-items:center}
     .cocard__logo img{width:100%;height:100%;object-fit:cover;display:block}
     .cocard__name{font-size:var(--text-xl);font-weight:600;color:var(--color-heading);margin:0;line-height:1.3}
@@ -304,6 +303,7 @@
             <div class="page-h__row">
               <div>
                 <div class="titlerow"><h1 id="dTitle">Informações do contribuinte</h1><span id="dBadge"></span></div>
+                <p id="dSub">Detalhe da versão e acompanhamento na Receita Federal.</p>
               </div>
               <!-- ações da versão (variam por estado): Editar, Excluir, etc. -->
               <div class="statusbar__actions" id="pageActions"></div>
@@ -898,7 +898,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788438076';
+  var MYV='1788438386';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
