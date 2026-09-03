@@ -56,7 +56,8 @@
     /* larguras estáveis: colunas não pulam ao trocar de cenário */
     .table--fixed{table-layout:fixed;min-width:1140px}
     /* só as células de texto truncam; a coluna de ação nunca clipa o botão */
-    .table--fixed td:not(.col-act){overflow:hidden;text-overflow:ellipsis}
+    .table--fixed td:not(.col-act):not(.col-ver){overflow:hidden;text-overflow:ellipsis}
+    .table--fixed td.col-ver{overflow:visible}
     .table td{padding-top:var(--space-4);padding-bottom:var(--space-4)}
     .celltitle{font-size:var(--text-base);font-weight:600;color:var(--color-heading);white-space:nowrap}
     .cellcnpj{font-size:var(--text-sm);color:var(--color-text-muted);font-variant-numeric:tabular-nums;margin-top:2px;white-space:nowrap}
@@ -228,7 +229,7 @@
                   <tr>
                     <th scope="col" class="sortable is-sorted" data-sort="emp" aria-sort="ascending" tabindex="0" role="button">Empresa <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></th>
                     <th scope="col" class="sortable" data-sort="regime" aria-sort="none" tabindex="0" role="button">Regime principal <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></th>
-                    <th scope="col" class="sortable" data-sort="sit" aria-sort="none" tabindex="0" role="button">Situação com a Receita <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></th>
+                    <th scope="col" class="sortable" data-sort="sit" aria-sort="none" tabindex="0" role="button">Situação na Receita <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></th>
                     <th scope="col" class="sortable" data-sort="ver" aria-sort="none" tabindex="0" role="button">Versão vigente <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></th>
                     <th scope="col" class="sortable" data-sort="at" aria-sort="none" tabindex="0" role="button">Última atualização <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></th>
                     <th scope="col"><span class="sr-only">Ações</span></th>
@@ -395,7 +396,7 @@
       var href=(semversao||isRascunho)?('info-contribuinte.html?modo=nova&emp='+e.id+'&scn='+scenario):('info-contribuinte-empresa.html?emp='+e.id+'&scn='+scenario);
       var regime=e.regime?esc(e.regime):'<span class="muted">—</span>';
       var periodo=e.vigente ? (e.vigente.until ? 'até '+esc(e.vigente.until) : 'em aberto') : '';
-      var vigWarn=nearEnd(e.vigente) ? ' <span class="tooltip vigwarn-wrap"><span class="vigwarn" tabindex="0" role="img" aria-label="O prazo de vigência está perto do fim. Envie uma nova versão."><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg></span><span class="tooltip__bubble tooltip__bubble--stack">O prazo de vigência está perto do fim. Envie uma nova versão.</span></span>' : '';
+      var vigWarn=nearEnd(e.vigente) ? ' <span class="tooltip tooltip--top vigwarn-wrap"><span class="vigwarn" tabindex="0" role="img" aria-label="O prazo de vigência está perto do fim. Envie uma nova versão."><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg></span><span class="tooltip__bubble tooltip__bubble--stack">O prazo de vigência está perto do fim. Envie uma nova versão.</span></span>' : '';
       /* só há "versão vigente" quando alguma versão foi processada com sucesso; em revisão/rascunho NÃO é vigente */
       var versao=e.vigente
         ? '<span class="vercell-top"><span style="font-weight:600;color:var(--color-heading)">Versão '+e.vigente.ver+'</span>'+vigWarn+'</span><div class="cellsub">'+periodo+'</div>'
@@ -410,7 +411,7 @@
         '<td><div class="evemp">'+logoHtml(e)+'<div><div class="celltitle">'+esc(e.nome)+'</div><div class="cellcnpj">'+esc(e.cnpj)+'</div></div></div></td>'+
         '<td>'+regime+'</td>'+
         '<td>'+situacaoCell(e)+'</td>'+
-        '<td>'+versao+'</td>'+
+        '<td class="col-ver">'+versao+'</td>'+
         '<td>'+at+'</td>'+
         '<td class="col-act">'+btn+'</td>'+
       '</tr>';
@@ -497,7 +498,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788450620';
+  var MYV='1788451248';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
