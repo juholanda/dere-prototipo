@@ -37,9 +37,12 @@
     .page-h h1{margin:0;font-size:var(--text-4xl)!important;font-weight:700!important;letter-spacing:-.015em;line-height:1.15}
     .titlerow{display:flex;align-items:center;gap:var(--space-3);flex-wrap:wrap}
     .titlerow .status{font-size:var(--text-sm)}
-    .optag{display:inline-flex;align-items:center;font-size:var(--text-sm);font-weight:600;color:var(--color-text);background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-pill);padding:var(--space-1) var(--space-3)}
-    .optag--alteracao{background:var(--color-warning-bg);color:var(--color-warning-fg);border-color:color-mix(in srgb, var(--color-warning) 30%, transparent)}
-    .optag--exclusao{background:var(--color-danger-bg);color:var(--color-danger-fg);border-color:color-mix(in srgb, var(--color-danger) 30%, transparent)}
+    .optag{display:inline-flex;align-items:center;gap:var(--space-1-5);margin-left:var(--space-3);font-size:var(--text-sm);font-weight:600;color:var(--color-text-muted);background:transparent;border:1px solid var(--color-border);border-radius:var(--radius-pill);padding:var(--space-1) var(--space-3)}
+    .optag::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--color-text-onmuted)}
+    .optag--alteracao{color:var(--color-warning-fg);border-color:color-mix(in srgb, var(--color-warning) 45%, transparent)}
+    .optag--alteracao::before{background:var(--color-warning)}
+    .optag--exclusao{color:var(--color-danger-fg);border-color:color-mix(in srgb, var(--color-danger) 45%, transparent)}
+    .optag--exclusao::before{background:var(--color-danger)}
     .page-h p{color:var(--color-text-muted);font-size:var(--text-base);margin:var(--space-2) 0 0}
     .scenario{display:inline-flex;gap:2px;padding:var(--space-1);background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-pill);flex:0 0 auto}
     /* Overlay de DEMONSTRAÇÃO (dev) — flutua por cima da interface, não faz parte do produto */
