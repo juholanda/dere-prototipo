@@ -28,13 +28,8 @@
     @media(prefers-reduced-motion:reduce){.cadscroll{scroll-behavior:auto}}
     /* conteúdo cresce até 1600px; margem lateral nunca menor que 40px (padding) */
     .wrap{padding:var(--space-8) var(--space-10);max-width:1600px;width:100%;margin:0 auto;box-sizing:border-box}
-    .page-h{background:var(--color-surface);border-bottom:1px solid var(--color-border)}
-    .page-h .wrap{padding-top:var(--space-8);padding-bottom:var(--space-8)}
+    /* .page-h* (cabeçalho de página com variantes) agora no ds.css */
     .eyebrow{font-size:var(--text-xs);font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--color-text-muted);margin:0 0 var(--space-1-5)}
-    .page-h h1{margin:0;font-size:var(--text-4xl)!important;font-weight:700!important;letter-spacing:-.015em;line-height:1.15}
-    .titlerow{display:flex;align-items:center;gap:var(--space-3);flex-wrap:wrap}
-    .subrow{display:flex;align-items:center;gap:var(--space-3);margin-top:var(--space-2)}
-    .subrow p{margin:0;font-size:var(--text-base);color:var(--color-text-muted)}
 
     /* ===== layout do formulário: cards + nav à direita ===== */
     .cadwrap{display:grid;grid-template-columns:minmax(0,1fr) 232px;gap:var(--space-10);align-items:start}
@@ -243,8 +238,10 @@
         <div class="cadscroll" id="cadscroll">
           <div class="page-h">
             <div class="wrap">
-              <div class="titlerow"><h1 id="formTitle">Preencher informações do contribuinte</h1></div>
-              <div class="subrow"><p id="formSub">Nova versão · Enquadramento do contribuinte nos regimes específicos da DeRE.</p></div>
+              <div class="page-h__row">
+                <div class="page-h__title"><h1 id="formTitle">Preencher informações do contribuinte</h1></div>
+              </div>
+              <p class="page-h__desc" id="formSub">Nova versão · Enquadramento do contribuinte nos regimes específicos da DeRE.</p>
             </div>
           </div>
 
@@ -920,7 +917,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788470045';
+  var MYV='1788472882';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

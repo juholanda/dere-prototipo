@@ -970,6 +970,22 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 .breadcrumb__sep{color:var(--color-text-muted)}
 .breadcrumb__current{color:var(--color-text-muted);font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
+/* ============ Cabeçalho de página (faixa branca sob o topbar) ============
+   Estrutura: .page-h > (container) > .page-h__row [.page-h__title (+ tag/badge) | .page-h__act] + .page-h__desc
+   Altura ESTÁVEL entre estados: a linha do título tem min-height fixo e a descrição fica sempre full-width
+   abaixo, então trocar/remover as ações não muda a altura do cabeçalho.
+   Variações: tag de código (.page-h__code), badge de status (.status na .page-h__title), slot de ação (.page-h__act). */
+.page-h{background:var(--color-surface);border-bottom:1px solid var(--color-border)}
+.page-h .wrap{padding-block:var(--space-8)}   /* respiro vertical do cabeçalho (o .wrap dá o horizontal) */
+.page-h__row{display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);min-height:var(--space-12)}
+.page-h__title{flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:var(--space-3);flex-wrap:wrap}
+.page-h__title h1{margin:0;font-size:var(--text-4xl);font-weight:700;letter-spacing:-.015em;line-height:1.15}
+.page-h__title .status{font-size:var(--text-sm)}
+.page-h__code{font-size:var(--text-sm)}
+.page-h__act{flex:0 0 auto;display:flex;align-items:center;gap:var(--space-3)}
+.page-h__desc{color:var(--color-text-muted);font-size:var(--text-base);line-height:1.5;margin:var(--space-2) 0 0}
+@media (max-width:640px){ .page-h__row{flex-wrap:wrap} }
+
 /* ============ Seletor de empresa (multi-CNPJ) — topo da sidebar ============ */
 .orgswitch{display:flex;align-items:center;gap:var(--space-2);width:100%;padding:var(--space-2);border:0;border-radius:var(--radius-base);background:transparent;cursor:pointer;text-align:left;transition:background .12s}
 .orgswitch:hover{background:var(--color-border)}

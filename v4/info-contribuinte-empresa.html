@@ -26,16 +26,7 @@
     /* conteúdo cresce até 1600px; margem lateral nunca menor que 40px (padding) */
     .wrap{padding:var(--space-8) var(--space-10);max-width:1600px;width:100%;margin:0 auto;box-sizing:border-box}
 
-    /* Cabeçalho da página: branco, largura toda, título "Versões" + tag do evento (mesmo padrão da lista) */
-    .page-h{background:var(--color-surface);border-bottom:1px solid var(--color-border)}
-    .page-h .wrap{padding-top:var(--space-8);padding-bottom:var(--space-8)}
-    .page-h__row{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--space-6);flex-wrap:wrap}
-    .page-h__row > div{min-width:0}
-    .page-h h1{margin:0;font-size:var(--text-4xl)!important;font-weight:700!important;letter-spacing:-.015em;line-height:1.15}
-    .page-h__title{display:flex;align-items:center;gap:var(--space-3);flex-wrap:wrap}
-    .page-h__code{font-size:var(--text-sm)}
-    .page-h p{color:var(--color-text-muted);font-size:var(--text-base);margin:var(--space-2) 0 0;line-height:1.5}
-    .page-h__act{flex:0 0 auto}
+    /* .page-h* (cabeçalho de página com variantes) agora no ds.css */
 
     /* trilha de navegação (topbar) */
     .bc{display:flex;align-items:center;gap:var(--space-2);font-size:var(--text-sm);min-width:0;overflow:hidden}
@@ -297,12 +288,10 @@
         <div class="page-h">
           <div class="wrap">
             <div class="page-h__row">
-              <div>
-                <div class="page-h__title"><h1>Versões</h1><span class="tag page-h__code">D-1001</span></div>
-                <p id="pageSub">Acompanhe e gerencie as versões das informações do contribuinte.</p>
-              </div>
+              <div class="page-h__title"><h1>Versões</h1><span class="tag page-h__code">D-1001</span></div>
               <div class="page-h__act" id="headerActSlot"></div>
             </div>
+            <p class="page-h__desc" id="pageSub">Acompanhe e gerencie as versões das informações do contribuinte.</p>
           </div>
         </div>
 
@@ -736,7 +725,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788470045';
+  var MYV='1788472882';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
