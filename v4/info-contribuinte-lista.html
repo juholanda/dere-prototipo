@@ -232,7 +232,7 @@
             <div class="table-wrap">
               <table class="table table--fixed table--stickyactions">
                 <colgroup>
-                  <col><col style="width:172px"><col style="width:195px"><col style="width:215px"><col style="width:160px"><col style="width:130px">
+                  <col style="width:250px"><col style="width:180px"><col style="width:205px"><col style="width:230px"><col style="width:175px"><col style="width:130px">
                 </colgroup>
                 <thead>
                   <tr>
@@ -298,8 +298,8 @@
     {id:'fin', nome:'MAG Finanças',      cnpj:'21.995.256/0001-56', regime:'Serviços Financeiros', vigente:{ver:3, since:'01/01/2026', until:'31/12/2026'}, sit:'sucesso',    flight:{ver:4, st:'revisao'},    at:'03/09/2026 10:20', ts:1020},
     /* Vigente com avisos + nova (v4) transmitida, em processamento na Receita */
     {id:'seg', nome:'MAG Seguros',       cnpj:'33.608.308/0001-73', regime:'Serviços Financeiros', vigente:{ver:3, since:'01/01/2026', until:null},         sit:'avisos',     flight:{ver:4, st:'processando'}, at:'03/09/2026 14:32', ts:1432},
-    /* Sem vigente + a tentativa (v3) foi rejeitada pela Receita (não gravada) */
-    {id:'sic', nome:'Sicoob Seguradora', cnpj:'26.314.512/0001-16', regime:'Serviços Financeiros', vigente:null,                       sit:'rejeitado',  flight:{ver:3, st:'rejeitado'},  at:'03/09/2026 11:05', ts:1105},
+    /* Vigente + nova (v4) transmitida e REJEITADA pela Receita (a rejeição não derruba a vigente) */
+    {id:'sic', nome:'Sicoob Seguradora', cnpj:'26.314.512/0001-16', regime:'Serviços Financeiros', vigente:{ver:3, since:'01/01/2026', until:null}, sit:'sucesso',    flight:{ver:4, st:'rejeitado'},  at:'03/09/2026 11:05', ts:1105},
     /* Nunca transmitida à Receita */
     {id:'s2u', nome:'Simple2u',          cnpj:'40.997.879/0001-02', regime:null,                    vigente:null,                       sit:'naoenviada', flight:null,                     at:null,           ts:0}
   ];
@@ -338,7 +338,7 @@
   /* Situação na Receita (empresa) = SÓ a foto do vigente (Extrato de Eventos Vigentes).
      Rejeitada e Em processamento descrevem a TENTATIVA, não a empresa → vão pra coluna Versão. */
   function receitaSit(e){
-    if(e.vigente && e.sit==='avisos') return {key:'avisos',  cls:'azul',    ic:RIC.info,  label:'Vigente com avisos'};
+    if(e.vigente && e.sit==='avisos') return {key:'avisos',  cls:'azul',    ic:RIC.check, label:'Vigente com avisos'};
     if(e.vigente)                     return {key:'vigente', cls:'success', ic:RIC.check, label:'Vigente'};
     /* sem vigente: nenhuma versão em vigor agora (nunca aceitou OU teve e venceu = lacuna; o porquê vem na coluna Versão) */
     return                                   {key:'nenhuma', cls:'muted',   ic:RIC.dash,  label:'Sem versão vigente'};
@@ -346,9 +346,12 @@
   /* versão em processo (tentativa), além da vigente: sublinha na coluna Versão com bolinha da etapa.
      etapas internas: rascunho / revisao / ajustes  ·  etapas na Receita: processando / rejeitado */
   function flightInfo(e){
-    if(!e.flight) return null;
     var L={rascunho:'em rascunho', revisao:'em revisão', ajustes:'em ajustes', processando:'em processamento', rejeitado:'rejeitada'};
-    return {n:e.flight.ver, label:L[e.flight.st]||e.flight.st, dot:e.flight.st};
+    if(e.flight) return {n:e.flight.ver, label:L[e.flight.st]||e.flight.st, dot:e.flight.st};
+    /* estado salvo no navegador (demo): rascunho salvo OU 1ª versão enviada para revisão aparecem na sublinha */
+    if(e.rascunho || e.sit==='rascunho') return {n:e.vigente?e.vigente.ver+1:1, label:L.rascunho, dot:'rascunho'};
+    if(e.emrev || e.sit==='revisao')     return {n:(e.emrev&&e.emrev.ver)||1,   label:L.revisao,  dot:'revisao'};
+    return null;
   }
   function nearEnd(v){ if(!v||!v.until) return false; var m=/(\d{2})\/(\d{2})\/(\d{4})/.exec(v.until); if(!m) return false; var end=new Date(+m[3],+m[2]-1,+m[1]), today=new Date(2026,8,3); var d=(end-today)/86400000; return d>=0 && d<=60; }
   function situacaoCell(e){
@@ -516,7 +519,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788453576';
+  var MYV='1788453999';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
