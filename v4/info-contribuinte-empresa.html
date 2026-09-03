@@ -456,7 +456,15 @@
 
   function endOf(vig){ var m=(vig||'').match(/\d{2}\/\d{2}\/\d{4}/g)||[]; return m[1]||'—'; }
   function stOf(v){ return (v.sit==='revisao')?'revisao':(v.sit==='ajustes')?'ajuste':'aprovado'; }
-  function hrefOf(v){ var _sit=(v.vigrole==='past')?'encerrada':v.sit; return 'info-contribuinte-detalhe.html?emp='+EMP+'&v='+v.n+'&st='+stOf(v)+'&sit='+_sit+Q(false); }
+  /* versão vigente com fim definido dentro de 60 dias e SEM sucessora em curso: sinaliza pro detalhe mostrar o alerta */
+  function nearEndVig(v){
+    if(v.vigrole!=='now') return null;
+    var end=endOf(v.vig), ed=pdate(end); if(!ed) return null;
+    var d=(ed-new Date(2026,8,3))/86400000; if(d<0||d>60) return null;
+    if(VERSIONS.some(function(x){ return x.vigrole!=='now' && x.vigrole!=='past'; })) return null;
+    return end;
+  }
+  function hrefOf(v){ var _sit=(v.vigrole==='past')?'encerrada':v.sit; var _ne=nearEndVig(v); return 'info-contribuinte-detalhe.html?emp='+EMP+'&v='+v.n+'&st='+stOf(v)+'&sit='+_sit+(_ne?('&near=1&vfim='+encodeURIComponent(_ne)):'')+Q(false); }
   function hrefNova(){ return 'info-contribuinte.html?modo=nova&emp='+EMP+Q(false)+'&from=empresa'; }
   /* rascunho continua no FORMULÁRIO; versões já enviadas abrem o detalhe */
   function goOf(v){ return (v.sit==='rascunho') ? (hrefNova()+'&v='+v.n+'&st=rascunho') : hrefOf(v); }
@@ -677,7 +685,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788454609';
+  var MYV='1788454814';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
