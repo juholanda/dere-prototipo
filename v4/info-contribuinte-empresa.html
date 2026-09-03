@@ -422,7 +422,7 @@
   /* trilha, menu lateral e subtítulo levam a empresa e o cenário */
   $('bcNome').textContent=CO.nome;
   document.querySelectorAll('.bc a, .sidenav a[href^="info-contribuinte-lista.html"]').forEach(function(a){ a.setAttribute('href','info-contribuinte-lista.html'+Q(true)); });
-  $('pageSub').textContent='Acompanhe e gerencie as versões das informações do contribuinte de '+CO.nome+'.';
+  $('pageSub').innerHTML='Acompanhe e gerencie as versões das <strong>informações do contribuinte</strong> de <strong>'+esc(CO.nome)+'</strong>.';
 
   /* cenário: primeiro acesso mostra só o que foi criado nesta sessão; populado traz o histórico */
   var _d1Sent=false; try{ _d1Sent=localStorage.getItem('adere.sent.d1001')===EMP; }catch(e){}
@@ -511,7 +511,7 @@
     $('coLogo').innerHTML=CO.logo?'<img src="'+CO.logo+'" alt="Logo '+esc(CO.nome)+'">':'<span class="co-code">'+code(CO.nome)+'</span>';
     /* primeiro acesso: o regime só existe depois que alguém escolheu no formulário (rascunho ou envio) */
     $('coRegime').textContent=(SCN==='new')?((_d1Sent&&_sentRegime)||(_draft&&_draftRegime)||'—'):(CO.regime||'—');
-    $('coVig').textContent=vig?('Versão '+vig.n):'Nenhuma';
+    $('coVig').textContent=vig?('Versão '+vig.n):'—';
     var _q=(prog||vig||VERSIONS[0]||{}).quando||'—'; $('coAt').textContent=_q.replace('hoje,','03/09/2026').replace('ontem,','02/09/2026').replace(/,\s+/,' ');
 
     /* ação principal: só cabe UMA versão em andamento; com uma aberta o botão fica desabilitado e explica */
@@ -676,7 +676,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788444871';
+  var MYV='1788445599';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

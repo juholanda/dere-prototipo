@@ -95,7 +95,9 @@
     /* texto e ícone na cor do estado (verde / laranja / vermelho / cinza) */
     .sitcell--success{color:var(--color-success-fg)}
     .sitcell--info{color:var(--color-info-fg)}
-    .sitcell--andamento{color:var(--color-draft-fg)}
+    .sitcell--proc{color:var(--color-text-muted)}
+    .sitcell--muted{color:var(--color-text-muted)}
+    .sitprog{display:block;font-size:var(--text-xs);color:var(--color-text-muted);margin-top:2px;padding-left:calc(18px + var(--space-2))}
     .sitcell--danger{color:var(--color-danger-fg)}
     .sitcell--neutral{color:var(--color-text-muted)}
     .sitcell--muted{color:var(--color-text-onmuted)}
@@ -313,19 +315,28 @@
     dash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke-dasharray="4 3"/></svg>'
   };
   function receitaSit(e){
-    var andamento = e.draft || e.emrev || e.rascunho || e.sit==='revisao' || e.sit==='rascunho';
-    if(e.vigente && e.sit==='avisos') return {key:'avisos',    cls:'info',    ic:RIC.info,  label:'Vigente com adv.'};
-    if(e.vigente)                     return {key:'vigente',   cls:'success', ic:RIC.check, label:'Vigente na Receita'};
-    if(e.sit==='rejeitado')           return {key:'rejeitado', cls:'danger',  ic:RIC.x,     label:'Versão rejeitada'};
-    if(andamento)                     return {key:'andamento', cls:'andamento', ic:RIC.clock, label:'Em andamento'};
-    return                                   {key:'nenhuma',   cls:'muted',   ic:RIC.dash,  label:'Nenhuma versão enviada'};
+    if(e.vigente && e.sit==='avisos') return {key:'avisos',      cls:'info',      ic:RIC.info,  label:'Vigente com adv.'};
+    if(e.vigente)                     return {key:'vigente',     cls:'success',   ic:RIC.check, label:'Vigente na Receita'};
+    if(e.sit==='rejeitado')           return {key:'rejeitado',   cls:'danger',    ic:RIC.x,     label:'Versão rejeitada'};
+    if(e.sit==='processando')         return {key:'processando', cls:'proc',      ic:RIC.clock, label:'Em processamento'};
+    /* rascunho / em revisão / ajustes = trabalho interno: nada foi transmitido à Receita ainda */
+    return                                   {key:'nenhuma',     cls:'muted',     ic:RIC.dash,  label:'Nenhuma versão enviada'};
+  }
+  /* versão em preparo interno (além da vigente): vira sublinha discreta, não muda o status da Receita */
+  function progressoInfo(e){
+    var M={revisao:'em revisão', ajuste:'em ajustes', ajustes:'em ajustes', rascunho:'em rascunho'};
+    var st = e.draft || (e.emrev?'revisao':null) || (e.rascunho?'rascunho':null) || ((!e.vigente && M[e.sit])?e.sit:null);
+    if(!M[st]) return null;
+    var n = e.vigente ? ((e.vigente.ver||0)+1) : ((e.emrev&&e.emrev.ver)||1);
+    return {n:n, label:M[st]};
   }
   function situacaoCell(e){
-    var r=receitaSit(e);
-    return '<span class="sitcell sitcell--'+r.cls+'">'+r.ic+'<span>'+esc(r.label)+'</span></span>';
+    var r=receitaSit(e), pr=progressoInfo(e);
+    var sub = pr ? '<span class="sitprog">Versão '+pr.n+' '+pr.label+'</span>' : '';
+    return '<span class="sitcell sitcell--'+r.cls+'">'+r.ic+'<span>'+esc(r.label)+'</span></span>'+sub;
   }
   /* ordenação: problema primeiro, depois pendência, depois ok */
-  var SITRANK={rejeitado:0, nenhuma:1, andamento:2, avisos:3, vigente:4};
+  var SITRANK={rejeitado:0, processando:1, nenhuma:2, avisos:3, vigente:4};
   function sitRank(e){ var k=receitaSit(e).key; return SITRANK[k]!=null?SITRANK[k]:9; }
 
   function count(fn){return curEmp().filter(fn).length;}
@@ -475,7 +486,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788444871';
+  var MYV='1788445599';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
