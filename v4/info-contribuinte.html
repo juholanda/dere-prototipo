@@ -478,7 +478,8 @@
         if($('formTitle')) $('formTitle').textContent='Nova versão · Preencher informações do contribuinte';
         /* cancelar volta pra ONDE veio: das versões da empresa (from=empresa) ou da lista; sempre com o cenário */
         if($('cancelBtn')){
-          if(param('from')==='empresa') $('cancelBtn').setAttribute('href','info-contribuinte-empresa.html?emp='+(param('emp')||'seg')+_scn);
+          if(param('from')==='detalhe') $('cancelBtn').setAttribute('href','info-contribuinte-detalhe.html?emp='+(param('emp')||'seg')+(param('v')?('&v='+param('v')):'')+(param('cenario')?('&cenario='+param('cenario')):'')+_scn);
+          else if(param('from')==='empresa') $('cancelBtn').setAttribute('href','info-contribuinte-empresa.html?emp='+(param('emp')||'seg')+_scn);
           else $('cancelBtn').setAttribute('href','info-contribuinte-lista.html'+(param('scn')?('?scn='+param('scn')):''));
         }
       }
