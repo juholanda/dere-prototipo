@@ -333,13 +333,8 @@
             <div class="tabs__panel" id="vp-tab" role="tabpanel" aria-labelledby="vt-tab" tabindex="0">
               <section class="versec" aria-labelledby="h-vig">
                 <div class="versec__h"><h2 id="h-vig">Versão vigente</h2></div>
-                <p class="versec__hint">Versão atualmente válida na Receita Federal.</p>
+                <p class="versec__hint">Versão válida hoje na Receita Federal e, quando houver, a próxima já aceita para vigência futura.</p>
                 <div id="secVig"></div>
-              </section>
-              <section class="versec" aria-labelledby="h-fut" id="secFutSection" hidden>
-                <div class="versec__h"><h2 id="h-fut">Vigência futura</h2></div>
-                <p class="versec__hint">Versão já aceita pela Receita que passa a valer em uma data futura. Até lá, a versão vigente continua valendo.</p>
-                <div id="secFut"></div>
               </section>
               <section class="versec" aria-labelledby="h-prog">
                 <div class="versec__h"><h2 id="h-prog">Em andamento</h2></div>
@@ -585,13 +580,11 @@
     if(!has) return;
 
     /* vigente */
-    $('secVig').innerHTML = vig
+    /* a vigência futura mora DENTRO do bloco de vigente, logo abaixo da atual, marcada como "Vigência futura" */
+    $('secVig').innerHTML = (vig
       ? row(vig,{current:true})
-      : emptyBox('Nenhuma versão vigente. A primeira versão processada com sucesso pela Receita aparece aqui.');
-
-    /* vigência futura (0 ou 1): versão aceita que só passa a valer numa data à frente */
-    $('secFutSection').hidden = !fut;
-    if(fut) $('secFut').innerHTML = row(fut,{});
+      : emptyBox('Nenhuma versão vigente. A primeira versão processada com sucesso pela Receita aparece aqui.'))
+      + (fut ? row(fut,{}) : '');
 
     /* em andamento (0 ou 1): a ação que o usuário precisa tomar é primária; só consultar é secundária */
     $('secProg').innerHTML = prog
@@ -727,7 +720,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788456650';
+  var MYV='1788457699';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

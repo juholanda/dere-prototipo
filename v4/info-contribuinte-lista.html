@@ -70,9 +70,7 @@
     .stagedot--ajustes{background:var(--color-danger)}
     .stagedot--processando{background:var(--sky-800)}
     .stagedot--rejeitado{background:var(--color-danger)}
-    /* vigência futura: calendário verde (aceita, mas ainda não em vigor) */
-    .stagecal{display:inline-flex;color:var(--color-success-fg);margin-right:var(--space-1-5);flex:0 0 auto}
-    .stagecal svg{width:14px;height:14px}
+    .stagedot--futura{background:var(--color-success-fg)}
     .evemp{display:flex;align-items:center;gap:var(--space-3)}
     .evemp > div{min-width:0}
     .muted{color:var(--color-text-muted)}
@@ -417,11 +415,8 @@
       var periodo=e.vigente ? (e.vigente.until ? 'até '+esc(e.vigente.until) : 'em aberto') : '';
       /* alerta de vigência só quando NÃO há nova versão em curso (com uma em curso, o operador já agiu) */
       var vigWarn=(nearEnd(e.vigente) && !fl) ? ' <span class="tooltip tooltip--top vigwarn-wrap"><span class="vigwarn" tabindex="0" role="img" aria-label="O prazo de vigência está perto do fim. Envie uma nova versão."><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg></span><span class="tooltip__bubble tooltip__bubble--stack">O prazo de vigência está perto do fim. Envie uma nova versão.</span></span>' : '';
-      /* sublinha = SÓ a versão em processo (bolinha da etapa) ou a vigência futura (calendário verde). Sem nada em curso, sem sublinha */
-      var _mark=fl ? (fl.dot==='futura'
-        ? '<span class="stagecal" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/></svg></span>'
-        : '<span class="stagedot stagedot--'+fl.dot+'" aria-hidden="true"></span>') : '';
-      var verSub=fl ? '<div class="cellsub cellsub--stage">'+_mark+'Versão '+fl.n+' '+esc(fl.label)+'</div>' : '';
+      /* sublinha = SÓ a versão em processo, com bolinha da etapa (inclui vigência futura, bolinha verde). Sem nada em curso, sem sublinha */
+      var verSub=fl ? '<div class="cellsub cellsub--stage"><span class="stagedot stagedot--'+fl.dot+'" aria-hidden="true"></span>Versão '+fl.n+' '+esc(fl.label)+'</div>' : '';
       /* linha 1: a versão vigente; sem vigente mas com tentativa, mostra o traço (a tentativa vem na sublinha) */
       var versao=(e.vigente
         ? '<span class="vercell-top"><span style="font-weight:600;color:var(--color-heading)">Versão '+e.vigente.ver+'</span>'+vigWarn+'</span>'
@@ -523,7 +518,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788456650';
+  var MYV='1788457699';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
