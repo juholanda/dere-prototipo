@@ -825,7 +825,7 @@
       var v=$('ajusteText').value.trim();
       if(!v){ if($('ajusteErr'))$('ajusteErr').hidden=false; $('ajusteText').setAttribute('aria-invalid','true'); $('ajusteText').focus(); return; }
       _ajusteComment=v; dsDialog.close();
-      try{ localStorage.setItem('adere.d1001.approval.'+empId(),'ajuste'); }catch(e){}
+      try{ localStorage.setItem('adere.d1001.approval.'+empId(),'ajuste'); localStorage.setItem('adere.d1001.ajustecomment.'+empId(), v); }catch(e){}
       showToast('Ajustes solicitados. A versão voltou para o preparador.');
       setScenario({role:'preparador',st:'ajuste'});
     });
@@ -986,7 +986,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788462128';
+  var MYV='1788462246';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

@@ -875,12 +875,14 @@
     var M={ ajustes:['Ajustes solicitados por Ana Prado','O regime secundário não se aplica a esta empresa. Remova a marcação e confirme a vigência antes de reenviar.'],
             rejeitado:['Versão rejeitada pela Receita Federal','MS1097 · A validade informada se sobrepõe a um período já existente. Ajuste as datas e reenvie.'] };
     var m=M[corr]; if(!m) return;
+    /* usa o comentário REAL que o aprovador escreveu (não o texto fixo), quando houver */
+    if(corr==='ajustes'){ var _c=''; try{ _c=localStorage.getItem('adere.d1001.ajustecomment.'+p('emp'))||''; }catch(e){} if(_c) m=[m[0], _c]; }
     el.innerHTML='<div class="dalert dalert--danger" role="status"><span class="dalert__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4M12 17h.01"/></svg></span><div><p class="dalert__title">'+m[0]+'</p><p class="dalert__text">'+m[1]+'</p></div></div>';
   })();
   </script>
 <script>
 (function(){
-  var MYV='1788462128';
+  var MYV='1788462246';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
