@@ -442,7 +442,6 @@
     ajustes:     {t:'02/09/2026 · 14:32', title:'Ajustes solicitados',           status:['Ajustes solicitados','status--danger'],     who:'Ana Prado', role:'Aprovadora', extras:[['Comentário','O regime secundário não se aplica a esta empresa. Remova a marcação e confirme a vigência antes de reenviar.']]},
     reenviada:   {t:'03/09/2026 · 09:10', title:'Reenviada para revisão',        status:['Em revisão','status--draft'],               who:'Ricardo Alves', role:'Preparador'},
     aprovada:    {t:'03/09/2026 · 11:20', title:'Aprovada e transmitida à Receita Federal', status:['Em processamento','status--draft'], who:'Ana Prado', role:'Aprovadora'},
-    processando: {t:'03/09/2026 · 11:20', title:'Em processamento na Receita Federal', status:['Em processamento','status--draft'], who:'Receita Federal', role:'Sistema'},
     processada:  {t:'03/09/2026 · 11:27', title:'Processada pela Receita Federal', status:['Processado com sucesso','status--success'], who:'Receita Federal', role:'Sistema', extras:[['Recibo',REC]]},
     processada_adv:{t:'03/09/2026 · 11:27', title:'Processada pela Receita Federal', status:['Processado com advertências','status--info'], who:'Receita Federal', role:'Sistema', extras:[['Advertência','MS1094 · A data de início da validade é anterior ao início da DeRE (aviso, não impeditivo).'],['Recibo',REC]]},
     rejeitada:   {t:'03/09/2026 · 11:27', title:'Processada pela Receita Federal', status:['Rejeitada','status--danger'], who:'Receita Federal', role:'Sistema', extras:[['Erro','MS1097 · A validade informada se sobrepõe a um período já existente. Ajuste as datas e reenvie.']]}
@@ -451,7 +450,7 @@
     rascunho:     ['criada'],
     revisao:      ['enviada'],
     ajustes:      ['enviada','ajustes'],
-    processando:  ['enviada','aprovada','processando'],
+    processando:  ['enviada','aprovada'],
     sucesso:      ['enviada','ajustes','reenviada','aprovada','processada'],
     advertencias: ['enviada','ajustes','reenviada','aprovada','processada_adv'],
     rejeitado:    ['enviada','aprovada','rejeitada'],
@@ -892,7 +891,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788446087';
+  var MYV='1788446435';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
