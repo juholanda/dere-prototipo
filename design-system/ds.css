@@ -392,7 +392,7 @@ textarea.input{height:auto;padding:var(--space-2) var(--space-3);min-height:84px
 /* Status (cor + dot + rótulo) */
 .status{display:inline-flex;align-items:center;gap:var(--space-1-5);padding:var(--space-1) var(--space-2);border-radius:var(--radius-pill);white-space:nowrap;
   font-size:var(--text-sm);font-weight:600;background:var(--color-surface-2);color:var(--color-text-onmuted);border:1px solid color-mix(in srgb, currentColor 25%, transparent)}
-.status__dot{width:7px;height:7px;border-radius:50%;background:currentColor}
+.status__dot{width:6px;height:6px;border-radius:50%;background:currentColor}
 .status--success{background:var(--color-success-bg);color:var(--color-success-fg)}
 .status--warning{background:var(--color-warning-bg);color:var(--color-warning-fg)}
 .status--danger{background:var(--color-danger-bg);color:var(--color-danger-fg)}
@@ -404,6 +404,13 @@ textarea.input{height:auto;padding:var(--space-2) var(--space-3);min-height:84px
 .status--sm .status__dot{width:6px;height:6px}
 .status--lg{padding:var(--space-1-5) var(--space-3);font-size:var(--text-base)}
 .status--lg .status__dot{width:8px;height:8px}
+/* optag: etiqueta da operação da versão (Nova versão / Alteração da vigente / Exclusão da vigente); acompanha o status, mesma bolinha */
+.optag{display:inline-flex;align-items:center;gap:var(--space-1-5);font-size:var(--text-sm);font-weight:600;color:var(--color-text-muted);background:transparent;border:1px solid var(--color-border);border-radius:var(--radius-pill);padding:var(--space-1) var(--space-3)}
+.optag::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--color-text-onmuted);flex:0 0 auto}
+.optag--alteracao{color:var(--color-warning-fg);border-color:color-mix(in srgb, var(--color-warning) 45%, transparent)}
+.optag--alteracao::before{background:var(--color-warning)}
+.optag--exclusao{color:var(--color-danger-fg);border-color:color-mix(in srgb, var(--color-danger) 45%, transparent)}
+.optag--exclusao::before{background:var(--color-danger)}
 
 /* Tabela — fundo branco, header sóbrio, zebra bem sutil */
 .table{width:100%;border-collapse:collapse;font-size:var(--text-sm);background:var(--color-surface)}

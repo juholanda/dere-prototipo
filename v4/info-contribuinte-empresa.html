@@ -104,7 +104,8 @@
     @container (min-width:820px){
       .verrow{grid-template-columns:auto auto minmax(0,1fr) auto auto;grid-template-rows:auto}
       .verrow__badge,.verrow__top,.verrow__sep,.verrow__act{grid-row:1}
-      .verrow__kvs{grid-row:1;grid-column:3;grid-template-columns:repeat(4,minmax(0,max-content));justify-content:end;column-gap:var(--space-8)}
+      /* larguras fixas: os 4 dados alinham entre as seções mesmo quando o valor é "—" */
+      .verrow__kvs{grid-row:1;grid-column:3;grid-template-columns:140px 165px 105px 115px;justify-content:end;column-gap:var(--space-8)}
       .verrow__sep{grid-column:4}
       .verrow__act{grid-column:5}
     }
@@ -117,6 +118,7 @@
     .verrow__badge{flex:0 0 auto;width:var(--space-10);height:var(--space-10);border-radius:var(--radius-lg);display:grid;place-items:center;background:color-mix(in srgb, var(--color-surface-2) 45%, var(--color-border));color:var(--color-text-onmuted);font-size:var(--text-sm);font-weight:700;font-variant-numeric:tabular-nums}
     .verrow__badge svg{width:20px;height:20px}
     .verrow__badge--success{color:var(--color-success-fg)}
+    .verrow__badge--future{color:var(--color-success-fg)}
     /* vigente: quadrado branco (limpo sobre o azul-claro da linha), sem borda; check verde */
     .verrow--current .verrow__badge{background:var(--color-surface)}
     /* sobre o azul-claro, o cinza "muted" fica em 4,3:1; o "onmuted" passa de 6:1 (AA) */
@@ -326,6 +328,11 @@
                 <p class="versec__hint">Versão atualmente válida na Receita Federal.</p>
                 <div id="secVig"></div>
               </section>
+              <section class="versec" aria-labelledby="h-fut" id="secFutSection" hidden>
+                <div class="versec__h"><h2 id="h-fut">Vigência futura</h2></div>
+                <p class="versec__hint">Versão já aceita pela Receita que passa a valer em uma data futura. Até lá, a versão vigente continua valendo.</p>
+                <div id="secFut"></div>
+              </section>
               <section class="versec" aria-labelledby="h-prog">
                 <div class="versec__h"><h2 id="h-prog">Em andamento</h2></div>
                 <p class="versec__hint">Versão em processo de criação, revisão ou processamento pela Receita Federal.</p>
@@ -373,6 +380,7 @@
     check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.8 10A10 10 0 1 1 17 3.3"/><path d="m9 11 3 3L22 4"/></svg>',
     clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>',
     alert:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg>',
+    calendar:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/></svg>',
     x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></svg>',
     pen:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.17 2.83a2.83 2.83 0 0 0-4 0L4 16l-1 5 5-1L21.17 6.83a2.83 2.83 0 0 0 0-4Z"/></svg>',
     info:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>',
@@ -395,7 +403,7 @@
       {n:1, current:false, sit:'sucesso',      vigrole:'past', vig:'01/01/2025 a 31/05/2025', recibo:'RC-2025.0001', quando:'31/05/2025, 23:59', env:'04/01/2025, 10:30', proc:'05/01/2025, 09:00', resp:'Ricardo Alves'}
     ]},
     fin:{nome:'MAG Finanças', cnpj:'21.995.256/0001-56', logo:'../Logos/mag%20financas.jpeg', regime:'Serviços Financeiros', versions:[
-      {n:4, current:false, sit:'revisao',      vigrole:null,   vig:'—',                       recibo:'—',            quando:'03/09/2026 10:20', env:'', resp:'Ricardo Alves'},
+      {n:4, current:false, sit:'futura',       vigrole:'future', vig:'01/01/2027 · em aberto',  recibo:'RC-2026.0004', quando:'03/09/2026, 10:20', env:'02/09/2026, 09:00', proc:'03/09/2026, 10:20'},
       {n:3, current:true,  sit:'sucesso',      vigrole:'now',  vig:'01/01/2026 a 31/12/2026', recibo:'RC-2026.0003', quando:'22/08/2026, 16:40', env:'21/08/2026, 10:20', proc:'22/08/2026, 16:40'},
       {n:2, current:false, sit:'sucesso',      vigrole:'past', vig:'01/07/2025 a 31/12/2025', recibo:'RC-2025.0002', quando:'31/12/2025, 23:59', env:'30/06/2025, 09:00', proc:'01/07/2025, 09:00', resp:'Ricardo Alves'},
       {n:1, current:false, sit:'sucesso',      vigrole:'past', vig:'01/01/2025 a 30/06/2025', recibo:'RC-2025.0001', quando:'30/06/2025, 23:59', env:'02/01/2025, 08:45', proc:'03/01/2025, 09:00', resp:'Ricardo Alves'}
@@ -416,6 +424,7 @@
     processando: {label:'Em processamento',       pill:'status--info',    tone:'info',    ic:I.clock, lead:'Transmitida em'},
     sucesso:     {label:'Processada com sucesso', pill:'status--success', tone:'success', ic:I.check, lead:'Processada em'},
     advertencias:{label:'Processada com advertências', pill:'status--azul', tone:'success', ic:I.check, lead:'Processada em'},
+    futura:      {label:'Vigência futura',           pill:'status--success', tone:'success', ic:I.calendar, lead:'Aceita em'},
     rejeitado:   {label:'Rejeitada pela Receita', pill:'status--danger',  tone:'danger',  ic:I.x,     lead:'Rejeitada em'}
   };
   var ENC={label:'Encerrada', pill:'status--neutral'};
@@ -488,7 +497,9 @@
     var s=(v.vigrole==='past')?ENC:(SIT[v.sit]||{label:v.sit,pill:''});
     var badge = opts.current
       ? '<span class="verrow__badge verrow__badge--success" aria-hidden="true">'+I.check+'</span>'
-      : '<span class="verrow__badge" aria-hidden="true">v'+v.n+'</span>';
+      : (v.vigrole==='future'
+        ? '<span class="verrow__badge verrow__badge--future" aria-hidden="true">'+I.calendar+'</span>'
+        : '<span class="verrow__badge" aria-hidden="true">v'+v.n+'</span>');
     /* o que importa numa lista de versões: quando vale, o que diz, quando foi e a prova da Receita (quem fez fica no detalhe) */
     var day=function(d){ return d?String(d).split(',')[0]:d; };
     var kvs=[['Regime principal',v.regime||regimeOf(v)],['Vigência',v.vig],['Processada em',day(v.proc)],['Recibo',v.recibo]]
@@ -521,7 +532,8 @@
   function renderVersions(){
     var has=VERSIONS.length>0;
     var vig=VERSIONS.filter(function(v){ return v.vigrole==='now'; })[0]||null;
-    var prog=VERSIONS.filter(function(v){ return v.vigrole!=='now' && v.vigrole!=='past'; })[0]||null;
+    var fut=VERSIONS.filter(function(v){ return v.vigrole==='future'; })[0]||null;
+    var prog=VERSIONS.filter(function(v){ return v.vigrole!=='now' && v.vigrole!=='past' && v.vigrole!=='future'; })[0]||null;
     var enc=VERSIONS.filter(function(v){ return v.vigrole==='past'; });
 
     /* empresa (contexto) */
@@ -568,6 +580,10 @@
     $('secVig').innerHTML = vig
       ? row(vig,{current:true})
       : emptyBox('Nenhuma versão vigente. A primeira versão processada com sucesso pela Receita aparece aqui.');
+
+    /* vigência futura (0 ou 1): versão aceita que só passa a valer numa data à frente */
+    $('secFutSection').hidden = !fut;
+    if(fut) $('secFut').innerHTML = row(fut,{});
 
     /* em andamento (0 ou 1): a ação que o usuário precisa tomar é primária; só consultar é secundária */
     $('secProg').innerHTML = prog
@@ -695,7 +711,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788455084';
+  var MYV='1788456273';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
