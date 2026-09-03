@@ -692,6 +692,8 @@
         if(msg){ msg.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>Selecione ao menos uma atividade antes de enviar para revisão.'; }
         if(box){ box.setAttribute('aria-invalid','true'); box.setAttribute('aria-describedby','atvErr'); }
         (box||openB).scrollIntoView({behavior:'smooth',block:'center'});
+        var _addBtn=box&&box.querySelector('[data-atvopen]');
+        if(_addBtn) setTimeout(function(){ try{ _addBtn.focus({preventScroll:true}); }catch(e){ _addBtn.focus(); } }, 350);
         return;
       }
       var _e=document.getElementById('atvErr'); if(_e) _e.remove(); if(box){ box.removeAttribute('aria-invalid'); box.removeAttribute('aria-describedby'); }
@@ -882,7 +884,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788462246';
+  var MYV='1788462355';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
