@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Informações do Contribuinte</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=48">
+  <link rel="stylesheet" href="../design-system/ds.css?v=49">
   <script src="../design-system/ds-tailwind.js"></script>
   <script src="../design-system/ds-dialog.js"></script>
   <style>
@@ -239,9 +239,11 @@
           <div class="page-h">
             <div class="wrap">
               <div class="page-h__row">
-                <div class="page-h__title"><h1 id="formTitle">Preencher informações do contribuinte</h1></div>
+                <div class="page-h__main">
+                  <div class="page-h__title"><h1 id="formTitle">Preencher informações do contribuinte</h1></div>
+                  <p class="page-h__desc" id="formSub">Nova versão · Enquadramento do contribuinte nos regimes específicos da DeRE.</p>
+                </div>
               </div>
-              <p class="page-h__desc" id="formSub">Nova versão · Enquadramento do contribuinte nos regimes específicos da DeRE.</p>
             </div>
           </div>
 
@@ -938,7 +940,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788497092';
+  var MYV='1788498204';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
