@@ -585,7 +585,7 @@
         _x='O preparador definiu novo início em <b>'+esc(a.data||'')+'</b>. Ao aprovar, a versão vigente é <b>encerrada</b> nessa data (corte automático) e esta passa a valer.';
       } else {
         _t='Correção da versão vigente aguardando sua aprovação';
-        _x='O preparador manteve a vigência'+(a&&a.data?(' (<b>'+esc(a.data)+'</b>)'):'')+'. Ao aprovar, esta versão <b>substitui</b> a vigente — mesmo período, nada é encerrado.';
+        _x='O preparador manteve a vigência atual'+(a&&a.data?(' (<b>'+esc(a.data)+'</b>)'):'')+'. Ao ser aprovada, esta versão <b>substituirá</b> a vigente, sem encerrar o período atual.';
       }
       return '<div class="dalert dalert--warning" role="status"><span class="dalert__ic">'+ALERT+'</span><div class="dalert__body"><p class="dalert__title">'+esc(_t)+'</p><p class="dalert__text">'+_x+'</p></div></div>';
     }
@@ -1142,7 +1142,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788506088';
+  var MYV='1788506191';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
