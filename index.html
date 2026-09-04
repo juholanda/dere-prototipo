@@ -122,8 +122,7 @@
           <a class="scn" href="v4/info-contribuinte-detalhe.html?emp=seg&v=3&cenario=vigente&fresh=1&scn=pop">Processada com sucesso · alterar ou excluir</a>
           <a class="scn" href="v4/info-contribuinte-detalhe.html?emp=fin&v=4&cenario=aprovar&fresh=1&scn=pop">Aprovar versão</a>
           <a class="scn" href="v4/info-contribuinte-detalhe.html?emp=seg&v=4&cenario=corrigir&fresh=1&scn=pop">Corrigir versão · ajustes ou rejeitada</a>
-          <a class="scn" href="v4/info-contribuinte-detalhe.html?emp=seg&v=4&cenario=corrigir&sit=rejeitado&rej=vigencia&fresh=1&scn=pop">Rejeitada · dados (troque o motivo na barra de demo)</a>
-          <a class="scn" href="v4/info-contribuinte-detalhe.html?emp=seg&v=4&cenario=corrigir&sit=rejeitado&rej=certificado&fresh=1&scn=pop">Rejeitada · certificado (sem procuração)</a>
+          <a class="scn" href="v4/info-contribuinte-detalhe.html?emp=seg&v=4&cenario=corrigir&sit=rejeitado&rej=vigencia&fresh=1&scn=pop">Rejeitada pela Receita · escolha o motivo na barra de demo</a>
           <a class="scn" href="v4/info-contribuinte-detalhe.html?emp=seg&v=3&cenario=estados&fresh=1&scn=pop">Estados da versão</a>
           <a class="scn scn--warn" href="v4/info-contribuinte-lista.html?scn=pop&demo=0">Vigência perto do fim · alerta na lista <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
           <a class="scn" href="v4/info-contribuinte-empresa.html?emp=fin&scn=pop">Vigência futura · versão aceita que vale depois</a>
@@ -148,7 +147,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788505203';
+  var MYV='1788506088';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

@@ -466,21 +466,23 @@
     var DESC='Enquadramento do contribuinte nos regimes específicos da DeRE.';
     if(param('modo')==='editar'){
       var vlabel=param('v')?('Versão '+param('v')):'Versão';
-      if($('bcAcao')) $('bcAcao').textContent='Editar '+vlabel;
-      if($('formTitle')) $('formTitle').textContent='Editar '+vlabel+' · Informações do contribuinte';
+      var _corr=param('corr'); /* corr = veio de ajustes/rejeitada; usado só pro Cancelar voltar ao estado certo */
+      var _acao='Alterar';
+      if($('bcAcao')) $('bcAcao').textContent=_acao+' '+vlabel;
+      if($('formTitle')) $('formTitle').textContent=_acao+' '+vlabel+' · Informações do contribuinte';
       if($('formSub')) $('formSub').textContent=DESC;
-      /* vim do detalhe da versão: cancelar volta pra lá, não pro painel */
-      if($('cancelBtn')) $('cancelBtn').setAttribute('href','info-contribuinte-detalhe.html?v='+(param('v')||'1')+'&st=revisao&from=lista'+(param('scn')?('&scn='+param('scn')):'')+(param('emp')?('&emp='+param('emp')):'')+(param('cenario')?('&cenario='+param('cenario')):''));
-      document.title='a-DeRE · Editar informações do contribuinte';
+      document.title='a-DeRE · '+_acao+' informações do contribuinte';
+      /* cancelar volta pra ONDE veio, no MESMO estado: corr (ajustes/rejeitado) vira o sit; senão revisão */
+      if($('cancelBtn')) $('cancelBtn').setAttribute('href','info-contribuinte-detalhe.html?emp='+(param('emp')||'seg')+'&v='+(param('v')||'1')+(_corr?('&sit='+_corr):'&st=revisao')+(param('cenario')?('&cenario='+param('cenario')):'')+(param('scn')?('&scn='+param('scn')):''));
     } else {
       /* rascunho salvo desta empresa = EDIÇÃO de uma versão em andamento (mesma estrutura de editar, só o estado muda);
          começar do zero (sem rascunho) é que é "Nova versão". */
       var _hasDraft=false; try{ _hasDraft=!!localStorage.getItem('adere.d1001.draft.'+(param('emp')||'seg')); }catch(e){}
       var _vN=param('v')||'1', _scn=param('scn')?('&scn='+param('scn')):'', _emp=param('emp')?('&emp='+param('emp')):'';
       if(_hasDraft){
-        if($('bcAcao')) $('bcAcao').textContent='Editar Versão '+_vN;
-        if($('formTitle')) $('formTitle').textContent='Editar Versão '+_vN+' · Informações do contribuinte';
-        document.title='a-DeRE · Editar Versão '+_vN;
+        if($('bcAcao')) $('bcAcao').textContent='Alterar Versão '+_vN;
+        if($('formTitle')) $('formTitle').textContent='Alterar Versão '+_vN+' · Informações do contribuinte';
+        document.title='a-DeRE · Alterar Versão '+_vN;
         /* veio das versões da empresa: cancelar volta pra lá */
         if($('cancelBtn')) $('cancelBtn').setAttribute('href','info-contribuinte-empresa.html?emp='+(param('emp')||'seg')+_scn);
       } else {
@@ -921,7 +923,7 @@
     var corr=p('corr'), op=p('op'); var el=document.getElementById('corrBanner'); if(!el) return;
     /* intent vindo do popup "Alterar a versão vigente" */
     if(op==='corrigir' || op==='novavig'){
-      var OM={ corrigir:['Corrigindo a versão vigente','A vigência atual continua a mesma. Você corrige os dados sem mudar quando vale — a versão vigente é substituída pela corrigida.'],
+      var OM={ corrigir:['Corrigindo a versão vigente','A vigência atual continua a mesma. Você corrige os dados sem mudar quando vale; a versão vigente é substituída pela corrigida.'],
                novavig:['Nova vigência a partir de outra data','Defina a nova data de início. A versão vigente será encerrada nessa data (corte automático).'] };
       var o=OM[op];
       el.innerHTML='<div class="dalert dalert--info" role="status"><span class="dalert__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span><div><p class="dalert__title">'+o[0]+'</p><p class="dalert__text">'+o[1]+'</p></div></div>';
@@ -938,7 +940,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788505203';
+  var MYV='1788506088';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
