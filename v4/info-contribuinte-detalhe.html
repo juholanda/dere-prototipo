@@ -715,7 +715,7 @@
       _acts=_exBtn+_prim;
     }
     /* em processamento = já transmitida à Receita. Doc só prevê aguardar (não há cancelar/abortar/excluir). Sem ação: só o aviso de espera. */
-    else if(sit==='processando'){ _acts='<button class="btn btn--secondary" type="button" data-open-comprovante><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>Ver comprovante</button>'; }
+    else if(sit==='processando'){ _acts='<button class="btn btn--secondary" type="button" data-open-comprovante><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>Ver comprovante</button><button class="btn btn--danger-outline" type="button" data-proc-block="excluir"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M10 11v6M14 11v6"/></svg>Excluir versão</button><button class="btn btn--primary" type="button" data-proc-block="alterar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>Alterar</button>'; }
     else if(sit==='encerrada' || sit==='excluida'){ _acts='<button class="btn btn--secondary" type="button" data-open-comprovante><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>Ver comprovante</button>'; }
     else { _acts=s.topActions; }
     if($('pageActions')) $('pageActions').innerHTML=_acts;
@@ -904,7 +904,7 @@
   });
   /* Aprovador: modais de Aprovar e Solicitar ajustes */
   document.addEventListener('DOMContentLoaded',function(){
-    var apM=$('aprovarModal'), ajM=$('ajusteModal'), compM=$('comprovanteModal'); if(!apM||!ajM) return;
+    var apM=$('aprovarModal'), ajM=$('ajusteModal'), compM=$('comprovanteModal'), pbM=$('procBlockModal'); if(!apM||!ajM) return;
     /* Comprovante de envio: recibo/protocolo por estado. Lê contribuinte/vigência da própria página. */
     function roVal(label){ var els=document.querySelectorAll('.roitem'); for(var i=0;i<els.length;i++){ var dt=els[i].querySelector('dt'); if(dt && dt.textContent.trim().indexOf(label)===0){ var dd=els[i].querySelector('dd'); return dd?dd.textContent.trim():''; } } return ''; }
     function fillComprovante(sit){
@@ -971,12 +971,14 @@
     document.addEventListener('click',function(e){
       if(e.target.closest('[data-open-aprovar]')){ fillApprove(); dsDialog.open(apM,{focus:$('confirmAprovar'),onOpen:function(){apM.hidden=false;document.body.style.overflow='hidden';},onClose:function(){apM.hidden=true;document.body.style.overflow='';}}); }
       if(e.target.closest('[data-open-ajuste]')){ $('ajusteText').value=''; if($('ajusteErr'))$('ajusteErr').hidden=true; dsDialog.open(ajM,{focus:$('ajusteText'),onOpen:function(){ajM.hidden=false;document.body.style.overflow='hidden';},onClose:function(){ajM.hidden=true;document.body.style.overflow='';}}); }
+      if(e.target.closest('[data-proc-block]')){ var _pb=e.target.closest('[data-proc-block]').getAttribute('data-proc-block'); if($('procBlockText')) $('procBlockText').textContent='Não é possível '+(_pb==='excluir'?'excluir':'alterar')+' esta versão enquanto ela está em processamento na Receita. Aguarde o retorno do processamento para fazer qualquer ajuste.'; if(pbM) dsDialog.open(pbM,{focus:pbM.querySelector('[data-close]'),onOpen:function(){pbM.hidden=false;document.body.style.overflow='hidden';},onClose:function(){pbM.hidden=true;document.body.style.overflow='';}}); return; }
       if(e.target.closest('[data-open-comprovante]')){ openComprovante(sitFor(curDetState)); }
     });
     apM.querySelectorAll('[data-close]').forEach(function(b){ b.addEventListener('click',function(){dsDialog.close();}); });
     ajM.querySelectorAll('[data-close]').forEach(function(b){ b.addEventListener('click',function(){dsDialog.close();}); });
     apM.addEventListener('click',function(e){ if(e.target===apM) dsDialog.close(); });
     ajM.addEventListener('click',function(e){ if(e.target===ajM) dsDialog.close(); });
+    if(pbM){ pbM.querySelectorAll('[data-close]').forEach(function(b){ b.addEventListener('click',function(){dsDialog.close();}); }); pbM.addEventListener('click',function(e){ if(e.target===pbM) dsDialog.close(); }); }
     if(compM){ compM.addEventListener('click',function(e){ if(e.target.closest('[data-comp-dl]')){ showToast('Comprovante gerado para download.'); return; } if(e.target.closest('[data-comp-fix]')){ var _rc=curRej(); showToast((_rc.natureza==='Cadastral'?'A situação do CNPJ':'O certificado/procuração')+' é resolvido em Minhas empresas. Tela ainda não desenhada.'); return; } if(e.target===compM || e.target.closest('[data-close-comp]')) dsDialog.close(); }); }
     /* switcher "Motivo" da barra de demo: troca o tipo de rejeição e atualiza banner + comprovante ao vivo */
     document.addEventListener('change',function(e){
@@ -1097,6 +1099,23 @@
     </div>
   </div>
 
+  <!-- Aviso orientativo: versão em processamento (não dá pra excluir/alterar) -->
+  <div class="scrim" id="procBlockModal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="procBlockTitle">
+      <div class="modal__header modal__header--icon">
+        <span class="modal__ic modal__ic--warning"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg></span>
+        <h3 class="modal__title" id="procBlockTitle">Versão em processamento</h3>
+        <button class="icon-btn" type="button" data-close aria-label="Fechar" style="flex:0 0 auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg></button>
+      </div>
+      <div class="modal__body">
+        <p id="procBlockText">Não é possível alterar esta versão enquanto ela está em processamento na Receita. Aguarde o retorno do processamento para fazer qualquer ajuste.</p>
+      </div>
+      <div class="modal__footer">
+        <button class="btn btn--primary btn--lg" type="button" data-close>Entendi</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Solicitar ajustes (aprovador) -->
   <div class="scrim" id="ajusteModal" hidden>
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="ajTitle">
@@ -1154,7 +1173,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788543662';
+  var MYV='1788544132';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
