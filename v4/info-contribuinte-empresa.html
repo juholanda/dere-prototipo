@@ -420,7 +420,7 @@
     advertencias:{label:'Processada com advertências', pill:'status--azul', tone:'success', ic:I.check, lead:'Processada em'},
     futura:      {label:'Vigência futura',           pill:'status--success', tone:'success', ic:I.calendar, lead:'Aceita em'},
     rejeitado:   {label:'Rejeitada pela Receita', pill:'status--danger',  tone:'danger',  ic:I.x,     lead:'Rejeitada em'},
-    excluida:    {label:'Vigência excluída',      pill:'status--neutral', tone:'draft',   ic:I.x,     lead:'Excluída em'}
+    excluida:    {label:'Excluída',                pill:'status--neutral', tone:'draft',   ic:I.x,     lead:'Excluída em'}
   };
   var ENC={label:'Encerrada', pill:'status--neutral'};
 
@@ -569,7 +569,7 @@
     } else if(prog && prog.sit==='rejeitado'){
       al='<div class="dalert dalert--danger" role="status"><span class="dalert__ic">'+I.x+'</span><div class="dalert__body"><p class="dalert__title">Versão '+prog.n+' rejeitada pela Receita</p><p class="dalert__text">A transmissão foi rejeitada. Consulte o motivo, corrija as informações e reenvie. A versão vigente continua valendo.</p></div><a class="btn btn--secondary dalert__act" href="'+hrefOf(prog)+'">Ver motivo'+I.chev+'</a></div>';
     } else if(exc){
-      al='<div class="dalert dalert--warning" role="status"><span class="dalert__ic">'+I.alert+'</span><div class="dalert__body"><p class="dalert__title">Vigência excluída na Receita Federal</p><p class="dalert__text">'+(exc.exclMotivo?('Motivo: <strong>'+esc(exc.exclMotivo)+'</strong>. '):'')+'O contribuinte está <strong>sem declaração vigente</strong> do D-1001. Se ainda é obrigado à DeRE, registre uma nova versão.</p></div><a class="btn btn--secondary dalert__act" href="'+hrefNova()+'">'+I.plus+'Nova versão D-1001</a></div>';
+      al='<div class="dalert dalert--warning" role="status"><span class="dalert__ic">'+I.alert+'</span><div class="dalert__body"><p class="dalert__title">Vigência excluída na Receita Federal</p><p class="dalert__text">'+(exc.exclMotivo?('Motivo: <strong>'+esc(exc.exclMotivo)+'</strong>. '):'')+'O período ficou como <strong>lacuna</strong> (sem D-1001 vigente): as <strong>declarações mensais</strong> que dependem deste cadastro ficam bloqueadas nesse intervalo. Registre uma nova versão que cubra o período.</p></div><a class="btn btn--secondary dalert__act" href="'+hrefNova()+'">'+I.plus+'Nova versão D-1001</a></div>';
     }
     $('alertSlot').innerHTML=al;
 
@@ -722,7 +722,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788496551';
+  var MYV='1788496704';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
