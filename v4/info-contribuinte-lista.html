@@ -64,6 +64,7 @@
     .cd{font-size:var(--text-xs);margin-top:3px;font-variant-numeric:tabular-nums;color:var(--color-text-muted);display:flex;align-items:center;gap:var(--space-1)}
     .cd--warn{color:var(--color-warning-fg);font-weight:600}
     .cd--over{color:var(--color-danger-fg);font-weight:600}
+    .cd--future{color:var(--color-success-fg);font-weight:600}
     .cd .vigwarn{margin-left:0}
     .cd .vigwarn__ic{padding:0;color:inherit}
     .cd .vigwarn__ic svg{width:15px;height:15px}
@@ -406,7 +407,10 @@
       var vigCell;
       if(e.vigente){
         if(e.vigente.until){
-          vigCell='<div class="vigperiod">'+esc(e.vigente.since)+' – '+esc(e.vigente.until)+'</div>'+countdownHtml(e.vigente, vigWarn);
+          var vigSecond=(fl && fl.dot==='futura')
+            ? '<div class="cd cd--future"><span class="stagedot stagedot--futura" aria-hidden="true"></span>Renovação aprovada · a partir de '+esc(e.flight.desde||'')+'</div>'
+            : countdownHtml(e.vigente, vigWarn);
+          vigCell='<div class="vigperiod">'+esc(e.vigente.since)+' – '+esc(e.vigente.until)+'</div>'+vigSecond;
         } else {
           vigCell='<div class="vigperiod">Desde '+esc(e.vigente.since)+'</div><div class="cd">Vigência em aberto</div>';
         }
@@ -512,7 +516,7 @@
   <script>(function(){ var bar=document.getElementById('demobar'); if(!bar) return; var tog=bar.querySelector('[data-demo-toggle]'); if(!tog) return; function set(open){ bar.classList.toggle('is-collapsed', !open); tog.setAttribute('aria-expanded', String(open)); tog.setAttribute('aria-label', open?'Recolher ferramenta de demonstração':'Abrir ferramenta de demonstração de cenários'); try{ localStorage.setItem('adere.demo.open', open?'1':'0'); }catch(e){} } var open=false; try{ open=localStorage.getItem('adere.demo.open')==='1'; }catch(e){} set(open); tog.addEventListener('click',function(){ set(bar.classList.contains('is-collapsed')); }); })();</script>
 <script>
 (function(){
-  var MYV='1788543284';
+  var MYV='1788543493';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
