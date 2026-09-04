@@ -980,11 +980,11 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 .page-h .wrap{padding-block:var(--space-8)}   /* respiro vertical do cabeçalho (o .wrap dá o horizontal) */
 .page-h__row{display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);min-height:var(--space-12)}
 .page-h__title{flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:var(--space-3);flex-wrap:wrap}
-.page-h__title h1{margin:0;font-size:var(--text-4xl);font-weight:700;letter-spacing:-.015em;line-height:1.15}
+.page-h__title h1{margin:0;font-size:var(--text-4xl)!important;font-weight:700!important;letter-spacing:-.015em;line-height:1.15}   /* !important vence o reset global de heading (h1{font-weight:600!important}) */
 .page-h__title .status{font-size:var(--text-sm)}
 .page-h__code{font-size:var(--text-sm)}
 .page-h__act{flex:0 0 auto;display:flex;align-items:center;gap:var(--space-3)}
-.page-h__desc{color:var(--color-text-muted);font-size:var(--text-base);line-height:1.5;margin:var(--space-2) 0 0}
+.page-h__desc{color:var(--color-text-muted);font-size:var(--text-base);line-height:1.5;margin:var(--space-1) 0 0}
 @media (max-width:640px){ .page-h__row{flex-wrap:wrap} }
 
 /* Aviso inline "vigência perto do fim": ícone de alerta âmbar + tooltip, junto a um título/valor.
