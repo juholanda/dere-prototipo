@@ -93,13 +93,13 @@
     .verrow__sep{grid-row:1/3;grid-column:3}
     .verrow__act{grid-row:1/3;grid-column:4}
     @container (min-width:760px){
-      .verrow{grid-template-columns:auto minmax(11rem,1fr) minmax(0,4fr) auto auto;grid-template-rows:auto}
+      .verrow{grid-template-columns:auto repeat(5,minmax(0,1fr)) auto auto;grid-template-rows:auto}
       .verrow__badge,.verrow__top,.verrow__sep,.verrow__act{grid-row:1}
       /* 4 dados inline (uma linha) assim que há espaço; colunas flexíveis (fr) enchem a faixa sem transbordar,
          calibradas por conteúdo (regime e vigência mais largos); valor longo trunca com reticências + tooltip */
-      .verrow__kvs{grid-row:1;grid-column:3;grid-template-columns:repeat(4,minmax(0,1fr));column-gap:var(--space-4)}
-      .verrow__sep{grid-column:4}
-      .verrow__act{grid-column:5}
+      .verrow .verrow__kvs{display:contents}
+      .verrow__sep{grid-column:7}
+      .verrow__act{grid-column:8}
     }
     @container (max-width:640px){
       .verrow__kvs{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -731,7 +731,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788542659';
+  var MYV='1788543284';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
