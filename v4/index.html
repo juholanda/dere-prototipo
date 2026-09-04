@@ -25,16 +25,17 @@
   .flow__n{font-size:var(--text-xs);color:var(--color-text-onmuted);font-weight:600;letter-spacing:.04em;text-transform:uppercase}
   .flow__head h2{font-size:var(--text-xl);color:var(--color-heading);margin:var(--space-1) 0 var(--space-1-5)}
   .flow__head p{margin:0;color:var(--color-text-muted);font-size:var(--text-sm);line-height:1.55}
-  .flow__scn{display:flex;flex-wrap:wrap;gap:var(--space-2);padding:var(--space-4) var(--space-6) var(--space-6);border-top:1px solid var(--color-divider)}
+  .flow__scn{display:flex;flex-direction:column;align-items:flex-start;gap:var(--space-1-5);padding:var(--space-4) var(--space-6) var(--space-6);border-top:1px solid var(--color-divider)}
   .flow__scn-lbl{width:100%;font-size:var(--text-xs);font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--color-text-onmuted);margin-bottom:var(--space-1)}
-  .scn{display:inline-flex;align-items:center;gap:var(--space-1-5);font-size:var(--text-sm);font-weight:500;color:var(--color-primary);text-decoration:none;background:var(--color-primary-subtle);border:1px solid transparent;border-radius:var(--radius-pill);padding:var(--space-1-5) var(--space-3);transition:background-color .12s,border-color .12s}
-  .scn:hover{border-color:var(--color-primary);background:var(--color-primary-subtle)}
+  .scn{display:inline-flex;align-items:center;gap:var(--space-1-5);font-size:var(--text-sm);font-weight:500;color:var(--color-primary);text-decoration:none;padding:var(--space-1) 0;transition:color .12s}
+  .scn:hover{text-decoration:underline}
+  .scn:focus-visible{outline:none;box-shadow:var(--ring);border-radius:var(--radius-sm)}
   .scn svg{width:14px;height:14px;flex:0 0 auto;opacity:.7}
-  .scn--main{background:var(--color-primary);color:var(--color-primary-contrast)}
-  .scn--main:hover{background:var(--color-primary-hover);border-color:transparent}
+  .scn--main{font-weight:700;font-size:var(--text-base)}
+  .scn--main:hover{text-decoration:underline}
   .scn--main svg{opacity:1}
-  .scn--warn{background:var(--color-warning-bg);color:var(--color-warning-fg)}
-  .scn--warn:hover{border-color:var(--color-warning)}
+  .scn--warn{color:var(--color-warning-fg)}
+  .scn--warn:hover{text-decoration:underline}
   .scn--soon{background:var(--color-surface-2);color:var(--color-text-onmuted);cursor:default}
   .scn--soon svg{opacity:.5}
 </style>
@@ -115,19 +116,22 @@
           <div><span class="flow__n">Fluxo 3</span><h2>Informações do contribuinte (D-1001)</h2><p>Lista das empresas, versões, detalhe e os fluxos de alteração e exclusão, com aprovação antes da Receita.</p></div>
         </div>
         <div class="flow__scn">
-          <span class="flow__scn-lbl">Começar por</span>
+          <span class="flow__scn-lbl">Começar</span>
           <a class="scn scn--main" href="info-contribuinte-lista.html?scn=new">Criar ou editar informações do contribuinte <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
-          <span class="flow__scn-lbl" style="margin-top:var(--space-3)">Cenários de negócio · a barra de demo acompanha as páginas; Resetar volta ao início</span>
-          <a class="scn" href="info-contribuinte.html?modo=nova&emp=cap&perfil=admin&scn=pop">Admin cria e transmite direto · sem passar pelo aprovador (recebe o retorno da Receita)</a>
-          <a class="scn" href="info-contribuinte-detalhe.html?emp=fin&v=4&cenario=andamento&fresh=1&scn=pop">Versão em revisão · alterar ou excluir (preparador)</a>
-          <a class="scn" href="info-contribuinte-detalhe.html?emp=seg&v=3&cenario=vigente&fresh=1&scn=pop">Processada com sucesso · alterar ou excluir (preparador)</a>
-          <a class="scn" href="info-contribuinte-detalhe.html?emp=fin&v=4&cenario=aprovar&fresh=1&scn=pop">Aprovar versão (aprovador)</a>
-          <a class="scn" href="info-contribuinte-detalhe.html?emp=seg&v=4&cenario=corrigir&fresh=1&scn=pop">Corrigir versão · após ajustes ou rejeição (preparador)</a>
-          <a class="scn" href="info-contribuinte-detalhe.html?emp=seg&v=4&cenario=corrigir&sit=rejeitado&rej=vigencia&fresh=1&scn=pop">Rejeitada pela Receita · escolha o motivo (preparador)</a>
+          <span class="flow__scn-lbl" style="margin-top:var(--space-3)">Admin · faz tudo</span>
+          <a class="scn" href="info-contribuinte.html?modo=nova&emp=cap&perfil=admin&scn=pop">Cria e transmite direto, sem passar pelo aprovador</a>
+          <span class="flow__scn-lbl" style="margin-top:var(--space-3)">Preparador</span>
+          <a class="scn" href="info-contribuinte-detalhe.html?emp=fin&v=4&cenario=andamento&fresh=1&scn=pop">Versão em revisão · alterar ou excluir</a>
+          <a class="scn" href="info-contribuinte-detalhe.html?emp=seg&v=3&cenario=vigente&fresh=1&scn=pop">Processada com sucesso · alterar ou excluir</a>
+          <a class="scn" href="info-contribuinte-detalhe.html?emp=seg&v=4&cenario=corrigir&fresh=1&scn=pop">Corrigir versão · após ajustes ou rejeição</a>
+          <a class="scn" href="info-contribuinte-detalhe.html?emp=seg&v=4&cenario=corrigir&sit=rejeitado&rej=vigencia&fresh=1&scn=pop">Rejeitada pela Receita · escolha o motivo</a>
+          <a class="scn" href="info-contribuinte-detalhe.html?emp=seg&v=3&cenario=excluir&fresh=1&scn=pop">Excluir a vigência · aprovação e baixa na Receita</a>
+          <span class="flow__scn-lbl" style="margin-top:var(--space-3)">Aprovador</span>
+          <a class="scn" href="info-contribuinte-detalhe.html?emp=fin&v=4&cenario=aprovar&fresh=1&scn=pop">Aprovar versão</a>
+          <span class="flow__scn-lbl" style="margin-top:var(--space-3)">Situações &amp; alertas</span>
           <a class="scn" href="info-contribuinte-detalhe.html?emp=seg&v=3&cenario=estados&fresh=1&scn=pop">Estados da versão</a>
           <a class="scn scn--warn" href="info-contribuinte-lista.html?scn=pop&demo=0">Vigência perto do fim · alerta na lista <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
           <a class="scn" href="info-contribuinte-empresa.html?emp=fin&scn=pop">Vigência futura · versão aceita que vale depois</a>
-          <a class="scn" href="info-contribuinte-detalhe.html?emp=seg&v=3&cenario=excluir&fresh=1&scn=pop">Excluir a vigência · aprovação e baixa na Receita (preparador)</a>
         </div>
       </div>
 
@@ -163,7 +167,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788541085';
+  var MYV='1788541505';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
