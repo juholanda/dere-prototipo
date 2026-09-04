@@ -433,6 +433,18 @@
   var CHAVE='D1001'+'A7F3B2E10C9D8465'+'20260903112000'+'0000042'; /* id do evento, 42 chars [0-9A-Za-z] */
   var HASH='9f86d081884c7d659a2feaa0c55ad015'+'a3bf4f1b2b0b';  /* hash do arquivo processado (44) */
   var DH_REC='03/09/2026, 11:20', DH_PROC='03/09/2026, 11:27'; /* dhRecepcao / dhProcess */
+  /* Catálogo de rejeições (códigos MS do doc 08). natureza = o que o usuário precisa fazer:
+     Dado/Conteúdo -> corrigir e retransmitir; Assinatura -> mexer no certificado (fora da app); Cadastral -> verificar CNPJ. */
+  var REJEICOES = {
+    vigencia:    {cod:'MS1097', titulo:'Sobreposição de vigência',        natureza:'Dado',       desc:'As datas de validade se sobrepõem a um período já existente. Ajuste as datas e reenvie.', loc:'infoContrib/idePeriodo/iniValid', acao:'Corrigir e retransmitir', acaoTipo:'corrigir'},
+    certificado: {cod:'MS0013', titulo:'Certificado sem procuração',       natureza:'Assinatura', desc:'O certificado usado não está habilitado como procurador da matriz no e-CAC (nem é da matriz ou do representante legal). Habilite a procuração e retransmita.', loc:'Assinatura do evento (ds:Signature)', acao:'Verificar procuração no e-CAC', acaoTipo:'certificado'},
+    certExpirado:{cod:'MS0006', titulo:'Certificado expirado',             natureza:'Assinatura', desc:'O certificado digital usado para assinar está expirado. Renove o certificado e retransmita.', loc:'Assinatura do evento (ds:Signature)', acao:'Renovar o certificado', acaoTipo:'certificado'},
+    cnpj:        {cod:'MS1062', titulo:'CNPJ baixado no período',           natureza:'Cadastral',  desc:'O CNPJ do contribuinte consta como baixado no período informado. Verifique a situação cadastral do CNPJ na Receita.', loc:'ideContrib/nrInsc', acao:'Verificar o CNPJ na Receita', acaoTipo:'cadastral'},
+    regime:      {cod:'MS1093', titulo:'Regime secundário igual ao principal', natureza:'Conteúdo', desc:'O regime tributário secundário informado é igual ao principal. Ajuste a marcação de regime e reenvie.', loc:'infoContrib/regTribSecund', acao:'Corrigir e retransmitir', acaoTipo:'corrigir'}
+  };
+  var REJ_ORDER=['vigencia','certificado','certExpirado','cnpj','regime'];
+  var _rejKey=(function(){ var r=dparam('rej'); return REJEICOES[r]?r:'vigencia'; })();
+  function curRej(){ return REJEICOES[_rejKey]||REJEICOES.vigencia; }
   var EV={
     criada:      {t:'02/09/2026 · 10:47', title:'Versão criada',                 status:['Rascunho','status--neutral'],                 who:'Ricardo Alves', role:'Preparador'},
     enviada:     {t:'02/09/2026 · 11:15', title:'Enviada para revisão',          status:['Em revisão','status--warning'],             who:'Ricardo Alves', role:'Preparador'},
@@ -500,7 +512,8 @@
     if(sit==='ajustes'){
       el.innerHTML='<div class="dalert dalert--danger" role="status"><span class="dalert__ic">'+ALERT+'</span><div><p class="dalert__title">Ajustes solicitados por Ana Prado</p><p class="dalert__text">'+esc(_ajusteComment || (EV.ajustes.extras?EV.ajustes.extras[0][1]:''))+'</p></div></div>';
     } else if(sit==='rejeitado'){
-      el.innerHTML='<div class="dalert dalert--danger" role="status"><span class="dalert__ic">'+ALERT+'</span><div class="dalert__body"><p class="dalert__title">Versão rejeitada pela Receita Federal</p><p class="dalert__text">'+esc(EV.rejeitada.extras?EV.rejeitada.extras[0][1]:'')+'</p></div><button class="btn btn--secondary dalert__act" type="button" data-open-comprovante><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>Ver comprovante</button></div>';
+      var _rj=curRej();
+      el.innerHTML='<div class="dalert dalert--danger" role="status"><span class="dalert__ic">'+ALERT+'</span><div class="dalert__body"><p class="dalert__title">Versão rejeitada pela Receita Federal · '+esc(_rj.titulo)+'</p><p class="dalert__text"><strong>'+esc(_rj.cod)+'</strong> · '+esc(_rj.desc)+'</p></div><button class="btn btn--secondary dalert__act" type="button" data-open-comprovante><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>Ver comprovante</button></div>';
     } else if(sit==='processando'){
       var _exTx = (curOp==='exclusao')
         ? 'A exclusão foi transmitida e está em processamento. O processamento é assíncrono; a vigência é encerrada quando a Receita concluir. Uma transmissão em andamento não pode ser cancelada.'
@@ -631,12 +644,22 @@
     var cen=curCenario()||CENARIOS.estados;
     if($('demoCenLbl')) $('demoCenLbl').textContent=cen.label;
     var wrap=$('demoOpts'); if(!wrap) return;
+    wrap.innerHTML='';
     if(cen.dropdown){
       var sel=document.createElement('select'); sel.className='demobar__sel'; sel.id='demoSel'; sel.setAttribute('aria-label','Estado da versão');
       cen.opts.forEach(function(o,i){ var op=document.createElement('option'); op.value=i; op.textContent=o[0]; if(optActive(o[1])) op.selected=true; sel.appendChild(op); });
-      wrap.innerHTML=''; wrap.appendChild(sel); return;
+      wrap.appendChild(sel);
+    } else {
+      cen.opts.forEach(function(o,i){ var b=document.createElement('button'); b.type='button'; b.setAttribute('data-opt-i',i); if(optActive(o[1])) b.className='on'; b.textContent=o[0]; wrap.appendChild(b); });
     }
-    wrap.innerHTML=cen.opts.map(function(o,i){ return '<button type="button" data-opt-i="'+i+'"'+(optActive(o[1])?' class="on"':'')+'>'+o[0]+'</button>'; }).join('');
+    /* "Motivo" da rejeição: aparece só no estado Rejeitada, pra alternar entre os tipos ao vivo */
+    if(curDetState && sitFor(curDetState)==='rejeitado'){
+      var sep=document.createElement('span'); sep.className='demobar__sep'; wrap.appendChild(sep);
+      var lbl=document.createElement('span'); lbl.className='demobar__lbl'; lbl.textContent='Motivo'; wrap.appendChild(lbl);
+      var rsel=document.createElement('select'); rsel.className='demobar__sel'; rsel.id='demoRej'; rsel.setAttribute('aria-label','Motivo da rejeição');
+      REJ_ORDER.forEach(function(k){ var op=document.createElement('option'); op.value=k; op.textContent=REJEICOES[k].cod+' · '+REJEICOES[k].titulo; if(k===_rejKey) op.selected=true; rsel.appendChild(op); });
+      wrap.appendChild(rsel);
+    }
   }
   function clearDemoLS(){ try{ localStorage.removeItem('adere.d1001.approval.'+empId()); localStorage.removeItem('adere.sent.d1001'); localStorage.removeItem('adere.sent.d1001.t'); localStorage.removeItem('adere.d1001.draft.'+empId()); localStorage.removeItem('adere.d1001.excluded.'+empId()); localStorage.removeItem('adere.d1001.vigexcluida.'+empId()); localStorage.removeItem('adere.d1001.altop.'+empId()); }catch(e){} _ajusteComment=''; }
   function resetDemo(){ clearDemoLS(); var cen=curCenario(); setScenario(cen?cen.start:{role:'preparador',st:'revisao',sit:'',op:'nova'}); showToast('Cenário reiniciado.'); }
@@ -777,6 +800,7 @@
       try{ _sent=localStorage.getItem('adere.sent.d1001')===empId(); _draft=!!localStorage.getItem('adere.d1001.draft.'+empId()); _appr=localStorage.getItem('adere.d1001.approval.'+empId()); }catch(e){}
       /* deep-link de exclusão (handoff preparador→aprovador e refresh nos passos da jornada): honra o passo explícito da URL em vez de voltar ao início do cenário */
       if(dparam('op')==='exclusao'){ setScenario({role:(dparam('role')||'preparador'), st:(dparam('st')||'revisao'), op:'exclusao', sit:(dparam('sit')||'')}); }
+      else if(dparam('sit')==='rejeitado'){ setScenario({role:'preparador', st:'aprovado', sit:'rejeitado', op:'nova'}); }
       else if(_appr==='processing') setScenario({role:(_cen.start.role||'preparador'), st:'aprovado', sit:'processando', op:(_cen.start.op||'nova')});
       else if(_appr==='ajuste') setScenario({role:'preparador', st:'ajuste', op:'nova', sit:''});
       else if(_sent) setScenario({role:(_cen.start.role||'preparador'), st:'revisao', op:(_cen.start.op||'nova'), sit:''});
@@ -882,7 +906,7 @@
       var IC_ERR='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></svg>';
       var state, sic, scls, stt, stx;
       if(sit==='processando'){ state='transmitido'; sic=IC_CLK; scls='receipt__state--info'; stt=(isExcl?'Exclusão transmitida à Receita — em processamento':'Transmitido à Receita — em processamento'); stx='Protocolo de entrega emitido. Ainda não cumpre a obrigação: o recibo definitivo é gerado quando a Receita concluir o processamento.'; }
-      else if(sit==='rejeitado'){ state='rejeitado'; sic=IC_ERR; scls='receipt__state--danger'; stt='Rejeitado pela Receita Federal'; stx='O evento foi rejeitado e não gerou recibo. Corrija os dados e retransmita (gera uma nova chave de evento).'; }
+      else if(sit==='rejeitado'){ state='rejeitado'; sic=IC_ERR; scls='receipt__state--danger'; stt='Rejeitado pela Receita Federal'; stx='O evento foi rejeitado e não gerou recibo. Veja o motivo e a ação recomendada abaixo.'; }
       else if(sit==='advertencias'){ state='aceito'; sic=IC_OK; scls='receipt__state--success'; stt='Aceito pela Receita Federal, com advertências'; stx='Comprovante definitivo. A obrigação foi cumprida. Há advertências (não impeditivas) registradas abaixo.'; }
       else { state='aceito'; sic=IC_OK; scls='receipt__state--success'; stt=(isExcl?'Exclusão aceita pela Receita Federal':'Aceito pela Receita Federal'); stx=(isExcl?'A exclusão da vigência foi processada. Este é o comprovante definitivo do evento.':'Comprovante definitivo. A obrigação foi cumprida (prova válida).'); }
       function row(k,v,cls){ return '<div class="receipt__row"><span class="receipt__k">'+esc(k)+'</span><span class="receipt__v '+(cls||'')+'">'+v+'</span></div>'; }
@@ -907,12 +931,14 @@
         rows+=row('Recibo (nrRecibo)','Não gerado','receipt__v--wait');
       }
       var occ='';
-      if(state==='rejeitado'){ occ='<div class="dalert dalert--danger" role="status" style="margin-top:var(--space-2)"><span class="dalert__ic">'+ALERT+'</span><div class="dalert__body"><p class="dalert__title">Ocorrência (erro impeditivo)</p><p class="dalert__text"><strong>MS1097</strong> · A validade informada se sobrepõe a um período já existente. Ajuste as datas e reenvie.</p></div></div>'; }
+      if(state==='rejeitado'){ var _rjo=curRej(); occ='<div class="dalert dalert--danger" role="status" style="margin-top:var(--space-2)"><span class="dalert__ic">'+ALERT+'</span><div class="dalert__body"><p class="dalert__title">Ocorrência · '+esc(_rjo.natureza)+'</p><p class="dalert__text"><strong>'+esc(_rjo.cod)+'</strong> · '+esc(_rjo.desc)+'<br><span style="color:var(--color-text-muted)">Localização: '+esc(_rjo.loc)+'</span></p></div></div>'; }
       else if(sit==='advertencias'){ occ='<div class="dalert dalert--warning" role="status" style="margin-top:var(--space-2)"><span class="dalert__ic">'+ALERT+'</span><div class="dalert__body"><p class="dalert__title">Advertência (não impeditiva)</p><p class="dalert__text"><strong>MS1094</strong> · A data de início da validade é anterior ao início da DeRE.</p></div></div>'; }
       R.innerHTML='<div class="receipt__state '+scls+'"><span class="receipt__state-ic">'+sic+'</span><div><p class="receipt__state-tt">'+esc(stt)+'</p><p class="receipt__state-tx">'+esc(stx)+'</p></div></div><div class="receipt__rows">'+rows+'</div>'+occ;
       var DL='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>';
       var f='<button class="btn btn--ghost btn--lg" type="button" data-close-comp>Fechar</button>';
-      if(state==='rejeitado'){ var _vr=dparam('v')||'4'; f+='<a class="btn btn--primary btn--lg" href="info-contribuinte.html?modo=editar&v='+_vr+'&corr=rejeitado"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>Corrigir e retransmitir</a>'; }
+      if(state==='rejeitado'){ var _rjf=curRej();
+        if(_rjf.acaoTipo==='corrigir'){ var _vr=dparam('v')||'4'; f+='<a class="btn btn--primary btn--lg" href="info-contribuinte.html?modo=editar&v='+_vr+'&corr=rejeitado"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>'+esc(_rjf.acao)+'</a>'; }
+        else { f+='<button class="btn btn--primary btn--lg" type="button" data-comp-fix><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>'+esc(_rjf.acao)+'</button>'; } }
       else { f+='<button class="btn btn--secondary btn--lg" type="button" data-comp-dl>'+DL+'Baixar XML</button><button class="btn btn--secondary btn--lg" type="button" data-comp-dl>'+DL+'Baixar PDF</button>'; }
       if(F) F.innerHTML=f;
     }
@@ -938,7 +964,13 @@
     ajM.querySelectorAll('[data-close]').forEach(function(b){ b.addEventListener('click',function(){dsDialog.close();}); });
     apM.addEventListener('click',function(e){ if(e.target===apM) dsDialog.close(); });
     ajM.addEventListener('click',function(e){ if(e.target===ajM) dsDialog.close(); });
-    if(compM){ compM.addEventListener('click',function(e){ if(e.target.closest('[data-comp-dl]')){ showToast('Comprovante gerado para download.'); return; } if(e.target===compM || e.target.closest('[data-close-comp]')) dsDialog.close(); }); }
+    if(compM){ compM.addEventListener('click',function(e){ if(e.target.closest('[data-comp-dl]')){ showToast('Comprovante gerado para download.'); return; } if(e.target.closest('[data-comp-fix]')){ showToast('Esta ação acontece fora da a-DeRE: '+curRej().acao+'.'); return; } if(e.target===compM || e.target.closest('[data-close-comp]')) dsDialog.close(); }); }
+    /* switcher "Motivo" da barra de demo: troca o tipo de rejeição e atualiza banner + comprovante ao vivo */
+    document.addEventListener('change',function(e){
+      var r=e.target.closest && e.target.closest('#demoRej'); if(!r) return;
+      _rejKey=r.value; render(curDetState);
+      if(compM && !compM.hidden) fillComprovante(sitFor(curDetState));
+    });
     $('confirmAprovar').addEventListener('click',function(){
       var isX=(curOp==='exclusao');
       var apCard=apM.querySelector('.modal');
@@ -1109,7 +1141,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788503672';
+  var MYV='1788504688';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
