@@ -439,10 +439,10 @@
     vigencia:    {cod:'MS1097', titulo:'Sobreposição de vigência',        natureza:'Dado',       desc:'As datas de validade se sobrepõem a um período já existente. Ajuste as datas e reenvie.', loc:'infoContrib/idePeriodo/iniValid', acao:'Corrigir e retransmitir', acaoTipo:'corrigir'},
     certificado: {cod:'MS0013', titulo:'Certificado sem procuração',       natureza:'Assinatura', desc:'O certificado usado não está habilitado como procurador da matriz no e-CAC (nem é da matriz ou do representante legal). Habilite a procuração e retransmita.', loc:'Assinatura do evento (ds:Signature)', acao:'Verificar procuração no e-CAC', acaoTipo:'certificado'},
     certExpirado:{cod:'MS0006', titulo:'Certificado expirado',             natureza:'Assinatura', desc:'O certificado digital usado para assinar está expirado. Renove o certificado e retransmita.', loc:'Assinatura do evento (ds:Signature)', acao:'Renovar o certificado', acaoTipo:'certificado'},
-    cnpj:        {cod:'MS1062', titulo:'CNPJ baixado no período',           natureza:'Cadastral',  desc:'O CNPJ do contribuinte consta como baixado no período informado. Verifique a situação cadastral do CNPJ na Receita.', loc:'ideContrib/nrInsc', acao:'Verificar o CNPJ na Receita', acaoTipo:'cadastral'},
-    regime:      {cod:'MS1093', titulo:'Regime secundário igual ao principal', natureza:'Conteúdo', desc:'O regime tributário secundário informado é igual ao principal. Ajuste a marcação de regime e reenvie.', loc:'infoContrib/regTribSecund', acao:'Corrigir e retransmitir', acaoTipo:'corrigir'}
+    cnpj:        {cod:'MS1062', titulo:'CNPJ baixado no período',           natureza:'Cadastral',  desc:'O CNPJ do contribuinte consta como baixado no período informado. Verifique a situação cadastral do CNPJ na Receita.', loc:'ideContrib/nrInsc', acao:'Verificar o CNPJ na Receita', acaoTipo:'cadastral'}
+    /* MS1093 (regime secundário = principal) foi removido: é validação do formulário (impedimos client-side), não chega a ser rejeição da Receita. */
   };
-  var REJ_ORDER=['vigencia','certificado','certExpirado','cnpj','regime'];
+  var REJ_ORDER=['vigencia','certificado','certExpirado','cnpj'];
   var _rejKey=(function(){ var r=dparam('rej'); return REJEICOES[r]?r:'vigencia'; })();
   function curRej(){ return REJEICOES[_rejKey]||REJEICOES.vigencia; }
   var EV={
@@ -1152,7 +1152,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788506922';
+  var MYV='1788509862';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
