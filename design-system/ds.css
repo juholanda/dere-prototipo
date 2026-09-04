@@ -205,8 +205,8 @@ a{color:var(--color-primary);text-decoration:none}
 .btn--danger:hover:not(:disabled){background:var(--color-danger-hover)}
 .btn--danger:active:not(:disabled){background:var(--red-800)}
 /* Success (confirmações positivas) */
-.btn--success{background:var(--color-success);color:#fff}
-.btn--success:hover:not(:disabled){background:var(--green-700)}
+.btn--success{background:var(--green-700);color:#fff}
+.btn--success:hover:not(:disabled){background:var(--green-800)}
 .btn--success:active:not(:disabled){background:var(--green-800)}
 /* Outline: mesmo estilo do secundário (mantido por compatibilidade) */
 .btn--outline{background:var(--color-surface);color:var(--color-primary);border-color:var(--color-border-strong)}
@@ -277,7 +277,8 @@ textarea.input{height:auto;padding:var(--space-2) var(--space-3);min-height:84px
 .field.is-invalid .input:focus{box-shadow:0 0 0 3px color-mix(in srgb,var(--color-danger) 30%,transparent)}
 .field__msg[hidden]{display:none}
 .field__msg{display:flex;align-items:center;gap:var(--space-1);margin:0;font-size:var(--text-xs);color:var(--color-text-muted)}
-.field__msg svg{flex:0 0 auto}
+.field__msg svg{width:16px;height:16px;flex:0 0 auto}
+.field__label .req{color:var(--color-danger);margin-left:2px}   /* asterisco de campo obrigatório */
 .field__msg--error{color:var(--color-danger)}
 @keyframes ds-field-msg-in{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}
 .field__msg--error:not([hidden]){animation:ds-field-msg-in .18s ease}

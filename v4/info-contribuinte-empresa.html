@@ -549,7 +549,7 @@
     if(!has){ slot.innerHTML=''; }
     else if(prog){
       /* botão habilitado: ao clicar, a modal explica por que não dá pra criar outra agora */
-      slot.innerHTML='<button class="btn btn--link" type="button" id="headerAct">'+I.plus+'Nova versão D-1001</button>';
+      slot.innerHTML='<button class="btn btn--primary btn--lg" type="button" id="headerAct">'+I.plus+'Nova versão D-1001</button>';
       var lbl='Ir para a versão em andamento';
       var pill=(SIT[prog.sit]||{}).label||'em andamento';
       $('headerAct').addEventListener('click',function(){
@@ -558,7 +558,7 @@
         dsDialog.open($('blockModal'));
       });
     } else {
-      slot.innerHTML='<a class="btn btn--link" id="headerAct" href="'+hrefNova()+'">'+I.plus+'Nova versão D-1001</a>';
+      slot.innerHTML='<a class="btn btn--primary btn--lg" id="headerAct" href="'+hrefNova()+'">'+I.plus+'Nova versão D-1001</a>';
     }
     $('emptyAct').setAttribute('href',hrefNova());
 
@@ -722,7 +722,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788494846';
+  var MYV='1788495817';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

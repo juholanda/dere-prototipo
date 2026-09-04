@@ -383,7 +383,7 @@
       desc:'A submissão está com o aprovador. Assim que for aprovada, é transmitida à Receita. Enquanto não for revisada, você ainda pode cancelar e editar.',
       meta:[{k:'Enviado por',by:'Ricardo Alves',v:'hoje, 14:32'},{k:'Aprovador',by:'Ana Prado',v:''}],
       comment:null,
-      topActions:'<button class="btn btn--danger-outline" type="button" data-open-excluir><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M10 11v6M14 11v6"/></svg>Excluir versão</button><a class="btn btn--primary" href="info-contribuinte.html?modo=editar&v=1"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>Editar informações</a>',
+      topActions:'<button class="btn btn--danger-outline" type="button" data-open-excluir><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M10 11v6M14 11v6"/></svg>Excluir versão</button><a class="btn btn--primary" href="info-contribuinte.html?modo=editar&v=1"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>Alterar</a>',
       cardActions:''
     },
     ajuste:{
@@ -529,6 +529,8 @@
     /* ===== Visão do APROVADOR (role=aprovador) + operação (op=nova|alteracao|exclusao) — só demo ===== */
   var curRole = (dparam('role')==='aprovador') ? 'aprovador' : 'preparador';
   var curOp   = (['nova','alteracao','exclusao'].indexOf(dparam('op'))>=0) ? dparam('op') : 'nova';
+  /* alteração pendente gravada pelo formulário (adere.d1001.altop): a versão em revisão é uma alteração */
+  try{ if(curOp==='nova' && localStorage.getItem('adere.d1001.altop.'+empId())) curOp='alteracao'; }catch(e){}
   var _ajusteComment = '';
   function empId(){ return dparam('emp')||'seg'; }
   var IC_CHK='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
@@ -537,8 +539,8 @@
   function approverActions(){
     var ajuste='<button class="btn btn--danger-outline btn--lg" type="button" data-open-ajuste>'+IC_MSG+'Solicitar ajustes</button>';
     var aprovar=(curOp==='exclusao')
-      ? '<button class="btn btn--danger btn--lg" type="button" data-open-aprovar>'+IC_CHK+'Aprovar exclusão</button>'
-      : '<button class="btn btn--primary btn--lg" type="button" data-open-aprovar>'+IC_CHK+'Aprovar e transmitir</button>';
+      ? '<button class="btn btn--success btn--lg" type="button" data-open-aprovar>'+IC_CHK+'Aprovar exclusão</button>'
+      : '<button class="btn btn--success btn--lg" type="button" data-open-aprovar>'+IC_CHK+'Aprovar e transmitir</button>';
     return ajuste+aprovar;
   }
   var APV_BANNER={
@@ -548,9 +550,22 @@
   };
   /* motivo da exclusão (motExcl escolhido pelo preparador): mostrado no banner do aprovador */
   function exclMotivo(){ var m=''; try{ m=localStorage.getItem('adere.d1001.exclmotivo.'+empId())||''; }catch(e){} return m||'Encerramento de atividade'; }
+  /* operação derivada da alteração (gravada pelo formulário no envio): {op:'corrigir'|'novavig', data} */
+  function altOp(){ try{ var s=localStorage.getItem('adere.d1001.altop.'+empId()); return s?JSON.parse(s):null; }catch(e){ return null; } }
   function approverBanner(){
+    if(curOp==='alteracao'){
+      var a=altOp(), _t, _x;
+      if(a && a.op==='novavig'){
+        _t='Nova vigência aguardando sua aprovação';
+        _x='O preparador definiu novo início em <b>'+esc(a.data||'')+'</b>. Ao aprovar, a versão vigente é <b>encerrada</b> nessa data (corte automático) e esta passa a valer.';
+      } else {
+        _t='Correção da versão vigente aguardando sua aprovação';
+        _x='O preparador manteve a vigência'+(a&&a.data?(' (<b>'+esc(a.data)+'</b>)'):'')+'. Ao aprovar, esta versão <b>substitui</b> a vigente — mesmo período, nada é encerrado.';
+      }
+      return '<div class="dalert dalert--warning" role="status"><span class="dalert__ic">'+ALERT+'</span><div class="dalert__body"><p class="dalert__title">'+esc(_t)+'</p><p class="dalert__text">'+_x+'</p></div></div>';
+    }
     var b=APV_BANNER[curOp]||APV_BANNER.nova;
-    var _txt=(curOp==='exclusao') ? ('Motivo informado pelo preparador: <b>'+esc(exclMotivo())+'</b>. '+esc(b[2])) : esc(b[2]);
+    var _txt=(curOp==='exclusao') ? ('Motivo informado pelo preparador: <b>'+esc(exclMotivo())+'</b>.<br>'+esc(b[2])) : esc(b[2]);
     var _ic=(b[0]==='info')?IC_INFO:ALERT;
     return '<div class="dalert dalert--'+b[0]+'" role="status"><span class="dalert__ic">'+_ic+'</span><div><p class="dalert__title">'+esc(b[1])+'</p><p class="dalert__text">'+_txt+'</p></div></div>';
   }
@@ -570,6 +585,7 @@
     try{ history.replaceState(null,'','?'+pr.toString()); }catch(e){}
     curRole=(pr.get('role')==='aprovador')?'aprovador':'preparador';
     curOp=(['nova','alteracao','exclusao'].indexOf(pr.get('op'))>=0)?pr.get('op'):'nova';
+    try{ if(curOp==='nova' && localStorage.getItem('adere.d1001.altop.'+empId())) curOp='alteracao'; }catch(e){}
     render(pr.get('st')||'revisao');
   }
   var BELL='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>';
@@ -610,7 +626,7 @@
     }
     wrap.innerHTML=cen.opts.map(function(o,i){ return '<button type="button" data-opt-i="'+i+'"'+(optActive(o[1])?' class="on"':'')+'>'+o[0]+'</button>'; }).join('');
   }
-  function clearDemoLS(){ try{ localStorage.removeItem('adere.d1001.approval.'+empId()); localStorage.removeItem('adere.sent.d1001'); localStorage.removeItem('adere.sent.d1001.t'); localStorage.removeItem('adere.d1001.draft.'+empId()); localStorage.removeItem('adere.d1001.excluded.'+empId()); localStorage.removeItem('adere.d1001.vigexcluida.'+empId()); }catch(e){} _ajusteComment=''; }
+  function clearDemoLS(){ try{ localStorage.removeItem('adere.d1001.approval.'+empId()); localStorage.removeItem('adere.sent.d1001'); localStorage.removeItem('adere.sent.d1001.t'); localStorage.removeItem('adere.d1001.draft.'+empId()); localStorage.removeItem('adere.d1001.excluded.'+empId()); localStorage.removeItem('adere.d1001.vigexcluida.'+empId()); localStorage.removeItem('adere.d1001.altop.'+empId()); }catch(e){} _ajusteComment=''; }
   function resetDemo(){ clearDemoLS(); var cen=curCenario(); setScenario(cen?cen.start:{role:'preparador',st:'revisao',sit:'',op:'nova'}); showToast('Cenário reiniciado.'); }
   document.addEventListener('DOMContentLoaded', syncDemo);
   /* barra de demo recolhível: começa como um chip discreto no canto; expande sob demanda e lembra a escolha */
@@ -776,19 +792,31 @@
   /* Fluxo de exclusão (tpOper=3): abre modal, coleta motivo (motExcl) e envia para aprovação */
   document.addEventListener('DOMContentLoaded',function(){
     var modal=$('excluirModal'); if(!modal) return;
-    var sel=$('motExcl'), procField=$('nrProcField');
-    if(sel) sel.addEventListener('change',function(){ if(procField) procField.hidden=(sel.value!=='1'); });
+    var csEl=$('motExcl'), procField=$('nrProcField');
+    var _motVal='', _motLabel='';
+    /* cselect (dropdown custom do DS): abre/fecha, marca a opção e devolve valor+texto */
+    function initCselect(cs, onSelect){
+      if(!cs) return;
+      var b=cs.querySelector('[data-cselect-btn]'), panel=cs.querySelector('[data-cselect-panel]'), label=cs.querySelector('[data-cselect-label]');
+      b.addEventListener('click',function(e){ e.stopPropagation(); var op=panel.hidden; panel.hidden=!op; b.setAttribute('aria-expanded',String(op)); });
+      panel.querySelectorAll('[role=option]').forEach(function(op){ op.addEventListener('click',function(){ label.textContent=op.textContent; panel.querySelectorAll('[role=option]').forEach(function(x){x.classList.remove('is-selected');}); op.classList.add('is-selected'); panel.hidden=true; b.setAttribute('aria-expanded','false'); cs.removeAttribute('aria-invalid'); if(onSelect) onSelect(op.getAttribute('data-val'), op.textContent); }); });
+      document.addEventListener('click',function(e){ if(!cs.contains(e.target)){ panel.hidden=true; b.setAttribute('aria-expanded','false'); } });
+    }
+    function resetCselect(){ _motVal=''; _motLabel=''; if(csEl){ var lb=csEl.querySelector('[data-cselect-label]'); if(lb) lb.textContent='Selecione o motivo'; csEl.querySelectorAll('[role=option]').forEach(function(x){x.classList.remove('is-selected');}); csEl.removeAttribute('aria-invalid'); } }
+    initCselect(csEl, function(val, text){ _motVal=val; _motLabel=text||''; if(procField) procField.hidden=(val!=='1'); });
     function open(){
       var naoTx=(curDetState!=='aprovado'); /* em revisão/ajuste: nada foi transmitido à Receita */
       $('exTitle').textContent = naoTx ? 'Tem certeza de que deseja excluir esta versão?' : 'Excluir a informação do contribuinte?';
+      if($('exVerNum')) $('exVerNum').textContent = dparam('v')||'—';
+      if($('exVerEmp')){ var _co=(typeof DCO!=='undefined')?DCO[empId()]:null; $('exVerEmp').textContent = (_co&&_co.nome)?(' · '+_co.nome):''; }
       $('exLead').innerHTML = naoTx
         ? 'Esta ação é permanente e não poderá ser desfeita. Todos os dados associados a esta versão serão excluídos.'
         : 'A exclusão encerra a vigência ativa do D-1001 na Receita. Ela não é imediata: entra como um evento de exclusão que <strong>passa pela aprovação de Ana Prado</strong> antes de ser transmitido.';
-      var motF=sel?sel.closest('.field'):null; if(motF) motF.hidden=naoTx;      /* motivo só na exclusão de vigência */
+      var motF=csEl?csEl.closest('.field'):null; if(motF) motF.hidden=naoTx;      /* motivo só na exclusão de vigência */
       if($('motExclHint')) $('motExclHint').hidden=naoTx;                        /* aviso de lacuna só na vigência */
       if($('confirmExcluir')) $('confirmExcluir').textContent = naoTx ? 'Excluir versão' : 'Enviar exclusão para aprovação';
-      if(sel){ sel.value=''; sel.removeAttribute('aria-invalid'); }
-      dsDialog.open(modal,{focus:(naoTx?$('confirmExcluir'):(sel||$('confirmExcluir'))),
+      resetCselect(); if(procField) procField.hidden=true;
+      dsDialog.open(modal,{focus:(naoTx?$('confirmExcluir'):(csEl?csEl.querySelector('[data-cselect-btn]'):$('confirmExcluir'))),
         onOpen:function(){ modal.hidden=false; document.body.style.overflow='hidden'; },
         onClose:function(){ modal.hidden=true; document.body.style.overflow=''; }});
     }
@@ -799,8 +827,8 @@
     var confirmBtn=$('confirmExcluir');
     if(confirmBtn) confirmBtn.addEventListener('click',function(){
       var naoTx=(curDetState!=='aprovado');
-      if(!naoTx && sel && !sel.value){ sel.focus(); sel.setAttribute('aria-invalid','true'); return; }
-      if(!naoTx && sel && sel.value==='1' && !($('nrProc')&&$('nrProc').value.trim())){ $('nrProc').focus(); $('nrProc').setAttribute('aria-invalid','true'); return; }
+      if(!naoTx && !_motVal){ if(csEl){ csEl.setAttribute('aria-invalid','true'); var _b=csEl.querySelector('[data-cselect-btn]'); if(_b) _b.focus(); } return; }
+      if(!naoTx && _motVal==='1' && !($('nrProc')&&$('nrProc').value.trim())){ $('nrProc').focus(); $('nrProc').setAttribute('aria-invalid','true'); return; }
       close();
       if(naoTx){
         /* em andamento: exclusão imediata (descarte). Marca como excluída pra sumir na empresa e mostra toast. */
@@ -811,9 +839,8 @@
       }
       /* vigente: a exclusão (tpOper=3) vira um evento que passa pelo aprovador. Salva o motivo (motExcl)
          e leva à tela de aprovação da Ana, onde o motivo aparece no banner vermelho. */
-      var _e=dparam('emp')||'seg', _mot='';
-      if(sel){ var _opt=sel.options[sel.selectedIndex]; _mot=(_opt?_opt.text:'').replace(/^\s*\d+\s*·\s*/,''); }
-      if(sel && sel.value==='1' && $('nrProc') && $('nrProc').value.trim()){ _mot+=' (processo '+$('nrProc').value.trim()+')'; }
+      var _e=dparam('emp')||'seg', _mot=(_motLabel||'').replace(/^\s*\d+\s*·\s*/,'');
+      if(_motVal==='1' && $('nrProc') && $('nrProc').value.trim()){ _mot+=' (processo '+$('nrProc').value.trim()+')'; }
       try{ localStorage.setItem('adere.d1001.exclmotivo.'+_e, _mot); }catch(e){}
       var _v=dparam('v')||'3';
       window.location.href='info-contribuinte-detalhe.html?emp='+_e+'&v='+_v+'&role=aprovador&op=exclusao&st=revisao&cenario=excluir&exsent=1'+(dparam('scn')?('&scn='+dparam('scn')):'');
@@ -825,9 +852,9 @@
     var apM=$('aprovarModal'), ajM=$('ajusteModal'); if(!apM||!ajM) return;
     function fillApprove(){
       var vnum=dparam('v')||'4';
-      var T={ nova:['Aprovar e transmitir a Versão '+vnum+'?','A versão será enviada à Receita Federal e passa a valer quando for processada. Não dá para desfazer por aqui.','Aprovar e transmitir','btn--primary'],
-              alteracao:['Aprovar a alteração das informações?','A Versão '+vnum+' substitui a vigente: a anterior é encerrada e a nova é transmitida à Receita, passando a valer quando processada.','Aprovar e transmitir','btn--primary'],
-              exclusao:['Aprovar a exclusão da vigência?','A vigência da Versão '+vnum+' será encerrada na Receita. A empresa fica sem declaração vigente até registrar uma nova. Não dá para desfazer por aqui.','Aprovar exclusão','btn--danger'] };
+      var T={ nova:['Aprovar e transmitir a Versão '+vnum+'?','A versão será enviada à Receita Federal e passa a valer quando for processada. Não dá para desfazer por aqui.','Aprovar e transmitir','btn--success'],
+              alteracao:['Aprovar a alteração das informações?','A Versão '+vnum+' substitui a vigente: a anterior é encerrada e a nova é transmitida à Receita, passando a valer quando processada.','Aprovar e transmitir','btn--success'],
+              exclusao:['Aprovar a exclusão da vigência?','A vigência da Versão '+vnum+' será encerrada na Receita. A empresa fica sem declaração vigente até registrar uma nova. Não dá para desfazer por aqui.','Aprovar exclusão','btn--success'] };
       var t=T[curOp]||T.nova;
       $('apTitle').textContent=t[0]; $('apLead').textContent=t[1];
       var btn=$('confirmAprovar'); btn.textContent=t[2]; btn.className='btn btn--lg '+t[3];
@@ -892,17 +919,20 @@
         <button class="icon-btn" type="button" data-close-excluir aria-label="Fechar" style="flex:0 0 auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg></button>
       </div>
       <div class="modal__body">
+        <p id="exVerLine" style="margin:0 0 var(--space-3);font-size:var(--text-sm);color:var(--color-text-muted)">Versão <strong id="exVerNum" style="color:var(--color-heading)">—</strong><span id="exVerEmp"></span></p>
         <p id="exLead" style="margin:0 0 var(--space-6);line-height:1.5;font-size:var(--text-base)">A exclusão encerra a vigência ativa do D-1001 na Receita. Ela não é imediata: entra como um evento de exclusão que <strong>passa pela aprovação de Ana Prado</strong> antes de ser transmitido.</p>
         <div class="mform" style="margin-bottom:var(--space-4)">
           <div class="field">
-            <label class="field__label" for="motExcl">Motivo da exclusão</label>
-            <select class="select" id="motExcl" aria-describedby="motExclHint">
-              <option value="">Selecione o motivo</option>
-              <option value="1">1 · Determinação judicial ou administrativa</option>
-              <option value="2">2 · Envio indevido (fato inexistente)</option>
-              <option value="3">3 · Erro na identificação (CNPJ ou período incorretos)</option>
-              <option value="9">9 · Outro</option>
-            </select>
+            <label class="field__label" id="motExclLbl">Motivo da exclusão</label>
+            <div class="cselect" id="motExcl" data-cselect aria-labelledby="motExclLbl" aria-describedby="motExclHint">
+              <button class="cselect__trigger" type="button" data-cselect-btn aria-haspopup="listbox" aria-expanded="false"><span class="cselect__value" data-cselect-label>Selecione o motivo</span><span class="cselect__chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span></button>
+              <div class="cselect__panel" data-cselect-panel hidden role="listbox">
+                <button type="button" role="option" data-val="1">1 · Determinação judicial ou administrativa</button>
+                <button type="button" role="option" data-val="2">2 · Envio indevido (fato inexistente)</button>
+                <button type="button" role="option" data-val="3">3 · Erro na identificação (CNPJ ou período incorretos)</button>
+                <button type="button" role="option" data-val="9">9 · Outro</button>
+              </div>
+            </div>
             <div class="field" id="nrProcField" hidden style="margin-top:var(--space-4)">
               <label class="field__label" for="nrProc">Número do processo administrativo ou judicial (nrProc)</label>
               <input class="input" id="nrProc" maxlength="21" placeholder="Ex.: 0001234-56.2026.4.01">
@@ -937,7 +967,7 @@
       </div>
       <div class="modal__footer">
         <button class="btn btn--ghost btn--lg" type="button" data-close>Cancelar</button>
-        <button class="btn btn--primary btn--lg" type="button" id="confirmAprovar">Aprovar e transmitir</button>
+        <button class="btn btn--success btn--lg" type="button" id="confirmAprovar">Aprovar e transmitir</button>
       </div>
     </div>
   </div>
@@ -956,7 +986,7 @@
         </div>
         <div class="mform" style="margin-bottom:var(--space-4)">
           <div class="field">
-            <label class="field__label" for="ajusteText">Comentário para o preparador</label>
+            <label class="field__label" for="ajusteText">Comentário para o preparador<span class="req" aria-hidden="true">*</span></label>
             <textarea class="input" id="ajusteText" rows="3" placeholder="Ex.: O regime secundário não se aplica. Remova a marcação e confirme a vigência antes de reenviar." aria-describedby="ajusteErr"></textarea>
             <p class="field__msg field__msg--error" id="ajusteErr" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>Escreva um comentário para o preparador.</p>
           </div>
@@ -964,7 +994,7 @@
       </div>
       <div class="modal__footer">
         <button class="btn btn--ghost btn--lg" type="button" data-close>Cancelar</button>
-        <button class="btn btn--primary btn--lg" type="button" id="confirmAjuste">Solicitar ajustes</button>
+        <button class="btn btn--danger btn--lg" type="button" id="confirmAjuste"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Solicitar ajustes</button>
       </div>
     </div>
   </div>
@@ -987,7 +1017,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788494846';
+  var MYV='1788495817';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
