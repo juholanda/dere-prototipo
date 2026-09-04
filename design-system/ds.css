@@ -771,7 +771,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 .dalert--info .dalert__ic{color:var(--color-info)}
 .dalert--success .dalert__ic{color:var(--color-success-fg)}
 .dalert__title{font-weight:700;color:var(--color-heading);margin:0;font-size:var(--text-base)}
-.dalert__text{font-size:var(--text-sm);color:var(--color-text-onmuted);margin:var(--space-1) 0 0;line-height:1.55}
+.dalert__text{font-size:var(--text-sm);color:var(--color-text);margin:var(--space-1) 0 0;line-height:1.55}
 .dalert__body{flex:1;min-width:0}
 .dalert__act{flex:0 0 auto;align-self:center;white-space:nowrap}
 
@@ -1032,7 +1032,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 .page-h__title .status{font-size:var(--text-sm)}
 .page-h__code{font-size:var(--text-sm)}
 .page-h__act{flex:0 0 auto;display:flex;align-items:center;gap:var(--space-3)}
-.page-h__desc{color:var(--color-text-muted);font-size:var(--text-base);line-height:1.5;margin:var(--space-2) 0 0}
+.page-h__desc{color:var(--color-text-onmuted);font-size:var(--text-base);line-height:1.5;margin:var(--space-2) 0 0}
 @media (max-width:640px){ .page-h__row{flex-wrap:wrap} }
 
 /* Aviso inline "vigência perto do fim": ícone de alerta âmbar + tooltip, junto a um título/valor.
@@ -1135,6 +1135,10 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 /* Balão em 2 linhas: nome (negrito) em cima, detalhe embaixo */
 .tooltip__bubble--stack{white-space:normal;width:max-content;max-width:230px;line-height:1.35}
 .tooltip__bubble--stack strong{display:block;font-weight:600}
+/* Convenção de tooltip de ajuda em campo (.lbltip):
+   1) O ícone (i) fica ao lado do RÓTULO (label), nunca do valor — ele explica o campo/conceito.
+   2) Conteúdo no formato "Nome completo do campo: descrição." — útil quando o rótulo está abreviado.
+      Nunca expor código cru (ex.: freqEncerr, planoCtaRef) na tela; ele fica só na doc/leiaute. */
 
 /* Dropdown menu (ações) */
 .menu{position:relative;display:inline-flex}
