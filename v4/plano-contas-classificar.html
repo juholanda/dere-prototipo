@@ -35,6 +35,8 @@
     .card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-2xl);box-shadow:var(--shadow-sm);overflow:hidden}
     .card + .card{margin-top:var(--space-6)}
     .card__body{padding:var(--space-6) var(--space-8) var(--space-8)}
+    /* seção "Adicione as contas": padding simétrico em volta dos cartões */
+    #acCard .card__body{padding:var(--space-8)}
     .card__h{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-6) var(--space-8);border-bottom:1px solid var(--color-divider)}
     .card__ic{width:34px;height:34px;border-radius:var(--radius-lg);background:var(--color-primary-subtle);color:var(--color-primary);display:grid;place-items:center;flex:0 0 auto}
     .card__ic svg{width:19px;height:19px}
@@ -61,13 +63,17 @@
 
     .create-opts{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-6)}
     @media(max-width:680px){.create-opts{grid-template-columns:1fr}}
-    .create-opt{border:1px solid var(--color-border);border-radius:var(--radius-2xl);padding:var(--space-8) var(--space-6);background:var(--color-surface);text-align:center;display:flex;flex-direction:column;align-items:center;transition:border-color .14s,box-shadow .14s}
+    .create-opt{border:1px solid var(--color-border);border-radius:var(--radius-2xl);padding:var(--space-6);background:var(--color-surface);text-align:center;display:flex;flex-direction:column;align-items:center;transition:border-color .14s,box-shadow .14s}
     .create-opt:hover{border-color:var(--color-primary);box-shadow:var(--shadow-sm)}
     .create-opt__ic{width:48px;height:48px;border-radius:var(--radius-lg);background:var(--color-primary-subtle);color:var(--color-primary);display:grid;place-items:center;margin-bottom:var(--space-4)}
     .create-opt__ic svg{width:24px;height:24px}
     .create-opt h3{font-size:var(--text-base)!important;font-weight:700!important;margin:0 0 var(--space-2);color:var(--color-heading)}
-    .create-opt p{font-size:var(--text-sm);color:var(--color-text-muted);margin:0 0 var(--space-6);line-height:1.5;max-width:34ch}
-    .create-opt .btn{margin-top:auto}
+    .create-opt p{font-size:var(--text-sm);color:var(--color-text-muted);margin:0 0 var(--space-4);line-height:1.5;max-width:54ch}
+    .create-opt .btn{margin-top:var(--space-1)}
+    .create-opt__tpl{display:inline-flex;align-items:center;gap:var(--space-1-5);margin-top:var(--space-4);font-size:var(--text-sm);font-weight:600;color:var(--color-primary);text-decoration:none}
+    .create-opt__tpl:hover{text-decoration:underline}
+    .create-opt__tpl:focus-visible{outline:none;box-shadow:var(--ring);border-radius:var(--radius-sm)}
+    .create-opt__tpl svg{width:15px;height:15px;flex:0 0 auto}
 
     /* tabela de contas classificadas */
     .table td{vertical-align:middle}
@@ -341,8 +347,8 @@
                     <span class="planmeta__v"><span class="emplogo"><img id="pmLogo" src="../Logos/mag%20capitalizacoes.jpeg" alt=""></span><span id="pmNome">MAG Capitalização</span></span>
                   </div>
                   <div class="planmeta__i">
-                    <span class="planmeta__k">Plano de Contas Referencial <span class="tooltip lbltip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" tabindex="0" role="img" aria-label="Ajuda"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg><span class="tooltip__bubble tooltip__bubble--stack" role="tooltip">Derivado do órgão regulador informado nas Informações do Contribuinte.</span></span></span>
-                    <span class="planmeta__v"><span id="pmRef">SUSEP</span> <span class="planmeta__derived"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Do D-1001</span></span>
+                    <span class="planmeta__k">Plano de Contas Referencial</span>
+                    <span class="planmeta__v"><span id="pmRef">SUSEP</span> <span class="tooltip tooltip--top lbltip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" tabindex="0" role="img" aria-label="Vinculado ao órgão regulador do regime principal informado no D-1001"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg><span class="tooltip__bubble tooltip__bubble--stack" role="tooltip">Vinculado ao órgão regulador do regime principal informado no D-1001</span></span></span>
                   </div>
                   <div class="planmeta__i">
                     <span class="planmeta__k">Frequência de encerramento <span class="tooltip lbltip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" tabindex="0" role="img" aria-label="Ajuda"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg><span class="tooltip__bubble tooltip__bubble--stack" role="tooltip">Periodicidade em que a empresa encerra as contas de resultado (freqEncerr).</span></span></span>
@@ -372,19 +378,20 @@
             </section>
 
             <section class="card" id="acCard" aria-labelledby="ac-h">
-              <div class="card__h"><span class="card__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></svg></span><h2 id="ac-h">Adicione as contas contábeis</h2></div>
+              <div class="card__h"><span class="card__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></svg></span><h2 id="ac-h">Adicionar contas contábeis</h2></div>
               <div class="card__body">
                 <div class="create-opts">
                   <div class="create-opt">
                     <span class="create-opt__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg></span>
                     <h3>Importar planilha</h3>
-                    <p>Envie a planilha do seu plano de contas (CSV ou Excel) e a IA classifica as contas para você revisar.</p>
+                    <p>Envie seu plano de contas em CSV ou Excel. Baixe o template para preencher a planilha no formato correto.</p>
                     <button class="btn btn--primary" type="button" id="btnImport"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>Importar planilha</button>
+                    <a class="create-opt__tpl" href="#" id="btnTemplate"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>Baixar template de importação</a>
                   </div>
                   <div class="create-opt">
                     <span class="create-opt__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><path d="M3 14h4a3 3 0 0 1 3 3v4"/></svg></span>
                     <h3>Integrar com ERP</h3>
-                    <p>Conecte o seu ERP ou sistema contábil e traga o plano de contas automaticamente, sempre atualizado.</p>
+                    <p>Conecte seu ERP ou sistema contábil para importar o plano de contas automaticamente.</p>
                     <button class="btn btn--secondary" type="button" id="btnErp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2v6M15 2v6M9 16v6M15 16v6M2 9h6M16 9h6M2 15h6M16 15h6"/><rect width="8" height="8" x="8" y="8" rx="1"/></svg>Conectar ERP</button>
                   </div>
                 </div>
@@ -840,6 +847,7 @@
 
   document.getElementById('btnImport').addEventListener('click',openPopup);
   document.getElementById('btnErp').addEventListener('click',openPopup);
+  document.getElementById('btnTemplate').addEventListener('click',function(ev){ ev.preventDefault(); toast('Baixando o template de importação (planilha modelo)…','ok'); });
   document.getElementById('btnReTriage').addEventListener('click',reopenTriage);
   document.getElementById('aiCancel').addEventListener('click',closePopup);
   document.getElementById('aiDiscard').addEventListener('click',function(){ closePopup(); toast('Sugestões da IA descartadas.','info'); });
@@ -869,7 +877,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788528025';
+  var MYV='1788529916';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
