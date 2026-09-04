@@ -135,6 +135,17 @@
     .aimodal{display:flex;width:min(1120px,100%);height:min(720px,calc(100vh - var(--space-14)));background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-2xl);box-shadow:var(--shadow-lg);overflow:hidden;animation:aipop .22s cubic-bezier(.16,1,.3,1)}
     @keyframes aipop{from{opacity:0;transform:translateY(8px) scale(.985)}to{opacity:1;transform:none}}
     @media(prefers-reduced-motion:reduce){.aiscrim,.aimodal{animation:none}}
+    /* Carregamento: modal compacto que cresce verticalmente (estado inicial → expandido → resultado) */
+    #aiPopup.is-loading .aimodal{width:min(520px,100%);height:auto;max-height:min(720px,calc(100vh - var(--space-14)))}
+    .aiclose{position:absolute;top:var(--space-4);right:var(--space-4);width:32px;height:32px;border:0;background:none;color:var(--color-text-muted);border-radius:var(--radius-lg);display:grid;place-items:center;cursor:pointer;z-index:2}
+    .aiclose:hover{background:var(--color-surface-2);color:var(--color-text)}
+    .aiclose:focus-visible{outline:none;box-shadow:var(--ring)}
+    .aiclose svg{width:20px;height:20px}
+    .aiexpand{display:grid;grid-template-rows:0fr;transition:grid-template-rows .35s cubic-bezier(.4,0,.2,1)}
+    .aiexpand__in{overflow:hidden;min-height:0}
+    #aiPopup.is-expanded .aiexpand{grid-template-rows:1fr}
+    #aiPopup.is-expanded .aiexpand__in{padding-top:var(--space-2)}
+    @media(prefers-reduced-motion:reduce){.aiexpand{transition:none}}
     .aiside{width:308px;flex:0 0 auto;background:var(--color-surface-2);border-right:1px solid var(--color-border);padding:var(--space-6);display:flex;flex-direction:column;gap:var(--space-6);overflow:auto}
     .aibrand{display:flex;align-items:center;gap:var(--space-3)}
     .aibrand__ic{width:40px;height:40px;border-radius:var(--radius-lg);background:var(--color-primary);color:var(--color-primary-contrast);display:grid;place-items:center;flex:0 0 auto}
@@ -165,18 +176,24 @@
     .aistat--ia{border-left-color:var(--color-primary)}.aistat--ia .aistat__ic{color:var(--color-primary)}
     .aistat--warn{border-left-color:var(--color-warning-fg)}.aistat--warn .aistat__ic{color:var(--color-warning-fg)}
     .aistat--miss{border-left-color:var(--color-danger-fg)}.aistat--miss .aistat__ic{color:var(--color-danger-fg)}
-    .aimain{flex:1;min-width:0;display:flex;flex-direction:column}
+    .aimain{flex:1;min-width:0;display:flex;flex-direction:column;position:relative}
     .aimain__scroll{flex:1;overflow:auto;padding:var(--space-8)}
     .aimain h2{font-size:var(--text-2xl)!important;font-weight:700!important;margin:0 0 var(--space-2);color:var(--color-heading);letter-spacing:-.01em}
+    #aiTitle{display:flex;align-items:center;gap:var(--space-2)}
+    .aititle__spark{color:var(--color-primary);display:inline-flex;flex:0 0 auto}
+    .aititle__spark svg{width:22px;height:22px;animation:aispark 2.4s ease-in-out infinite;transform-origin:center}
+    @keyframes aispark{0%,100%{opacity:.55;transform:scale(.9) rotate(-6deg)}50%{opacity:1;transform:scale(1.06) rotate(6deg)}}
+    @media(prefers-reduced-motion:reduce){.aititle__spark svg{animation:none;opacity:1;transform:none}}
     .aimain__lead{font-size:var(--text-base);color:var(--color-text-muted);margin:0 0 var(--space-6);line-height:1.5}
+    #aiLead{font-size:var(--text-sm);margin-bottom:var(--space-3)}
     .aifoot{flex:0 0 auto;border-top:1px solid var(--color-border);padding:var(--space-4) var(--space-8);display:flex;align-items:center;justify-content:space-between;gap:var(--space-3)}
     .aifoot--end{justify-content:flex-end}
     .aisteps{display:flex;flex-direction:column;gap:var(--space-1);background:var(--color-surface-2);border-radius:var(--radius-xl);padding:var(--space-4) var(--space-6)}
-    .aistep{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-3) 0;font-size:var(--text-base);color:var(--color-text-onmuted)}
+    .aistep{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-2) 0;font-size:var(--text-sm);color:var(--color-text-onmuted)}
     .aistep__ic{width:22px;height:22px;flex:0 0 auto;display:grid;place-items:center;color:var(--color-text-muted)}
     .aistep__ic svg{width:22px;height:22px}
     .aistep__dot{width:10px;height:10px;border-radius:50%;border:2px solid var(--color-border-strong)}
-    .aistep.is-done{color:var(--color-heading)}
+    .aistep.is-done{color:var(--color-text-onmuted)}
     .aistep.is-done .aistep__ic{color:var(--color-success-fg)}
     .aistep.is-active{color:var(--color-primary);font-weight:700}
     .aispin{width:20px;height:20px;border:2px solid var(--color-primary);border-top-color:transparent;border-radius:50%;animation:aispin .7s linear infinite}
@@ -455,14 +472,18 @@
       </aside>
 
       <div class="aimain">
+        <button class="aiclose" id="aiClose" type="button" aria-label="Fechar assistente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
         <div class="aimain__scroll" id="aiLoading">
-          <h2 id="aiTitle">Processando classificação...</h2>
-          <p class="aimain__lead">Aguarde enquanto a inteligência artificial analisa e mapeia o seu plano de contas.</p>
-          <div class="aisteps" id="aiSteps"></div>
-          <div class="aiproc">
-            <div class="aiproc__top"><span><b id="aiProcN">0</b> de <b>10</b> contas processadas</span><span class="aiproc__hint">Isso pode levar alguns segundos...</span></div>
-            <div class="aiprocbar"><i id="aiProcBar"></i></div>
-          </div>
+          <h2 id="aiTitle"><span class="aititle__spark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4M22 5h-4M4 17v2M5 18H3"/></svg></span>Processando classificação...</h2>
+          <p class="aimain__lead" id="aiLead">A inteligência artificial está analisando seu plano de contas.</p>
+          <span class="sr-only" id="aiLive" role="status" aria-live="polite"></span>
+          <div class="aiexpand" id="aiExpand"><div class="aiexpand__in">
+            <div class="aisteps" id="aiSteps"></div>
+            <div class="aiproc">
+              <div class="aiproc__top"><span><b id="aiProcN">0</b> de <b>10</b> contas processadas</span></div>
+              <div class="aiprocbar"><i id="aiProcBar"></i></div>
+            </div>
+          </div></div>
         </div>
         <div class="aimain__scroll" id="aiTriage" hidden>
           <h2>Triagem · decisão por grupo</h2>
@@ -528,7 +549,7 @@
   document.getElementById('btnSend').addEventListener('click',function(){ toast('Plano enviado para revisão do aprovador.','ok'); });
 
   /* ================= modelo único de contas (triagem e tabela compartilham) ================= */
-  var STEPS=['Lendo dados da planilha importada','Identificando contas analíticas','Classificando contas nos códigos de tributação','Associando codTrib e conta referencial','Verificando correspondências no plano referencial','Calculando níveis de confiança'];
+  var STEPS=['Lendo dados da planilha importada','Identificando contas analíticas','Gerando sugestões de classificação','Associando codTrib e conta referencial','Verificando correspondências no plano referencial','Calculando níveis de confiança'];
   var CODTRIB_NAMES={'110010101':'Prêmios de seguros diretos','218010301':'Rendimentos de aplicações financeiras','110020101':'Prêmios de cosseguro cedidos','310010101':'Sinistros de seguros diretos','410010201':'Despesas de comercialização'};
   /* Tabela 11 (subconjunto ilustrativo; codTrib de 9 dígitos, regra oficial MS1115) */
   var T11=[
@@ -608,13 +629,24 @@
     document.getElementById('stTotal').textContent='10';document.getElementById('stOk').textContent='0';document.getElementById('stIa').textContent='0';document.getElementById('stNone').textContent='0';document.getElementById('stLeft').textContent='10';
     document.getElementById('aiPct').textContent='0%';document.getElementById('aiSegOk').style.width='0%';document.getElementById('aiSegIa').style.width='0%';
     document.getElementById('aiProgSub').textContent='0 de 10 contas validadas · 0% concluído';
-    runLoading();
+    var pop=document.getElementById('aiPopup');
+    pop.classList.add('is-loading'); pop.classList.remove('is-expanded');
+    document.getElementById('aiLead').textContent='A inteligência artificial está analisando seu plano de contas.';
+    document.getElementById('aiLive').textContent='';
+    lastTrigger=document.getElementById('btnImport');
+    document.getElementById('aiClose').focus();
+    /* estado inicial (pequeno) → expande e começa o processamento */
+    loadTimer=setTimeout(function(){
+      pop.classList.add('is-expanded');
+      document.getElementById('aiLead').textContent='A inteligência artificial está analisando seu plano de contas e gerando sugestões.';
+      runLoading();
+    }, (/[?&]slow=/.test(location.search)?2600:900));
   }
-  function closePopup(){ document.getElementById('aiPopup').hidden=true; if(loadTimer){clearTimeout(loadTimer);loadTimer=null;} if(barTimer){clearInterval(barTimer);barTimer=null;} }
-  var loadTimer=null, barTimer=null;
+  function closePopup(){ var pop=document.getElementById('aiPopup'); pop.hidden=true; pop.classList.remove('is-loading','is-expanded'); if(loadTimer){clearTimeout(loadTimer);loadTimer=null;} if(barTimer){clearInterval(barTimer);barTimer=null;} if(lastTrigger){ try{lastTrigger.focus();}catch(e){} lastTrigger=null; } }
+  var loadTimer=null, barTimer=null, lastTrigger=null;
   var HOLD_LOAD=/[?&]hold=load/.test(location.search); /* dev: segura na tela de carregamento (não avança pra triagem) */
   function runLoading(){
-    var stepDur=1200, start=Date.now(), total=STEPS.length*stepDur, i=0;
+    var stepDur=(/[?&]slow=/.test(location.search)?4000:1200), start=Date.now(), total=STEPS.length*stepDur, i=0; /* dev: ?slow=1 deixa o carregamento lento pra análise */
     var bar=document.getElementById('aiProcBar'), pn=document.getElementById('aiProcN');
     bar.style.width='0%'; pn.textContent='0'; renderSteps(0);
     /* barra e contador enchem de forma contínua e suave */
@@ -624,14 +656,16 @@
       pn.textContent=Math.min(10,Math.floor(p*10));
     },70);
     /* cada etapa fica visível (~1,2s) com seu spinner antes de concluir */
+    var live=document.getElementById('aiLive');
     function nextStep(){
-      if(i>=STEPS.length){ if(barTimer){clearInterval(barTimer);barTimer=null;} bar.style.width='100%'; pn.textContent='10'; renderSteps(STEPS.length); if(HOLD_LOAD) return; loadTimer=setTimeout(showTriage,700); return; }
+      if(i>=STEPS.length){ if(barTimer){clearInterval(barTimer);barTimer=null;} bar.style.width='100%'; pn.textContent='10'; renderSteps(STEPS.length); if(live) live.textContent='Processamento concluído.'; if(HOLD_LOAD) return; loadTimer=setTimeout(showTriage,700); return; }
+      if(live) live.textContent='Etapa '+(i+1)+' de '+STEPS.length+': '+STEPS[i];
       renderSteps(i); i++; loadTimer=setTimeout(nextStep,stepDur);
     }
     nextStep();
   }
-  function showTriage(){ document.getElementById('aiSide').hidden=false; document.getElementById('aiLoading').hidden=true; document.getElementById('aiTriage').hidden=false; document.getElementById('aiFootLoading').hidden=true; document.getElementById('aiFootTriage').hidden=false; renderTriage(); }
-  function reopenTriage(){ if(!contas){ openPopup(); return; } document.getElementById('aiPopup').hidden=false; document.getElementById('aiSide').hidden=false; document.getElementById('aiLoading').hidden=true; document.getElementById('aiTriage').hidden=false; document.getElementById('aiFootLoading').hidden=true; document.getElementById('aiFootTriage').hidden=false; renderTriage(); }
+  function showTriage(){ document.getElementById('aiPopup').classList.remove('is-loading','is-expanded'); document.getElementById('aiSide').hidden=false; document.getElementById('aiLoading').hidden=true; document.getElementById('aiTriage').hidden=false; document.getElementById('aiFootLoading').hidden=true; document.getElementById('aiFootTriage').hidden=false; renderTriage(); }
+  function reopenTriage(){ if(!contas){ openPopup(); return; } document.getElementById('aiPopup').hidden=false; document.getElementById('aiPopup').classList.remove('is-loading','is-expanded'); document.getElementById('aiSide').hidden=false; document.getElementById('aiLoading').hidden=true; document.getElementById('aiTriage').hidden=false; document.getElementById('aiFootLoading').hidden=true; document.getElementById('aiFootTriage').hidden=false; renderTriage(); }
 
   function confLabel(c){ return c==='alta'?'Confiança alta':'Confiança média'; }
   function nlabel(n){ return n+(n===1?' conta':' contas'); }
@@ -855,6 +889,8 @@
   document.getElementById('btnTemplate').addEventListener('click',function(ev){ ev.preventDefault(); toast('Baixando o template de importação (planilha modelo)…','ok'); });
   document.getElementById('btnReTriage').addEventListener('click',reopenTriage);
   document.getElementById('aiCancel').addEventListener('click',closePopup);
+  document.getElementById('aiClose').addEventListener('click',closePopup);
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape' && !document.getElementById('aiPopup').hidden) closePopup(); });
   document.getElementById('aiDiscard').addEventListener('click',function(){ closePopup(); toast('Sugestões da IA descartadas.','info'); });
   document.getElementById('aiConfirm').addEventListener('click',function(){ closePopup(); showTable(); toast('Classificação aplicada ao plano.','ok'); });
 
@@ -882,7 +918,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788531930';
+  var MYV='1788533705';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
