@@ -133,6 +133,10 @@
     .verrow--current[data-href]:hover{background:color-mix(in srgb, var(--color-primary) 12%, var(--color-surface))}
     .verrow[data-href]:hover .verrow__act .icon-btn{background:var(--color-primary-subtle)}
     .verrow__sep{width:1px;align-self:stretch;background:var(--color-border);margin:0 var(--space-2)}
+    .cd{font-size:var(--text-xs);margin-top:3px;font-variant-numeric:tabular-nums;color:var(--color-text-muted);display:flex;align-items:center;gap:var(--space-1)}
+    .cd--warn{color:var(--color-warning-fg);font-weight:600}
+    .cd--over{color:var(--color-danger-fg);font-weight:600}
+    .cdtip{text-decoration:underline dotted;text-underline-offset:2px;cursor:help}
     .verlist{display:flex;flex-direction:column;gap:var(--space-3)}
     /* pílula de status na linha de versão: 12px (pedido do PO nesta tela) */
     .status{white-space:nowrap}
@@ -488,6 +492,9 @@
     if(!nearEndVig(v)) return '';
     return '<span class="tooltip tooltip--top vigwarn"><span class="vigwarn__ic" tabindex="0" role="img" aria-label="O prazo de vigência está perto do fim. Envie uma nova versão."><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg></span><span class="tooltip__bubble tooltip__bubble--stack">O prazo de vigência está perto do fim. Envie uma nova versão.</span></span>';
   }
+  /* countdown embaixo da Vigência (igual à lista): "Termina em X dias" + tooltip quando perto do fim e sem sucessora */
+  function vigCd(v){ if(v.vigrole!=='now') return ''; var end=endOf(v.vig), ed=pdate(end); if(!ed) return ''; var d=Math.round((ed-new Date(2026,8,4))/86400000); var warn=nearEndVig(v); var cls=d<0?'cd--over':(d<=60?'cd--warn':'cd--ok'); var txt=d<0?'Vigência expirada':(d===0?'Termina hoje':('Termina em '+d+' dia'+(d===1?'':'s'))); var msg='Não há versão futura aprovada. Crie uma nova versão antes do fim desta vigência.'; if(warn){ return '<div class="cd '+cls+'"><span class="tooltip tooltip--top cdtip" tabindex="0" role="note" aria-label="'+esc(txt)+'. '+esc(msg)+'">'+esc(txt)+'<span class="tooltip__bubble tooltip__bubble--stack" role="tooltip">'+esc(msg)+'</span></span></div>'; } return '<div class="cd '+cls+'">'+esc(txt)+'</div>'; }
+  function vigKv(v){ var period=(v.vig&&v.vig!=='—')?v.vig:'—'; return '<div class="kv"><p class="kv__k">Vigência</p><p class="kv__v" title="'+esc(period)+'">'+esc(period)+'</p>'+vigCd(v)+'</div>'; }
   function row(v, opts){
     opts=opts||{};
     var s=(v.vigrole==='past')?ENC:(SIT[v.sit]||{label:v.sit,pill:''});
@@ -499,9 +506,9 @@
     /* o que importa numa lista de versões: quando vale, o que diz, quando foi e a prova da Receita (quem fez fica no detalhe) */
     var day=function(d){ return d?String(d).split(',')[0]:d; };
     var kvs=[['Regime principal',v.regime||regimeOf(v)],['Vigência',v.vig],['Processada em',day(v.proc)],['Recibo',v.recibo]]
-      .map(function(p){ return kv(p[0],(p[1]&&p[1]!=='—')?p[1]:'—'); }).join('');
+      .map(function(p){ if(p[0]==='Vigência') return vigKv(v); return kv(p[0],(p[1]&&p[1]!=='—')?p[1]:'—'); }).join('');
     return '<div class="verrow'+(opts.current?' verrow--current':'')+'" data-href="'+hrefOf(v)+'">'+badge+
-      '<div class="verrow__main"><div class="verrow__top"><span class="verrow__titlewrap"><span class="verrow__title">Versão '+v.n+'</span>'+verWarn(v)+'</span><span class="status status--sm '+s.pill+'"><span class="status__dot"></span>'+esc(s.label)+'</span></div>'+
+      '<div class="verrow__main"><div class="verrow__top"><span class="verrow__titlewrap"><span class="verrow__title">Versão '+v.n+'</span></span><span class="status status--sm '+s.pill+'"><span class="status__dot"></span>'+esc(s.label)+'</span></div>'+
       '<div class="verrow__kvs">'+kvs+'</div></div>'+
       '<span class="verrow__sep" aria-hidden="true"></span>'+
       /* só consultar = botão-ícone com seta (nome acessível no aria-label); agir (Continuar, Ver ajustes) = botão com texto */
@@ -731,7 +738,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788544423';
+  var MYV='1788544783';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
