@@ -815,7 +815,11 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 .modal__header{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;padding:var(--space-8) var(--space-8) var(--space-4)}
 
 .modal__title{font-size:var(--text-2xl) !important;font-weight:700 !important;color:var(--color-heading);margin:0}
-.modal__body{padding:0 var(--space-8);overflow:auto;color:var(--color-text-onmuted);font-size:var(--text-sm)}
+.modal__body{padding:0 var(--space-8);overflow:auto;color:var(--color-text-onmuted);font-size:var(--text-sm);scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--color-text-muted) 30%,transparent) transparent;overscroll-behavior:contain}
+.modal__body::-webkit-scrollbar{width:10px}
+.modal__body::-webkit-scrollbar-track{background:transparent}
+.modal__body::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--color-text-muted) 28%,transparent);border-radius:999px;border:3px solid transparent;background-clip:padding-box}
+.modal__body::-webkit-scrollbar-thumb:hover{background:color-mix(in srgb,var(--color-text-muted) 44%,transparent);background-clip:padding-box}
 .modal__footer{display:flex;justify-content:flex-end;gap:var(--space-2);padding:var(--space-6) var(--space-8) var(--space-8)}
 /* Cancelar/dismiss (1º botão) vai pro lado oposto; as ações ficam agrupadas à direita */
 .modal__footer > .btn:first-child:not(:last-child){margin-right:auto}
