@@ -317,7 +317,7 @@
               <div class="page-h__row">
                 <div class="page-h__main">
                   <div class="page-h__title"><h1 id="pageTitle">Nova versão</h1><span class="tag page-h__code">D-1011</span></div>
-                  <p class="page-h__desc">Classifique as contas contábeis da <b id="descEmp">MAG Capitalização</b> nos códigos de tributação (codTrib) para IBS, CBS e IS.</p>
+                  <p class="page-h__desc">Classifique as contas contábeis da <b id="descEmp">MAG Capitalização</b> conforme os códigos de tributação (codTrib) para IBS, CBS e IS.</p>
                 </div>
               </div>
             </div>
@@ -327,8 +327,9 @@
             <div class="dalert dalert--info" role="note" style="margin-bottom:var(--space-6)">
               <span class="dalert__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span>
               <div class="dalert__body">
-                <p class="dalert__text">Você pode preparar o plano agora. A <b>transmissão</b> à Receita só é liberada depois que as Informações do Contribuinte (D-1001) desta empresa forem processadas. <a href="info-contribuinte-empresa.html?emp=cap" style="color:var(--color-primary);font-weight:600">Ver o D-1001</a>.</p>
+                <p class="dalert__text">Você pode preparar o plano agora. A <b>transmissão</b> à Receita será liberada após o processamento das Informações do Contribuinte (D-1001) desta empresa.</p>
               </div>
+              <a class="btn btn--secondary dalert__act" id="d1001Link" href="info-contribuinte-empresa.html?emp=cap">Ver D-1001<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a>
             </div>
 
             <section class="card" aria-labelledby="pi-h">
@@ -340,7 +341,7 @@
                     <span class="planmeta__v"><span class="emplogo"><img id="pmLogo" src="../Logos/mag%20capitalizacoes.jpeg" alt=""></span><span id="pmNome">MAG Capitalização</span></span>
                   </div>
                   <div class="planmeta__i">
-                    <span class="planmeta__k">Plano referencial <span class="tooltip lbltip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" tabindex="0" role="img" aria-label="Ajuda"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg><span class="tooltip__bubble tooltip__bubble--stack" role="tooltip">Derivado do órgão regulador informado nas Informações do Contribuinte.</span></span></span>
+                    <span class="planmeta__k">Plano de Contas Referencial <span class="tooltip lbltip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" tabindex="0" role="img" aria-label="Ajuda"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg><span class="tooltip__bubble tooltip__bubble--stack" role="tooltip">Derivado do órgão regulador informado nas Informações do Contribuinte.</span></span></span>
                     <span class="planmeta__v"><span id="pmRef">SUSEP</span> <span class="planmeta__derived"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Do D-1001</span></span>
                   </div>
                   <div class="planmeta__i">
@@ -500,6 +501,7 @@
   document.getElementById('pmLogo').src=e.logo;
   document.getElementById('bcEmp').textContent=e.nome;
   document.getElementById('bcEmp').href='plano-contas-empresa.html?emp='+empId;
+  (function(){ var d=document.getElementById('d1001Link'); if(d) d.href='info-contribuinte-empresa.html?emp='+empId; })();
   document.getElementById('pageTitle').textContent=primeiro?'Novo plano de contas':'Nova versão';
   document.getElementById('bcAction').textContent=primeiro?'Novo plano':'Nova versão';
 
@@ -867,7 +869,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788527582';
+  var MYV='1788528025';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
