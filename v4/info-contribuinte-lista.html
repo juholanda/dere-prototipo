@@ -59,9 +59,9 @@
     .stagedot--adv{background:var(--color-azul)}
     .vernum{font-weight:600;color:var(--color-heading)}
     .vercell-sit{margin-top:3px}
-    .vigperiod{font-size:var(--text-sm);color:var(--color-text);display:inline-flex;align-items:center;gap:4px;white-space:nowrap;font-variant-numeric:tabular-nums}
+    .vigperiod{font-size:var(--text-base);color:var(--color-text);white-space:nowrap;font-variant-numeric:tabular-nums}
     .vigopen{color:var(--color-text-muted);font-weight:400}
-    .cd{font-size:var(--text-xs);margin-top:3px;font-variant-numeric:tabular-nums;color:var(--color-text-muted);display:inline-flex;align-items:center;gap:var(--space-1)}
+    .cd{font-size:var(--text-xs);margin-top:3px;font-variant-numeric:tabular-nums;color:var(--color-text-muted);display:flex;align-items:center;gap:var(--space-1)}
     .cd--warn{color:var(--color-warning-fg);font-weight:600}
     .cd--over{color:var(--color-danger-fg);font-weight:600}
     .cd .vigwarn{margin-left:0}
@@ -509,7 +509,7 @@
   <script>(function(){ var bar=document.getElementById('demobar'); if(!bar) return; var tog=bar.querySelector('[data-demo-toggle]'); if(!tog) return; function set(open){ bar.classList.toggle('is-collapsed', !open); tog.setAttribute('aria-expanded', String(open)); tog.setAttribute('aria-label', open?'Recolher ferramenta de demonstração':'Abrir ferramenta de demonstração de cenários'); try{ localStorage.setItem('adere.demo.open', open?'1':'0'); }catch(e){} } var open=false; try{ open=localStorage.getItem('adere.demo.open')==='1'; }catch(e){} set(open); tog.addEventListener('click',function(){ set(bar.classList.contains('is-collapsed')); }); })();</script>
 <script>
 (function(){
-  var MYV='1788542345';
+  var MYV='1788542659';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
