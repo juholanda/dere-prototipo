@@ -92,6 +92,7 @@
     <a href="#accordion">Accordion</a>
     <a href="#abas">Abas</a>
     <a href="#modais">Modais</a>
+    <a href="#comprovante">Comprovante</a>
     <a href="#formulario">Formulário</a>
     <a href="#wizard">Wizard</a>
     <a href="#timeline">Timeline</a>
@@ -676,6 +677,51 @@
         <div class="card"><div class="card__body demo">
           <button class="btn btn--primary" onclick="dsOpenModal('m1')">Abrir modal</button>
           <button class="btn btn--danger" onclick="dsOpenModal('m2')">Excluir (confirmação)</button>
+        </div></div>
+        <p class="sec__hint" style="margin-top:var(--space-3)">Larguras: <code>.modal</code> (480) · <code>.modal--md</code> (560) · <code>.modal--lg</code> (720). O card anima na entrada (<code>ds-modal-in</code>); ao encadear dois modais, use <code>.is-leaving</code> no card que sai e o fundo escuro permanece contínuo.</p>
+      </section>
+
+      <!-- COMPROVANTE / RECIBO -->
+      <section class="sec" id="comprovante">
+        <p class="sec__k">Componentes</p>
+        <h2>Comprovante (recibo)</h2>
+        <p class="sec__hint">Comprovante de envio à Receita, reutilizável (D-1001, eventos mensais, "Recibos e envios"). Vive num <code>.modal--md</code> reabrível e evolui no tempo: <strong>protocolo</strong> (transmitido) → <strong>recibo</strong> (aceito) → <strong>ocorrências</strong> (rejeitado). Tom do bloco de estado por variante (info/success/danger), nunca verde no provisório.</p>
+        <div class="card"><div class="card__body" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:var(--space-6)">
+          <div class="receipt">
+            <div class="receipt__state receipt__state--info">
+              <span class="receipt__state-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>
+              <div><p class="receipt__state-tt">Transmitido — em processamento</p><p class="receipt__state-tx">Protocolo emitido. Ainda não cumpre a obrigação; o recibo sai quando a Receita concluir.</p></div>
+            </div>
+            <div class="receipt__rows">
+              <div class="receipt__row"><span class="receipt__k">Contribuinte</span><span class="receipt__v">MAG Seguros</span></div>
+              <div class="receipt__row"><span class="receipt__k">Protocolo do lote</span><span class="receipt__v receipt__v--mono">000120260903112000000042</span></div>
+              <div class="receipt__row"><span class="receipt__k">Recepção</span><span class="receipt__v">03/09/2026, 11:20</span></div>
+              <div class="receipt__row"><span class="receipt__k">Recibo (nrRecibo)</span><span class="receipt__v receipt__v--wait">Aguardando processamento</span></div>
+            </div>
+          </div>
+          <div class="receipt">
+            <div class="receipt__state receipt__state--success">
+              <span class="receipt__state-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg></span>
+              <div><p class="receipt__state-tt">Aceito pela Receita Federal</p><p class="receipt__state-tx">Comprovante definitivo. A obrigação foi cumprida (prova válida).</p></div>
+            </div>
+            <div class="receipt__rows">
+              <div class="receipt__row"><span class="receipt__k">Protocolo do lote</span><span class="receipt__v receipt__v--mono">000120260903112000000042</span></div>
+              <div class="receipt__row"><span class="receipt__k">Recibo (nrRecibo)</span><span class="receipt__v receipt__v--mono receipt__v--strong">1001202601000000000000000000001</span></div>
+              <div class="receipt__row"><span class="receipt__k">Processamento</span><span class="receipt__v">03/09/2026, 11:27</span></div>
+              <div class="receipt__row"><span class="receipt__k">Hash do arquivo</span><span class="receipt__v receipt__v--mono">9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b</span></div>
+            </div>
+          </div>
+          <div class="receipt">
+            <div class="receipt__state receipt__state--danger">
+              <span class="receipt__state-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></svg></span>
+              <div><p class="receipt__state-tt">Rejeitado pela Receita Federal</p><p class="receipt__state-tx">Não gerou recibo. Corrija os dados e retransmita (gera nova chave).</p></div>
+            </div>
+            <div class="receipt__rows">
+              <div class="receipt__row"><span class="receipt__k">Protocolo do lote</span><span class="receipt__v receipt__v--mono">000120260903112000000042</span></div>
+              <div class="receipt__row"><span class="receipt__k">Recibo (nrRecibo)</span><span class="receipt__v receipt__v--wait">Não gerado</span></div>
+            </div>
+            <div class="dalert dalert--danger" role="status" style="margin-top:var(--space-2)"><span class="dalert__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg></span><div class="dalert__body"><p class="dalert__title">Ocorrência (erro impeditivo)</p><p class="dalert__text">MS1097 · A validade informada se sobrepõe a um período já existente.</p></div></div>
+          </div>
         </div></div>
       </section>
 
@@ -1326,7 +1372,7 @@
 </script>
 <script>
 (function(){
-  var MYV='1788500118';
+  var MYV='1788502554';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

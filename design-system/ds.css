@@ -802,7 +802,15 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 /* Barra superior do modal: só o "X" (fechar), à direita — layout em blocos (estilo OutSystems) */
 .modal__topbar{display:flex;justify-content:flex-end;padding:var(--space-3) var(--space-3) 0}
 .modal__topbar + .confirm{padding-top:var(--space-2)}
+.modal--md{width:min(560px,100%)}
 .modal--lg{width:min(720px,100%)}
+/* Entrada/saída do card do modal. O backdrop (scrim) é instantâneo de propósito: assim,
+   ao encadear dois modais (ex.: aprovar -> comprovante), o fundo escuro permanece contínuo e só os cards trocam. */
+.modal{animation:ds-modal-in .26s cubic-bezier(.2,.7,.2,1)}
+.modal.is-leaving{animation:ds-modal-out .2s ease forwards;pointer-events:none}
+@keyframes ds-modal-in{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes ds-modal-out{from{opacity:1;transform:none}to{opacity:0;transform:translateY(4px) scale(.98)}}
+@media(prefers-reduced-motion:reduce){.modal,.modal.is-leaving{animation:none}}
 .modal__header{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;padding:var(--space-8) var(--space-8) var(--space-4)}
 
 .modal__title{font-size:var(--text-2xl) !important;font-weight:700 !important;color:var(--color-heading);margin:0}
@@ -838,6 +846,27 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 .confirm__icon--info{background:var(--color-info-bg);color:var(--color-info)}
 .confirm__title{font-size:var(--text-base);font-weight:600;color:var(--color-heading);margin:0 0 var(--space-1)}
 .confirm__text{font-size:var(--text-sm);color:var(--color-text-onmuted);margin:0}
+
+/* ===== Comprovante / recibo (reutilizável: D-1001, eventos mensais, "Recibos e envios") =====
+   Bloco de estado no topo (transmitido/aceito/rejeitado) + linhas rótulo/valor + ocorrências. */
+.receipt{display:flex;flex-direction:column;gap:var(--space-6)}
+.receipt__state{display:flex;gap:var(--space-3);align-items:flex-start;padding:var(--space-4);border-radius:var(--radius-lg);border:1px solid var(--color-border);background:var(--color-surface-2)}
+.receipt__state-ic{flex:0 0 auto;width:40px;height:40px;border-radius:var(--radius-lg);display:grid;place-items:center;background:var(--color-border);color:var(--color-text-muted)}
+.receipt__state-ic svg{width:22px;height:22px}
+.receipt__state-tt{margin:0;font-size:var(--text-base);font-weight:700;color:var(--color-heading);line-height:1.3}
+.receipt__state-tx{margin:var(--space-1) 0 0;font-size:var(--text-sm);color:var(--color-text-onmuted);line-height:1.5}
+.receipt__state--info .receipt__state-ic{background:var(--color-info-bg);color:var(--color-info-fg)}
+.receipt__state--success .receipt__state-ic{background:var(--color-success-bg);color:var(--color-success-fg)}
+.receipt__state--warning .receipt__state-ic{background:var(--color-warning-bg);color:var(--color-warning)}
+.receipt__state--danger .receipt__state-ic{background:var(--color-danger-bg);color:var(--color-danger-fg)}
+.receipt__rows{display:flex;flex-direction:column}
+.receipt__row{display:flex;justify-content:space-between;gap:var(--space-6);align-items:baseline;padding:var(--space-3) 0;border-top:1px solid var(--color-divider)}
+.receipt__row:first-child{border-top:0;padding-top:0}
+.receipt__k{flex:0 0 auto;font-size:var(--text-sm);color:var(--color-text-muted);font-weight:600}
+.receipt__v{min-width:0;text-align:right;font-size:var(--text-base);color:var(--color-heading);font-weight:500;word-break:break-word;line-height:1.4}
+.receipt__v--mono{font-variant-numeric:tabular-nums;letter-spacing:.01em}
+.receipt__v--strong{font-weight:700}
+.receipt__v--wait{color:var(--color-text-muted);font-weight:500}
 
 /* ===== Date picker (popover de calendário, 100% tokens do DS) ===== */
 .dp{position:absolute;z-index:70;top:calc(100% + var(--space-1));left:0;width:17.5rem;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);padding:var(--space-3)}

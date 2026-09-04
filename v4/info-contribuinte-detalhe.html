@@ -409,7 +409,7 @@
       desc:'O aprovador aprovou e as informações foram transmitidas à Receita, com recibo. A vigência está ativa. Para mudar, altere os dados (gera uma nova versão) ou exclua a vigência. Toda alteração ou exclusão passa por nova aprovação antes de ir à Receita.',
       meta:[{k:'Enviado por',by:'Ricardo Alves',v:'hoje, 14:32'},{k:'Aprovado por',by:'Ana Prado',v:'hoje, 15:40'},{k:'Recibo (Receita)',v:'RC-2026.0001'}],
       comment:null,
-      topActions:'<div class="menu" data-actions><button class="btn btn--secondary" type="button" data-actions-toggle aria-haspopup="true" aria-expanded="false">Mais ações <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button><div class="menu__panel" hidden role="menu"><button class="menu__item" type="button" role="menuitem"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>Ver comprovante</button><button class="menu__item menu__item--danger" type="button" role="menuitem" data-open-excluir><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M10 11v6M14 11v6"/></svg>Excluir da Receita</button></div></div><button class="btn btn--primary" type="button" data-go-editar><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>Alterar</button>',
+      topActions:'<div class="menu" data-actions><button class="btn btn--secondary" type="button" data-actions-toggle aria-haspopup="true" aria-expanded="false">Mais ações <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button><div class="menu__panel" hidden role="menu"><button class="menu__item" type="button" role="menuitem" data-open-comprovante><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>Ver comprovante</button><button class="menu__item menu__item--danger" type="button" role="menuitem" data-open-excluir><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M10 11v6M14 11v6"/></svg>Excluir da Receita</button></div></div><button class="btn btn--primary" type="button" data-go-editar><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>Alterar</button>',
       cardActions:''
     }
   };
@@ -428,6 +428,11 @@
   /* Cada passo: ação (título) + status REAL resultante (badge) + quem fez + data. Papéis: Preparador/Aprovador (perfis do produto). */
   /* Cada passo: título (ação) + Status REAL + Responsável (perfil) + Comentário/Recibo/Motivo quando houver. */
   var REC='1001202601'+Array(21).join('0')+'1'; /* recibo ilustrativo: 31 posições (1001+AAAAMM+sequencial); máscara oficial no Anexo II */
+  /* Comprovante: valores ILUSTRATIVOS opacos (o formato real é regra de negócio da Receita; exibir, não interpretar). */
+  var PROTO='0001'+'20260903112000'+'000042';                 /* protocolo do lote (<=28), síncrono na transmissão */
+  var CHAVE='D1001'+'A7F3B2E10C9D8465'+'20260903112000'+'0000042'; /* id do evento, 42 chars [0-9A-Za-z] */
+  var HASH='9f86d081884c7d659a2feaa0c55ad015'+'a3bf4f1b2b0b';  /* hash do arquivo processado (44) */
+  var DH_REC='03/09/2026, 11:20', DH_PROC='03/09/2026, 11:27'; /* dhRecepcao / dhProcess */
   var EV={
     criada:      {t:'02/09/2026 · 10:47', title:'Versão criada',                 status:['Rascunho','status--neutral'],                 who:'Ricardo Alves', role:'Preparador'},
     enviada:     {t:'02/09/2026 · 11:15', title:'Enviada para revisão',          status:['Em revisão','status--warning'],             who:'Ricardo Alves', role:'Preparador'},
@@ -495,13 +500,13 @@
     if(sit==='ajustes'){
       el.innerHTML='<div class="dalert dalert--danger" role="status"><span class="dalert__ic">'+ALERT+'</span><div><p class="dalert__title">Ajustes solicitados por Ana Prado</p><p class="dalert__text">'+esc(_ajusteComment || (EV.ajustes.extras?EV.ajustes.extras[0][1]:''))+'</p></div></div>';
     } else if(sit==='rejeitado'){
-      el.innerHTML='<div class="dalert dalert--danger" role="status"><span class="dalert__ic">'+ALERT+'</span><div><p class="dalert__title">Versão rejeitada pela Receita Federal</p><p class="dalert__text">'+esc(EV.rejeitada.extras?EV.rejeitada.extras[0][1]:'')+'</p></div></div>';
+      el.innerHTML='<div class="dalert dalert--danger" role="status"><span class="dalert__ic">'+ALERT+'</span><div class="dalert__body"><p class="dalert__title">Versão rejeitada pela Receita Federal</p><p class="dalert__text">'+esc(EV.rejeitada.extras?EV.rejeitada.extras[0][1]:'')+'</p></div><button class="btn btn--secondary dalert__act" type="button" data-open-comprovante><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>Ver comprovante</button></div>';
     } else if(sit==='processando'){
       var _exTx = (curOp==='exclusao')
         ? 'A exclusão foi transmitida e está em processamento. O processamento é assíncrono; a vigência é encerrada quando a Receita concluir. Uma transmissão em andamento não pode ser cancelada.'
         : 'O processamento é assíncrono. O recibo é gerado quando a Receita concluir; uma transmissão em andamento não pode ser cancelada.';
       var _exTt = (curOp==='exclusao') ? 'Exclusão transmitida à Receita, em processamento' : 'Transmitida à Receita, em processamento';
-      el.innerHTML='<div class="dalert dalert--info" role="status"><span class="dalert__ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span><div><p class="dalert__title">'+_exTt+'</p><p class="dalert__text">'+_exTx+'</p></div></div>';
+      el.innerHTML='<div class="dalert dalert--info" role="status"><span class="dalert__ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span><div><p class="dalert__title">'+_exTt+'</p><p class="dalert__text">'+_exTx+' Protocolo de entrega: <strong>'+esc(PROTO)+'</strong>.</p></div></div>';
     } else if(sit==='excluida'){
       var _hN='info-contribuinte.html?modo=nova&emp='+empId()+(dparam('scn')?('&scn='+dparam('scn')):'')+'&from=detalhe';
       var _PL='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5v14"/></svg>';
@@ -677,7 +682,7 @@
     else if(curOp==='exclusao' && (sit==='sucesso'||sit==='advertencias')){ _acts=''; }
     else if(sit==='rejeitado' || sit==='ajustes'){ var _vr=dparam('v')||'4'; _acts='<button class="btn btn--danger-outline" type="button" data-open-excluir><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M10 11v6M14 11v6"/></svg>Excluir versão</button><a class="btn btn--primary" href="info-contribuinte.html?modo=editar&v='+_vr+'&corr='+sit+'"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>Corrigir e reenviar</a>'; }
     /* em processamento = já transmitida à Receita. Doc só prevê aguardar (não há cancelar/abortar/excluir). Sem ação: só o aviso de espera. */
-    else if(sit==='processando'){ _acts=''; }
+    else if(sit==='processando'){ _acts='<button class="btn btn--secondary" type="button" data-open-comprovante><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>Ver comprovante</button>'; }
     else if(sit==='encerrada' || sit==='excluida'){ _acts='<button class="btn btn--secondary" type="button" data-open-comprovante><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>Ver comprovante</button>'; }
     else { _acts=s.topActions; }
     if($('pageActions')) $('pageActions').innerHTML=_acts;
@@ -862,7 +867,56 @@
   });
   /* Aprovador: modais de Aprovar e Solicitar ajustes */
   document.addEventListener('DOMContentLoaded',function(){
-    var apM=$('aprovarModal'), ajM=$('ajusteModal'); if(!apM||!ajM) return;
+    var apM=$('aprovarModal'), ajM=$('ajusteModal'), compM=$('comprovanteModal'); if(!apM||!ajM) return;
+    /* Comprovante de envio: recibo/protocolo por estado. Lê contribuinte/vigência da própria página. */
+    function roVal(label){ var els=document.querySelectorAll('.roitem'); for(var i=0;i<els.length;i++){ var dt=els[i].querySelector('dt'); if(dt && dt.textContent.trim().indexOf(label)===0){ var dd=els[i].querySelector('dd'); return dd?dd.textContent.trim():''; } } return ''; }
+    function fillComprovante(sit){
+      var R=$('compReceipt'), F=$('compFooter'); if(!R) return;
+      var emp=$('coNome')?$('coNome').textContent.trim():'Contribuinte';
+      var cnpj=$('coCnpj')?$('coCnpj').textContent.replace(/^\s*CNPJ\s*/,'').trim():'';
+      var vnum=dparam('v')||'', isExcl=(curOp==='exclusao');
+      var evLabel=isExcl?'D-1001 · Exclusão de vigência':'D-1001 · Informações do Contribuinte';
+      var vigIni=roVal('Início da vigência'), vigFim=roVal('Fim da vigência');
+      var IC_CLK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>';
+      var IC_OK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>';
+      var IC_ERR='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></svg>';
+      var state, sic, scls, stt, stx;
+      if(sit==='processando'){ state='transmitido'; sic=IC_CLK; scls='receipt__state--info'; stt=(isExcl?'Exclusão transmitida à Receita — em processamento':'Transmitido à Receita — em processamento'); stx='Protocolo de entrega emitido. Ainda não cumpre a obrigação: o recibo definitivo é gerado quando a Receita concluir o processamento.'; }
+      else if(sit==='rejeitado'){ state='rejeitado'; sic=IC_ERR; scls='receipt__state--danger'; stt='Rejeitado pela Receita Federal'; stx='O evento foi rejeitado e não gerou recibo. Corrija os dados e retransmita (gera uma nova chave de evento).'; }
+      else if(sit==='advertencias'){ state='aceito'; sic=IC_OK; scls='receipt__state--success'; stt='Aceito pela Receita Federal, com advertências'; stx='Comprovante definitivo. A obrigação foi cumprida. Há advertências (não impeditivas) registradas abaixo.'; }
+      else { state='aceito'; sic=IC_OK; scls='receipt__state--success'; stt=(isExcl?'Exclusão aceita pela Receita Federal':'Aceito pela Receita Federal'); stx=(isExcl?'A exclusão da vigência foi processada. Este é o comprovante definitivo do evento.':'Comprovante definitivo. A obrigação foi cumprida (prova válida).'); }
+      function row(k,v,cls){ return '<div class="receipt__row"><span class="receipt__k">'+esc(k)+'</span><span class="receipt__v '+(cls||'')+'">'+v+'</span></div>'; }
+      var rows='';
+      rows+=row('Contribuinte', esc(emp));
+      if(cnpj) rows+=row('CNPJ', esc(cnpj),'receipt__v--mono');
+      rows+=row('Evento', esc(evLabel));
+      if(vnum) rows+=row('Versão', esc(vnum));
+      rows+=row('Chave do evento', esc(CHAVE),'receipt__v--mono');
+      rows+=row('Protocolo do lote', esc(PROTO),'receipt__v--mono');
+      rows+=row('Recepção', esc(DH_REC));
+      if(state==='aceito'){
+        rows+=row('Processamento', esc(DH_PROC));
+        rows+=row('Recibo (nrRecibo)', esc(REC),'receipt__v--mono receipt__v--strong');
+        rows+=row('Hash do arquivo', esc(HASH),'receipt__v--mono');
+        if(vigIni) rows+=row(isExcl?'Vigência encerrada em':'Início da vigência', esc(vigIni));
+        if(!isExcl && vigFim) rows+=row('Fim da vigência', esc(vigFim));
+      } else if(state==='transmitido'){
+        rows+=row('Recibo (nrRecibo)','Aguardando processamento','receipt__v--wait');
+      } else {
+        rows+=row('Processamento', esc(DH_PROC));
+        rows+=row('Recibo (nrRecibo)','Não gerado','receipt__v--wait');
+      }
+      var occ='';
+      if(state==='rejeitado'){ occ='<div class="dalert dalert--danger" role="status" style="margin-top:var(--space-2)"><span class="dalert__ic">'+ALERT+'</span><div class="dalert__body"><p class="dalert__title">Ocorrência (erro impeditivo)</p><p class="dalert__text"><strong>MS1097</strong> · A validade informada se sobrepõe a um período já existente. Ajuste as datas e reenvie.</p></div></div>'; }
+      else if(sit==='advertencias'){ occ='<div class="dalert dalert--warning" role="status" style="margin-top:var(--space-2)"><span class="dalert__ic">'+ALERT+'</span><div class="dalert__body"><p class="dalert__title">Advertência (não impeditiva)</p><p class="dalert__text"><strong>MS1094</strong> · A data de início da validade é anterior ao início da DeRE.</p></div></div>'; }
+      R.innerHTML='<div class="receipt__state '+scls+'"><span class="receipt__state-ic">'+sic+'</span><div><p class="receipt__state-tt">'+esc(stt)+'</p><p class="receipt__state-tx">'+esc(stx)+'</p></div></div><div class="receipt__rows">'+rows+'</div>'+occ;
+      var DL='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>';
+      var f='<button class="btn btn--ghost btn--lg" type="button" data-close-comp>Fechar</button>';
+      if(state==='rejeitado'){ var _vr=dparam('v')||'4'; f+='<a class="btn btn--primary btn--lg" href="info-contribuinte.html?modo=editar&v='+_vr+'&corr=rejeitado"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>Corrigir e retransmitir</a>'; }
+      else { f+='<button class="btn btn--secondary btn--lg" type="button" data-comp-dl>'+DL+'Baixar XML</button><button class="btn btn--secondary btn--lg" type="button" data-comp-dl>'+DL+'Baixar PDF</button>'; }
+      if(F) F.innerHTML=f;
+    }
+    function openComprovante(sit){ fillComprovante(sit); dsDialog.open(compM,{focus:compM.querySelector('[data-close-comp]'),onOpen:function(){compM.hidden=false;document.body.style.overflow='hidden';},onClose:function(){compM.hidden=true;document.body.style.overflow='';}}); }
     function fillApprove(){
       var vnum=dparam('v')||'4';
       var T={ nova:['Aprovar e transmitir a Versão '+vnum+'?','A versão será enviada à Receita Federal e passa a valer quando for processada. Não dá para desfazer por aqui.','Aprovar e transmitir','btn--success'],
@@ -878,23 +932,27 @@
     document.addEventListener('click',function(e){
       if(e.target.closest('[data-open-aprovar]')){ fillApprove(); dsDialog.open(apM,{focus:$('confirmAprovar'),onOpen:function(){apM.hidden=false;document.body.style.overflow='hidden';},onClose:function(){apM.hidden=true;document.body.style.overflow='';}}); }
       if(e.target.closest('[data-open-ajuste]')){ $('ajusteText').value=''; if($('ajusteErr'))$('ajusteErr').hidden=true; dsDialog.open(ajM,{focus:$('ajusteText'),onOpen:function(){ajM.hidden=false;document.body.style.overflow='hidden';},onClose:function(){ajM.hidden=true;document.body.style.overflow='';}}); }
+      if(e.target.closest('[data-open-comprovante]')){ openComprovante(sitFor(curDetState)); }
     });
     apM.querySelectorAll('[data-close]').forEach(function(b){ b.addEventListener('click',function(){dsDialog.close();}); });
     ajM.querySelectorAll('[data-close]').forEach(function(b){ b.addEventListener('click',function(){dsDialog.close();}); });
     apM.addEventListener('click',function(e){ if(e.target===apM) dsDialog.close(); });
     ajM.addEventListener('click',function(e){ if(e.target===ajM) dsDialog.close(); });
+    if(compM){ compM.addEventListener('click',function(e){ if(e.target.closest('[data-comp-dl]')){ showToast('Comprovante gerado para download.'); return; } if(e.target===compM || e.target.closest('[data-close-comp]')) dsDialog.close(); }); }
     $('confirmAprovar').addEventListener('click',function(){
-      dsDialog.close();
-      if(curOp==='exclusao'){
-        /* aprovar a exclusão baixa a vigência: registra o flag que a lista/empresa leem como "Sem versão vigente" */
-        try{ localStorage.setItem('adere.d1001.vigexcluida.'+empId(), JSON.stringify({v:(dparam('v')||'3'), motivo:exclMotivo(), t:Date.now()})); }catch(e){}
-        showToast('Exclusão aprovada e transmitida à Receita Federal.');
-        setScenario({role:'preparador',st:'aprovado',sit:'excluida',op:'exclusao'});
-        return;
-      }
-      try{ localStorage.setItem('adere.d1001.approval.'+empId(),'processing'); }catch(e){}
-      showToast('Versão aprovada e transmitida à Receita Federal.');
-      setScenario({role:'aprovador',st:'aprovado',sit:'processando'});
+      var isX=(curOp==='exclusao');
+      var apCard=apM.querySelector('.modal');
+      if(apCard) apCard.classList.add('is-leaving');           /* o card de aprovar recua e some */
+      /* trabalho de estado por baixo, enquanto o card sai */
+      if(isX){ try{ localStorage.setItem('adere.d1001.vigexcluida.'+empId(), JSON.stringify({v:(dparam('v')||'3'), motivo:exclMotivo(), t:Date.now()})); }catch(e){} }
+      else { try{ localStorage.setItem('adere.d1001.approval.'+empId(),'processing'); }catch(e){} }
+      setTimeout(function(){
+        if(apCard) apCard.classList.remove('is-leaving');
+        dsDialog.close();                                       /* esconde o scrim do aprovar */
+        setScenario(isX?{role:'preparador',st:'aprovado',sit:'excluida',op:'exclusao'}:{role:'aprovador',st:'aprovado',sit:'processando'});
+        openComprovante(isX?'excluida':'processando');          /* no mesmo tique o comprovante entra: fundo escuro contínuo */
+        showToast(isX?'Exclusão aprovada e transmitida à Receita Federal.':'Versão aprovada e transmitida à Receita Federal.');
+      }, 210);
     });
     $('confirmAjuste').addEventListener('click',function(){
       var v=$('ajusteText').value.trim();
@@ -1019,6 +1077,20 @@
     </div>
   </div>
 
+  <!-- Comprovante de envio (reabrível): protocolo (transmitido) -> recibo (aceito) -> ocorrências (rejeitado) -->
+  <div class="scrim" id="comprovanteModal" hidden>
+    <div class="modal modal--md" role="dialog" aria-modal="true" aria-labelledby="compTitle">
+      <div class="modal__header">
+        <h3 class="modal__title" id="compTitle">Comprovante de envio</h3>
+        <button class="icon-btn" type="button" data-close-comp aria-label="Fechar" style="flex:0 0 auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg></button>
+      </div>
+      <div class="modal__body">
+        <div class="receipt" id="compReceipt"></div>
+      </div>
+      <div class="modal__footer" id="compFooter"></div>
+    </div>
+  </div>
+
   <div class="toast-wrap" id="toastWrap" aria-live="polite" aria-atomic="false"></div>
   <div class="notifwrap" id="notifWrap" aria-live="polite"></div>
 
@@ -1037,7 +1109,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788500118';
+  var MYV='1788502554';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
