@@ -40,8 +40,8 @@
     /* larguras estáveis: colunas não pulam ao trocar de cenário */
     .table--fixed{table-layout:fixed;min-width:1140px}
     /* só as células de texto truncam; a coluna de ação nunca clipa o botão */
-    .table--fixed td:not(.col-act):not(.col-ver){overflow:hidden;text-overflow:ellipsis}
-    .table--fixed td.col-ver{overflow:visible}
+    .table--fixed td:not(.col-act):not(.col-ver):not(.col-vig){overflow:hidden;text-overflow:ellipsis}
+    .table--fixed td.col-ver,.table--fixed td.col-vig{overflow:visible}
     .table td{padding-top:var(--space-4);padding-bottom:var(--space-4)}
     .celltitle{font-size:var(--text-base);font-weight:600;color:var(--color-heading);white-space:nowrap}
     .cellcnpj{font-size:var(--text-sm);color:var(--color-text-muted);font-variant-numeric:tabular-nums;margin-top:2px;white-space:nowrap}
@@ -416,7 +416,7 @@
       return '<tr data-href="'+href+'">'+
         '<td><div class="evemp">'+logoHtml(e)+'<div><div class="celltitle">'+esc(e.nome)+'</div><div class="cellcnpj">'+esc(e.cnpj)+'</div></div></div></td>'+
         '<td class="col-ver">'+verCell+'</td>'+
-        '<td>'+vigCell+'</td>'+
+        '<td class="col-vig">'+vigCell+'</td>'+
         '<td>'+prepCell+'</td>'+
         '<td class="col-act">'+btn+'</td>'+
       '</tr>';
@@ -506,7 +506,7 @@
   <script>(function(){ var bar=document.getElementById('demobar'); if(!bar) return; var tog=bar.querySelector('[data-demo-toggle]'); if(!tog) return; function set(open){ bar.classList.toggle('is-collapsed', !open); tog.setAttribute('aria-expanded', String(open)); tog.setAttribute('aria-label', open?'Recolher ferramenta de demonstração':'Abrir ferramenta de demonstração de cenários'); try{ localStorage.setItem('adere.demo.open', open?'1':'0'); }catch(e){} } var open=false; try{ open=localStorage.getItem('adere.demo.open')==='1'; }catch(e){} set(open); tog.addEventListener('click',function(){ set(bar.classList.contains('is-collapsed')); }); })();</script>
 <script>
 (function(){
-  var MYV='1788541967';
+  var MYV='1788542189';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
