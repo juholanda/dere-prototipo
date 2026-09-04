@@ -61,9 +61,12 @@
     .vercell-sit{margin-top:3px}
     .vigperiod{font-size:var(--text-sm);color:var(--color-text);display:inline-flex;align-items:center;gap:4px;white-space:nowrap;font-variant-numeric:tabular-nums}
     .vigopen{color:var(--color-text-muted);font-weight:400}
-    .cd{font-size:var(--text-xs);margin-top:3px;font-variant-numeric:tabular-nums;color:var(--color-text-muted)}
+    .cd{font-size:var(--text-xs);margin-top:3px;font-variant-numeric:tabular-nums;color:var(--color-text-muted);display:inline-flex;align-items:center;gap:var(--space-1)}
     .cd--warn{color:var(--color-warning-fg);font-weight:600}
     .cd--over{color:var(--color-danger-fg);font-weight:600}
+    .cd .vigwarn{margin-left:0}
+    .cd .vigwarn__ic{padding:0}
+    .cd .vigwarn__ic svg{width:15px;height:15px}
     .prepcell{font-size:var(--text-sm)}
     .evemp{display:flex;align-items:center;gap:var(--space-3)}
     .evemp > div{min-width:0}
@@ -354,7 +357,7 @@
   }
   function nearEnd(v){ if(!v||!v.until) return false; var m=/(\d{2})\/(\d{2})\/(\d{4})/.exec(v.until); if(!m) return false; var end=new Date(+m[3],+m[2]-1,+m[1]), today=new Date(2026,8,3); var d=(end-today)/86400000; return d>=0 && d<=60; }
   function daysLeft(v){ if(!v||!v.until) return null; var m=/(\d{2})\/(\d{2})\/(\d{4})/.exec(v.until); if(!m) return null; var end=new Date(+m[3],+m[2]-1,+m[1]), today=new Date(2026,8,4); return Math.round((end-today)/86400000); }
-  function countdownHtml(v){ var d=daysLeft(v); if(d==null) return ''; var cls=d<0?'cd--over':(d<=30?'cd--warn':'cd--ok'); var txt=d<0?'vigência expirada':(d===0?'expira hoje':('restam '+d+' dia'+(d===1?'':'s'))); return '<div class="cd '+cls+'">'+txt+'</div>'; }
+  function countdownHtml(v, warn){ var d=daysLeft(v); if(d==null) return ''; var cls=d<0?'cd--over':(d<=60?'cd--warn':'cd--ok'); var txt=d<0?'vigência expirada':(d===0?'expira hoje':('restam '+d+' dia'+(d===1?'':'s'))); return '<div class="cd '+cls+'">'+(warn||'')+txt+'</div>'; }
   /* rótulos de status da versão em preparação (etapa) */
   var PREPLBL={rascunho:'Rascunho', revisao:'Em revisão', ajustes:'Em ajustes', processando:'Em processamento', rejeitado:'Rejeitada', futura:'Vigência futura'};
   /* bloco de célula: "Versão N" em cima + status (bolinha da etapa) embaixo. Usado nas colunas Versão vigente e Em preparação. */
@@ -403,7 +406,7 @@
       var vigCell;
       if(e.vigente){
         var per=e.vigente.until ? esc(e.vigente.since)+' – '+esc(e.vigente.until) : 'Desde '+esc(e.vigente.since)+' <span class="vigopen">· em aberto</span>';
-        vigCell='<div class="vigperiod">'+per+vigWarn+'</div>'+countdownHtml(e.vigente);
+        vigCell='<div class="vigperiod">'+per+'</div>'+countdownHtml(e.vigente, vigWarn);
       } else { vigCell='<span class="muted">—</span>'; }
       /* Em preparação = nº + status da etapa embaixo (mesmo padrão do vigente) ou "—" */
       var prepCell=fl ? verBlock(fl.n, (PREPLBL[fl.dot]||fl.label), fl.dot) : '<span class="muted">—</span>';
@@ -506,7 +509,7 @@
   <script>(function(){ var bar=document.getElementById('demobar'); if(!bar) return; var tog=bar.querySelector('[data-demo-toggle]'); if(!tog) return; function set(open){ bar.classList.toggle('is-collapsed', !open); tog.setAttribute('aria-expanded', String(open)); tog.setAttribute('aria-label', open?'Recolher ferramenta de demonstração':'Abrir ferramenta de demonstração de cenários'); try{ localStorage.setItem('adere.demo.open', open?'1':'0'); }catch(e){} } var open=false; try{ open=localStorage.getItem('adere.demo.open')==='1'; }catch(e){} set(open); tog.addEventListener('click',function(){ set(bar.classList.contains('is-collapsed')); }); })();</script>
 <script>
 (function(){
-  var MYV='1788542189';
+  var MYV='1788542345';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
