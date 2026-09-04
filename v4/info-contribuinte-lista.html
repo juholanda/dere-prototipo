@@ -65,6 +65,7 @@
     .cd--warn{color:var(--color-warning-fg);font-weight:600}
     .cd--over{color:var(--color-danger-fg);font-weight:600}
     .cd--future{color:var(--color-success-fg);font-weight:600}
+    .cdtip{text-decoration:underline dotted;text-underline-offset:2px;cursor:help}
     .cd .vigwarn{margin-left:0}
     .cd .vigwarn__ic{padding:0;color:inherit}
     .cd .vigwarn__ic svg{width:15px;height:15px}
@@ -358,7 +359,7 @@
   }
   function nearEnd(v){ if(!v||!v.until) return false; var m=/(\d{2})\/(\d{2})\/(\d{4})/.exec(v.until); if(!m) return false; var end=new Date(+m[3],+m[2]-1,+m[1]), today=new Date(2026,8,3); var d=(end-today)/86400000; return d>=0 && d<=60; }
   function daysLeft(v){ if(!v||!v.until) return null; var m=/(\d{2})\/(\d{2})\/(\d{4})/.exec(v.until); if(!m) return null; var end=new Date(+m[3],+m[2]-1,+m[1]), today=new Date(2026,8,4); return Math.round((end-today)/86400000); }
-  function countdownHtml(v, warn){ var d=daysLeft(v); if(d==null) return ''; var cls=d<0?'cd--over':(d<=60?'cd--warn':'cd--ok'); var txt=d<0?'Vigência expirada':(d===0?'Termina hoje':('Termina em '+d+' dia'+(d===1?'':'s'))); return '<div class="cd '+cls+'">'+(warn||'')+txt+'</div>'; }
+  function countdownHtml(v, msg){ var d=daysLeft(v); if(d==null) return ''; var cls=d<0?'cd--over':(d<=60?'cd--warn':'cd--ok'); var txt=d<0?'Vigência expirada':(d===0?'Termina hoje':('Termina em '+d+' dia'+(d===1?'':'s'))); if(msg){ return '<div class="cd '+cls+'"><span class="tooltip tooltip--top cdtip" tabindex="0" role="note" aria-label="'+esc(txt)+'. '+esc(msg)+'">'+txt+'<span class="tooltip__bubble tooltip__bubble--stack" role="tooltip">'+esc(msg)+'</span></span></div>'; } return '<div class="cd '+cls+'">'+txt+'</div>'; }
   /* rótulos de status da versão em preparação (etapa) */
   var PREPLBL={rascunho:'Rascunho', revisao:'Em revisão', ajustes:'Em ajustes', processando:'Em processamento', rejeitado:'Rejeitada', futura:'Vigência futura'};
   /* bloco de célula: "Versão N" em cima + status (bolinha da etapa) embaixo. Usado nas colunas Versão vigente e Em preparação. */
@@ -396,20 +397,20 @@
       var fl=flightInfo(e);
       var periodo=e.vigente ? (e.vigente.until ? 'até '+esc(e.vigente.until) : 'em aberto') : '';
       /* alerta de vigência só quando NÃO há nova versão em curso (com uma em curso, o operador já agiu) */
-      var vigWarn=(nearEnd(e.vigente) && !fl) ? ' <span class="tooltip tooltip--top vigwarn"><span class="vigwarn__ic" tabindex="0" role="img" aria-label="Não há versão futura aprovada. Crie uma nova versão antes do fim desta vigência."><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg></span><span class="tooltip__bubble tooltip__bubble--stack">Não há versão futura aprovada. Crie uma nova versão antes do fim desta vigência.</span></span>' : '';
+      var vigWarnMsg=(nearEnd(e.vigente) && !fl) ? 'Não há versão futura aprovada. Crie uma nova versão antes do fim desta vigência.' : '';
       /* sublinha = SÓ a versão em processo, com bolinha da etapa (inclui vigência futura, bolinha verde). Sem nada em curso, sem sublinha */
       var verSub=fl ? '<div class="cellsub cellsub--stage"><span class="stagedot stagedot--'+fl.dot+'" aria-hidden="true"></span>Versão '+fl.n+' '+esc(fl.label)+'</div>' : '';
       /* Versão vigente = nº + status do processamento embaixo (mesmo padrão da coluna Em preparação). Sem vigente: "Sem versão vigente". */
       var verCell=e.vigente
         ? verBlock(e.vigente.ver, (e.sit==='avisos'?'Processada com advertência':'Processada com sucesso'), (e.sit==='avisos'?'adv':'sucesso'))
-        : '<span class="muted">Sem versão vigente</span>';
+        : '<span class="muted">—</span>';
       /* Vigência = período + contagem regressiva + alerta (o alerta de vigência migrou p/ cá) */
       var vigCell;
       if(e.vigente){
         if(e.vigente.until){
           var vigSecond=(fl && fl.dot==='futura')
-            ? '<div class="cd cd--future"><span class="stagedot stagedot--futura" aria-hidden="true"></span>Renovação aprovada · a partir de '+esc(e.flight.desde||'')+'</div>'
-            : countdownHtml(e.vigente, vigWarn);
+            ? '<div class="cd cd--future">Renovação aprovada · a partir de '+esc(e.flight.desde||'')+'</div>'
+            : countdownHtml(e.vigente, vigWarnMsg);
           vigCell='<div class="vigperiod">'+esc(e.vigente.since)+' – '+esc(e.vigente.until)+'</div>'+vigSecond;
         } else {
           vigCell='<div class="vigperiod">Desde '+esc(e.vigente.since)+'</div><div class="cd">Vigência em aberto</div>';
@@ -516,7 +517,7 @@
   <script>(function(){ var bar=document.getElementById('demobar'); if(!bar) return; var tog=bar.querySelector('[data-demo-toggle]'); if(!tog) return; function set(open){ bar.classList.toggle('is-collapsed', !open); tog.setAttribute('aria-expanded', String(open)); tog.setAttribute('aria-label', open?'Recolher ferramenta de demonstração':'Abrir ferramenta de demonstração de cenários'); try{ localStorage.setItem('adere.demo.open', open?'1':'0'); }catch(e){} } var open=false; try{ open=localStorage.getItem('adere.demo.open')==='1'; }catch(e){} set(open); tog.addEventListener('click',function(){ set(bar.classList.contains('is-collapsed')); }); })();</script>
 <script>
 (function(){
-  var MYV='1788543493';
+  var MYV='1788543662';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
