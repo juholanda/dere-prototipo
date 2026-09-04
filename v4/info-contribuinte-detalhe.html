@@ -156,7 +156,7 @@
     /* ===== contexto: empresa (cocard) e pessoas do processo ===== */
     .cocard{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:var(--space-6) var(--space-10);padding:var(--space-6)}
     /* 3 marcos com largura fixa: alinham entre os estados mesmo quando o valor é "Aguardando" */
-    .cometa{display:grid;grid-template-columns:repeat(3,195px);justify-content:end;gap:var(--space-6) var(--space-10);align-items:start}
+    .cometa{display:grid;grid-template-columns:repeat(3,minmax(0,195px));justify-content:end;gap:var(--space-6) var(--space-8);align-items:start}
     @media(max-width:1180px){.cocard{grid-template-columns:1fr}.cometa{grid-template-columns:repeat(3,minmax(0,1fr));justify-content:stretch;border-left:0;padding-left:0;border-top:1px solid var(--color-divider);padding-top:var(--space-6)}}
     .cofield__k{display:flex;align-items:center;gap:var(--space-1-5);font-size:var(--text-sm);color:var(--color-text-muted);font-weight:600;margin:0 0 var(--space-3);white-space:nowrap}
     .cofield__k svg{width:14px;height:14px;flex:0 0 auto}
@@ -1027,7 +1027,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788473541';
+  var MYV='1788494102';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
