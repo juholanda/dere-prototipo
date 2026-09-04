@@ -413,6 +413,7 @@
       </div>
       <div class="modal__body">
         <p id="confirmDesc">As informações do contribuinte (D-1001) vão para <b>revisão interna</b> antes de serem transmitidas à Receita.</p>
+        <div id="confirmConseq" class="dalert" role="status" style="margin-bottom:var(--space-4)" hidden></div>
         <div class="cinfo">
           <div class="cinfo__row"><span class="cinfo__k">Aprovador responsável</span><span class="cinfo__v"><span class="avatar avatar--sm">AP</span>Ana Prado</span></div>
         </div>
@@ -691,6 +692,25 @@
   (function(){
     var modal=$('confirmModal'), openB=$('submitBtn'); if(!modal||!openB) return;
     function close(){ dsDialog.close(); }
+    /* baseline da vigência (data no carregamento = vigência atual do contribuinte) para derivar a operação */
+    var _vigBaseline=($('iniVig')||{}).value||'';
+    function _q(k){ var m=new RegExp('[?&]'+k+'=([^&]*)').exec(location.search); return m?decodeURIComponent(m[1]):''; }
+    var _IC_INFO='<span class="dalert__ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span>';
+    var _IC_WARN='<span class="dalert__ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg></span>';
+    /* deriva correção × nova vigência pela DATA (só quando alterando a vigente: veio do detalhe, populado, nova versão) */
+    function setConseq(){
+      var cq=document.getElementById('confirmConseq'); if(!cq) return;
+      var isAlt=(_q('modo')==='nova' && _q('from')==='detalhe' && _q('scn')==='pop');
+      if(!isAlt){ cq.hidden=true; return; }
+      var ini=($('iniVig')||{}).value||'';
+      if(ini && _vigBaseline && ini!==_vigBaseline){
+        cq.className='dalert dalert--warning'; cq.hidden=false;
+        cq.innerHTML=_IC_WARN+'<div class="dalert__body"><p class="dalert__title">Nova vigência a partir de '+esc(ini)+'</p><p class="dalert__text">Você mudou a data de início, então entra como <strong>nova vigência</strong>: a versão vigente será <strong>encerrada</strong> nessa data (corte automático).</p></div>';
+      } else {
+        cq.className='dalert dalert--info'; cq.hidden=false;
+        cq.innerHTML=_IC_INFO+'<div class="dalert__body"><p class="dalert__title">Correção da versão vigente</p><p class="dalert__text">Você manteve a vigência ('+esc(_vigBaseline)+'), então isto <strong>corrige</strong> a versão vigente: ela é <strong>substituída</strong> pela corrigida, mesmo período.</p></div>';
+      }
+    }
     openB.addEventListener('click',function(){
       /* validação de envio: ao menos uma atividade (obrigatória). Rascunho não valida; só o envio. */
       var _sel=(window.__d1001Atv?window.__d1001Atv.get():{})||{};
@@ -707,6 +727,7 @@
         return;
       }
       var _e=document.getElementById('atvErr'); if(_e) _e.remove(); if(box){ box.removeAttribute('aria-invalid'); box.removeAttribute('aria-describedby'); }
+      setConseq();
       dsDialog.open(modal);
     });
     modal.querySelectorAll('[data-confirm-close]').forEach(function(b){ b.addEventListener('click',close); });
@@ -917,7 +938,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788494102';
+  var MYV='1788494846';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

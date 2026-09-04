@@ -986,6 +986,15 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 .page-h__desc{color:var(--color-text-muted);font-size:var(--text-base);line-height:1.5;margin:var(--space-2) 0 0}
 @media (max-width:640px){ .page-h__row{flex-wrap:wrap} }
 
+/* Aviso inline "vigência perto do fim": ícone de alerta âmbar + tooltip, junto a um título/valor.
+   Estrutura: <span class="tooltip tooltip--top vigwarn"><span class="vigwarn__ic" tabindex="0" role="img" aria-label="…">svg</span><span class="tooltip__bubble tooltip__bubble--stack">…</span></span>
+   (o banner de página maior é .dalert--warning; isto é só o marcador inline.) */
+.vigwarn{vertical-align:middle;margin-left:var(--space-1)}
+.vigwarn__ic{display:inline-flex;color:var(--color-warning);padding:var(--space-1);cursor:default}
+.vigwarn__ic svg{width:16px;height:16px}
+.vigwarn__ic:focus-visible{outline:none;box-shadow:var(--ring);border-radius:var(--radius-pill)}
+.vigwarn .tooltip__bubble{max-width:300px;text-align:left}
+
 /* ============ Seletor de empresa (multi-CNPJ) — topo da sidebar ============ */
 .orgswitch{display:flex;align-items:center;gap:var(--space-2);width:100%;padding:var(--space-2);border:0;border-radius:var(--radius-base);background:transparent;cursor:pointer;text-align:left;transition:background .12s}
 .orgswitch:hover{background:var(--color-border)}

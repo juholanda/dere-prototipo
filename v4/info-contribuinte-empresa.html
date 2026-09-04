@@ -120,10 +120,7 @@
     .verrow__top{display:flex;flex-direction:column;align-items:flex-start;gap:var(--space-1-5)}
     .verrow__title{font-size:var(--text-base);font-weight:600;color:var(--color-heading)}
     .verrow__titlewrap{display:inline-flex;align-items:center;gap:var(--space-1-5)}
-    .verwarn__ic{display:inline-flex;vertical-align:middle;color:var(--color-warning);padding:var(--space-1)}
-    .verwarn__ic svg{width:16px;height:16px}
-    .verwarn__ic:focus-visible{outline:none;box-shadow:var(--ring);border-radius:var(--radius-pill)}
-    .verwarn .tooltip__bubble{max-width:300px;text-align:left}
+    /* .vigwarn / .vigwarn__ic (aviso de vigência perto do fim) agora no ds.css */
     .verrow__kvs{display:grid;gap:var(--space-6)}
     .verrow__act{display:flex;align-items:center;gap:var(--space-2)}
     .verrow__act .btn{white-space:nowrap}
@@ -491,7 +488,7 @@
   /* mesmo alerta da lista: versão vigente perto do fim + sem sucessora ganha ícone com tooltip */
   function verWarn(v){
     if(!nearEndVig(v)) return '';
-    return '<span class="tooltip tooltip--top verwarn"><span class="verwarn__ic" tabindex="0" role="img" aria-label="O prazo de vigência está perto do fim. Envie uma nova versão."><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg></span><span class="tooltip__bubble tooltip__bubble--stack">O prazo de vigência está perto do fim. Envie uma nova versão.</span></span>';
+    return '<span class="tooltip tooltip--top vigwarn"><span class="vigwarn__ic" tabindex="0" role="img" aria-label="O prazo de vigência está perto do fim. Envie uma nova versão."><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg></span><span class="tooltip__bubble tooltip__bubble--stack">O prazo de vigência está perto do fim. Envie uma nova versão.</span></span>';
   }
   function row(v, opts){
     opts=opts||{};
@@ -725,7 +722,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788494102';
+  var MYV='1788494846';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

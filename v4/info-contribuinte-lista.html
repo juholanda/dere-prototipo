@@ -95,11 +95,7 @@
     .sitcell--proc{color:var(--color-processing)}
     .sitcell--muted{color:var(--color-text-muted)}
     .sitprog{display:block;font-size:var(--text-sm);color:var(--color-text-muted);margin-top:2px;line-height:1.3;padding-left:calc(18px + var(--space-2))}
-    .vigwarn-wrap{margin-left:var(--space-1-5);vertical-align:middle}
-    .vigwarn-wrap .tooltip__bubble{max-width:300px;text-align:left}
-    .vigwarn{display:inline-flex;color:var(--color-warning);padding:var(--space-1)}
-    .vigwarn svg{width:16px;height:16px}
-    .vigwarn:focus-visible{outline:none;box-shadow:var(--ring);border-radius:var(--radius-pill)}
+    /* .vigwarn / .vigwarn__ic (aviso de vigência perto do fim) agora no ds.css */
     .sitcell--danger{color:var(--color-danger-fg)}
     .sitcell--neutral{color:var(--color-text-muted)}
     .sitcell--muted{color:var(--color-text-onmuted)}
@@ -382,7 +378,7 @@
       var fl=flightInfo(e);
       var periodo=e.vigente ? (e.vigente.until ? 'até '+esc(e.vigente.until) : 'em aberto') : '';
       /* alerta de vigência só quando NÃO há nova versão em curso (com uma em curso, o operador já agiu) */
-      var vigWarn=(nearEnd(e.vigente) && !fl) ? ' <span class="tooltip tooltip--top vigwarn-wrap"><span class="vigwarn" tabindex="0" role="img" aria-label="O prazo de vigência está perto do fim. Envie uma nova versão."><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg></span><span class="tooltip__bubble tooltip__bubble--stack">O prazo de vigência está perto do fim. Envie uma nova versão.</span></span>' : '';
+      var vigWarn=(nearEnd(e.vigente) && !fl) ? ' <span class="tooltip tooltip--top vigwarn"><span class="vigwarn__ic" tabindex="0" role="img" aria-label="O prazo de vigência está perto do fim. Envie uma nova versão."><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg></span><span class="tooltip__bubble tooltip__bubble--stack">O prazo de vigência está perto do fim. Envie uma nova versão.</span></span>' : '';
       /* sublinha = SÓ a versão em processo, com bolinha da etapa (inclui vigência futura, bolinha verde). Sem nada em curso, sem sublinha */
       var verSub=fl ? '<div class="cellsub cellsub--stage"><span class="stagedot stagedot--'+fl.dot+'" aria-hidden="true"></span>Versão '+fl.n+' '+esc(fl.label)+'</div>' : '';
       /* linha 1: a versão vigente; sem vigente mas com tentativa, mostra o traço (a tentativa vem na sublinha) */
@@ -489,7 +485,7 @@
   <script>(function(){ var bar=document.getElementById('demobar'); if(!bar) return; var tog=bar.querySelector('[data-demo-toggle]'); if(!tog) return; function set(open){ bar.classList.toggle('is-collapsed', !open); tog.setAttribute('aria-expanded', String(open)); tog.setAttribute('aria-label', open?'Recolher ferramenta de demonstração':'Abrir ferramenta de demonstração de cenários'); try{ localStorage.setItem('adere.demo.open', open?'1':'0'); }catch(e){} } var open=false; try{ open=localStorage.getItem('adere.demo.open')==='1'; }catch(e){} set(open); tog.addEventListener('click',function(){ set(bar.classList.contains('is-collapsed')); }); })();</script>
 <script>
 (function(){
-  var MYV='1788494102';
+  var MYV='1788494846';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
