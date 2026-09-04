@@ -171,7 +171,7 @@
         <a class="sidenav__item" href="#" data-tip="Minhas empresas"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4M10 10h4M10 14h4M10 18h4"/></svg><span class="sidenav__label">Minhas empresas</span></a>
         <p class="sidenav__group">Cadastro</p>
         <a class="sidenav__item is-active" href="info-contribuinte-lista.html" aria-current="page" data-tip="Informações do Contribuinte"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg><span class="sidenav__label">Informações do Contribuinte</span></a>
-        <span class="sidenav__item is-disabled" data-tip="Plano de contas · em breve" aria-disabled="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M7 12h14M7 18h14M3 12h.01M3 18h.01"/></svg><span class="sidenav__label">Plano de contas</span></span>
+        <a class="sidenav__item" href="plano-contas-lista.html" data-tip="Plano Geral de Contas Comentado"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M7 12h14M7 18h14M3 12h.01M3 18h.01"/></svg><span class="sidenav__label">Plano Geral de Contas Comentado</span></a>
         <p class="sidenav__group">Declarações</p>
         <a class="sidenav__item" href="#" data-tip="Declaração mensal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span class="sidenav__label">Declaração mensal</span></a>
         <a class="sidenav__item" href="#" data-tip="Recibos e envios"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6M16 12h-6M13 16H10"/></svg><span class="sidenav__label">Recibos e envios</span></a>
@@ -218,7 +218,7 @@
               </div>
             </div>
             <div class="table-wrap">
-              <table class="table table--fixed table--stickyactions">
+              <table class="table table--fixed table--stickyactions" aria-labelledby="lst-h">
                 <colgroup>
                   <col style="width:250px"><col style="width:180px"><col style="width:205px"><col style="width:230px"><col style="width:175px"><col style="width:130px">
                 </colgroup>
@@ -487,7 +487,7 @@
   <script>(function(){ var bar=document.getElementById('demobar'); if(!bar) return; var tog=bar.querySelector('[data-demo-toggle]'); if(!tog) return; function set(open){ bar.classList.toggle('is-collapsed', !open); tog.setAttribute('aria-expanded', String(open)); tog.setAttribute('aria-label', open?'Recolher ferramenta de demonstração':'Abrir ferramenta de demonstração de cenários'); try{ localStorage.setItem('adere.demo.open', open?'1':'0'); }catch(e){} } var open=false; try{ open=localStorage.getItem('adere.demo.open')==='1'; }catch(e){} set(open); tog.addEventListener('click',function(){ set(bar.classList.contains('is-collapsed')); }); })();</script>
 <script>
 (function(){
-  var MYV='1788509862';
+  var MYV='1788526757';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

@@ -129,6 +129,21 @@
           <a class="scn" href="info-contribuinte-detalhe.html?emp=seg&v=3&cenario=excluir&fresh=1&scn=pop">Excluir a vigência · aprovação e baixa na Receita (preparador)</a>
         </div>
       </div>
+
+      <div class="flow">
+        <div class="flow__head">
+          <span class="flow__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M7 12h14M7 18h14M3 12h.01M3 18h.01"/></svg></span>
+          <div><span class="flow__n">Fluxo 4</span><h2>Plano Geral de Contas Comentado (D-1011)</h2><p>Lista das empresas e a classificação por IA: importar a planilha, ver o carregamento, a triagem por grupo e a tabela de contas editável.</p></div>
+        </div>
+        <div class="flow__scn">
+          <span class="flow__scn-lbl">Começar por</span>
+          <a class="scn scn--main" href="plano-contas-lista.html?scn=pop">Ver o plano de contas por empresa <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+          <span class="flow__scn-lbl" style="margin-top:var(--space-3)">Cenários</span>
+          <a class="scn" href="plano-contas-lista.html?scn=new">Primeiro acesso · empresas vazias</a>
+          <a class="scn" href="plano-contas-classificar.html?emp=cap&modo=nova">Preencher · importar → carregamento → triagem → tabela</a>
+          <a class="scn" href="plano-contas-classificar.html?emp=cap&modo=nova&tipo=primeiro">Primeiro plano da empresa (empresa nova)</a>
+        </div>
+      </div>
     </div>
 
     <p class="eyebrow" style="margin-top:var(--space-10)">Referência</p>
@@ -147,7 +162,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788509862';
+  var MYV='1788526757';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
