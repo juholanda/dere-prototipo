@@ -478,6 +478,11 @@
   }
   function renderAlert(sit){
     var el=$('alertSlot'); if(!el) return;
+    /* preparador acabou de enviar uma EXCLUSÃO da vigente: a vigência segue valendo, com aviso de que está aguardando aprovação */
+    if(curRole==='preparador' && curOp==='exclusao' && (sit==='sucesso'||sit==='advertencias')){
+      el.innerHTML='<div class="dalert dalert--info" role="status"><span class="dalert__ic">'+IC_INFO+'</span><div class="dalert__body"><p class="dalert__title">Exclusão da vigência enviada para aprovação</p><p class="dalert__text">A exclusão da Versão '+esc(dparam('v')||'')+' está com <strong>Ana Prado</strong>. A vigência continua valendo até a exclusão ser aprovada e transmitida — nada foi transmitido à Receita ainda.</p></div></div>';
+      return;
+    }
     /* versão vigente perto do vencimento, sem sucessora em curso: avisa pra enviar uma nova */
     if(dparam('near')==='1' && curRole==='preparador' && (sit==='sucesso'||sit==='advertencias')){
       var _e=empId(), _busy=false; try{ _busy=!!(localStorage.getItem('adere.d1001.draft.'+_e)||localStorage.getItem('adere.sent.d1001')); }catch(e){}
@@ -498,7 +503,7 @@
     } else if(sit==='excluida'){
       var _hN='info-contribuinte.html?modo=nova&emp='+empId()+(dparam('scn')?('&scn='+dparam('scn')):'')+'&from=detalhe';
       var _PL='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5v14"/></svg>';
-      el.innerHTML='<div class="dalert dalert--warning" role="status"><span class="dalert__ic">'+ALERT+'</span><div class="dalert__body"><p class="dalert__title">Vigência excluída na Receita Federal</p><p class="dalert__text">Motivo: <strong>'+esc(exclMotivo())+'</strong>. O contribuinte ficou <strong>sem declaração vigente</strong> do D-1001. Se ele continua obrigado à DeRE, registre uma nova versão para não ficar irregular.</p></div><a class="btn btn--primary dalert__act" href="'+_hN+'">'+_PL+'Nova versão D-1001</a></div>';
+      el.innerHTML='<div class="dalert dalert--warning" role="status"><span class="dalert__ic">'+ALERT+'</span><div class="dalert__body"><p class="dalert__title">Vigência excluída na Receita Federal</p><p class="dalert__text">Motivo: <strong>'+esc(exclMotivo())+'</strong>. O contribuinte ficou <strong>sem declaração vigente</strong> do D-1001. Se ele continua obrigado à DeRE, registre uma nova versão para não ficar irregular.</p></div><a class="btn btn--secondary dalert__act" href="'+_hN+'">'+_PL+'Nova versão D-1001</a></div>';
     } else { el.innerHTML=''; }
   }
   function renderTimeline(sit){
@@ -529,8 +534,8 @@
     /* ===== Visão do APROVADOR (role=aprovador) + operação (op=nova|alteracao|exclusao) — só demo ===== */
   var curRole = (dparam('role')==='aprovador') ? 'aprovador' : 'preparador';
   var curOp   = (['nova','alteracao','exclusao'].indexOf(dparam('op'))>=0) ? dparam('op') : 'nova';
-  /* alteração pendente gravada pelo formulário (adere.d1001.altop): a versão em revisão é uma alteração */
-  try{ if(curOp==='nova' && localStorage.getItem('adere.d1001.altop.'+empId())) curOp='alteracao'; }catch(e){}
+  /* operação pendente gravada no envio (adere.d1001.altop): alteração ou exclusão define o op da versão */
+  try{ var _ao0=localStorage.getItem('adere.d1001.altop.'+empId()); if(curOp==='nova' && _ao0){ curOp=(JSON.parse(_ao0).op==='exclusao')?'exclusao':'alteracao'; } }catch(e){}
   var _ajusteComment = '';
   function empId(){ return dparam('emp')||'seg'; }
   var IC_CHK='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
@@ -585,7 +590,7 @@
     try{ history.replaceState(null,'','?'+pr.toString()); }catch(e){}
     curRole=(pr.get('role')==='aprovador')?'aprovador':'preparador';
     curOp=(['nova','alteracao','exclusao'].indexOf(pr.get('op'))>=0)?pr.get('op'):'nova';
-    try{ if(curOp==='nova' && localStorage.getItem('adere.d1001.altop.'+empId())) curOp='alteracao'; }catch(e){}
+    try{ var _ao1=localStorage.getItem('adere.d1001.altop.'+empId()); if(curOp==='nova' && _ao1){ curOp=(JSON.parse(_ao1).op==='exclusao')?'exclusao':'alteracao'; } }catch(e){}
     render(pr.get('st')||'revisao');
   }
   var BELL='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>';
@@ -640,12 +645,15 @@
   });
   function showNotif(){
     var w=$('notifWrap'); if(!w) return; var vnum=dparam('v')||'4';
+    var _ao=altOp(); var _op=(_ao&&_ao.op==='exclusao')?'exclusao':(_ao?'alteracao':'nova');
+    var _co=(typeof DCO!=='undefined')?DCO[empId()]:null; var _nm=(_co&&_co.nome)||'MAG Seguros';
+    var _kind={nova:'Nova versão',alteracao:'Alteração',exclusao:'Exclusão de vigência'}[_op];
     var n=document.createElement('button'); n.type='button'; n.className='notif';
-    n.innerHTML='<span class="notif__ic">'+BELL+'</span><span class="notif__b"><strong>Nova submissão para aprovar</strong><span>MAG Seguros · Versão '+esc(vnum)+' aguardando sua aprovação</span></span>';
-    n.addEventListener('click',function(){ if(n.parentNode)n.parentNode.removeChild(n); setScenario({role:'aprovador',st:'revisao',sit:'',op:'nova'}); });
+    n.innerHTML='<span class="notif__ic">'+BELL+'</span><span class="notif__b"><strong>Nova submissão para aprovar</strong><span>'+esc(_nm+' · '+_kind+' · Versão '+vnum)+' aguardando sua aprovação</span></span>';
+    n.addEventListener('click',function(){ if(n.parentNode)n.parentNode.removeChild(n); setScenario({role:'aprovador',st:'revisao',sit:'',op:_op}); });
     w.appendChild(n);
     var bb=document.querySelector('.topbar .badge'); if(bb){ bb.textContent=String((parseInt(bb.textContent,10)||0)+1); }
-    setTimeout(function(){ if(n.parentNode) n.parentNode.removeChild(n); }, 9000);
+    /* persiste até clicar (demo): a notificação é o atalho pra ver o lado do aprovador */
   }
     var curDetState='revisao';
   /* quem está logado muda com o papel: no fluxo de aprovação, o usuário é a aprovadora (Ana Prado) */
@@ -663,6 +671,8 @@
     var s=STATES[key], sit=sitFor(key);
     var _acts, _decision='';
     if(curRole==='aprovador'){ if(sit==='revisao'){ _decision=approverActions(); } _acts=''; }
+    /* exclusão da vigente aguardando aprovação: sem ações (não dá pra alterar/excluir de novo enquanto pende) */
+    else if(curOp==='exclusao' && (sit==='sucesso'||sit==='advertencias')){ _acts=''; }
     else if(sit==='rejeitado' || sit==='ajustes'){ var _vr=dparam('v')||'4'; _acts='<button class="btn btn--danger-outline" type="button" data-open-excluir><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M10 11v6M14 11v6"/></svg>Excluir versão</button><a class="btn btn--primary" href="info-contribuinte.html?modo=editar&v='+_vr+'&corr='+sit+'"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>Corrigir e reenviar</a>'; }
     /* em processamento = já transmitida à Receita. Doc só prevê aguardar (não há cancelar/abortar/excluir). Sem ação: só o aviso de espera. */
     else if(sit==='processando'){ _acts=''; }
@@ -768,8 +778,8 @@
     } else { var st=dparam('st'); render(STATES[st]?st:'revisao'); }
   })();
   document.addEventListener('DOMContentLoaded',function(){
-    if(dparam('sent')==='1'){ showToast('Enviado para revisão interna.'); try{ var _ps=new URLSearchParams(location.search); _ps.delete('sent'); history.replaceState(null,'','?'+_ps.toString()); }catch(e){} }
-    if(dparam('exsent')==='1'){ showToast('Exclusão enviada para aprovação de Ana Prado.'); try{ var _pe=new URLSearchParams(location.search); _pe.delete('exsent'); history.replaceState(null,'','?'+_pe.toString()); }catch(e){} }
+    if(dparam('sent')==='1'){ showToast('Enviado para revisão interna.'); try{ var _ps=new URLSearchParams(location.search); _ps.delete('sent'); history.replaceState(null,'','?'+_ps.toString()); }catch(e){} setTimeout(showNotif,700); }
+    if(dparam('exsent')==='1'){ showToast('Exclusão enviada para revisão de Ana Prado.'); try{ var _pe=new URLSearchParams(location.search); _pe.delete('exsent'); history.replaceState(null,'','?'+_pe.toString()); }catch(e){} setTimeout(showNotif,700); }
   });
 
   /* Botão "Mais ações" (dropdown): abre o painel; fecha ao escolher, clicar fora ou Esc */
@@ -841,9 +851,10 @@
          e leva à tela de aprovação da Ana, onde o motivo aparece no banner vermelho. */
       var _e=dparam('emp')||'seg', _mot=(_motLabel||'').replace(/^\s*\d+\s*·\s*/,'');
       if(_motVal==='1' && $('nrProc') && $('nrProc').value.trim()){ _mot+=' (processo '+$('nrProc').value.trim()+')'; }
-      try{ localStorage.setItem('adere.d1001.exclmotivo.'+_e, _mot); }catch(e){}
+      try{ localStorage.setItem('adere.d1001.exclmotivo.'+_e, _mot); localStorage.setItem('adere.d1001.altop.'+_e, JSON.stringify({op:'exclusao'})); }catch(e){}
       var _v=dparam('v')||'3';
-      window.location.href='info-contribuinte-detalhe.html?emp='+_e+'&v='+_v+'&role=aprovador&op=exclusao&st=revisao&cenario=excluir&exsent=1'+(dparam('scn')?('&scn='+dparam('scn')):'');
+      /* cai no PREPARADOR (a vigente segue valendo, com aviso de exclusão pendente); a troca pro aprovador é pela notificação/demo */
+      window.location.href='info-contribuinte-detalhe.html?emp='+_e+'&v='+_v+'&role=preparador&st=aprovado&sit=sucesso&cenario=excluir&exsent=1'+(dparam('scn')?('&scn='+dparam('scn')):'');
       return;
     });
   });
@@ -1017,7 +1028,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788495817';
+  var MYV='1788496551';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
