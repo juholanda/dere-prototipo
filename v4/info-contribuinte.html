@@ -124,9 +124,7 @@
     .atvreg{display:flex;align-items:center;gap:var(--space-2);flex-wrap:wrap;margin:var(--space-4) 0 var(--space-2)}
     .atvreg__name{font-size:var(--text-lg);font-weight:700;color:var(--color-heading)}
     .atvlistgroup{border:1px solid var(--color-border);border-radius:var(--radius-2xl);overflow:hidden}
-    /* modal de confirmação */
-    .scrim{position:fixed;inset:0;background:var(--color-scrim);display:flex;align-items:center;justify-content:center;padding:var(--space-6);z-index:80}
-    .scrim[hidden]{display:none}
+    /* modal de confirmação: .scrim agora no ds.css (z acima da barra de demo); só os ajustes específicos ficam aqui */
     #leaveModal .modal{width:min(520px,100%)}
     #leaveModal .modal__footer{flex-wrap:wrap;gap:var(--space-2)}
     #confirmModal .modal__header{align-items:center}
@@ -940,7 +938,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788498564';
+  var MYV='1788500118';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

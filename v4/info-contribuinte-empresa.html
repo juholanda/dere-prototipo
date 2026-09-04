@@ -198,16 +198,8 @@
     .demobar button:hover{color:rgba(255,255,255,1);background:rgba(255,255,255,.08)}
     .demobar button.on{background:rgba(255,255,255,.16);color:rgba(255,255,255,1);font-weight:600}
 
-    /* modal (bloqueio de nova versão) */
-    .scrim{position:fixed;inset:0;background:var(--color-scrim);display:flex;align-items:center;justify-content:center;padding:var(--space-6);z-index:120}
-    .scrim[hidden]{display:none}
-    .modal{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);width:min(520px,100%)}
-    .modal__header{padding:var(--space-8) var(--space-8) var(--space-2)}
-    .modal__lead{display:flex;gap:var(--space-3);align-items:flex-start}
-    .modal__lead-ic{width:36px;height:36px;border-radius:var(--radius-lg);flex:0 0 auto;display:grid;place-items:center;background:var(--color-info-bg);color:var(--color-info-fg)}
-    .modal__lead-ic svg{width:20px;height:20px}
-    .modal__body{padding:var(--space-4) var(--space-8) var(--space-2);color:var(--color-text-onmuted);font-size:var(--text-base);line-height:1.55}
-    .modal__footer{display:flex;justify-content:flex-end;gap:var(--space-3);padding:var(--space-8)}
+    /* modal (bloqueio de nova versão): .scrim/.modal/.modal__lead/header/body/footer agora no ds.css; só a largura fica local */
+    #blockModal .modal{width:min(520px,100%)}
     .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
   </style>
 </head>
@@ -739,7 +731,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788498564';
+  var MYV='1788500118';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

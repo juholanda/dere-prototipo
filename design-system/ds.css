@@ -803,11 +803,11 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 .modal__topbar{display:flex;justify-content:flex-end;padding:var(--space-3) var(--space-3) 0}
 .modal__topbar + .confirm{padding-top:var(--space-2)}
 .modal--lg{width:min(720px,100%)}
-.modal__header{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;padding:var(--space-6) var(--space-6) var(--space-4)}
+.modal__header{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;padding:var(--space-8) var(--space-8) var(--space-4)}
 
 .modal__title{font-size:var(--text-2xl) !important;font-weight:700 !important;color:var(--color-heading);margin:0}
-.modal__body{padding:0 var(--space-6);overflow:auto;color:var(--color-text-onmuted);font-size:var(--text-sm)}
-.modal__footer{display:flex;justify-content:flex-end;gap:var(--space-2);padding:var(--space-6)}
+.modal__body{padding:0 var(--space-8);overflow:auto;color:var(--color-text-onmuted);font-size:var(--text-sm)}
+.modal__footer{display:flex;justify-content:flex-end;gap:var(--space-2);padding:var(--space-6) var(--space-8) var(--space-8)}
 /* Cancelar/dismiss (1º botão) vai pro lado oposto; as ações ficam agrupadas à direita */
 .modal__footer > .btn:first-child:not(:last-child){margin-right:auto}
 .modal__footer .btn{height:var(--control-h-lg);font-size:var(--text-base);padding:0 var(--space-6)}
@@ -824,6 +824,17 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 .modal__header + .confirm{padding-top:var(--space-2)}
 .confirm__icon{flex:0 0 auto;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--color-danger-bg);color:var(--color-danger)}
 .confirm__icon--warning{background:var(--color-warning-bg);color:var(--color-warning)}
+/* Overlay do modal usado pelas telas do app (z ACIMA da barra de demo e do app-shell) */
+.scrim{position:fixed;inset:0;background:var(--color-scrim);display:flex;align-items:center;justify-content:center;padding:var(--space-6);z-index:300}
+.scrim[hidden]{display:none}
+/* "Lead" do modal: ícone-chip + texto (confirmações). Chip danger por padrão; use as variantes. */
+.modal__lead{display:flex;gap:var(--space-3);align-items:flex-start;margin:0 0 var(--space-6)}
+.modal__lead p{margin:0;line-height:1.5;font-size:var(--text-base)}
+.modal__lead-ic{flex:0 0 auto;width:36px;height:36px;border-radius:var(--radius-lg);display:grid;place-items:center;background:var(--color-danger-bg);color:var(--color-danger-fg)}
+.modal__lead-ic svg{width:19px;height:19px}
+.modal__lead-ic--primary{background:var(--color-primary-subtle);color:var(--color-primary)}
+.modal__lead-ic--info{background:var(--color-info-bg);color:var(--color-info-fg)}
+.modal__lead-ic--warning{background:var(--color-warning-bg);color:var(--color-warning)}
 .confirm__icon--info{background:var(--color-info-bg);color:var(--color-info)}
 .confirm__title{font-size:var(--text-base);font-weight:600;color:var(--color-heading);margin:0 0 var(--space-1)}
 .confirm__text{font-size:var(--text-sm);color:var(--color-text-onmuted);margin:0}
