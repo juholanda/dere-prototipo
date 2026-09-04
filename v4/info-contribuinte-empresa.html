@@ -69,7 +69,7 @@
     /* respiro maior acima da primeira seção, logo abaixo das abas */
     #vp-tab .versec:first-child{padding-top:var(--space-10)}
 
-    /* seções: vigente · em andamento · encerradas */
+    /* seções: vigente · em preparação · encerradas */
     .versec{padding:var(--space-6) var(--space-6) 0}
     #vp-tab{padding-bottom:var(--space-8)}
     /* entre uma seção e a próxima: 48px (24 de padding + 24 de margem), pra cada bloco respirar */
@@ -93,7 +93,7 @@
     .verrow__sep{grid-row:1/3;grid-column:3}
     .verrow__act{grid-row:1/3;grid-column:4}
     @container (min-width:760px){
-      .verrow{grid-template-columns:auto auto minmax(0,1fr) auto auto;grid-template-rows:auto}
+      .verrow{grid-template-columns:auto 13.5rem minmax(0,1fr) auto auto;grid-template-rows:auto}
       .verrow__badge,.verrow__top,.verrow__sep,.verrow__act{grid-row:1}
       /* 4 dados inline (uma linha) assim que há espaço; colunas flexíveis (fr) enchem a faixa sem transbordar,
          calibradas por conteúdo (regime e vigência mais largos); valor longo trunca com reticências + tooltip */
@@ -326,8 +326,8 @@
                 <div id="secVig"></div>
               </section>
               <section class="versec" aria-labelledby="h-prog">
-                <div class="versec__h"><h2 id="h-prog">Em andamento</h2></div>
-                <p class="versec__hint">Versão em processo de criação, revisão ou processamento pela Receita Federal.</p>
+                <div class="versec__h"><h2 id="h-prog">Em preparação</h2></div>
+                <p class="versec__hint">Versão em criação, revisão ou processamento na Receita. Ainda não é a vigente.</p>
                 <div id="secProg"></div>
               </section>
               <section class="versec" aria-labelledby="h-enc" id="secEncSection">
@@ -353,12 +353,12 @@
     </div>
   </div>
 
-  <!-- Bloqueio: já existe uma versão em andamento -->
+  <!-- Bloqueio: já existe uma versão em preparação -->
   <div class="scrim" id="blockModal" hidden>
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="blockTitle" aria-describedby="blockDesc">
-      <div class="modal__header modal__header--icon"><span class="modal__ic modal__ic--warning" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span><h2 class="modal__title" id="blockTitle">Já existe uma versão em andamento</h2><button class="icon-btn" type="button" data-block-close aria-label="Fechar" style="flex:0 0 auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg></button></div>
+      <div class="modal__header modal__header--icon"><span class="modal__ic modal__ic--warning" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span><h2 class="modal__title" id="blockTitle">Já existe uma versão em preparação</h2><button class="icon-btn" type="button" data-block-close aria-label="Fechar" style="flex:0 0 auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg></button></div>
       <div class="modal__body" id="blockDesc"><p id="blockText" style="margin:0"></p></div>
-      <div class="modal__footer"><button class="btn btn--ghost" type="button" data-block-close>Fechar</button><a class="btn btn--primary" id="blockGo" href="#">Ver a versão em andamento</a></div>
+      <div class="modal__footer"><button class="btn btn--ghost" type="button" data-block-close>Fechar</button><a class="btn btn--primary" id="blockGo" href="#">Ver a versão em preparação</a></div>
     </div>
   </div>
 
@@ -380,7 +380,7 @@
     plus:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5v14"/></svg>'
   };
 
-  /* Versões do D-1001 por empresa. Regra do produto: no máximo UMA versão em andamento por vez
+  /* Versões do D-1001 por empresa. Regra do produto: no máximo UMA versão em preparação por vez
      (rascunho, em revisão, ajustes solicitados, em processamento ou rejeitada aguardando correção). */
   var COMPANIES={
     seg:{nome:'MAG Seguros', cnpj:'33.608.308/0001-73', logo:'../Logos/MAG%20seguros.png', regime:'Serviços Financeiros', versions:[
@@ -447,7 +447,7 @@
           : [];
   } else {
     _base = CO.versions.slice().filter(function(v){ return !(EMP==='seg' && v.sit==='revisao' && !_d1Sent); });
-    /* incorpora a versão em andamento criada pelo usuário (rascunho salvo ou enviada), respeitando a regra de UMA por vez */
+    /* incorpora a versão em preparação criada pelo usuário (rascunho salvo ou enviada), respeitando a regra de UMA por vez */
     var _prog=['rascunho','revisao','ajustes','processando','rejeitado'];
     var _hasProg=_base.some(function(v){ return _prog.indexOf(v.sit)>=0; });
     if(!_hasProg && (_d1Sent || _draft)){
@@ -482,7 +482,7 @@
   /* regime da versão: nas processadas é o da empresa; em rascunho/revisão do primeiro acesso vem do que foi escolhido no formulário */
   function regimeOf(v){ if(v.vigrole==='now'||v.vigrole==='past') return CO.regime; if(SCN==='new') return (_d1Sent&&_sentRegime)||(_draft&&_draftRegime)||null; return (v.sit==='rascunho'&&_draftRegime)||CO.regime; }
   function emptyBox(title, sub){ var body=sub?'<span><b>'+esc(title)+'</b><span class="versec__empty-sub">'+esc(sub)+'</span></span>':'<span>'+esc(title)+'</span>'; return '<div class="versec__empty">'+I.info+body+'</div>'; }
-  /* Uma linha só para vigente, em andamento e encerradas: os mesmos cinco campos, sempre na mesma ordem. */
+  /* Uma linha só para vigente, em preparação e encerradas: os mesmos cinco campos, sempre na mesma ordem. */
   /* mesmo alerta da lista: versão vigente perto do fim + sem sucessora ganha ícone com tooltip */
   function verWarn(v){
     if(!nearEndVig(v)) return '';
@@ -542,16 +542,16 @@
     $('coVig').textContent=vig?('Versão '+vig.n):(exc?'Sem versão vigente':'—');
     var _q=(prog||vig||VERSIONS[0]||{}).quando||'—'; $('coAt').textContent=_q.replace('hoje,','03/09/2026').replace('ontem,','02/09/2026').replace(/,\s+/,' ');
 
-    /* ação principal: só cabe UMA versão em andamento; com uma aberta o botão fica desabilitado e explica */
+    /* ação principal: só cabe UMA versão em preparação; com uma aberta o botão fica desabilitado e explica */
     var slot=$('headerActSlot');
     if(!has){ slot.innerHTML=''; }
     else if(prog){
       /* botão habilitado: ao clicar, a modal explica por que não dá pra criar outra agora */
       slot.innerHTML='<button class="btn btn--primary btn--lg" type="button" id="headerAct">'+I.plus+'Nova versão D-1001</button>';
-      var lbl='Ir para a versão em andamento';
-      var pill=(SIT[prog.sit]||{}).label||'em andamento';
+      var lbl='Ir para a versão em preparação';
+      var pill=(SIT[prog.sit]||{}).label||'em preparação';
       $('headerAct').addEventListener('click',function(){
-        $('blockText').textContent='A Versão '+prog.n+' está \u201c'+pill+'\u201d e ainda não foi concluída. Só pode haver uma versão em andamento por vez. Conclua ou cancele essa versão antes de registrar uma nova.';
+        $('blockText').textContent='A Versão '+prog.n+' está \u201c'+pill+'\u201d e ainda não foi concluída. Só pode haver uma versão em preparação por vez. Conclua ou cancele essa versão antes de registrar uma nova.';
         var go=$('blockGo'); go.textContent=lbl; go.setAttribute('href',goOf(prog));
         dsDialog.open($('blockModal'));
       });
@@ -580,10 +580,10 @@
     var _vigHtml = vig ? row(vig,{current:true}) : emptyBox(exc?'Sem versão vigente. A vigência foi excluída na Receita Federal; registre uma nova versão para o contribuinte voltar a ter declaração vigente.':'Nenhuma versão vigente. A primeira versão processada com sucesso pela Receita aparece aqui.');
     $('secVig').innerHTML = fut ? '<div class="verlist" style="gap:var(--space-4)">'+_vigHtml+row(fut,{})+'</div>' : _vigHtml;
 
-    /* em andamento (0 ou 1): a ação que o usuário precisa tomar é primária; só consultar é secundária */
+    /* em preparação (0 ou 1): a ação que o usuário precisa tomar é primária; só consultar é secundária */
     $('secProg').innerHTML = prog
       ? row(prog,{cta:(prog.sit==='ajustes')?'Ver ajustes':(prog.sit==='rascunho')?'Continuar':null, href:goOf(prog), primary:(prog.sit==='rascunho'||prog.sit==='ajustes')})
-      : emptyBox('Nenhuma versão em andamento.', 'Você pode registrar uma nova versão quando necessário.');
+      : emptyBox('Nenhuma versão em preparação.', 'Você pode registrar uma nova versão quando necessário.');
 
     /* encerradas: a seção só aparece quando há histórico */
     $('secEncSection').hidden = !enc.length;
@@ -725,13 +725,13 @@
   (function(){
     function stripParam(k){ try{ var u=new URLSearchParams(location.search); u.delete(k); history.replaceState(null,'',location.pathname+(u.toString()?('?'+u.toString()):'')); }catch(e){} }
     function toast(msg){ var w=document.getElementById('toastWrap'); if(!w) return; var t=document.createElement('div'); t.className='toast toast--success'; t.setAttribute('role','status'); t.innerHTML='<span class="toast__ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span>'+msg+'</span>'; w.appendChild(t); setTimeout(function(){ if(t.parentNode) t.parentNode.removeChild(t); }, 3800); }
-    if(/[?&]excl=1(&|$)/.test(location.search)){ toast('Versão em andamento excluída.'); stripParam('excl'); }
+    if(/[?&]excl=1(&|$)/.test(location.search)){ toast('Versão em preparação excluída.'); stripParam('excl'); }
     else if(/[?&]sent=1(&|$)/.test(location.search)){ toast('Enviado para revisão interna.'); stripParam('sent'); }
   })();
   </script>
 <script>
 (function(){
-  var MYV='1788533705';
+  var MYV='1788541085';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

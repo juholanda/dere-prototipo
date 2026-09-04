@@ -450,25 +450,27 @@
     enviada:     {t:'02/09/2026 · 11:15', title:'Enviada para revisão',          status:['Em revisão','status--warning'],             who:'Ricardo Alves', role:'Preparador'},
     ajustes:     {t:'02/09/2026 · 14:32', title:'Ajustes solicitados',           status:['Ajustes solicitados','status--danger'],     who:'Ana Prado', role:'Aprovadora', extras:[['Comentário','O regime secundário não se aplica a esta empresa. Remova a marcação e confirme a vigência antes de reenviar.']]},
     reenviada:   {t:'03/09/2026 · 09:10', title:'Reenviada para revisão',        status:['Em revisão','status--warning'],             who:'Ricardo Alves', role:'Preparador'},
-    aprovada:    {t:'03/09/2026 · 11:20', title:'Aprovada e transmitida à Receita Federal', status:['Em processamento','status--info'], who:'Ana Prado', role:'Aprovadora'},
+    aprovada:    {t:'03/09/2026 · 11:20', title:'Aprovada pelo revisor', status:['Aprovada','status--success'], who:'Ana Prado', role:'Aprovadora'},
+    transmitida: {t:'03/09/2026 · 11:22', title:'Transmitida à Receita Federal', status:['Em processamento','status--info'], who:'a-DeRE', role:'Sistema', extras:[['Protocolo',PROTO]]},
     processada:  {t:'03/09/2026 · 11:27', title:'Processada pela Receita Federal', status:['Processada com sucesso','status--success'], who:'Receita Federal', role:'Sistema', extras:[['Recibo',REC]]},
     processada_adv:{t:'03/09/2026 · 11:27', title:'Processada pela Receita Federal', status:['Processada com advertências','status--azul'], who:'Receita Federal', role:'Sistema', extras:[['Advertência','MS1094 · A data de início da validade é anterior ao início da DeRE (aviso, não impeditivo).'],['Recibo',REC]]},
     rejeitada:   {t:'03/09/2026 · 11:27', title:'Processada pela Receita Federal', status:['Rejeitada','status--danger'], who:'Receita Federal', role:'Sistema', extras:[['Erro','MS1097 · A validade informada se sobrepõe a um período já existente. Ajuste as datas e reenvie.']]},
     excl_enviada:  {t:'03/09/2026 · 16:05', title:'Exclusão enviada para aprovação',           status:['Em revisão','status--warning'],       who:'Ricardo Alves', role:'Preparador'},
-    excl_aprovada: {t:'03/09/2026 · 16:40', title:'Exclusão aprovada e transmitida à Receita Federal', status:['Em processamento','status--info'], who:'Ana Prado', role:'Aprovadora'},
+    excl_aprovada: {t:'03/09/2026 · 16:40', title:'Exclusão aprovada pelo revisor', status:['Aprovada','status--success'], who:'Ana Prado', role:'Aprovadora'},
+    excl_transmitida: {t:'03/09/2026 · 16:42', title:'Exclusão transmitida à Receita Federal', status:['Em processamento','status--info'], who:'a-DeRE', role:'Sistema', extras:[['Protocolo',PROTO]]},
     excl_feita:    {t:'03/09/2026 · 16:47', title:'Vigência excluída na Receita Federal',        status:['Vigência excluída','status--neutral'], who:'Receita Federal', role:'Sistema', extras:[['Motivo',''],['Recibo (exclusão)',REC]]}
   };
   var TL={
     rascunho:     ['criada'],
     revisao:      ['enviada'],
     ajustes:      ['enviada','ajustes'],
-    processando:  ['enviada','aprovada'],
-    sucesso:      ['enviada','ajustes','reenviada','aprovada','processada'],
-    advertencias: ['enviada','ajustes','reenviada','aprovada','processada_adv'],
-    rejeitado:    ['enviada','aprovada','rejeitada'],
-    futura:       ['enviada','aprovada','processada'],
-    encerrada:    ['enviada','aprovada','processada'],
-    excluida:     ['enviada','aprovada','processada','excl_enviada','excl_aprovada','excl_feita']
+    processando:  ['enviada','aprovada','transmitida'],
+    sucesso:      ['enviada','ajustes','reenviada','aprovada','transmitida','processada'],
+    advertencias: ['enviada','ajustes','reenviada','aprovada','transmitida','processada_adv'],
+    rejeitado:    ['enviada','aprovada','transmitida','rejeitada'],
+    futura:       ['enviada','aprovada','transmitida','processada'],
+    encerrada:    ['enviada','aprovada','transmitida','processada'],
+    excluida:     ['enviada','aprovada','transmitida','processada','excl_enviada','excl_aprovada','excl_transmitida','excl_feita']
   };
   var XMARK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></svg>';
   var LOADER='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>';
@@ -1152,7 +1154,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788533705';
+  var MYV='1788541085';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

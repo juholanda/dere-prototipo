@@ -137,6 +137,8 @@
   .rf-title{font-size:var(--text-base);font-weight:600;color:var(--color-heading)}
   .rf-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:var(--space-3)}
   .rf-perfis{display:flex;flex-wrap:wrap;gap:var(--space-4);padding-top:2px}
+  .rf-adminnote{display:flex;gap:var(--space-2);align-items:flex-start;font-size:var(--text-sm);color:var(--color-text-onmuted);background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-3) var(--space-4)}
+  .rf-adminnote svg{flex:0 0 auto;margin-top:1px;color:var(--color-primary)}
   .rf__act{display:flex;justify-content:flex-end;margin-top:var(--space-1)}
   .dsec{display:flex;flex-direction:column;gap:var(--space-4)}
   .dsec__hd{display:flex;flex-direction:column;gap:2px}
@@ -620,7 +622,7 @@
         var el=document.createElement('div');
         if(p._edit){
           el.className='resp resp--edit';
-          var checks=(p.admin?'<label class="check"><input type="checkbox" checked disabled> Administrador</label>':'')+PERFIS.map(function(pf){var on=p.perfis.indexOf(pf.k)>=0;return '<label class="check"><input type="checkbox" data-k="'+pf.k+'"'+(on?' checked':'')+'> '+pf.k+'</label>';}).join('');
+          var checks=(p.admin?'<div class="rf-adminnote"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg><span>Faz tudo: preparar, aprovar e transmitir à Receita. Não precisa de aprovação de terceiros.</span></div>':PERFIS.map(function(pf){var on=p.perfis.indexOf(pf.k)>=0;return '<label class="check"><input type="checkbox" data-k="'+pf.k+'"'+(on?' checked':'')+'> '+pf.k+'</label>';}).join(''));
           var ERRIC='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
           el.innerHTML=
             '<div class="rf-head"><span class="rf-title">'+(p._new?'Novo responsável':'Editar responsável')+'</span><button class="icon-btn icon-btn--sm rf-cancel" type="button" data-tooltip="Cancelar" aria-label="Cancelar edição"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div>'+
@@ -628,7 +630,7 @@
               '<div class="field"><label class="field__label">Nome</label><input class="input rf-nome" aria-label="Nome do responsável" value="'+esc(p.nome)+'" placeholder="Ex.: Nome da pessoa"><p class="field__msg field__msg--error rf-nome-msg" role="alert" hidden>'+ERRIC+' Informe o nome.</p></div>'+
               '<div class="field"><label class="field__label">E-mail</label><input class="input rf-mail" type="email" aria-label="E-mail do responsável" value="'+esc(p.email)+'" placeholder="Ex.: nome@empresa.com"'+(p.admin?' disabled':'')+'><p class="field__msg field__msg--error rf-mail-msg" role="alert" hidden>'+ERRIC+' Informe um e-mail válido.</p></div>'+
             '</div>'+
-            '<div class="field"><label class="field__label">Perfis</label><div class="rf-perfis">'+checks+'</div></div>'+
+            '<div class="field"><label class="field__label">'+(p.admin?'Permissões':'Perfis')+'</label><div class="rf-perfis">'+checks+'</div></div>'+
             '<div class="rf__act"><button class="btn btn--secondary btn--sm rf-save" type="button">Confirmar responsável</button></div>';
           var nomeI=el.querySelector('.rf-nome'), mailI=el.querySelector('.rf-mail');
           nomeI.addEventListener('input',function(){ el.querySelector('.rf-nome-msg').hidden=true; nomeI.setAttribute('aria-invalid','false'); });
@@ -667,11 +669,11 @@
       var wrap=$('resplist'); wrap.innerHTML='';
       resp.forEach(function(p,i){ wrap.appendChild(buildResp(p,i)); });
       $('respCount').textContent='('+resp.length+')';
-      if($('respMsg')){ var hp=resp.some(function(p){return (p.perfis||[]).indexOf('Preparador')>=0;}), ha=resp.some(function(p){return (p.perfis||[]).indexOf('Aprovador')>=0;}); if(hp&&ha)$('respMsg').hidden=true; }
+      if($('respMsg')){ var hp=resp.some(function(p){return (p.admin||(p.perfis||[]).indexOf('Preparador')>=0);}), ha=resp.some(function(p){return (p.admin||(p.perfis||[]).indexOf('Aprovador')>=0);}); if(hp&&ha)$('respMsg').hidden=true; }
     }
     /* Confirmar: fecha o form de preenchimento e revela o card com transição (colapsa o form, expande o card). */
     function swapToCard(el,p,i){
-      if($('respMsg')){ var hp=resp.some(function(x){return (x.perfis||[]).indexOf('Preparador')>=0;}), ha=resp.some(function(x){return (x.perfis||[]).indexOf('Aprovador')>=0;}); if(hp&&ha)$('respMsg').hidden=true; }
+      if($('respMsg')){ var hp=resp.some(function(x){return x.admin||(x.perfis||[]).indexOf('Preparador')>=0;}), ha=resp.some(function(x){return x.admin||(x.perfis||[]).indexOf('Aprovador')>=0;}); if(hp&&ha)$('respMsg').hidden=true; }
       var card=buildResp(p,i);
       el.parentNode.replaceChild(card, el);            /* swap instantâneo */
       if(!matchMedia('(prefers-reduced-motion:reduce)').matches){
@@ -736,8 +738,8 @@
       var d=onlyDigits($('cnpj').value);
       if(d.length!==14){ setCnpjError('Informe um CNPJ válido (14 dígitos).'); $('cnpj').focus(); return; }
       if(!CNPJDB[d]){ setCnpjError('CNPJ não encontrado. Confira o número e tente novamente.'); $('cnpj').focus(); return; }
-      var hasPrep=resp.some(function(p){return (p.perfis||[]).indexOf('Preparador')>=0;});
-      var hasAprov=resp.some(function(p){return (p.perfis||[]).indexOf('Aprovador')>=0;});
+      var hasPrep=resp.some(function(p){return (p.admin||(p.perfis||[]).indexOf('Preparador')>=0);});
+      var hasAprov=resp.some(function(p){return (p.admin||(p.perfis||[]).indexOf('Aprovador')>=0);});
       if(!hasPrep||!hasAprov){ $('respMsg').hidden=false; return; }
       var obj={ cnpj:$('roCnpj').textContent||maskCNPJ(d), razao:$('roRazao').textContent, resp:resp.filter(function(p){return !p._new;}).map(function(p){return {nome:p.nome,email:p.email,perfis:(p.perfis||[]).slice(),admin:p.admin};}), logo:logoData };
       if(editIndex>=0){ companies[editIndex]=obj; } else { companies.push(obj); }
@@ -843,7 +845,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788533705';
+  var MYV='1788541085';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

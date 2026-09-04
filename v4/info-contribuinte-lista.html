@@ -55,6 +55,13 @@
     .stagedot--processando{background:var(--color-processing)}
     .stagedot--rejeitado{background:var(--color-danger)}
     .stagedot--futura{background:var(--color-success-fg)}
+    .vercell-sit{margin-top:3px}
+    .vigperiod{font-size:var(--text-sm);color:var(--color-text);display:inline-flex;align-items:center;gap:4px;white-space:nowrap;font-variant-numeric:tabular-nums}
+    .vigopen{color:var(--color-text-muted);font-weight:400}
+    .cd{font-size:var(--text-xs);margin-top:3px;font-variant-numeric:tabular-nums;color:var(--color-text-muted)}
+    .cd--warn{color:var(--color-warning-fg);font-weight:600}
+    .cd--over{color:var(--color-danger-fg);font-weight:600}
+    .prepcell{font-size:var(--text-sm)}
     .evemp{display:flex;align-items:center;gap:var(--space-3)}
     .evemp > div{min-width:0}
     .muted{color:var(--color-text-muted)}
@@ -220,15 +227,14 @@
             <div class="table-wrap">
               <table class="table table--fixed table--stickyactions" aria-labelledby="lst-h">
                 <colgroup>
-                  <col style="width:250px"><col style="width:180px"><col style="width:205px"><col style="width:230px"><col style="width:175px"><col style="width:130px">
+                  <col style="width:250px"><col style="width:210px"><col style="width:235px"><col style="width:235px"><col style="width:130px">
                 </colgroup>
                 <thead>
                   <tr>
                     <th scope="col" class="sortable is-sorted" data-sort="emp" aria-sort="ascending"><button type="button" class="th-btn">Empresa <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
-                    <th scope="col" class="sortable" data-sort="regime" aria-sort="none"><button type="button" class="th-btn">Regime principal <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
-                    <th scope="col" class="sortable" data-sort="sit" aria-sort="none"><button type="button" class="th-btn">Situação na Receita <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
                     <th scope="col" class="sortable" data-sort="ver" aria-sort="none"><button type="button" class="th-btn">Versão vigente <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
-                    <th scope="col" class="sortable" data-sort="at" aria-sort="none"><button type="button" class="th-btn">Última atualização <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
+                    <th scope="col" class="sortable" data-sort="vig" aria-sort="none"><button type="button" class="th-btn">Vigência <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
+                    <th scope="col">Em preparação</th>
                     <th scope="col"><span class="sr-only">Ações</span></th>
                   </tr>
                 </thead>
@@ -344,6 +350,8 @@
     return null;
   }
   function nearEnd(v){ if(!v||!v.until) return false; var m=/(\d{2})\/(\d{2})\/(\d{4})/.exec(v.until); if(!m) return false; var end=new Date(+m[3],+m[2]-1,+m[1]), today=new Date(2026,8,3); var d=(end-today)/86400000; return d>=0 && d<=60; }
+  function daysLeft(v){ if(!v||!v.until) return null; var m=/(\d{2})\/(\d{2})\/(\d{4})/.exec(v.until); if(!m) return null; var end=new Date(+m[3],+m[2]-1,+m[1]), today=new Date(2026,8,4); return Math.round((end-today)/86400000); }
+  function countdownHtml(v){ var d=daysLeft(v); if(d==null) return ''; var cls=d<0?'cd--over':(d<=30?'cd--warn':'cd--ok'); var txt=d<0?'vigência expirada':(d===0?'expira hoje':('restam '+d+' dia'+(d===1?'':'s'))); return '<div class="cd '+cls+'">'+txt+'</div>'; }
   function situacaoCell(e){
     var r=receitaSit(e);
     return '<span class="sitcell sitcell--'+r.cls+'">'+r.ic+'<span>'+esc(r.label)+'</span></span>';
@@ -356,11 +364,8 @@
   var listSort={key:'emp', dir:'asc'};
   function sortVal(e){
     switch(listSort.key){
-      case 'cnpj':   return e.cnpj;
-      case 'regime': return (e.regime||'').toLowerCase();
       case 'ver':    return e.vigente?e.vigente.ver:-1;
-      case 'sit':    return sitRank(e);
-      case 'at':     return e.ts||0;
+      case 'vig':    var d=daysLeft(e.vigente); return d==null?99999:d;
       default:       return e.nome.toLowerCase();
     }
   }
@@ -383,10 +388,18 @@
       var vigWarn=(nearEnd(e.vigente) && !fl) ? ' <span class="tooltip tooltip--top vigwarn"><span class="vigwarn__ic" tabindex="0" role="img" aria-label="O prazo de vigência está perto do fim. Envie uma nova versão."><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg></span><span class="tooltip__bubble tooltip__bubble--stack">O prazo de vigência está perto do fim. Envie uma nova versão.</span></span>' : '';
       /* sublinha = SÓ a versão em processo, com bolinha da etapa (inclui vigência futura, bolinha verde). Sem nada em curso, sem sublinha */
       var verSub=fl ? '<div class="cellsub cellsub--stage"><span class="stagedot stagedot--'+fl.dot+'" aria-hidden="true"></span>Versão '+fl.n+' '+esc(fl.label)+'</div>' : '';
-      /* linha 1: a versão vigente; sem vigente mas com tentativa, mostra o traço (a tentativa vem na sublinha) */
-      var versao=(e.vigente
-        ? '<span class="vercell-top"><span style="font-weight:600;color:var(--color-heading)">Versão '+e.vigente.ver+'</span>'+vigWarn+'</span>'
-        : (fl ? '<span class="vercell-top"><span class="muted">—</span></span>' : '<span class="muted">—</span>')) + verSub;
+      /* Versão vigente = nº + situação na Receita (fundidas). Sem vigente: só a situação ("Sem versão vigente"). */
+      var verCell=e.vigente
+        ? '<div class="vercell-top"><span style="font-weight:600;color:var(--color-heading)">Versão '+e.vigente.ver+'</span></div><div class="vercell-sit">'+situacaoCell(e)+'</div>'
+        : situacaoCell(e);
+      /* Vigência = período + contagem regressiva + alerta (o alerta de vigência migrou p/ cá) */
+      var vigCell;
+      if(e.vigente){
+        var per=e.vigente.until ? esc(e.vigente.since)+' – '+esc(e.vigente.until) : 'Desde '+esc(e.vigente.since)+' <span class="vigopen">· em aberto</span>';
+        vigCell='<div class="vigperiod">'+per+vigWarn+'</div>'+countdownHtml(e.vigente);
+      } else { vigCell='<span class="muted">—</span>'; }
+      /* Em preparação = a versão em processo (reusa a sublinha da etapa) ou "—" */
+      var prepCell=verSub ? verSub : '<span class="muted">—</span>';
       var at=e.at?esc(e.at):'<span class="muted">—</span>';
       var btn=semversao
         ? '<a class="btn btn--primary rowbtn" href="'+href+'">Preencher</a>'
@@ -395,10 +408,9 @@
         : '<a class="btn btn--secondary rowbtn" href="'+href+'">Ver detalhe</a>';
       return '<tr data-href="'+href+'">'+
         '<td><div class="evemp">'+logoHtml(e)+'<div><div class="celltitle">'+esc(e.nome)+'</div><div class="cellcnpj">'+esc(e.cnpj)+'</div></div></div></td>'+
-        '<td>'+regime+'</td>'+
-        '<td>'+situacaoCell(e)+'</td>'+
-        '<td class="col-ver">'+versao+'</td>'+
-        '<td>'+at+'</td>'+
+        '<td class="col-ver">'+verCell+'</td>'+
+        '<td>'+vigCell+'</td>'+
+        '<td>'+prepCell+'</td>'+
         '<td class="col-act">'+btn+'</td>'+
       '</tr>';
     }).join('');
@@ -487,7 +499,7 @@
   <script>(function(){ var bar=document.getElementById('demobar'); if(!bar) return; var tog=bar.querySelector('[data-demo-toggle]'); if(!tog) return; function set(open){ bar.classList.toggle('is-collapsed', !open); tog.setAttribute('aria-expanded', String(open)); tog.setAttribute('aria-label', open?'Recolher ferramenta de demonstração':'Abrir ferramenta de demonstração de cenários'); try{ localStorage.setItem('adere.demo.open', open?'1':'0'); }catch(e){} } var open=false; try{ open=localStorage.getItem('adere.demo.open')==='1'; }catch(e){} set(open); tog.addEventListener('click',function(){ set(bar.classList.contains('is-collapsed')); }); })();</script>
 <script>
 (function(){
-  var MYV='1788533705';
+  var MYV='1788541085';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

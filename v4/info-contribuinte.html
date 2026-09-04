@@ -458,6 +458,15 @@
     s2u:{reg:'1', cnae:'64.63-8/00 · Outras sociedades de participação',          ativ:[]}
   };
   function empId(){ var m=new RegExp('[?&]emp=([^&]*)').exec(location.search); return m?decodeURIComponent(m[1]):'seg'; }
+  var IS_ADMIN=/[?&]perfil=admin/.test(location.search);
+  /* Fluxo admin: transmite direto à Receita, sem passar por revisão. Ajusta rótulos e esconde o aprovador. */
+  (function(){ if(!IS_ADMIN) return; function setTxt(el,txt){ if(!el) return; for(var i=el.childNodes.length-1;i>=0;i--){ if(el.childNodes[i].nodeType===3){ el.childNodes[i].nodeValue=txt; return; } } el.appendChild(document.createTextNode(txt)); }
+    setTxt(document.getElementById('submitBtn'),'Transmitir para Receita');
+    setTxt(document.getElementById('confirmSubmit'),'Transmitir para Receita');
+    var ct=document.getElementById('confirmTitle'); if(ct) ct.textContent='Transmitir para a Receita?';
+    var cd=document.getElementById('confirmDesc'); if(cd) cd.innerHTML='Você é <b>administrador</b>: as informações do contribuinte (D-1001) vão direto para a Receita, sem passar por revisão de terceiros.';
+    var ci=document.querySelector('.cinfo'); if(ci) ci.hidden=true;
+  })();
   function perfil(){ return PERFIL[empId()]||PERFIL.seg; }
 
   /* Modo do formulário: nova versão (padrão) x editar versão existente (?modo=editar&v=N) */
@@ -734,7 +743,7 @@
     });
     modal.querySelectorAll('[data-confirm-close]').forEach(function(b){ b.addEventListener('click',close); });
     modal.addEventListener('click',function(e){ if(e.target===modal) close(); });
-    $('confirmSubmit').addEventListener('click',function(){ var q=function(k){var m=new RegExp('[?&]'+k+'=([^&]+)').exec(location.search);return m?decodeURIComponent(m[1]):'';}; try{ localStorage.setItem('adere.sent.d1001', q('emp')||'seg'); localStorage.setItem('adere.sent.d1001.t', String(Date.now())); var _rp=document.querySelector('input[name="regprin"]:checked'), _rl=_rp&&_rp.closest('.selectcard')&&_rp.closest('.selectcard').querySelector('.selectcard__title'); if(_rl) localStorage.setItem('adere.sent.d1001.regime', _rl.textContent.replace(/^Regime Específico de /,'').trim()); }catch(e){} try{ var _isAlt=(q('modo')==='nova' && q('from')==='detalhe' && q('scn')==='pop'); var _kAlt='adere.d1001.altop.'+(q('emp')||'seg'); if(_isAlt){ var _ini=($('iniVig')||{}).value||''; localStorage.setItem(_kAlt, JSON.stringify({op:(_ini&&_vigBaseline&&_ini!==_vigBaseline)?'novavig':'corrigir', data:_ini})); } else { localStorage.removeItem(_kAlt); } }catch(e){} var _cen=q('cenario'); var _dest='info-contribuinte-detalhe.html?emp='+(q('emp')||'seg')+'&v='+(q('v')||'1')+'&st=revisao'+(_cen?('&cenario='+_cen):'')+(q('scn')?('&scn='+q('scn')):''); window.location.href=_dest+'&sent=1'; });
+    $('confirmSubmit').addEventListener('click',function(){ if(IS_ADMIN){ var qa=function(k){var m=new RegExp('[?&]'+k+'=([^&]+)').exec(location.search);return m?decodeURIComponent(m[1]):'';}; window.location.href='info-contribuinte-detalhe.html?emp='+(qa('emp')||'cap')+'&v='+(qa('v')||'1')+'&sit=processando&fresh=1'+(qa('scn')?('&scn='+qa('scn')):'')+'&sent=1'; return; } var q=function(k){var m=new RegExp('[?&]'+k+'=([^&]+)').exec(location.search);return m?decodeURIComponent(m[1]):'';}; try{ localStorage.setItem('adere.sent.d1001', q('emp')||'seg'); localStorage.setItem('adere.sent.d1001.t', String(Date.now())); var _rp=document.querySelector('input[name="regprin"]:checked'), _rl=_rp&&_rp.closest('.selectcard')&&_rp.closest('.selectcard').querySelector('.selectcard__title'); if(_rl) localStorage.setItem('adere.sent.d1001.regime', _rl.textContent.replace(/^Regime Específico de /,'').trim()); }catch(e){} try{ var _isAlt=(q('modo')==='nova' && q('from')==='detalhe' && q('scn')==='pop'); var _kAlt='adere.d1001.altop.'+(q('emp')||'seg'); if(_isAlt){ var _ini=($('iniVig')||{}).value||''; localStorage.setItem(_kAlt, JSON.stringify({op:(_ini&&_vigBaseline&&_ini!==_vigBaseline)?'novavig':'corrigir', data:_ini})); } else { localStorage.removeItem(_kAlt); } }catch(e){} var _cen=q('cenario'); var _dest='info-contribuinte-detalhe.html?emp='+(q('emp')||'seg')+'&v='+(q('v')||'1')+'&st=revisao'+(_cen?('&cenario='+_cen):'')+(q('scn')?('&scn='+q('scn')):''); window.location.href=_dest+'&sent=1'; });
   })();
 
   /* Tooltip da sugestão da IA (position:fixed para escapar o recorte do drawer) */
@@ -940,7 +949,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788533705';
+  var MYV='1788541085';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
