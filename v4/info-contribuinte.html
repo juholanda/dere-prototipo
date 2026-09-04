@@ -465,7 +465,7 @@
     setTxt(document.getElementById('confirmSubmit'),'Transmitir para Receita');
     var ct=document.getElementById('confirmTitle'); if(ct) ct.textContent='Transmitir para a Receita?';
     var cd=document.getElementById('confirmDesc'); if(cd) cd.innerHTML='Você é <b>administrador</b>: as informações do contribuinte (D-1001) vão direto para a Receita, sem passar por revisão de terceiros.';
-    var ci=document.querySelector('.cinfo'); if(ci) ci.hidden=true;
+    var ci=document.querySelector('.cinfo'); if(ci) ci.innerHTML='<div class="cinfo__row"><span class="cinfo__k">Assinatura digital · ICP-Brasil</span><span class="cinfo__v"><span class="avatar avatar--sm">RA</span>Ricardo Alves</span></div>';
   })();
   function perfil(){ return PERFIL[empId()]||PERFIL.seg; }
 
@@ -949,7 +949,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788544783';
+  var MYV='1788544908';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
