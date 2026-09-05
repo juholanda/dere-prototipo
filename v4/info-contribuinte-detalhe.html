@@ -8,9 +8,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Detalhe do contribuinte</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788623626">
-  <script src="../design-system/ds-tailwind.js?v=1788623626"></script>
-  <script src="../design-system/ds-dialog.js?v=1788623626"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788625016">
+  <script src="../design-system/ds-tailwind.js?v=1788625016"></script>
+  <script src="../design-system/ds-dialog.js?v=1788625016"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -82,7 +82,10 @@
     .notifitem:last-child{border-bottom:0}
     .notifitem:hover{background:var(--color-surface-2)}
     .notifitem:focus-visible{outline:none;box-shadow:var(--ring)}
+    /* não-lida: marcador NÃO-cromático (dot + título em negrito), não só o fundo (status nunca só por cor) */
     .notifitem--unread{background:color-mix(in srgb,var(--color-primary) 5%,var(--color-surface))}
+    .notifitem--unread .notifitem__title{font-weight:700}
+    .notifitem--unread .notifitem__title::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--color-primary);margin-right:var(--space-2);vertical-align:middle}
     .notifitem__ic{flex:0 0 auto;width:32px;height:32px;border-radius:var(--radius-lg);display:grid;place-items:center}
     .notifitem__ic svg{width:17px;height:17px}
     .notifitem__ic--info{background:var(--color-info-bg);color:var(--color-info-fg)}
@@ -91,6 +94,13 @@
     .notifitem__body{min-width:0;display:flex;flex-direction:column;gap:2px}
     .notifitem__title{font-weight:600;color:var(--color-heading);font-size:var(--text-sm)}
     .notifitem__text{font-size:var(--text-xs);color:var(--color-text-muted);line-height:1.45}
+    /* barra de decisão do aprovador surge com slide-up sutil (é sticky no rodapé, o movimento é natural) */
+    @keyframes ds-decisionbar-in{from{opacity:0;transform:translateY(100%)}to{opacity:1;transform:none}}
+    .decisionbar:not([hidden]){animation:ds-decisionbar-in .24s cubic-bezier(.2,.7,.2,1) both}
+    /* badge do sino aparece com micro pop */
+    @keyframes ds-badge-pop{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
+    #notifBadge:not([hidden]){animation:ds-badge-pop .18s cubic-bezier(.2,.7,.2,1)}
+    @media (prefers-reduced-motion:reduce){.decisionbar:not([hidden]),#notifBadge:not([hidden]){animation:none}}
     .demobar button{background:none;border:0;color:rgba(255,255,255,.72);font-family:inherit;font-size:var(--text-xs);cursor:pointer;padding:var(--space-1) var(--space-2);border-radius:var(--radius-pill)}
     .demobar button:hover{color:rgba(255,255,255,1);background:rgba(255,255,255,.08)}
     .demobar button.on{background:rgba(255,255,255,.16);color:rgba(255,255,255,1);font-weight:600}
@@ -361,8 +371,8 @@
                 <div class="accordion__item is-open">
                   <button class="accordion__head" type="button" aria-expanded="true"><span class="accordion__label"><span class="accordion__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>Vigência</span><span class="accordion__chev" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button>
                   <div class="accordion__panel"><dl class="rogrid">
-                    <div class="roitem"><dt>Início da vigência</dt><dd>01/01/2026</dd></div>
-                    <div class="roitem"><dt>Fim da vigência</dt><dd>Sem data de fim</dd></div>
+                    <div class="roitem"><dt>Início da vigência</dt><dd id="roIni">01/01/2026</dd></div>
+                    <div class="roitem"><dt>Fim da vigência</dt><dd id="roFim">Sem data de fim</dd></div>
                   </dl></div>
                 </div>
                 <div class="accordion__item is-open">
@@ -484,7 +494,7 @@
     aprovada:    {t:'03/09/2026 · 11:20', title:'Aprovada pelo revisor', status:['Aprovada','status--success'], who:'Ana Prado', role:'Aprovadora'},
     transmitida: {t:'03/09/2026 · 11:22', title:'Transmitida à Receita Federal', status:['Em processamento','status--info'], who:'a-DeRE', role:'Sistema', extras:[['Protocolo',PROTO]]},
     processada:  {t:'03/09/2026 · 11:27', title:'Processada pela Receita Federal', status:['Processada com sucesso','status--success'], who:'Receita Federal', role:'Sistema', extras:[['Recibo',REC]]},
-    processada_adv:{t:'03/09/2026 · 11:27', title:'Processada pela Receita Federal', status:['Processada com advertências','status--azul'], who:'Receita Federal', role:'Sistema', extras:[['Advertência','MS1094 · A data de início da validade é anterior ao início da DeRE (aviso, não impeditivo).'],['Recibo',REC]]},
+    processada_adv:{t:'03/09/2026 · 11:27', title:'Processada pela Receita Federal', status:['Processada com advertências','status--azul'], who:'Receita Federal', role:'Sistema', extras:[['Advertência','A versão foi aceita com observações não impeditivas. Confira os dados antes do próximo período.'],['Recibo',REC]]},
     rejeitada:   {t:'03/09/2026 · 11:27', title:'Processada pela Receita Federal', status:['Rejeitada','status--danger'], who:'Receita Federal', role:'Sistema', extras:[['Erro','MS1097 · A validade informada se sobrepõe a um período já existente. Ajuste as datas e reenvie.']]},
     excl_enviada:  {t:'03/09/2026 · 16:05', title:'Exclusão enviada para aprovação',           status:['Em revisão','status--warning'],       who:'Ricardo Alves', role:'Preparador'},
     excl_aprovada: {t:'03/09/2026 · 16:40', title:'Exclusão aprovada pelo revisor', status:['Aprovada','status--success'], who:'Ana Prado', role:'Aprovadora'},
@@ -743,8 +753,9 @@
     var n=document.createElement('div'); n.className='notif'; n.setAttribute('role','button'); n.tabIndex=0;
     n.innerHTML='<span class="notif__ic">'+BELL+'</span><span class="notif__b"><strong>Nova submissão para aprovar</strong><span>'+esc(_nm+' · '+_kind+' · Versão '+vnum)+' aguardando sua aprovação</span></span><button class="notif__x" type="button" aria-label="Dispensar notificação"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg></button>';
     n.addEventListener('click',function(ev){ if(n.parentNode)n.parentNode.removeChild(n); if(ev.target.closest('.notif__x')) return; setScenario({role:'aprovador',st:'revisao',sit:'',op:_op}); });
+    n.addEventListener('keydown',function(ev){ if(ev.key==='Enter'||ev.key===' '){ ev.preventDefault(); n.click(); } });
     w.appendChild(n);
-    var bb=document.querySelector('.topbar .badge'); if(bb){ bb.textContent=String((parseInt(bb.textContent,10)||0)+1); }
+    /* o contador do sino é responsabilidade única do renderNotifs (evita contar 2 com 1 item) */
     /* persiste até clicar (demo): a notificação é o atalho pra ver o lado do aprovador */
   }
   /* notificação de RETORNO ao preparador (aprovador devolveu ajustes / Receita rejeitou / aprovada e transmitida) */
@@ -756,8 +767,9 @@
     var n=document.createElement('div'); n.className='notif'; n.setAttribute('role','button'); n.tabIndex=0;
     n.innerHTML='<span class="notif__ic">'+BELL+'</span><span class="notif__b"><strong>'+esc(M[0])+'</strong><span>'+esc(_nm+' · Versão '+vnum+' · '+M[1])+'</span></span><button class="notif__x" type="button" aria-label="Dispensar notificação"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg></button>';
     n.addEventListener('click',function(){ if(n.parentNode)n.parentNode.removeChild(n); });
+    n.addEventListener('keydown',function(ev){ if(ev.key==='Enter'||ev.key===' '){ ev.preventDefault(); n.click(); } });
     w.appendChild(n);
-    var bb=document.querySelector('.topbar .badge'); if(bb){ bb.textContent=String((parseInt(bb.textContent,10)||0)+1); }
+    /* o contador do sino é responsabilidade única do renderNotifs (evita contar 2 com 1 item) */
   }
     var curDetState='revisao';
   /* quem está logado muda com o papel: no fluxo de aprovação, o usuário é a aprovadora (Ana Prado) */
@@ -824,6 +836,8 @@
     if($('dBadge')){ var _st=SIT[sit]||{label:s.sub,pill:s.pill}; var _bh='<span class="status '+_st.pill+'"><span class="status__dot"></span>'+esc(_st.label)+'</span>'; $('dBadge').innerHTML=_bh; }
     renderPeople(sit); renderAlert(sit); renderTimeline(sit);
     syncUser(); syncDemo(); renderNotifs();
+    /* fade curto nas regiões que trocam de conteúdo (não no peopleCard, que é display:contents) */
+    ['pageActions','dBadge'].forEach(function(id){ var el=$(id); if(!el) return; el.classList.remove('ds-swap-in'); void el.offsetWidth; el.classList.add('ds-swap-in'); });
   }
   document.addEventListener('click',function(e){
     if(e.target.closest('[data-go-editar]')){ goEditar(); return; }
@@ -874,6 +888,8 @@
     sic:{nome:'Sicoob Seguradora', cnpj:'26.314.512/0001-16', logo:'../Logos/sicooboficial_logo.jpeg',   natureza:'Cooperativa',       cnae:'65.12-0/00 · Seguros não-vida',                   regNum:'1', regNome:'Serviços Financeiros', regSec:'Nenhum', natTrib:'Tributação regular', tab:'Tabela 21', ativ:[['11A','Seguros de ramos elementares e de pessoas, sem cobertura por sobrevivência']]},
     s2u:{nome:'Simple2u',          cnpj:'40.997.879/0001-02', logo:'../Logos/logo_simple-2u_j7QQ4s.png', natureza:'Sociedade Empresária Limitada', cnae:'64.63-8/00 · Outras sociedades de participação', regNum:'1', regNome:'Serviços Financeiros', regSec:'Nenhum', natTrib:'Tributação regular', tab:'Tabela 21', ativ:[]}
   };
+  /* vigência REAL da vigente por empresa (o detalhe mostrava início/fim fixos, contradizendo a lista/empresa e o próprio banner de vencimento) */
+  var VIG={ seg:{ini:'01/01/2026',fim:''}, fin:{ini:'01/01/2026',fim:'31/12/2026'}, cap:{ini:'01/01/2026',fim:'30/09/2026'}, sic:{ini:'01/01/2026',fim:''}, s2u:{ini:'01/01/2026',fim:''} };
   function dparam(k){ var m=new RegExp('[?&]'+k+'=([^&]+)').exec(location.search); return m?decodeURIComponent(m[1]):''; }
   function dco(){ return DCO[dparam('emp')||'seg']||DCO.seg; }
   (function(){
@@ -890,6 +906,10 @@
     /* accordion (identificação/regime/atividades) por empresa, não mais fixo como MAG Seguros */
     if($('roNatJur')) $('roNatJur').textContent=_co.natureza||'—';
     if($('roCnae')) $('roCnae').textContent=_co.cnae||'—';
+    /* vigência real da empresa (o vfim do cenário "perto do fim" vence, se vier) */
+    var _vig=VIG[emp]||{ini:'',fim:''}; var _fimReal=dparam('vfim')||_vig.fim;
+    if($('roIni')) $('roIni').textContent=_vig.ini||'—';
+    if($('roFim')) $('roFim').textContent=_fimReal?_fimReal:'Sem data de fim';
     if($('roRegPrinc')) $('roRegPrinc').innerHTML='<span class="ronum">'+esc(_co.regNum||'')+'</span>'+esc(_co.regNome||'');
     if($('roRegSec')) $('roRegSec').textContent=_co.regSec||'Nenhum';
     if($('roNatTrib')) $('roNatTrib').textContent=_co.natTrib||'—';
@@ -1050,7 +1070,7 @@
       }
       var occ='';
       if(state==='rejeitado'){ var _rjo=curRej(); occ='<div class="dalert dalert--danger" role="status" style="margin-top:var(--space-2)"><span class="dalert__ic">'+ALERT+'</span><div class="dalert__body"><p class="dalert__title">Ocorrência · '+esc(_rjo.natureza)+'</p><p class="dalert__text"><strong>'+esc(_rjo.cod)+'</strong> · '+esc(_rjo.desc)+'<br><span style="color:var(--color-text-muted)">Localização: '+esc(_rjo.loc)+'</span></p></div></div>'; }
-      else if(sit==='advertencias'){ occ='<div class="dalert dalert--warning" role="status" style="margin-top:var(--space-2)"><span class="dalert__ic">'+ALERT+'</span><div class="dalert__body"><p class="dalert__title">Advertência (não impeditiva)</p><p class="dalert__text"><strong>MS1094</strong> · A data de início da validade é anterior ao início da DeRE.</p></div></div>'; }
+      else if(sit==='advertencias'){ occ='<div class="dalert dalert--warning" role="status" style="margin-top:var(--space-2)"><span class="dalert__ic">'+ALERT+'</span><div class="dalert__body"><p class="dalert__title">Advertência (não impeditiva)</p><p class="dalert__text">A versão foi <strong>aceita</strong>, mas a Receita registrou observações não impeditivas. Confira os dados antes do próximo período.</p></div></div>'; }
       R.innerHTML='<div class="receipt__state '+scls+'"><span class="receipt__state-ic">'+sic+'</span><div><p class="receipt__state-tt">'+esc(stt)+'</p><p class="receipt__state-tx">'+esc(stx)+'</p></div></div><div class="receipt__rows">'+rows+'</div>'+occ;
       var DL='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>';
       var f='<button class="btn btn--ghost btn--lg" type="button" data-close-comp>Fechar</button>';
@@ -1286,7 +1306,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788623626';
+  var MYV='1788625016';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
