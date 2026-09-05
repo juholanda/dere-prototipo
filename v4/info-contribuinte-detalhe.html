@@ -8,9 +8,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Detalhe do contribuinte</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=51">
-  <script src="../design-system/ds-tailwind.js"></script>
-  <script src="../design-system/ds-dialog.js"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788621222">
+  <script src="../design-system/ds-tailwind.js?v=1788621222"></script>
+  <script src="../design-system/ds-dialog.js?v=1788621222"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -296,7 +296,7 @@
           <div class="wrap">
             <div class="page-h__row">
               <div class="page-h__main">
-                <div class="page-h__title"><h1 id="dTitle">Informações do contribuinte</h1><span id="dBadge"></span></div>
+                <div class="page-h__title"><h1 id="dTitle">Informações do contribuinte</h1><span id="dBadge" role="status" aria-live="polite"></span></div>
                 <p id="dSub" class="page-h__desc"><strong>Informações do contribuinte</strong> desta versão e o acompanhamento na <strong>Receita Federal</strong>.</p>
               </div>
               <!-- ações da versão (variam por estado): Editar, Excluir, etc. -->
@@ -536,6 +536,8 @@
       var _hN='info-contribuinte.html?modo=nova&emp='+empId()+(dparam('scn')?('&scn='+dparam('scn')):'')+'&from=detalhe';
       var _PL='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5v14"/></svg>';
       el.innerHTML='<div class="dalert dalert--warning" role="status"><span class="dalert__ic">'+ALERT+'</span><div class="dalert__body"><p class="dalert__title">Vigência excluída na Receita Federal</p><p class="dalert__text">Motivo: <strong>'+esc(exclMotivo())+'</strong>. O período ficou como <strong>lacuna</strong> (sem D-1001 vigente): as <strong>declarações mensais</strong> que dependem deste cadastro ficam bloqueadas nesse intervalo. Registre uma nova versão que cubra o período.</p></div><a class="btn btn--secondary dalert__act" href="'+_hN+'">'+_PL+'Nova versão D-1001</a></div>';
+    } else if(sit==='futura'){
+      el.innerHTML='<div class="dalert dalert--info" role="status"><span class="dalert__ic">'+IC_INFO+'</span><div class="dalert__body"><p class="dalert__title">Vigência futura</p><p class="dalert__text">Esta versão foi <strong>aceita pela Receita</strong>, mas só passa a <strong>valer no início da vigência</strong>. Até lá, a versão vigente anterior continua valendo.</p></div></div>';
     } else { el.innerHTML=''; }
   }
   function renderTimeline(sit){
@@ -646,7 +648,7 @@
   var BELL='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>';
   /* ===== Cenários de negócio: a barra é dirigida por ?cenario= (segue as páginas); Resetar volta ao início do cenário ===== */
   var CENARIOS = {
-    andamento:{ label:'Versão em andamento', start:{role:'preparador',st:'revisao',op:'nova',sit:''},
+    andamento:{ label:'Versão em preparação', start:{role:'preparador',st:'revisao',op:'nova',sit:''},
       opts:[ ['Alterar',{act:'editar'}], ['Excluir',{act:'excluir'}] ] },
     vigente:{ label:'Versão vigente', start:{role:'preparador',st:'aprovado',sit:'sucesso',op:'nova'},
       opts:[ ['Alterar',{act:'editar'}], ['Excluir',{act:'excluir'}] ] },
@@ -700,7 +702,7 @@
       wrap.appendChild(rsel);
     }
   }
-  function clearDemoLS(){ try{ localStorage.removeItem('adere.d1001.approval.'+empId()); localStorage.removeItem('adere.sent.d1001'); localStorage.removeItem('adere.sent.d1001.t'); localStorage.removeItem('adere.d1001.draft.'+empId()); localStorage.removeItem('adere.d1001.excluded.'+empId()); localStorage.removeItem('adere.d1001.vigexcluida.'+empId()); localStorage.removeItem('adere.d1001.altop.'+empId()); }catch(e){} _ajusteComment=''; }
+  function clearDemoLS(){ try{ localStorage.removeItem('adere.d1001.approval.'+empId()); localStorage.removeItem('adere.sent.d1001'); localStorage.removeItem('adere.sent.d1001.t'); localStorage.removeItem('adere.d1001.draft.'+empId()); localStorage.removeItem('adere.d1001.excluded.'+empId()); localStorage.removeItem('adere.d1001.vigexcluida.'+empId()); localStorage.removeItem('adere.d1001.altop.'+empId()); localStorage.removeItem('adere.d1001.revstarted.'+empId()); }catch(e){} _ajusteComment=''; }
   function resetDemo(){ clearDemoLS(); var cen=curCenario(); setScenario(cen?cen.start:{role:'preparador',st:'revisao',sit:'',op:'nova'}); showToast('Cenário reiniciado.'); }
   document.addEventListener('DOMContentLoaded', syncDemo);
   /* barra de demo recolhível: começa como um chip discreto no canto; expande sob demanda e lembra a escolha */
@@ -916,7 +918,8 @@
     function resetCselect(){ _motVal=''; _motLabel=''; if(csEl){ var lb=csEl.querySelector('[data-cselect-label]'); if(lb) lb.textContent='Selecione o motivo'; csEl.querySelectorAll('[role=option]').forEach(function(x){x.classList.remove('is-selected');}); csEl.removeAttribute('aria-invalid'); } }
     initCselect(csEl, function(val, text){ _motVal=val; _motLabel=text||''; if(procField) procField.classList.toggle('is-open', val==='1'); });
     function open(){
-      var naoTx=(curDetState!=='aprovado'); /* em revisão/ajuste: nada foi transmitido à Receita */
+      /* descarte LOCAL (nada foi aceito na Receita) para rascunho/revisão/ajustes/rejeitada; exclusão de vigência na Receita só para versões ACEITAS (sucesso/advertências/futura). NÃO usar curDetState==='aprovado' (rejeitada entra como st=aprovado e cairia por engano na exclusão de vigência). */
+      var naoTx=(['rascunho','revisao','ajustes','rejeitado'].indexOf(sitFor(curDetState))>=0);
       $('exTitle').textContent = naoTx ? 'Tem certeza de que deseja excluir esta versão?' : 'Excluir a informação do contribuinte?';
       if($('exVerNum')) $('exVerNum').textContent = dparam('v')||'—';
       if($('exVerEmp')){ var _co=(typeof DCO!=='undefined')?DCO[empId()]:null; $('exVerEmp').textContent = (_co&&_co.nome)?(' · '+_co.nome):''; }
@@ -937,7 +940,7 @@
     modal.addEventListener('click',function(e){ if(e.target===modal) close(); });
     var confirmBtn=$('confirmExcluir');
     if(confirmBtn) confirmBtn.addEventListener('click',function(){
-      var naoTx=(curDetState!=='aprovado');
+      var naoTx=(['rascunho','revisao','ajustes','rejeitado'].indexOf(sitFor(curDetState))>=0);
       if(!naoTx && !_motVal){ if(csEl){ csEl.setAttribute('aria-invalid','true'); var _b=csEl.querySelector('[data-cselect-btn]'); if(_b) _b.focus(); } return; }
       if(!naoTx && _motVal==='1' && !($('nrProc')&&$('nrProc').value.trim())){ $('nrProc').focus(); $('nrProc').setAttribute('aria-invalid','true'); return; }
       close();
@@ -1116,7 +1119,7 @@
               </div>
             </div>
             <div class="field" id="nrProcField">
-              <label class="field__label" for="nrProc">Número do processo administrativo ou judicial (nrProc)</label>
+              <label class="field__label" for="nrProc">Número do processo administrativo ou judicial</label>
               <input class="input" id="nrProc" maxlength="21" placeholder="Ex.: 0001234-56.2026.4.01">
               <p class="field__msg" style="color:var(--color-text-muted)">Obrigatório para determinação judicial ou administrativa. Deve existir no evento D-1021 (Processos).</p>
             </div>
@@ -1235,7 +1238,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788618026';
+  var MYV='1788621222';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

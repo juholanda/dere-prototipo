@@ -8,9 +8,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Informações do Contribuinte</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=51">
-  <script src="../design-system/ds-tailwind.js"></script>
-  <script src="../design-system/ds-dialog.js"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788621222">
+  <script src="../design-system/ds-tailwind.js?v=1788621222"></script>
+  <script src="../design-system/ds-dialog.js?v=1788621222"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     /* ===== App shell (mesmo do painel) ===== */
@@ -344,11 +344,11 @@
                     <div><dt>Contribuinte</dt><dd data-co-nome>MAG Seguros</dd></div>
                     <div><dt>CNPJ (raiz)</dt><dd data-co-cnpjraiz>33.608.308</dd></div>
                     <div><dt>Natureza jurídica</dt><dd data-co-natureza>Sociedade Anônima</dd></div>
-                    <div><dt>Vigência</dt><dd>01/01/2026 · sem data de fim</dd></div>
+                    <div><dt>Vigência</dt><dd id="revVig">01/01/2026 · sem data de fim</dd></div>
                     <div><dt>CNAE principal</dt><dd data-co-cnae>65.11-1/01 · Seguros de vida</dd></div>
-                    <div><dt>Regime principal</dt><dd>Serviços Financeiros</dd></div>
-                    <div><dt>Regimes secundários</dt><dd>Nenhum</dd></div>
-                    <div><dt>Natureza da tributação</dt><dd>Tributação regular</dd></div>
+                    <div><dt>Regime principal</dt><dd id="revRegPrin">Serviços Financeiros</dd></div>
+                    <div><dt>Regimes secundários</dt><dd id="revRegSec">Nenhum</dd></div>
+                    <div><dt>Natureza da tributação</dt><dd id="revNatTrib">Tributação regular</dd></div>
                     <div class="cadsum__full"><dt>Atividades</dt><dd><div class="atvsel" id="atvSelReview"></div></dd></div>
                   </dl>
                   <div class="cadnote">
@@ -468,6 +468,7 @@
     var ct=document.getElementById('confirmTitle'); if(ct) ct.textContent='Transmitir para a Receita?';
     var cd=document.getElementById('confirmDesc'); if(cd) cd.innerHTML='Você é <b>administrador</b>: as informações do contribuinte (D-1001) vão direto para a Receita, sem passar por revisão de terceiros.';
     var ci=document.querySelector('.cinfo'); if(ci) ci.innerHTML='<div class="cinfo__row"><span class="cinfo__k">Assinatura digital · ICP-Brasil</span><span class="cinfo__v"><span class="avatar avatar--sm">RA</span>Ricardo Alves</span></div>';
+    var cn=document.querySelector('.cadnote p'); if(cn) cn.textContent='Você transmite direto à Receita, com sua assinatura ICP-Brasil, sem revisão de terceiros.';
   })();
   function perfil(){ return PERFIL[empId()]||PERFIL.seg; }
 
@@ -651,6 +652,13 @@
     function picksHtml(reg,codes){ if(!codes.length) return '<span class="atvsel__empty">Nenhuma atividade selecionada.</span>'; var m=byCode(reg); return '<div class="atvpicks">'+codes.map(function(c){var a=m[c];return a?'<div class="atvpick"><span class="atvpick__cod">'+a.c+'</span><span class="atvpick__desc" title="'+esc(descOf(a))+'">'+esc(descOf(a))+'</span></div>':'';}).join('')+'</div>'; }
     function renderSelected(){
       var regs=selectedRegimes(), html='';
+      /* regime "Outros" (sem nenhum regime setorial): não há grupo setorial a detalhar. Mostra nota em vez de seção vazia. */
+      if(regs.length===0){
+        var _nota='<p class="atvsel__empty" style="margin:0">O regime <strong>Outros</strong> não exige detalhamento de atividades por grupo setorial.</p>';
+        selectedEl.innerHTML=_nota;
+        if(reviewEl) reviewEl.innerHTML=_nota;
+        return;
+      }
       regs.forEach(function(reg){
         var lbl = sel[reg].length ? 'Editar atividades' : 'Adicionar atividades';
         html+='<div class="atvgroup"><div class="atvgroup__h"><span class="atvgroup__name">'+esc(TAB[reg].name)+'</span><span class="atvgroup__tab">Tabela '+TAB[reg].tab+'</span><button class="btn btn--secondary btn--sm" type="button" data-atvopen="'+reg+'" style="margin-left:auto">'+lbl+'</button></div>'+picksHtml(reg,sel[reg])+'</div>';
@@ -658,6 +666,20 @@
       selectedEl.innerHTML=html;
       selectedEl.querySelectorAll('[data-atvopen]').forEach(function(b){ b.addEventListener('click',function(){ openDrawer(b.getAttribute('data-atvopen')); }); });
       if(reviewEl){ var rh=''; regs.forEach(function(reg){ if(sel[reg].length) rh+='<div class="atvgroup atvgroup--flat"><span class="atvgroup__name">'+esc(TAB[reg].name)+'</span>'+picksHtml(reg,sel[reg])+'</div>'; }); reviewEl.innerHTML = rh || '<span class="atvsel__empty">Nenhuma atividade selecionada.</span>'; }
+    }
+    /* resumo "Revisão e envio" espelha o que foi preenchido (é confissão: não pode mostrar dado fixo). */
+    function regName(v){ return (TAB[v]&&TAB[v].name) || (v==='9'?'Outros':''); }
+    function renderReviewSummary(){
+      var iniEl=$('iniVig'), fimEl=$('fimVig'), ab=$('vigAberta');
+      var ini=(iniEl&&iniEl.value||'').trim(), fim=(fimEl&&fimEl.value||'').trim();
+      var semFim=(ab&&ab.checked)||!fim;
+      if($('revVig')) $('revVig').textContent = ini ? (ini+' · '+(semFim?'sem data de fim':('até '+fim))) : '—';
+      if($('revRegPrin')) $('revRegPrin').textContent = regName(principal())||'—';
+      var secs=secundarios().map(regName).filter(Boolean);
+      if($('revRegSec')) $('revRegSec').textContent = secs.length?secs.join(', '):'Nenhum';
+      var nat=document.querySelector('input[name="nattrib"]:checked');
+      var natT=nat&&nat.closest('.selectcard')&&nat.closest('.selectcard').querySelector('.selectcard__title');
+      if($('revNatTrib')) $('revNatTrib').textContent = natT?natT.textContent.trim():'—';
     }
 
     /* Drawer único: todos os regimes selecionados */
@@ -696,12 +718,15 @@
 
     regprins.forEach(function(r){ r.addEventListener('change',function(){ syncSec(); renderSelected(); }); });
     document.querySelectorAll('#secStack input[name="regsec"]').forEach(function(i){ i.addEventListener('change',renderSelected); });
-    syncSec(); renderSelected();
+    /* resumo "Revisão e envio" reflete regime/secundários/natureza/vigência ao vivo (change borbulha) */
+    document.addEventListener('change',function(e){ var t=e.target; if(!t) return; if((t.name&&/^(regprin|regsec|nattrib)$/.test(t.name)) || t.id==='vigAberta' || t.id==='iniVig' || t.id==='fimVig') renderReviewSummary(); });
+    syncSec(); renderSelected(); renderReviewSummary();
     /* Ponte p/ rascunho e guarda de saída: ler/repor as atividades selecionadas (vivem só neste escopo) */
     window.__d1001Atv={
       get:function(){ return JSON.parse(JSON.stringify(sel)); },
       set:function(s){ if(!s) return; Object.keys(sel).forEach(function(k){ sel[k]=Array.isArray(s[k])?s[k].slice():[]; }); renderSelected(); }
     };
+    window.__d1001Review=renderReviewSummary; /* resumo de revisão, chamado também no submit (outra IIFE) */
   })();
 
   /* Modal de confirmação: submeter para revisão */
@@ -734,11 +759,14 @@
       }
     }
     openB.addEventListener('click',function(){
+      try{ if(window.__d1001Review) window.__d1001Review(); }catch(e){} /* garante o resumo fiel no momento do envio */
       /* validação de envio: ao menos uma atividade (obrigatória). Rascunho não valida; só o envio. */
       var _sel=(window.__d1001Atv?window.__d1001Atv.get():{})||{};
       var _total=Object.keys(_sel).reduce(function(n,k){ return n+((_sel[k]||[]).length); },0);
       var box=$('atvSelected');
-      if(_total===0){
+      /* atividade só é obrigatória quando há regime SETORIAL (grupo com botão "Adicionar atividades"). Regime "Outros" (regTribPrinc=9) não exige grupo setorial (MS1065/66/67 não se aplicam), então não trava o envio. */
+      var _temSetorial=!!(box && box.querySelector('[data-atvopen]'));
+      if(_temSetorial && _total===0){
         var msg=document.getElementById('atvErr');
         if(!msg && box){ msg=document.createElement('p'); msg.id='atvErr'; msg.className='field__msg field__msg--error'; msg.setAttribute('role','alert'); box.parentNode.insertBefore(msg, box); }
         if(msg){ msg.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>Selecione ao menos uma atividade antes de enviar para revisão.'; }
@@ -964,7 +992,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788618026';
+  var MYV='1788621222';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
