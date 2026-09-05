@@ -8,9 +8,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Detalhe do contribuinte</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788625016">
-  <script src="../design-system/ds-tailwind.js?v=1788625016"></script>
-  <script src="../design-system/ds-dialog.js?v=1788625016"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788625575">
+  <script src="../design-system/ds-tailwind.js?v=1788625575"></script>
+  <script src="../design-system/ds-dialog.js?v=1788625575"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -526,6 +526,12 @@
     /* três marcos sempre visíveis; pendente = "Aguardando" */
     var html='';
     var processed=['sucesso','advertencias','encerrada','rejeitado','futura','excluida'].indexOf(sit)>=0;
+    /* Admin (UC11) transmite direto, sem revisão de terceiro: NÃO existe "Revisado por Ana Prado". */
+    if(dparam('perfil')==='admin'){
+      html+=field('Preparado e transmitido por', (sit!=='rascunho')?personVal('Ricardo Alves · Administrador','03/09/2026, 11:20'):waitVal(), SEND);
+      html+=field('Processado por', processed?sysVal('Receita Federal','03/09/2026, 11:27'):waitVal(), FILECOG);
+      el.innerHTML=html; return;
+    }
     html+=field('Enviado para revisão por', (sit!=='rascunho')?personVal('Ricardo Alves','02/09/2026, 11:15'):waitVal(), SEND);
     if(sit==='ajustes'){ html+=field('Revisado por', personVal('Ana Prado','03/09/2026, 11:20'), IC_MSG); }
     else { html+=field('Revisado por', approved?personVal('Ana Prado','03/09/2026, 11:20'):waitVal(), APPROVE); }
@@ -575,6 +581,8 @@
     var el=$('tl'); if(!el) return;
     if(sit==='excluida' && EV.excl_feita.extras){ EV.excl_feita.extras[0][1]=exclMotivo(); }
     var keys=(TL[sit]||TL.revisao).slice();
+    /* Admin (UC11): transmite direto, sem revisão de terceiro — some "Enviada para revisão" e "Aprovada pelo revisor" da linha do tempo */
+    if(dparam('perfil')==='admin'){ keys=keys.filter(function(k){ return ['enviada','aprovada','ajustes','reenviada'].indexOf(k)<0; }); }
     /* "Versão criada" (rascunho) só aparece se houve rascunho salvo; senão começa em "Enviada para revisão" */
     var hadDraft=false; try{ hadDraft=(dparam('draft')==='1')||!!localStorage.getItem('adere.d1001.draft.'+(dparam('emp')||'seg')); }catch(e){}
     if(sit!=='rascunho' && hadDraft && keys[0]!=='criada') keys.unshift('criada');
@@ -1306,7 +1314,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788625016';
+  var MYV='1788625575';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
