@@ -979,6 +979,8 @@
       if(e.target.closest('[data-proc-block]')){ var _pb=e.target.closest('[data-proc-block]').getAttribute('data-proc-block'); if($('procBlockText')) $('procBlockText').textContent='Não é possível '+(_pb==='excluir'?'excluir':'alterar')+' esta versão enquanto ela está em processamento na Receita. Aguarde o retorno do processamento para fazer qualquer ajuste.'; if(pbM) dsDialog.open(pbM,{focus:pbM.querySelector('[data-close]'),onOpen:function(){pbM.hidden=false;document.body.style.overflow='hidden';},onClose:function(){pbM.hidden=true;document.body.style.overflow='';}}); return; }
       if(e.target.closest('[data-open-comprovante]')){ openComprovante(sitFor(curDetState)); }
     });
+    /* deep-link direto pro comprovante (?comp=1) — para o doc de casos de uso testar cada estado do comprovante por link */
+    if(dparam('comp')==='1' && compM){ setTimeout(function(){ try{ openComprovante(sitFor(curDetState)); }catch(e){} }, 380); }
     apM.querySelectorAll('[data-close]').forEach(function(b){ b.addEventListener('click',function(){dsDialog.close();}); });
     ajM.querySelectorAll('[data-close]').forEach(function(b){ b.addEventListener('click',function(){dsDialog.close();}); });
     apM.addEventListener('click',function(e){ if(e.target===apM) dsDialog.close(); });
@@ -1178,7 +1180,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788576479';
+  var MYV='1788606584';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
