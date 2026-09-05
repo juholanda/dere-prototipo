@@ -613,14 +613,15 @@
     var a=altOp(), _t, _x, _src=_cur-1;
     if(a && a.op==='novavig'){
       _t='Nova vigência aguardando sua aprovação';
-      _x='O preparador definiu novo início em <b>'+esc(a.data||'')+'</b>. Ao aprovar, a Versão '+_src+' (vigente) é <b>encerrada</b> e a Versão '+_cur+' passa a valer a partir dessa data.';
+      var _vesp=(function(s){var m=/^(\d{2})\/(\d{2})\/(\d{4})$/.exec(s||'');if(!m)return s||'';var d=new Date(+m[3],+m[2]-1,+m[1]);d.setDate(d.getDate()-1);var p=function(n){return(n<10?'0':'')+n;};return p(d.getDate())+'/'+p(d.getMonth()+1)+'/'+d.getFullYear();})(a.data||'');
+      _x='O preparador definiu novo início em <b>'+esc(a.data||'')+'</b>. Ao aprovar, a Versão '+_src+' (vigente) é <b>encerrada em '+esc(_vesp)+'</b> (véspera do novo início, corte automático) e a Versão '+_cur+' passa a valer a partir de <b>'+esc(a.data||'')+'</b>.';
     } else {
       _t='Correção da versão vigente aguardando sua aprovação';
       _x='O preparador manteve a mesma vigência'+(a&&a.data?(' (<b>'+esc(a.data)+'</b>)'):'')+' da Versão '+_src+'. Ao ser aprovada, a Versão '+_cur+' substituirá a versão vigente, mantendo o mesmo período de vigência.';
     }
     var _srcUrl='info-contribuinte-detalhe.html?emp='+empId()+'&v='+_src+'&st=aprovado&sit=sucesso'+(dparam('scn')?('&scn='+dparam('scn')):'');
     /* ação à direita (padrão dos banners do DS: .dalert__act); abre a versão vigente em nova aba (ícone external-link à direita) pra o aprovador não perder o lugar na revisão */
-    var _act='<a class="btn btn--secondary dalert__act" href="'+_srcUrl+'" target="_blank" rel="noopener" aria-label="Ver a Versão '+_src+' (abre em nova aba)">Ver a Versão '+_src+' '+IC_EXT+'</a>';
+    var _act='<a class="btn btn--secondary dalert__act" href="'+_srcUrl+'" target="_blank" rel="noopener" aria-label="Ver Versão '+_src+' (abre em nova aba)">Ver Versão '+_src+' '+IC_EXT+'</a>';
     return '<div class="dalert dalert--warning" role="status"><span class="dalert__ic">'+ALERT+'</span><div class="dalert__body"><p class="dalert__title">'+esc(_t)+'</p><p class="dalert__text">'+_x+'</p></div>'+_act+'</div>';
   }
   function showToast(msg){
@@ -1234,7 +1235,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788616933';
+  var MYV='1788618026';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
