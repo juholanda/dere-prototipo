@@ -8,9 +8,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Informações do Contribuinte</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788621222">
-  <script src="../design-system/ds-tailwind.js?v=1788621222"></script>
-  <script src="../design-system/ds-dialog.js?v=1788621222"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788622886">
+  <script src="../design-system/ds-tailwind.js?v=1788622886"></script>
+  <script src="../design-system/ds-dialog.js?v=1788622886"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     /* ===== App shell (mesmo do painel) ===== */
@@ -452,12 +452,14 @@
   /* Perfil por empresa (regime + CNAE + atividades reais da Tabela 21). Fonte da verdade ao
      EDITAR/ALTERAR uma versão já existente: o formulário carrega o que a empresa já declarou,
      não os dados de outra. Espelha o DCO da tela de detalhe. */
+  /* perfil da vigente por empresa: regime + atividades + VIGÊNCIA REAL (início/fim). O fim é lido ao Alterar
+     para o formulário não perder a data de fim (e não transformar silenciosamente a vigência em "em aberto"). */
   var PERFIL={
-    seg:{reg:'1', cnae:'65.11-1/01 · Seguros de vida',                            ativ:['11A','11B','13A']},
-    fin:{reg:'1', cnae:'64.99-9/99 · Outras atividades de serviços financeiros',  ativ:['01A']},
-    cap:{reg:'1', cnae:'65.50-2/00 · Capitalização',                              ativ:['14A']},
-    sic:{reg:'1', cnae:'65.12-0/00 · Seguros não-vida',                           ativ:['11A']},
-    s2u:{reg:'1', cnae:'64.63-8/00 · Outras sociedades de participação',          ativ:[]}
+    seg:{reg:'1', ini:'01/01/2026', fim:'',           cnae:'65.11-1/01 · Seguros de vida',                            ativ:['11A','11B','13A']},
+    fin:{reg:'1', ini:'01/01/2026', fim:'31/12/2026', cnae:'64.99-9/99 · Outras atividades de serviços financeiros',  ativ:['01A']},
+    cap:{reg:'1', ini:'01/01/2026', fim:'30/09/2026', cnae:'65.50-2/00 · Capitalização',                              ativ:['14A']},
+    sic:{reg:'1', ini:'01/01/2026', fim:'',           cnae:'65.12-0/00 · Seguros não-vida',                           ativ:['11A']},
+    s2u:{reg:'1', ini:'01/01/2026', fim:'',           cnae:'64.63-8/00 · Outras sociedades de participação',          ativ:[]}
   };
   function empId(){ var m=new RegExp('[?&]emp=([^&]*)').exec(location.search); return m?decodeURIComponent(m[1]):'seg'; }
   var IS_ADMIN=/[?&]perfil=admin/.test(location.search);
@@ -849,6 +851,12 @@
       var rr=document.querySelector('input[name="regprin"][value="'+pf.reg+'"]');
       if(rr && !rr.checked){ rr.checked=true; rr.dispatchEvent(new Event('change')); }
       if(window.__d1001Atv){ var s={'1':[],'2':[],'3':[]}; if(s[pf.reg]) s[pf.reg]=pf.ativ.slice(); window.__d1001Atv.set(s); }
+      /* vigência real da vigente: carrega início E fim (não perder o fim ao Alterar) */
+      var _ini=$('iniVig'), _fim=$('fimVig'), _ab=$('vigAberta');
+      if(_ini && pf.ini) _ini.value=pf.ini;
+      if(_ab){ _ab.checked=!pf.fim; _ab.dispatchEvent(new Event('change')); }   /* change limpa/desabilita o fim quando "em aberto" */
+      if(_fim && pf.fim){ _fim.value=pf.fim; }                                  /* com fim: repõe o valor após o change habilitar o campo */
+      if(window.__d1001Review) window.__d1001Review();
     }
     /* Precedência ao abrir o formulário:
        1) rascunho salvo desta empresa (ainda não transmitido) vence — traz as escolhas em andamento;
@@ -992,7 +1000,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788621222';
+  var MYV='1788622886';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

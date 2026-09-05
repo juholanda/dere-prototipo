@@ -8,9 +8,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Detalhe do contribuinte</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788621222">
-  <script src="../design-system/ds-tailwind.js?v=1788621222"></script>
-  <script src="../design-system/ds-dialog.js?v=1788621222"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788622886">
+  <script src="../design-system/ds-tailwind.js?v=1788622886"></script>
+  <script src="../design-system/ds-dialog.js?v=1788622886"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -752,6 +752,8 @@
   function render(key){
     curDetState=key;
     var s=STATES[key], sit=sitFor(key);
+    /* conclusão da exclusão: ao chegar em "excluída", a vigência é efetivamente baixada (grava vigexcluida p/ lista/empresa) e sai de "em processamento" */
+    if(sit==='excluida' && curOp==='exclusao'){ try{ localStorage.setItem('adere.d1001.vigexcluida.'+empId(), JSON.stringify({v:(dparam('v')||'3'), motivo:exclMotivo(), t:Date.now()})); localStorage.removeItem('adere.d1001.exclproc.'+empId()); }catch(e){} }
     var _acts, _decision='';
     if(curRole==='aprovador'){ if(sit==='revisao'){ _decision=approverActions(); } _acts=''; }
     /* exclusão da vigente aguardando aprovação: sem ações (não dá pra alterar/excluir de novo enquanto pende) */
@@ -1056,14 +1058,17 @@
       var apCard=apM.querySelector('.modal');
       if(apCard) apCard.classList.add('is-leaving');           /* o card de aprovar recua e some */
       /* trabalho de estado por baixo, enquanto o card sai */
-      if(isX){ try{ localStorage.setItem('adere.d1001.vigexcluida.'+empId(), JSON.stringify({v:(dparam('v')||'3'), motivo:exclMotivo(), t:Date.now()})); }catch(e){} }
+      /* exclusão também é ASSÍNCRONA: ao aprovar, vai para "Em processamento" (protocolo provisório). A vigência
+         só é baixada quando a Receita CONCLUI (estado "excluída"), quando a flag vigexcluida é gravada. Aqui grava-se
+         apenas "exclusão em processamento" (a vigente segue valendo). */
+      if(isX){ try{ localStorage.setItem('adere.d1001.exclproc.'+empId(), JSON.stringify({v:(dparam('v')||'3'), motivo:exclMotivo(), t:Date.now()})); }catch(e){} }
       else { try{ localStorage.setItem('adere.d1001.approval.'+empId(),'processing'); }catch(e){} }
       setTimeout(function(){
         if(apCard) apCard.classList.remove('is-leaving');
         dsDialog.close();                                       /* esconde o scrim do aprovar */
-        setScenario(isX?{role:'preparador',st:'aprovado',sit:'excluida',op:'exclusao'}:{role:'aprovador',st:'aprovado',sit:'processando'});
-        openComprovante(isX?'excluida':'processando');          /* no mesmo tique o comprovante entra: fundo escuro contínuo */
-        showToast(isX?'Exclusão aprovada e transmitida à Receita Federal.':'Versão aprovada e transmitida à Receita Federal.');
+        setScenario(isX?{role:'aprovador',st:'aprovado',sit:'processando',op:'exclusao'}:{role:'aprovador',st:'aprovado',sit:'processando'});
+        openComprovante('processando');                         /* no mesmo tique o comprovante entra: fundo escuro contínuo */
+        showToast(isX?'Exclusão transmitida à Receita Federal, em processamento.':'Versão aprovada e transmitida à Receita Federal.');
       }, 210);
     });
     $('confirmAjuste').addEventListener('click',function(){
@@ -1238,7 +1243,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788621222';
+  var MYV='1788622886';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

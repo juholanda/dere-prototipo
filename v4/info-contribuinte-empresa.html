@@ -8,9 +8,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Versões · MAG Seguros</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788621222">
-  <script src="../design-system/ds-tailwind.js?v=1788621222"></script>
-  <script src="../design-system/ds-dialog.js?v=1788621222"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788622886">
+  <script src="../design-system/ds-tailwind.js?v=1788622886"></script>
+  <script src="../design-system/ds-dialog.js?v=1788622886"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -466,9 +466,15 @@
   /* vigência excluída na Receita (aprovada a exclusão): a vigente vira "Vigência excluída" e some da foto de vigente */
   var _vigExc=null; try{ _vigExc=JSON.parse(localStorage.getItem('adere.d1001.vigexcluida.'+EMP)||'null'); }catch(e){}
   if(_vigExc){ _base.forEach(function(v){ if(v.vigrole==='now'){ v.vigrole='excluded'; v.sit='excluida'; v.exclMotivo=_vigExc.motivo; } }); }
+  /* exclusão EM PROCESSAMENTO (aprovada, aguardando a Receita concluir): a vigente CONTINUA valendo, com selo "Exclusão em processamento". Só vira "excluída" quando conclui (vigexcluida acima). */
+  var _exclProc=null; try{ _exclProc=JSON.parse(localStorage.getItem('adere.d1001.exclproc.'+EMP)||'null'); }catch(e){}
+  if(_exclProc && !_vigExc){ _base.forEach(function(v){ if(v.vigrole==='now'){ v.exclProc=true; } }); }
   var VERSIONS=_base.sort(function(a,b){ if(a.current!==b.current) return a.current?-1:1; return b.n-a.n; });
 
   function endOf(vig){ var m=(vig||'').match(/\d{2}\/\d{2}\/\d{4}/g)||[]; return m[1]||'—'; }
+  /* recibo real (nrRecibo): 31 caracteres, competência AAAAMM nas posições 6-11 (leiaute v1.1.0); o "RC-AAAA.000N" era rótulo inventado.
+     Deriva a competência do início da vigência e o sequencial do número antigo, mantendo o dado ilustrativo fiel ao formato oficial. */
+  function recOf(v){ if(!v.recibo || v.recibo==='—') return '—'; var m=/(\d{2})\/(\d{2})\/(\d{4})/.exec(v.vig||''); var comp=m?(m[3]+m[2]):'202601'; var seq=((v.recibo.match(/(\d+)\s*$/)||[])[1]||String(v.n||1)); var tail=('0000000000000000000'+seq).slice(-21); return '1001'+comp+tail; }
   function stOf(v){ return (v.sit==='revisao')?'revisao':(v.sit==='ajustes')?'ajuste':'aprovado'; }
   /* versão vigente com fim definido dentro de 60 dias e SEM sucessora em curso: sinaliza pro detalhe mostrar o alerta */
   function nearEndVig(v){
@@ -505,10 +511,10 @@
         : '<span class="verrow__badge" aria-hidden="true">v'+v.n+'</span>');
     /* o que importa numa lista de versões: quando vale, o que diz, quando foi e a prova da Receita (quem fez fica no detalhe) */
     var day=function(d){ return d?String(d).split(',')[0]:d; };
-    var kvs=[['Regime principal',v.regime||regimeOf(v)],['Vigência',v.vig],['Processada em',day(v.proc)],['Recibo',v.recibo]]
+    var kvs=[['Regime principal',v.regime||regimeOf(v)],['Vigência',v.vig],['Processada em',day(v.proc)],['Recibo',recOf(v)]]
       .map(function(p){ if(p[0]==='Vigência') return vigKv(v); return kv(p[0],(p[1]&&p[1]!=='—')?p[1]:'—'); }).join('');
     return '<div class="verrow'+(opts.current?' verrow--current':'')+'" data-href="'+hrefOf(v)+'">'+badge+
-      '<div class="verrow__main"><div class="verrow__top"><span class="verrow__titlewrap"><span class="verrow__title">Versão '+v.n+'</span></span><span class="status status--sm '+s.pill+'"><span class="status__dot"></span>'+esc(s.label)+'</span></div>'+
+      '<div class="verrow__main"><div class="verrow__top"><span class="verrow__titlewrap"><span class="verrow__title">Versão '+v.n+'</span></span><span class="status status--sm '+s.pill+'"><span class="status__dot"></span>'+esc(s.label)+'</span>'+(v.exclProc?'<span class="status status--sm status--info verrow__flag"><span class="status__dot"></span>Exclusão em processamento</span>':'')+'</div>'+
       '<div class="verrow__kvs">'+kvs+'</div></div>'+
       '<span class="verrow__sep" aria-hidden="true"></span>'+
       /* só consultar = botão-ícone com seta (nome acessível no aria-label); agir (Continuar, Ver ajustes) = botão com texto */
@@ -575,6 +581,8 @@
       al='<div class="dalert dalert--danger" role="status"><span class="dalert__ic">'+I.x+'</span><div class="dalert__body"><p class="dalert__title">Versão '+prog.n+' rejeitada pela Receita</p><p class="dalert__text">A transmissão foi rejeitada. Consulte o motivo, corrija as informações e reenvie. A versão vigente continua valendo.</p></div><a class="btn btn--secondary dalert__act" href="'+hrefOf(prog)+'">Ver motivo'+I.chev+'</a></div>';
     } else if(exc){
       al='<div class="dalert dalert--warning" role="status"><span class="dalert__ic">'+I.alert+'</span><div class="dalert__body"><p class="dalert__title">Vigência excluída na Receita Federal</p><p class="dalert__text">'+(exc.exclMotivo?('Motivo: <strong>'+esc(exc.exclMotivo)+'</strong>. '):'')+'O período ficou como <strong>lacuna</strong> (sem D-1001 vigente): as <strong>declarações mensais</strong> que dependem deste cadastro ficam bloqueadas nesse intervalo. Registre uma nova versão que cubra o período.</p></div><a class="btn btn--secondary dalert__act" href="'+hrefNova()+'">'+I.plus+'Nova versão D-1001</a></div>';
+    } else if(vig && vig.exclProc){
+      al='<div class="dalert dalert--info" role="status"><span class="dalert__ic">'+I.info+'</span><div class="dalert__body"><p class="dalert__title">Exclusão em processamento na Receita Federal</p><p class="dalert__text">A exclusão da Versão '+vig.n+' foi transmitida e está em processamento. A vigência <strong>continua valendo</strong> até a Receita concluir; uma transmissão em andamento não pode ser cancelada.</p></div><a class="btn btn--secondary dalert__act" href="info-contribuinte-detalhe.html?emp='+EMP+'&v='+vig.n+'&st=aprovado&sit=processando&op=exclusao'+Q(false)+'">Acompanhar'+I.chev+'</a></div>';
     }
     $('alertSlot').innerHTML=al;
 
@@ -738,7 +746,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788621222';
+  var MYV='1788622886';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
