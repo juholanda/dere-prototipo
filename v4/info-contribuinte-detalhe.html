@@ -603,7 +603,10 @@
         _t='Correção da versão vigente aguardando sua aprovação';
         _x='O preparador manteve a vigência atual'+(a&&a.data?(' (<b>'+esc(a.data)+'</b>)'):'')+'. Ao ser aprovada, esta versão <b>substituirá</b> a vigente, sem encerrar o período atual.';
       }
-      return '<div class="dalert dalert--warning" role="status"><span class="dalert__ic">'+ALERT+'</span><div class="dalert__body"><p class="dalert__title">'+esc(_t)+'</p><p class="dalert__text">'+_x+'</p></div></div>';
+      var _cur=parseInt(dparam('v')||'4',10), _src=(_cur>1?_cur-1:_cur);
+      var _srcUrl='info-contribuinte-detalhe.html?emp='+empId()+'&v='+_src+'&st=aprovado&sit=sucesso'+(dparam('scn')?('&scn='+dparam('scn')):'');
+      var _deriv='<p class="dalert__text" style="margin-top:var(--space-2)">Esta é a <b>Versão '+_cur+'</b>, criada a partir da <b>Versão '+_src+'</b> (vigente). <a href="'+_srcUrl+'">Ver a Versão '+_src+'</a></p>';
+      return '<div class="dalert dalert--warning" role="status"><span class="dalert__ic">'+ALERT+'</span><div class="dalert__body"><p class="dalert__title">'+esc(_t)+'</p><p class="dalert__text">'+_x+'</p>'+_deriv+'</div></div>';
     }
     var b=APV_BANNER[curOp]||APV_BANNER.nova;
     var _txt=(curOp==='exclusao') ? ('Motivo informado pelo preparador: <b>'+esc(exclMotivo())+'</b>.<br>'+esc(b[2])) : esc(b[2]);
@@ -753,7 +756,7 @@
     var vnum=dparam('v'); var vlabel=vnum?('Versão '+vnum):s.ver;
     if($('dTitle')) $('dTitle').textContent = vlabel;
     if($('bcVer')) $('bcVer').textContent = vlabel;
-    if($('dBadge')){ var _st=SIT[sit]||{label:s.sub,pill:s.pill}; var _bh='<span class="status '+_st.pill+'"><span class="status__dot"></span>'+esc(_st.label)+'</span>'; if(curRole==='aprovador' && sit==='revisao'){ var _om={nova:['','Nova versão'],alteracao:['--alteracao','Alteração'],exclusao:['--exclusao','Exclusão']}[curOp]||['','Nova versão']; _bh+='<span class="optag optag'+_om[0]+'">'+esc(_om[1])+'</span>'; } $('dBadge').innerHTML=_bh; }
+    if($('dBadge')){ var _st=SIT[sit]||{label:s.sub,pill:s.pill}; var _bh='<span class="status '+_st.pill+'"><span class="status__dot"></span>'+esc(_st.label)+'</span>'; $('dBadge').innerHTML=_bh; }
     renderPeople(sit); renderAlert(sit); renderTimeline(sit);
     syncUser(); syncDemo();
   }
@@ -1214,7 +1217,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788613726';
+  var MYV='1788614744';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
