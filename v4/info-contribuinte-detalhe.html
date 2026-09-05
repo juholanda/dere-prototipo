@@ -1075,7 +1075,7 @@
         <h3 class="modal__title" id="exTitle">Excluir a informação do contribuinte?</h3>
         <button class="icon-btn" type="button" data-close-excluir aria-label="Fechar" style="flex:0 0 auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg></button>
       </div>
-      <div class="modal__body">
+      <div class="modal__body" style="overflow:visible">
         <p id="exVerLine" style="margin:0 0 var(--space-3);font-size:var(--text-sm);color:var(--color-text-muted)">Versão <strong id="exVerNum" style="color:var(--color-heading)">—</strong><span id="exVerEmp"></span></p>
         <p id="exLead" style="margin:0 0 var(--space-6);line-height:1.5;font-size:var(--text-base)">A exclusão encerra a vigência ativa do D-1001 na Receita. Ela não é imediata: entra como um evento de exclusão que <strong>passa pela aprovação de Ana Prado</strong> antes de ser transmitido.</p>
         <div class="mform" style="margin-bottom:var(--space-4)">
@@ -1210,7 +1210,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788611724';
+  var MYV='1788612552';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
