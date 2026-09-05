@@ -481,8 +481,9 @@
       if($('formTitle')) $('formTitle').textContent=_acao+' '+vlabel+' · Informações do contribuinte';
       if($('formSub')) $('formSub').textContent=DESC;
       document.title='a-DeRE · '+_acao+' informações do contribuinte';
-      /* cancelar volta pra ONDE veio, no MESMO estado: corr (ajustes/rejeitado) vira o sit; senão revisão */
-      if($('cancelBtn')) $('cancelBtn').setAttribute('href','info-contribuinte-detalhe.html?emp='+(param('emp')||'seg')+'&v='+(param('v')||'1')+(_corr?('&sit='+_corr):'&st=revisao')+(param('cenario')?('&cenario='+param('cenario')):'')+(param('scn')?('&scn='+param('scn')):''));
+      /* cancelar volta pra ONDE veio, no MESMO estado. O detalhe exige o `st` certo: ajustes→st=ajuste; rejeitado→st=aprovado&sit=rejeitado; senão em revisão. (Se vier `back`, ele vence — ver override no fim.) */
+      var _st=(_corr==='ajustes')?'&st=ajuste':(_corr==='rejeitado')?('&st=aprovado&sit=rejeitado'+(param('rej')?('&rej='+param('rej')):'')):'&st=revisao';
+      if($('cancelBtn')) $('cancelBtn').setAttribute('href','info-contribuinte-detalhe.html?emp='+(param('emp')||'seg')+'&v='+(param('v')||'1')+_st+(param('cenario')?('&cenario='+param('cenario')):'')+(param('scn')?('&scn='+param('scn')):''));
     } else {
       /* rascunho salvo desta empresa = EDIÇÃO de uma versão em andamento (mesma estrutura de editar, só o estado muda);
          começar do zero (sem rascunho) é que é "Nova versão". */
@@ -506,6 +507,8 @@
       }
       if($('formSub')) $('formSub').textContent=DESC;
     }
+    /* se a tela de origem mandou uma URL de retorno canônica (&back=), ela vence: Cancelar volta ao estado/versão exatos de origem */
+    var _bk=param('back'); if(_bk && $('cancelBtn')) $('cancelBtn').setAttribute('href', decodeURIComponent(_bk));
   })();
 
   /* Empresa do contexto (?emp=): trilha, "Contribuinte" e revisão seguem a empresa, nunca a MAG Seguros fixa; links de saída preservam o cenário */
@@ -761,7 +764,7 @@
   })();
 
   /* Se veio de "Ajustar informações" (tela de detalhe), Cancelar volta pro detalhe */
-  if(location.search.indexOf('from=detalhe')>=0){ var cb=$('cancelBtn'); if(cb) cb.setAttribute('href','info-contribuinte-detalhe.html'); }
+  if(location.search.indexOf('from=detalhe')>=0){ var cb=$('cancelBtn'); if(cb){ var _b=(new RegExp('[?&]back=([^&]+)').exec(location.search)); if(_b) cb.setAttribute('href', decodeURIComponent(_b[1])); } }
 
   /* ===== Rascunho do D-1001 persiste localmente (paridade com o plano de contas) ===== */
   (function(){
@@ -949,7 +952,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788544908';
+  var MYV='1788576479';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

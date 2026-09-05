@@ -632,8 +632,10 @@
       opts:[ ['Rascunho',{role:'preparador',st:'rascunho',sit:'',op:'nova'}], ['Em revisão',{role:'preparador',st:'revisao',sit:'',op:'nova'}], ['Ajustes solicitados',{role:'preparador',st:'ajuste',sit:'',op:'nova'}], ['Em processamento',{role:'preparador',st:'aprovado',sit:'processando',op:'nova'}], ['Processada com sucesso',{role:'preparador',st:'aprovado',sit:'sucesso',op:'nova'}], ['Processada com advertências',{role:'preparador',st:'aprovado',sit:'advertencias',op:'nova'}], ['Rejeitada',{role:'preparador',st:'aprovado',sit:'rejeitado',op:'nova'}] ] }
   };
   function curCenario(){ return CENARIOS[dparam('cenario')]||null; }
+  /* URL de retorno canônica p/ o Cancelar do formulário voltar ao MESMO estado/versão de origem (evita cair em "Em revisão" ou numa versão fantasma) */
+  function retURL(){ var _s=sitFor(curDetState); return 'info-contribuinte-detalhe.html?emp='+empId()+'&v='+(dparam('v')||'')+'&st='+curDetState+(_s?('&sit='+_s):'')+(dparam('rej')?('&rej='+dparam('rej')):'')+(dparam('op')?('&op='+dparam('op')):'')+(dparam('role')?('&role='+dparam('role')):'')+(dparam('scn')?('&scn='+dparam('scn')):''); }
   /* transmitida (vigente/avisos) → alterar cria uma NOVA versão numerada atual+1 (não duplica o número); rascunho/revisão/ajustes = edição in-place (mesmo número) */
-  function goEditar(){ var _sit=sitFor(curDetState); var _transmitida=(_sit==='sucesso'||_sit==='advertencias'); var _cur=parseInt(dparam('v')||'4',10); var v=_transmitida?String(_cur+1):String(dparam('v')||'4'); var _modo=_transmitida?'nova':'editar'; window.location.href='info-contribuinte.html?modo='+_modo+'&v='+v+'&emp='+empId()+'&from=detalhe'+(dparam('scn')?('&scn='+dparam('scn')):'')+(dparam('cenario')?('&cenario='+dparam('cenario')):''); }
+  function goEditar(){ var _sit=sitFor(curDetState); var _transmitida=(_sit==='sucesso'||_sit==='advertencias'); var _cur=parseInt(dparam('v')||'4',10); var v=_transmitida?String(_cur+1):String(dparam('v')||'4'); var _modo=_transmitida?'nova':'editar'; window.location.href='info-contribuinte.html?modo='+_modo+'&v='+v+'&emp='+empId()+'&from=detalhe'+(dparam('scn')?('&scn='+dparam('scn')):'')+(dparam('cenario')?('&cenario='+dparam('cenario')):'')+'&back='+encodeURIComponent(retURL()); }
   function optActive(o){
     if(o.act) return false;
     if((o.role||'preparador')!==curRole) return false;
@@ -709,7 +711,7 @@
       var _vr=dparam('v')||'4'; var _rjh=(sit==='rejeitado')?curRej():null;
       var _exBtn='<button class="btn btn--danger-outline" type="button" data-open-excluir><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M10 11v6M14 11v6"/></svg>Excluir versão</button>';
       var _prim;
-      if(!_rjh || _rjh.acaoTipo==='corrigir'){ _prim='<a class="btn btn--primary" href="info-contribuinte.html?modo=editar&v='+_vr+'&corr='+sit+'&emp='+empId()+(dparam('cenario')?('&cenario='+dparam('cenario')):'')+(dparam('scn')?('&scn='+dparam('scn')):'')+'"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>Corrigir e reenviar</a>'; }
+      if(!_rjh || _rjh.acaoTipo==='corrigir'){ _prim='<a class="btn btn--primary" href="info-contribuinte.html?modo=editar&v='+_vr+'&corr='+sit+'&emp='+empId()+(dparam('cenario')?('&cenario='+dparam('cenario')):'')+(dparam('scn')?('&scn='+dparam('scn')):'')+'&back='+encodeURIComponent(retURL())+'"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>Corrigir e reenviar</a>'; }
       else if(_rjh.acaoTipo==='certificado'){ _prim='<button class="btn btn--primary" type="button" data-go-cert><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>Resolver certificado</button>'; }
       else { _prim='<button class="btn btn--primary" type="button" data-go-cert><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4M10 10h4M10 14h4"/></svg>Verificar o CNPJ</button>'; }
       _acts=_exBtn+_prim;
@@ -822,7 +824,10 @@
     } else { var st=dparam('st'); render(STATES[st]?st:'revisao'); }
   })();
   document.addEventListener('DOMContentLoaded',function(){
-    if(dparam('sent')==='1'){ showToast('Enviado para revisão interna.'); try{ var _ps=new URLSearchParams(location.search); _ps.delete('sent'); history.replaceState(null,'','?'+_ps.toString()); }catch(e){} setTimeout(showNotif,700); }
+    if(dparam('sent')==='1'){ try{ var _ps=new URLSearchParams(location.search); _ps.delete('sent'); history.replaceState(null,'','?'+_ps.toString()); }catch(e){}
+      /* admin transmite direto à Receita (st=aprovado/sit=processando): não há etapa de aprovação, então sem toast de revisão e sem notificação pro aprovador */
+      if(dparam('st')==='aprovado' || dparam('sit')==='processando'){ showToast('Transmitido para a Receita Federal.'); }
+      else { showToast('Enviado para revisão interna.'); setTimeout(showNotif,700); } }
     if(dparam('exsent')==='1'){ showToast('Exclusão enviada para revisão de Ana Prado.'); try{ var _pe=new URLSearchParams(location.search); _pe.delete('exsent'); history.replaceState(null,'','?'+_pe.toString()); }catch(e){} setTimeout(showNotif,700); }
   });
 
@@ -950,7 +955,7 @@
       var DL='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>';
       var f='<button class="btn btn--ghost btn--lg" type="button" data-close-comp>Fechar</button>';
       if(state==='rejeitado'){ var _rjf=curRej();
-        if(_rjf.acaoTipo==='corrigir'){ var _vr=dparam('v')||'4'; f+='<a class="btn btn--primary btn--lg" href="info-contribuinte.html?modo=editar&v='+_vr+'&corr=rejeitado"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>'+esc(_rjf.acao)+'</a>'; }
+        if(_rjf.acaoTipo==='corrigir'){ var _vr=dparam('v')||'4'; f+='<a class="btn btn--primary btn--lg" href="info-contribuinte.html?modo=editar&v='+_vr+'&corr=rejeitado&emp='+empId()+'&back='+encodeURIComponent(retURL())+'"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>'+esc(_rjf.acao)+'</a>'; }
         else { f+='<button class="btn btn--primary btn--lg" type="button" data-comp-fix><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>'+esc(_rjf.acao)+'</button>'; } }
       else { f+='<button class="btn btn--secondary btn--lg" type="button" data-comp-dl>'+DL+'Baixar XML</button><button class="btn btn--secondary btn--lg" type="button" data-comp-dl>'+DL+'Baixar PDF</button>'; }
       if(F) F.innerHTML=f;
@@ -1173,7 +1178,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788544908';
+  var MYV='1788576479';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
