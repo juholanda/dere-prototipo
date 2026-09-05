@@ -59,6 +59,10 @@
     .notif__x{position:absolute;top:6px;right:6px;width:26px;height:26px;border:0;background:none;color:var(--color-text-muted);cursor:pointer;border-radius:var(--radius-sm);display:grid;place-items:center;padding:0}
     .notif__x:hover{background:var(--color-primary-subtle);color:var(--color-text)}
     .notif__x svg{width:15px;height:15px}
+    /* campo do processo (nrProc): revela/esconde com transição fluida quando o motivo é judicial */
+    #nrProcField{max-height:0;opacity:0;overflow:hidden;margin-top:0;visibility:hidden;transition:max-height .34s cubic-bezier(.2,.7,.2,1),opacity .24s ease,margin-top .34s cubic-bezier(.2,.7,.2,1),visibility 0s linear .34s}
+    #nrProcField.is-open{max-height:240px;opacity:1;margin-top:var(--space-4);visibility:visible;transition:max-height .34s cubic-bezier(.2,.7,.2,1),opacity .24s ease .06s,margin-top .34s cubic-bezier(.2,.7,.2,1),visibility 0s}
+    @media(prefers-reduced-motion:reduce){#nrProcField{transition:none}}
     @keyframes notifIn{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:none}}
     @media(prefers-reduced-motion:reduce){.notif{animation:none}}
     .notif:hover{border-color:var(--color-primary);background:var(--color-primary-subtle)}
@@ -889,7 +893,7 @@
       document.addEventListener('click',function(e){ if(!cs.contains(e.target)){ panel.hidden=true; b.setAttribute('aria-expanded','false'); } });
     }
     function resetCselect(){ _motVal=''; _motLabel=''; if(csEl){ var lb=csEl.querySelector('[data-cselect-label]'); if(lb) lb.textContent='Selecione o motivo'; csEl.querySelectorAll('[role=option]').forEach(function(x){x.classList.remove('is-selected');}); csEl.removeAttribute('aria-invalid'); } }
-    initCselect(csEl, function(val, text){ _motVal=val; _motLabel=text||''; if(procField) procField.hidden=(val!=='1'); });
+    initCselect(csEl, function(val, text){ _motVal=val; _motLabel=text||''; if(procField) procField.classList.toggle('is-open', val==='1'); });
     function open(){
       var naoTx=(curDetState!=='aprovado'); /* em revisão/ajuste: nada foi transmitido à Receita */
       $('exTitle').textContent = naoTx ? 'Tem certeza de que deseja excluir esta versão?' : 'Excluir a informação do contribuinte?';
@@ -901,7 +905,7 @@
       var motF=csEl?csEl.closest('.field'):null; if(motF) motF.hidden=naoTx;      /* motivo só na exclusão de vigência */
       if($('motExclHint')) $('motExclHint').hidden=naoTx;                        /* aviso de lacuna só na vigência */
       if($('confirmExcluir')) $('confirmExcluir').textContent = naoTx ? 'Excluir versão' : 'Enviar exclusão para aprovação';
-      resetCselect(); if(procField) procField.hidden=true;
+      resetCselect(); if(procField) procField.classList.remove('is-open');
       dsDialog.open(modal,{focus:(naoTx?$('confirmExcluir'):(csEl?csEl.querySelector('[data-cselect-btn]'):$('confirmExcluir'))),
         onOpen:function(){ modal.hidden=false; document.body.style.overflow='hidden'; },
         onClose:function(){ modal.hidden=true; document.body.style.overflow=''; }});
@@ -1090,7 +1094,7 @@
                 <button type="button" role="option" data-val="9">9 · Outro</button>
               </div>
             </div>
-            <div class="field" id="nrProcField" hidden style="margin-top:var(--space-4)">
+            <div class="field" id="nrProcField">
               <label class="field__label" for="nrProc">Número do processo administrativo ou judicial (nrProc)</label>
               <input class="input" id="nrProc" maxlength="21" placeholder="Ex.: 0001234-56.2026.4.01">
               <p class="field__msg" style="color:var(--color-text-muted)">Obrigatório para determinação judicial ou administrativa. Deve existir no evento D-1021 (Processos).</p>
@@ -1210,7 +1214,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788612552';
+  var MYV='1788612886';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
