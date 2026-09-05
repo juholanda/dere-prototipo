@@ -129,6 +129,8 @@
     #leaveModal .modal__footer{flex-wrap:wrap;gap:var(--space-2)}
     #confirmModal .modal__header{align-items:center}
     .modal__body p{margin:0 0 var(--space-4);font-size:var(--text-base);line-height:1.55;color:var(--color-text)}
+    /* texto do alerta de consequência mantém o tamanho de UI do DS (14px), sem herdar o 16px da regra acima */
+    #confirmModal .dalert__text{font-size:var(--text-sm)}
     .cinfo{display:flex;flex-direction:column;gap:var(--space-4);background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-4)}
     .cinfo__row{display:flex;flex-direction:column;gap:2px}
     .cinfo__k{font-size:var(--text-xs);color:var(--color-text-muted);font-weight:600}
@@ -960,7 +962,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788616171';
+  var MYV='1788616663';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

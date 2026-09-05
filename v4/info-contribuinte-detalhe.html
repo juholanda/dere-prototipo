@@ -28,6 +28,8 @@
     .decisionbar{position:sticky;bottom:0;z-index:30;background:var(--color-surface);border-top:1px solid var(--color-border);box-shadow:var(--shadow-up)}
     .decisionbar[hidden]{display:none}
     .decisionbar__inner{max-width:1600px;margin:0 auto;padding:var(--space-4) var(--space-10);display:flex;align-items:center;justify-content:flex-end;gap:var(--space-3);box-sizing:border-box}
+    /* ação de escape (Cancelar/Voltar) ancora na extremidade esquerda; ações primárias à direita — mesmo padrão do rodapé do modal (.modal__footer) */
+    .decisionbar__inner .decisionbar__back{margin-right:auto}
     /* .page-h / .page-h__row / .page-h__title / .page-h__desc agora vivem no ds.css (cabeçalho de página) */
     .eyebrow{margin:0 0 var(--space-1-5)}
     .vigchip{display:inline-flex;align-items:center;gap:3px;font-size:var(--text-sm);font-weight:600;color:var(--color-success-fg);background:var(--color-success-bg);border:1px solid color-mix(in srgb, var(--color-success-fg) 22%, transparent);border-radius:var(--radius-pill);padding:2px var(--space-2)}
@@ -577,7 +579,7 @@
     if(!reviewStarted()){
       return '<button class="btn btn--primary btn--lg" type="button" data-start-review>'+IC_REV+'Iniciar revisão</button>';
     }
-    var cancelar='<button class="btn btn--ghost btn--lg" type="button" data-cancel-review>Cancelar</button>';
+    var cancelar='<button class="btn btn--ghost btn--lg decisionbar__back" type="button" data-cancel-review>Cancelar</button>';
     var ajuste='<button class="btn btn--danger-outline btn--lg" type="button" data-open-ajuste>'+IC_MSG+'Solicitar ajustes</button>';
     var aprovar=(curOp==='exclusao')
       ? '<button class="btn btn--success btn--lg" type="button" data-open-aprovar>'+IC_CHK+'Aprovar exclusão</button>'
@@ -616,8 +618,9 @@
       _x='O preparador manteve a mesma vigência'+(a&&a.data?(' (<b>'+esc(a.data)+'</b>)'):'')+' da Versão '+_src+'. Ao ser aprovada, a Versão '+_cur+' substituirá a versão vigente, mantendo o mesmo período de vigência.';
     }
     var _srcUrl='info-contribuinte-detalhe.html?emp='+empId()+'&v='+_src+'&st=aprovado&sit=sucesso'+(dparam('scn')?('&scn='+dparam('scn')):'');
-    var _deriv='<p class="dalert__text" style="margin-top:var(--space-2)"><a href="'+_srcUrl+'">Ver a Versão '+_src+' (vigente)</a></p>';
-    return '<div class="dalert dalert--warning" role="status"><span class="dalert__ic">'+ALERT+'</span><div class="dalert__body"><p class="dalert__title">'+esc(_t)+'</p><p class="dalert__text">'+_x+'</p>'+_deriv+'</div></div>';
+    /* ação à direita (padrão dos banners do DS: .dalert__act), não link solto embaixo do texto */
+    var _act='<a class="btn btn--secondary dalert__act" href="'+_srcUrl+'">'+ARROW+'Ver a Versão '+_src+'</a>';
+    return '<div class="dalert dalert--warning" role="status"><span class="dalert__ic">'+ALERT+'</span><div class="dalert__body"><p class="dalert__title">'+esc(_t)+'</p><p class="dalert__text">'+_x+'</p></div>'+_act+'</div>';
   }
   function showToast(msg){
     var w=$('toastWrap'); if(!w) return;
@@ -1230,7 +1233,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788616171';
+  var MYV='1788616663';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
