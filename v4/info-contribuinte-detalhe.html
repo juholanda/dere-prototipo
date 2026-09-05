@@ -607,17 +607,16 @@
       return '<div class="dalert dalert--info" role="status"><span class="dalert__ic">'+IC_INFO+'</span><div class="dalert__body"><p class="dalert__title">Primeira versão aguardando sua aprovação</p><p class="dalert__text">'+esc(b0[2])+'</p></div></div>';
     }
     /* v>1: toda versão é nova, mas SEMPRE deriva da vigente anterior. Distingue correção (mantém vigência) × nova vigência (encerra a anterior). */
-    var a=altOp(), _t, _x;
+    var a=altOp(), _t, _x, _src=_cur-1;
     if(a && a.op==='novavig'){
       _t='Nova vigência aguardando sua aprovação';
-      _x='O preparador definiu novo início em <b>'+esc(a.data||'')+'</b>. Ao aprovar, a versão vigente é <b>encerrada</b> nessa data (corte automático) e esta passa a valer.';
+      _x='O preparador definiu novo início em <b>'+esc(a.data||'')+'</b>. Ao aprovar, a Versão '+_src+' (vigente) é <b>encerrada</b> e a Versão '+_cur+' passa a valer a partir dessa data.';
     } else {
       _t='Correção da versão vigente aguardando sua aprovação';
-      _x='O preparador manteve a vigência atual'+(a&&a.data?(' (<b>'+esc(a.data)+'</b>)'):'')+'. Ao ser aprovada, esta versão <b>substituirá</b> a vigente, sem encerrar o período atual.';
+      _x='O preparador manteve a mesma vigência'+(a&&a.data?(' (<b>'+esc(a.data)+'</b>)'):'')+' da Versão '+_src+'. Ao ser aprovada, a Versão '+_cur+' substituirá a versão vigente, mantendo o mesmo período de vigência.';
     }
-    var _src=_cur-1;
     var _srcUrl='info-contribuinte-detalhe.html?emp='+empId()+'&v='+_src+'&st=aprovado&sit=sucesso'+(dparam('scn')?('&scn='+dparam('scn')):'');
-    var _deriv='<p class="dalert__text" style="margin-top:var(--space-2)">Esta é a <b>Versão '+_cur+'</b>, criada a partir da <b>Versão '+_src+'</b> (vigente). <a href="'+_srcUrl+'">Ver a Versão '+_src+'</a></p>';
+    var _deriv='<p class="dalert__text" style="margin-top:var(--space-2)"><a href="'+_srcUrl+'">Ver a Versão '+_src+' (vigente)</a></p>';
     return '<div class="dalert dalert--warning" role="status"><span class="dalert__ic">'+ALERT+'</span><div class="dalert__body"><p class="dalert__title">'+esc(_t)+'</p><p class="dalert__text">'+_x+'</p>'+_deriv+'</div></div>';
   }
   function showToast(msg){
@@ -1231,7 +1230,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788615301';
+  var MYV='1788616171';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

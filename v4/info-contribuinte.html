@@ -716,16 +716,17 @@
       var cq=document.getElementById('confirmConseq'); if(!cq) return;
       var isAlt=(_q('modo')==='nova' && _q('from')==='detalhe');
       if(!isAlt){ cq.hidden=true; return; }
+      var _v=parseInt(_q('v')||'1',10), _src=(_v>1?_v-1:_v);
       /* diz explicitamente que é uma alteração: cria a Versão N a partir da vigente (Versão N-1) */
       var _cd=document.getElementById('confirmDesc');
-      if(_cd && !IS_ADMIN){ var _v=parseInt(_q('v')||'1',10), _src=(_v>1?_v-1:_v); _cd.innerHTML='Você está criando a <b>Versão '+_v+'</b> a partir da <b>Versão '+_src+'</b> (vigente). Ela vai para <b>revisão interna</b> antes de ser transmitida à Receita.'; }
+      if(_cd && !IS_ADMIN){ _cd.innerHTML='Você está criando a <b>Versão '+_v+'</b> a partir da <b>Versão '+_src+'</b> (vigente). Ela será enviada para <b>revisão interna</b> antes da transmissão à Receita.'; }
       var ini=($('iniVig')||{}).value||'';
       if(ini && _vigBaseline && ini!==_vigBaseline){
         cq.className='dalert dalert--warning'; cq.hidden=false;
-        cq.innerHTML=_IC_WARN+'<div class="dalert__body"><p class="dalert__title">Nova vigência a partir de '+esc(ini)+'</p><p class="dalert__text">Você mudou a data de início, então entra como <strong>nova vigência</strong>: a versão vigente será <strong>encerrada</strong> nessa data (corte automático).</p></div>';
+        cq.innerHTML=_IC_WARN+'<div class="dalert__body"><p class="dalert__title">Nova vigência a partir de '+esc(ini)+'</p><p class="dalert__text">Você mudou a data de início, então a Versão '+_v+' entra como <strong>nova vigência</strong>: a Versão '+_src+' (vigente) é <strong>encerrada</strong> em '+esc(_vigBaseline)+' e a Versão '+_v+' passa a valer a partir de '+esc(ini)+'.</p></div>';
       } else {
         cq.className='dalert dalert--info'; cq.hidden=false;
-        cq.innerHTML=_IC_INFO+'<div class="dalert__body"><p class="dalert__title">Correção da versão vigente</p><p class="dalert__text">Você manteve a vigência ('+esc(_vigBaseline)+'), então isto <strong>corrige</strong> a versão vigente: ela é <strong>substituída</strong> pela corrigida, mesmo período.</p></div>';
+        cq.innerHTML=_IC_INFO+'<div class="dalert__body"><p class="dalert__title">Correção da versão vigente</p><p class="dalert__text">Você manteve a mesma vigência ('+esc(_vigBaseline)+') da Versão '+_src+'. Ao ser aprovada, a Versão '+_v+' substituirá a versão vigente, mantendo o mesmo período de vigência.</p></div>';
       }
     }
     openB.addEventListener('click',function(){
@@ -959,7 +960,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788615301';
+  var MYV='1788616171';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
