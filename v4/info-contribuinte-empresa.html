@@ -8,9 +8,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Versões · MAG Seguros</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788622886">
-  <script src="../design-system/ds-tailwind.js?v=1788622886"></script>
-  <script src="../design-system/ds-dialog.js?v=1788622886"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788623626">
+  <script src="../design-system/ds-tailwind.js?v=1788623626"></script>
+  <script src="../design-system/ds-dialog.js?v=1788623626"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -468,7 +468,8 @@
   if(_vigExc){ _base.forEach(function(v){ if(v.vigrole==='now'){ v.vigrole='excluded'; v.sit='excluida'; v.exclMotivo=_vigExc.motivo; } }); }
   /* exclusão EM PROCESSAMENTO (aprovada, aguardando a Receita concluir): a vigente CONTINUA valendo, com selo "Exclusão em processamento". Só vira "excluída" quando conclui (vigexcluida acima). */
   var _exclProc=null; try{ _exclProc=JSON.parse(localStorage.getItem('adere.d1001.exclproc.'+EMP)||'null'); }catch(e){}
-  if(_exclProc && !_vigExc){ _base.forEach(function(v){ if(v.vigrole==='now'){ v.exclProc=true; } }); }
+  var _exclProcLink=(param('exclproc')==='1');   /* link direto pro estado (docs/flows), sem precisar passar pelo fluxo de aprovação */
+  if((_exclProc||_exclProcLink) && !_vigExc){ _base.forEach(function(v){ if(v.vigrole==='now'){ v.exclProc=true; } }); }
   var VERSIONS=_base.sort(function(a,b){ if(a.current!==b.current) return a.current?-1:1; return b.n-a.n; });
 
   function endOf(vig){ var m=(vig||'').match(/\d{2}\/\d{2}\/\d{4}/g)||[]; return m[1]||'—'; }
@@ -746,7 +747,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788622886';
+  var MYV='1788623626';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

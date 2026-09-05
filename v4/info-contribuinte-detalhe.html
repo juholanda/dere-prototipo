@@ -8,9 +8,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Detalhe do contribuinte</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788622886">
-  <script src="../design-system/ds-tailwind.js?v=1788622886"></script>
-  <script src="../design-system/ds-dialog.js?v=1788622886"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788623626">
+  <script src="../design-system/ds-tailwind.js?v=1788623626"></script>
+  <script src="../design-system/ds-dialog.js?v=1788623626"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -73,6 +73,24 @@
     .notif__b{min-width:0;display:flex;flex-direction:column;gap:2px}
     .notif__b strong{font-size:var(--text-sm);color:var(--color-heading);font-weight:600}
     .notif__b span{font-size:var(--text-xs);color:var(--color-text-muted);line-height:1.4}
+    /* painel de notificações (sino da topbar): reusa .menu__panel do DS; conteúdo em lista de itens acionáveis */
+    .notifpanel{min-width:340px;max-width:min(380px,92vw);padding:0;overflow:hidden}
+    .notifpanel__head{padding:var(--space-3) var(--space-4);border-bottom:1px solid var(--color-border);font-weight:700;color:var(--color-heading);font-size:var(--text-sm)}
+    .notifpanel__list{max-height:60vh;overflow:auto}
+    .notifpanel__empty{padding:var(--space-6) var(--space-4);margin:0;color:var(--color-text-muted);font-size:var(--text-sm);text-align:center}
+    .notifitem{display:flex;gap:var(--space-3);align-items:flex-start;padding:var(--space-3) var(--space-4);text-decoration:none;color:var(--color-text);border-bottom:1px solid var(--color-border)}
+    .notifitem:last-child{border-bottom:0}
+    .notifitem:hover{background:var(--color-surface-2)}
+    .notifitem:focus-visible{outline:none;box-shadow:var(--ring)}
+    .notifitem--unread{background:color-mix(in srgb,var(--color-primary) 5%,var(--color-surface))}
+    .notifitem__ic{flex:0 0 auto;width:32px;height:32px;border-radius:var(--radius-lg);display:grid;place-items:center}
+    .notifitem__ic svg{width:17px;height:17px}
+    .notifitem__ic--info{background:var(--color-info-bg);color:var(--color-info-fg)}
+    .notifitem__ic--success{background:var(--color-success-bg);color:var(--color-success-fg)}
+    .notifitem__ic--danger{background:var(--color-danger-bg);color:var(--color-danger-fg)}
+    .notifitem__body{min-width:0;display:flex;flex-direction:column;gap:2px}
+    .notifitem__title{font-weight:600;color:var(--color-heading);font-size:var(--text-sm)}
+    .notifitem__text{font-size:var(--text-xs);color:var(--color-text-muted);line-height:1.45}
     .demobar button{background:none;border:0;color:rgba(255,255,255,.72);font-family:inherit;font-size:var(--text-xs);cursor:pointer;padding:var(--space-1) var(--space-2);border-radius:var(--radius-pill)}
     .demobar button:hover{color:rgba(255,255,255,1);background:rgba(255,255,255,.08)}
     .demobar button.on{background:rgba(255,255,255,.16);color:rgba(255,255,255,1);font-weight:600}
@@ -282,7 +300,10 @@
         </nav>
         <div class="flex items-center gap-1" style="margin-left:auto">
           <span class="tooltip"><button class="icon-btn" type="button" aria-label="Buscar"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></button><span class="tooltip__bubble" role="tooltip">Buscar</span></span>
-          <span class="tooltip"><button class="icon-btn" aria-label="Notificações, 3 pendências" style="position:relative"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="badge badge--danger" style="position:absolute;top:3px;right:3px">3</span></button><span class="tooltip__bubble" role="tooltip">Notificações</span></span>
+          <div class="menu" data-menu>
+            <span class="tooltip"><button class="icon-btn" type="button" id="notifBtn" aria-haspopup="true" aria-expanded="false" aria-label="Notificações" style="position:relative"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="badge badge--danger" id="notifBadge" style="position:absolute;top:3px;right:3px" hidden>0</span></button><span class="tooltip__bubble" role="tooltip">Notificações</span></span>
+            <div class="menu__panel notifpanel" hidden role="region" aria-label="Notificações"><div class="notifpanel__head">Notificações</div><div class="notifpanel__list" id="notifList"></div></div>
+          </div>
         </div>
         <span aria-hidden="true" style="width:1px;height:22px;background:var(--color-divider);flex:0 0 auto"></span>
         <div class="menu" data-menu>
@@ -749,6 +770,28 @@
     if($('userMenuName')) $('userMenuName').textContent=nm;
     if($('userMenuRole')) $('userMenuRole').textContent=rl;
   }
+  /* Painel de notificações (sino): mostra a notificação relevante ao contexto. A "Aprovada e transmitida" (informativa ao preparador) vive aqui, não some como toast. */
+  function renderNotifs(){
+    var list=$('notifList'), badge=$('notifBadge'), btn=$('notifBtn'); if(!list) return;
+    var v=dparam('v')||'3', sit=sitFor(curDetState), items=[];
+    var nm=(typeof DCO!=='undefined'&&DCO[empId()]&&DCO[empId()].nome)||'MAG Seguros';
+    if(curRole==='aprovador' && sit==='revisao'){
+      var kind={nova:'Nova versão',alteracao:'Alteração',exclusao:'Exclusão de vigência'}[curOp]||'Nova versão';
+      items.push({ic:BELL,tone:'info',title:'Nova submissão para aprovar',text:esc(nm+' · '+kind+' · Versão '+v)+' aguardando sua aprovação',unread:true});
+    } else if(curRole!=='aprovador'){
+      if(sit==='ajustes'){ items.push({ic:ALERT,tone:'danger',title:'Ajustes solicitados',text:'Ana Prado devolveu a <b>Versão '+esc(v)+'</b> com ajustes. Nada foi transmitido à Receita.',unread:true}); }
+      else if(sit==='rejeitado'){ items.push({ic:ALERT,tone:'danger',title:'Rejeitada pela Receita',text:'A <b>Versão '+esc(v)+'</b> foi rejeitada. Veja o motivo e reenvie.',unread:true}); }
+      else if((sit==='sucesso'||sit==='advertencias') && curOp!=='exclusao'){ items.push({ic:IC_CHK,tone:'success',title:'Aprovada e transmitida',text:'A <b>Versão '+esc(v)+'</b> foi aprovada por Ana Prado e transmitida à Receita Federal.',unread:true}); }
+      else if(sit==='processando' && curOp==='exclusao'){ items.push({ic:IC_INFO,tone:'info',title:'Exclusão em processamento',text:'A exclusão da <b>Versão '+esc(v)+'</b> foi transmitida e aguarda a Receita concluir.',unread:false}); }
+      else if(sit==='excluida'){ items.push({ic:IC_INFO,tone:'info',title:'Vigência excluída',text:'A vigência da <b>Versão '+esc(v)+'</b> foi baixada na Receita; o período ficou como lacuna.',unread:true}); }
+    }
+    var self=retURL();
+    if(!items.length){ list.innerHTML='<p class="notifpanel__empty">Nenhuma notificação.</p>'; }
+    else { list.innerHTML=items.map(function(n){ return '<a class="notifitem'+(n.unread?' notifitem--unread':'')+'" href="'+self+'"><span class="notifitem__ic notifitem__ic--'+(n.tone||'info')+'">'+n.ic+'</span><span class="notifitem__body"><span class="notifitem__title">'+esc(n.title)+'</span><span class="notifitem__text">'+n.text+'</span></span></a>'; }).join(''); }
+    var unread=items.filter(function(n){return n.unread;}).length;
+    if(badge){ if(unread>0){ badge.textContent=String(unread); badge.hidden=false; } else { badge.hidden=true; } }
+    if(btn){ btn.setAttribute('aria-label', unread>0?('Notificações, '+unread+' não lida'+(unread>1?'s':'')):'Notificações'); }
+  }
   function render(key){
     curDetState=key;
     var s=STATES[key], sit=sitFor(key);
@@ -780,7 +823,7 @@
     if($('bcVer')) $('bcVer').textContent = vlabel;
     if($('dBadge')){ var _st=SIT[sit]||{label:s.sub,pill:s.pill}; var _bh='<span class="status '+_st.pill+'"><span class="status__dot"></span>'+esc(_st.label)+'</span>'; $('dBadge').innerHTML=_bh; }
     renderPeople(sit); renderAlert(sit); renderTimeline(sit);
-    syncUser(); syncDemo();
+    syncUser(); syncDemo(); renderNotifs();
   }
   document.addEventListener('click',function(e){
     if(e.target.closest('[data-go-editar]')){ goEditar(); return; }
@@ -1243,7 +1286,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788622886';
+  var MYV='1788623626';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
