@@ -279,7 +279,7 @@
   /* estados oficiais do retorno da Receita (cdRetorno) + estado interno "não enviada" */
   var SIT={
     sucesso:   {label:'Processada com sucesso', pill:'status--success'},
-    avisos:    {label:'Processada com advertências', pill:'status--warning'},
+    avisos:    {label:'Processada com adv.', pill:'status--warning'},
     rejeitado: {label:'Rejeitada',              pill:'status--danger'},
     revisao:   {label:'Em revisão',              pill:'status--info'},
     rascunho:  {label:'Rascunho',                pill:'status--draft'},
@@ -402,7 +402,7 @@
       var verSub=fl ? '<div class="cellsub cellsub--stage"><span class="stagedot stagedot--'+fl.dot+'" aria-hidden="true"></span>Versão '+fl.n+' '+esc(fl.label)+'</div>' : '';
       /* Versão vigente = nº + status do processamento embaixo (mesmo padrão da coluna Em preparação). Sem vigente: "Sem versão vigente". */
       var verCell=e.vigente
-        ? verBlock(e.vigente.ver, (e.sit==='avisos'?'Processada com advertência':'Processada com sucesso'), (e.sit==='avisos'?'adv':'sucesso'))
+        ? verBlock(e.vigente.ver, (e.sit==='avisos'?'Processada com adv.':'Processada com sucesso'), (e.sit==='avisos'?'adv':'sucesso'))
         : '<span class="muted">—</span>';
       /* Vigência = período + contagem regressiva + alerta (o alerta de vigência migrou p/ cá) */
       var vigCell;
@@ -517,7 +517,7 @@
   <script>(function(){ var bar=document.getElementById('demobar'); if(!bar) return; var tog=bar.querySelector('[data-demo-toggle]'); if(!tog) return; function set(open){ bar.classList.toggle('is-collapsed', !open); tog.setAttribute('aria-expanded', String(open)); tog.setAttribute('aria-label', open?'Recolher ferramenta de demonstração':'Abrir ferramenta de demonstração de cenários'); try{ localStorage.setItem('adere.demo.open', open?'1':'0'); }catch(e){} } var open=false; try{ open=localStorage.getItem('adere.demo.open')==='1'; }catch(e){} set(open); tog.addEventListener('click',function(){ set(bar.classList.contains('is-collapsed')); }); })();</script>
 <script>
 (function(){
-  var MYV='1788611563';
+  var MYV='1788611724';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

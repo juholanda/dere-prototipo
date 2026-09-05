@@ -119,7 +119,6 @@
        largura fixa (alinham entre linhas e seções); o que não existe leva traço. */
     .verrow__main{display:contents}
     .verrow__top{display:flex;flex-direction:column;align-items:flex-start;gap:var(--space-1-5);min-width:0}
-    .verrow__top .status{white-space:normal;max-width:100%;height:auto}
     .verrow__title{font-size:var(--text-base);font-weight:600;color:var(--color-heading)}
     .verrow__titlewrap{display:inline-flex;align-items:center;gap:var(--space-1-5)}
     /* .vigwarn / .vigwarn__ic (aviso de vigência perto do fim) agora no ds.css */
@@ -420,7 +419,7 @@
     ajustes:     {label:'Ajustes solicitados',    pill:'status--danger',  tone:'danger',  ic:I.alert, lead:'Devolvida em'},
     processando: {label:'Em processamento',       pill:'status--info',    tone:'info',    ic:I.clock, lead:'Transmitida em'},
     sucesso:     {label:'Processada com sucesso', pill:'status--success', tone:'success', ic:I.check, lead:'Processada em'},
-    advertencias:{label:'Processada com advertências', pill:'status--azul', tone:'success', ic:I.check, lead:'Processada em'},
+    advertencias:{label:'Processada com adv.', pill:'status--azul', tone:'success', ic:I.check, lead:'Processada em'},
     futura:      {label:'Vigência futura',           pill:'status--success', tone:'success', ic:I.calendar, lead:'Aceita em'},
     rejeitado:   {label:'Rejeitada pela Receita', pill:'status--danger',  tone:'danger',  ic:I.x,     lead:'Rejeitada em'},
     excluida:    {label:'Excluída',                pill:'status--neutral', tone:'draft',   ic:I.x,     lead:'Excluída em'}
@@ -739,7 +738,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788611563';
+  var MYV='1788611724';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
