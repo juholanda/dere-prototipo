@@ -819,9 +819,11 @@
        2) senão, editando/alterando/corrigindo uma versão que já existe → carrega o perfil real da empresa;
        3) senão (primeiro acesso, sem rascunho) → começa em branco. */
     var _draft=null; try{ _draft=JSON.parse(localStorage.getItem(KEY)||'null'); }catch(e){}
+    var _draftFull = !!(_draft && _draft.f && Object.keys(_draft.f).length>0);   /* rascunho com conteúdo real (não um placeholder vazio) */
     var _existente = qs('modo')==='editar' || !!qs('op') || location.search.indexOf('from=detalhe')>=0 || qs('scn')==='pop';
-    if(qs('modo')!=='editar' && _draft){ restore(_draft); }
-    else if(_existente){ preloadPerfil(); }
+    if(qs('modo')!=='editar' && _draftFull){ restore(_draft); }        /* rascunho de verdade: resume as escolhas em andamento */
+    else if(_existente){ preloadPerfil(); }                            /* editar/alterar/corrigir versão existente: carrega o perfil real (regime + atividades) */
+    else if(_draft){ restore(_draft); }                               /* rascunho vazio em primeiro acesso (empresa sem versão): abre em branco */
     /* enviado para revisão = rascunho consumido */
     var cs=document.getElementById('confirmSubmit'); if(cs) cs.addEventListener('click',function(){ try{ localStorage.removeItem(KEY); }catch(e){} });
 
@@ -952,7 +954,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788612886';
+  var MYV='1788613559';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
