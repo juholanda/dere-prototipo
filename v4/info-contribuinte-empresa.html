@@ -118,7 +118,8 @@
     /* MESMA estrutura nas três seções: título + pílula em cima; embaixo os mesmos cinco campos em colunas de
        largura fixa (alinham entre linhas e seções); o que não existe leva traço. */
     .verrow__main{display:contents}
-    .verrow__top{display:flex;flex-direction:column;align-items:flex-start;gap:var(--space-1-5)}
+    .verrow__top{display:flex;flex-direction:column;align-items:flex-start;gap:var(--space-1-5);min-width:0}
+    .verrow__top .status{white-space:normal;max-width:100%;height:auto}
     .verrow__title{font-size:var(--text-base);font-weight:600;color:var(--color-heading)}
     .verrow__titlewrap{display:inline-flex;align-items:center;gap:var(--space-1-5)}
     /* .vigwarn / .vigwarn__ic (aviso de vigência perto do fim) agora no ds.css */
@@ -738,7 +739,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788607826';
+  var MYV='1788611563';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

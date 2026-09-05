@@ -55,7 +55,10 @@
     .demobar{flex-wrap:wrap;justify-content:center;max-width:calc(100vw - var(--space-8));row-gap:var(--space-1)}
     .demobar__scn{display:flex;gap:2px;flex-wrap:wrap}
     .notifwrap{position:fixed;top:var(--space-6);right:var(--space-6);z-index:210;display:flex;flex-direction:column;gap:var(--space-2);max-width:340px}
-    .notif{display:flex;gap:var(--space-3);align-items:flex-start;text-align:left;width:100%;background:var(--color-surface);border:1px solid var(--color-border);border-left:4px solid var(--color-primary);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);padding:var(--space-4);cursor:pointer;font-family:inherit;animation:notifIn .28s cubic-bezier(.2,.7,.2,1) both}
+    .notif{position:relative;display:flex;gap:var(--space-3);align-items:flex-start;text-align:left;width:100%;background:var(--color-surface);border:1px solid var(--color-border);border-left:4px solid var(--color-primary);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);padding:var(--space-4);padding-right:calc(var(--space-6) + 14px);cursor:pointer;font-family:inherit;animation:notifIn .28s cubic-bezier(.2,.7,.2,1) both}
+    .notif__x{position:absolute;top:6px;right:6px;width:26px;height:26px;border:0;background:none;color:var(--color-text-muted);cursor:pointer;border-radius:var(--radius-sm);display:grid;place-items:center;padding:0}
+    .notif__x:hover{background:var(--color-primary-subtle);color:var(--color-text)}
+    .notif__x svg{width:15px;height:15px}
     @keyframes notifIn{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:none}}
     @media(prefers-reduced-motion:reduce){.notif{animation:none}}
     .notif:hover{border-color:var(--color-primary);background:var(--color-primary-subtle)}
@@ -570,11 +573,12 @@
     if(!reviewStarted()){
       return '<button class="btn btn--primary btn--lg" type="button" data-start-review>'+IC_REV+'Iniciar revisão</button>';
     }
+    var cancelar='<button class="btn btn--ghost btn--lg" type="button" data-cancel-review>Cancelar</button>';
     var ajuste='<button class="btn btn--danger-outline btn--lg" type="button" data-open-ajuste>'+IC_MSG+'Solicitar ajustes</button>';
     var aprovar=(curOp==='exclusao')
       ? '<button class="btn btn--success btn--lg" type="button" data-open-aprovar>'+IC_CHK+'Aprovar exclusão</button>'
       : '<button class="btn btn--success btn--lg" type="button" data-open-aprovar>'+IC_CHK+'Aprovar e transmitir</button>';
-    return ajuste+aprovar;
+    return cancelar+ajuste+aprovar;
   }
   var APV_BANNER={
     nova:['info','Nova versão aguardando sua aprovação','Revise as informações e aprove para transmitir à Receita Federal, ou solicite ajustes ao preparador.'],
@@ -688,9 +692,9 @@
     var _ao=altOp(); var _op=(_ao&&_ao.op==='exclusao')?'exclusao':(_ao?'alteracao':'nova');
     var _co=(typeof DCO!=='undefined')?DCO[empId()]:null; var _nm=(_co&&_co.nome)||'MAG Seguros';
     var _kind={nova:'Nova versão',alteracao:'Alteração',exclusao:'Exclusão de vigência'}[_op];
-    var n=document.createElement('button'); n.type='button'; n.className='notif';
-    n.innerHTML='<span class="notif__ic">'+BELL+'</span><span class="notif__b"><strong>Nova submissão para aprovar</strong><span>'+esc(_nm+' · '+_kind+' · Versão '+vnum)+' aguardando sua aprovação</span></span>';
-    n.addEventListener('click',function(){ if(n.parentNode)n.parentNode.removeChild(n); setScenario({role:'aprovador',st:'revisao',sit:'',op:_op}); });
+    var n=document.createElement('div'); n.className='notif'; n.setAttribute('role','button'); n.tabIndex=0;
+    n.innerHTML='<span class="notif__ic">'+BELL+'</span><span class="notif__b"><strong>Nova submissão para aprovar</strong><span>'+esc(_nm+' · '+_kind+' · Versão '+vnum)+' aguardando sua aprovação</span></span><button class="notif__x" type="button" aria-label="Dispensar notificação"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg></button>';
+    n.addEventListener('click',function(ev){ if(n.parentNode)n.parentNode.removeChild(n); if(ev.target.closest('.notif__x')) return; setScenario({role:'aprovador',st:'revisao',sit:'',op:_op}); });
     w.appendChild(n);
     var bb=document.querySelector('.topbar .badge'); if(bb){ bb.textContent=String((parseInt(bb.textContent,10)||0)+1); }
     /* persiste até clicar (demo): a notificação é o atalho pra ver o lado do aprovador */
@@ -701,8 +705,8 @@
     var _co=(typeof DCO!=='undefined')?DCO[empId()]:null; var _nm=(_co&&_co.nome)||'MAG Seguros';
     var M={ajuste:['Ajustes solicitados','o aprovador pediu ajustes: corrija e reenvie'],rejeitado:['Rejeitada pela Receita','veja a ocorrência e corrija por natureza'],aprovada:['Aprovada e transmitida','enviada à Receita, em processamento']}[kind];
     if(!M) return;
-    var n=document.createElement('button'); n.type='button'; n.className='notif';
-    n.innerHTML='<span class="notif__ic">'+BELL+'</span><span class="notif__b"><strong>'+esc(M[0])+'</strong><span>'+esc(_nm+' · Versão '+vnum+' · '+M[1])+'</span></span>';
+    var n=document.createElement('div'); n.className='notif'; n.setAttribute('role','button'); n.tabIndex=0;
+    n.innerHTML='<span class="notif__ic">'+BELL+'</span><span class="notif__b"><strong>'+esc(M[0])+'</strong><span>'+esc(_nm+' · Versão '+vnum+' · '+M[1])+'</span></span><button class="notif__x" type="button" aria-label="Dispensar notificação"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg></button>';
     n.addEventListener('click',function(){ if(n.parentNode)n.parentNode.removeChild(n); });
     w.appendChild(n);
     var bb=document.querySelector('.topbar .badge'); if(bb){ bb.textContent=String((parseInt(bb.textContent,10)||0)+1); }
@@ -850,6 +854,8 @@
     if(dparam('exsent')==='1'){ showToast('Exclusão enviada para revisão de Ana Prado.'); try{ var _pe=new URLSearchParams(location.search); _pe.delete('exsent'); history.replaceState(null,'','?'+_pe.toString()); }catch(e){} setTimeout(showNotif,700); }
     /* notificação de retorno ao preparador nos cenários acionáveis (ajustes solicitados / rejeitada) */
     if((dparam('role')||'preparador')!=='aprovador'){ var _rs=dparam('st'), _rsit=dparam('sit'); if(_rs==='ajuste'){ setTimeout(function(){ showReturnNotif('ajuste'); },750); } else if(_rs==='aprovado' && _rsit==='rejeitado'){ setTimeout(function(){ showReturnNotif('rejeitado'); },750); } }
+    /* deep-link de rascunho: semeia o rascunho no localStorage para a lista/empresa refletirem (navegação consistente ao voltar às versões) */
+    if(dparam('st')==='rascunho'){ try{ var _dk='adere.d1001.draft.'+empId(); if(!localStorage.getItem(_dk)) localStorage.setItem(_dk, JSON.stringify({t:Date.now(), f:{}})); }catch(e){} }
   });
 
   /* Botão "Mais ações" (dropdown): abre o painel; fecha ao escolher, clicar fora ou Esc */
@@ -999,6 +1005,7 @@
       if(e.target.closest('[data-open-ajuste]')){ $('ajusteText').value=''; if($('ajusteErr'))$('ajusteErr').hidden=true; dsDialog.open(ajM,{focus:$('ajusteText'),onOpen:function(){ajM.hidden=false;document.body.style.overflow='hidden';},onClose:function(){ajM.hidden=true;document.body.style.overflow='';}}); }
       if(e.target.closest('[data-proc-block]')){ var _pb=e.target.closest('[data-proc-block]').getAttribute('data-proc-block'); if($('procBlockText')) $('procBlockText').textContent='Não é possível '+(_pb==='excluir'?'excluir':'alterar')+' esta versão enquanto ela está em processamento na Receita. Aguarde o retorno do processamento para fazer qualquer ajuste.'; if(pbM) dsDialog.open(pbM,{focus:pbM.querySelector('[data-close]'),onOpen:function(){pbM.hidden=false;document.body.style.overflow='hidden';},onClose:function(){pbM.hidden=true;document.body.style.overflow='';}}); return; }
       if(e.target.closest('[data-start-review]')){ try{ localStorage.setItem('adere.d1001.revstarted.'+empId(),'1'); }catch(e2){} showToast('Revisão iniciada. O preparador não pode mais alterar esta versão.'); render(curDetState); return; }
+      if(e.target.closest('[data-cancel-review]')){ try{ localStorage.removeItem('adere.d1001.revstarted.'+empId()); }catch(e2){} showToast('Revisão cancelada. O preparador pode editar novamente.'); render(curDetState); return; }
       if(e.target.closest('[data-rev-block]')){ var _rb=e.target.closest('[data-rev-block]').getAttribute('data-rev-block'); if($('procBlockText')) $('procBlockText').textContent='Não é possível '+(_rb==='excluir'?'excluir':'alterar')+' esta versão: o aprovador já iniciou a revisão. Aguarde a decisão dele (aprovar ou solicitar ajustes).'; if(pbM) dsDialog.open(pbM,{focus:pbM.querySelector('[data-close]'),onOpen:function(){pbM.hidden=false;document.body.style.overflow='hidden';},onClose:function(){pbM.hidden=true;document.body.style.overflow='';}}); return; }
       if(e.target.closest('[data-open-comprovante]')){ openComprovante(sitFor(curDetState)); }
     });
@@ -1155,7 +1162,7 @@
         <button class="icon-btn" type="button" data-close aria-label="Fechar" style="flex:0 0 auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg></button>
       </div>
       <div class="modal__body">
-        <p>A versão volta para o preparador com o seu comentário. Nada é transmitido à Receita.</p>
+        <p style="font-size:var(--text-base);color:var(--color-text);line-height:1.55;margin:0 0 var(--space-6)">A versão volta para o preparador com o seu comentário. Nada é transmitido à Receita.</p>
         <div class="mform" style="margin-bottom:var(--space-4)">
           <div class="field">
             <label class="field__label" for="ajusteText">Comentário para o preparador<span class="req" aria-hidden="true">*</span></label>
@@ -1203,7 +1210,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788607826';
+  var MYV='1788611563';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
