@@ -517,7 +517,7 @@
       if(!_busy){ el.innerHTML=nearEndCard(); return; }
     }
     /* na aprovação de NOVA versão, o cartão só repetia a ação (já dita pelo status e pelos botões): removido. Alteração/exclusão mantêm (explicam consequência). */
-    if(curRole==='aprovador' && sit==='revisao'){ el.innerHTML=(curOp==='nova')?'':approverBanner(); return; }
+    if(curRole==='aprovador' && sit==='revisao'){ el.innerHTML=approverBanner(); return; }
     if(sit==='ajustes'){
       el.innerHTML='<div class="dalert dalert--danger" role="status"><span class="dalert__ic">'+ALERT+'</span><div><p class="dalert__title">Ajustes solicitados por Ana Prado</p><p class="dalert__text">'+esc(_ajusteComment || (EV.ajustes.extras?EV.ajustes.extras[0][1]:''))+'</p></div></div>';
     } else if(sit==='rejeitado'){
@@ -594,24 +594,31 @@
   /* operação derivada da alteração (gravada pelo formulário no envio): {op:'corrigir'|'novavig', data} */
   function altOp(){ try{ var s=localStorage.getItem('adere.d1001.altop.'+empId()); return s?JSON.parse(s):null; }catch(e){ return null; } }
   function approverBanner(){
-    if(curOp==='alteracao'){
-      var a=altOp(), _t, _x;
-      if(a && a.op==='novavig'){
-        _t='Nova vigência aguardando sua aprovação';
-        _x='O preparador definiu novo início em <b>'+esc(a.data||'')+'</b>. Ao aprovar, a versão vigente é <b>encerrada</b> nessa data (corte automático) e esta passa a valer.';
-      } else {
-        _t='Correção da versão vigente aguardando sua aprovação';
-        _x='O preparador manteve a vigência atual'+(a&&a.data?(' (<b>'+esc(a.data)+'</b>)'):'')+'. Ao ser aprovada, esta versão <b>substituirá</b> a vigente, sem encerrar o período atual.';
-      }
-      var _cur=parseInt(dparam('v')||'4',10), _src=(_cur>1?_cur-1:_cur);
-      var _srcUrl='info-contribuinte-detalhe.html?emp='+empId()+'&v='+_src+'&st=aprovado&sit=sucesso'+(dparam('scn')?('&scn='+dparam('scn')):'');
-      var _deriv='<p class="dalert__text" style="margin-top:var(--space-2)">Esta é a <b>Versão '+_cur+'</b>, criada a partir da <b>Versão '+_src+'</b> (vigente). <a href="'+_srcUrl+'">Ver a Versão '+_src+'</a></p>';
-      return '<div class="dalert dalert--warning" role="status"><span class="dalert__ic">'+ALERT+'</span><div class="dalert__body"><p class="dalert__title">'+esc(_t)+'</p><p class="dalert__text">'+_x+'</p>'+_deriv+'</div></div>';
+    var _cur=parseInt(dparam('v')||'1',10);
+    /* Exclusão de vigência: banner próprio (natureza diferente das demais) */
+    if(curOp==='exclusao'){
+      var be=APV_BANNER.exclusao;
+      var _txe='Motivo informado pelo preparador: <b>'+esc(exclMotivo())+'</b>.<br>'+esc(be[2]);
+      return '<div class="dalert dalert--danger" role="status"><span class="dalert__ic">'+ALERT+'</span><div class="dalert__body"><p class="dalert__title">'+esc(be[1])+'</p><p class="dalert__text">'+_txe+'</p></div></div>';
     }
-    var b=APV_BANNER[curOp]||APV_BANNER.nova;
-    var _txt=(curOp==='exclusao') ? ('Motivo informado pelo preparador: <b>'+esc(exclMotivo())+'</b>.<br>'+esc(b[2])) : esc(b[2]);
-    var _ic=(b[0]==='info')?IC_INFO:ALERT;
-    return '<div class="dalert dalert--'+b[0]+'" role="status"><span class="dalert__ic">'+_ic+'</span><div><p class="dalert__title">'+esc(b[1])+'</p><p class="dalert__text">'+_txt+'</p></div></div>';
+    /* Primeira versão (v1): não deriva de nada, não há vigente a substituir */
+    if(_cur<=1){
+      var b0=APV_BANNER.nova;
+      return '<div class="dalert dalert--info" role="status"><span class="dalert__ic">'+IC_INFO+'</span><div class="dalert__body"><p class="dalert__title">Primeira versão aguardando sua aprovação</p><p class="dalert__text">'+esc(b0[2])+'</p></div></div>';
+    }
+    /* v>1: toda versão é nova, mas SEMPRE deriva da vigente anterior. Distingue correção (mantém vigência) × nova vigência (encerra a anterior). */
+    var a=altOp(), _t, _x;
+    if(a && a.op==='novavig'){
+      _t='Nova vigência aguardando sua aprovação';
+      _x='O preparador definiu novo início em <b>'+esc(a.data||'')+'</b>. Ao aprovar, a versão vigente é <b>encerrada</b> nessa data (corte automático) e esta passa a valer.';
+    } else {
+      _t='Correção da versão vigente aguardando sua aprovação';
+      _x='O preparador manteve a vigência atual'+(a&&a.data?(' (<b>'+esc(a.data)+'</b>)'):'')+'. Ao ser aprovada, esta versão <b>substituirá</b> a vigente, sem encerrar o período atual.';
+    }
+    var _src=_cur-1;
+    var _srcUrl='info-contribuinte-detalhe.html?emp='+empId()+'&v='+_src+'&st=aprovado&sit=sucesso'+(dparam('scn')?('&scn='+dparam('scn')):'');
+    var _deriv='<p class="dalert__text" style="margin-top:var(--space-2)">Esta é a <b>Versão '+_cur+'</b>, criada a partir da <b>Versão '+_src+'</b> (vigente). <a href="'+_srcUrl+'">Ver a Versão '+_src+'</a></p>';
+    return '<div class="dalert dalert--warning" role="status"><span class="dalert__ic">'+ALERT+'</span><div class="dalert__body"><p class="dalert__title">'+esc(_t)+'</p><p class="dalert__text">'+_x+'</p>'+_deriv+'</div></div>';
   }
   function showToast(msg){
     var w=$('toastWrap'); if(!w) return;
@@ -661,6 +668,13 @@
     if(curDetState==='aprovado') return (o.sit||'')===sitFor('aprovado');
     return true;
   }
+  /* seleção do dropdown "Estados da versão": casa só pelo estado do ciclo (ignora papel/op). Sem isto, quando o papel não bate (ex.: aprovador), nenhuma opção casa e o <select> exibe a 1ª ("Rascunho"), mentindo sobre o estado real. */
+  function optStateActive(o){
+    if(o.act) return false;
+    if(o.st!==curDetState) return false;
+    if(curDetState==='aprovado') return (o.sit||'')===sitFor('aprovado');
+    return true;
+  }
   function syncDemo(){
     var cen=curCenario()||CENARIOS.estados;
     if($('demoCenLbl')) $('demoCenLbl').textContent=cen.label;
@@ -668,7 +682,7 @@
     wrap.innerHTML='';
     if(cen.dropdown){
       var sel=document.createElement('select'); sel.className='demobar__sel'; sel.id='demoSel'; sel.setAttribute('aria-label','Estado da versão');
-      cen.opts.forEach(function(o,i){ var op=document.createElement('option'); op.value=i; op.textContent=o[0]; if(optActive(o[1])) op.selected=true; sel.appendChild(op); });
+      cen.opts.forEach(function(o,i){ var op=document.createElement('option'); op.value=i; op.textContent=o[0]; if(optStateActive(o[1])) op.selected=true; sel.appendChild(op); });
       wrap.appendChild(sel);
     } else {
       cen.opts.forEach(function(o,i){ var b=document.createElement('button'); b.type='button'; b.setAttribute('data-opt-i',i); if(optActive(o[1])) b.className='on'; b.textContent=o[0]; wrap.appendChild(b); });
@@ -1217,7 +1231,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788614744';
+  var MYV='1788615301';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
