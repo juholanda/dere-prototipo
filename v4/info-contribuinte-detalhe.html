@@ -383,6 +383,7 @@
   var $=function(id){return document.getElementById(id);};
   var CLOCK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>';
   var ALERT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg>';
+  var IC_EXT='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>';
   var CHECK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
   var ARROW='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>';
   var COMMENT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>';
@@ -618,8 +619,8 @@
       _x='O preparador manteve a mesma vigência'+(a&&a.data?(' (<b>'+esc(a.data)+'</b>)'):'')+' da Versão '+_src+'. Ao ser aprovada, a Versão '+_cur+' substituirá a versão vigente, mantendo o mesmo período de vigência.';
     }
     var _srcUrl='info-contribuinte-detalhe.html?emp='+empId()+'&v='+_src+'&st=aprovado&sit=sucesso'+(dparam('scn')?('&scn='+dparam('scn')):'');
-    /* ação à direita (padrão dos banners do DS: .dalert__act), não link solto embaixo do texto */
-    var _act='<a class="btn btn--secondary dalert__act" href="'+_srcUrl+'">'+ARROW+'Ver a Versão '+_src+'</a>';
+    /* ação à direita (padrão dos banners do DS: .dalert__act); abre a versão vigente em nova aba (ícone external-link à direita) pra o aprovador não perder o lugar na revisão */
+    var _act='<a class="btn btn--secondary dalert__act" href="'+_srcUrl+'" target="_blank" rel="noopener" aria-label="Ver a Versão '+_src+' (abre em nova aba)">Ver a Versão '+_src+' '+IC_EXT+'</a>';
     return '<div class="dalert dalert--warning" role="status"><span class="dalert__ic">'+ALERT+'</span><div class="dalert__body"><p class="dalert__title">'+esc(_t)+'</p><p class="dalert__text">'+_x+'</p></div>'+_act+'</div>';
   }
   function showToast(msg){
@@ -1233,7 +1234,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788616663';
+  var MYV='1788616933';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
