@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Painel de Monitoramento</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788682104">
-  <script src="../design-system/ds-tailwind.js?v=1788682104"></script>
-  <script src="../design-system/ds-dialog.js?v=1788682104"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788710169">
+  <script src="../design-system/ds-tailwind.js?v=1788710169"></script>
+  <script src="../design-system/ds-dialog.js?v=1788710169"></script>
   <style>
     /* ===== app-shell (igual às outras telas do v4) ===== */
     body{margin:0;background:var(--color-bg)}
@@ -114,6 +114,7 @@
     .openbtn:hover{text-decoration:underline}
     .openbtn:focus-visible{outline:none;box-shadow:var(--ring);border-radius:var(--radius-sm)}
     .openbtn svg{width:14px;height:14px}
+    .taskrow__mono svg{width:18px;height:18px}
     .due{font-size:var(--text-xs);font-variant-numeric:tabular-nums;color:var(--color-text-muted);text-align:right;min-width:84px}
     .due .rel{display:block;font-weight:600;margin-top:2px}
     .rel--late{color:var(--color-danger-fg)} .rel--soon{color:var(--color-warning-fg)} .rel--ok{color:var(--color-text-muted)}
@@ -849,7 +850,7 @@
 </script>
 <script>
 (function(){
-  var MYV='1788682104';
+  var MYV='1788710169';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
