@@ -262,7 +262,7 @@ a{color:var(--color-primary);text-decoration:none}
 .input,.select,textarea.input{width:100%;height:var(--control-h);padding:0 var(--space-3);
   background:var(--color-surface);color:var(--color-heading);
   border:1px solid var(--color-field-border);border-radius:var(--radius-base);
-  font-family:var(--font-sans);font-size:var(--text-base);transition:border-color .12s,box-shadow .12s}
+  font-family:var(--font-sans);font-size:var(--text-sm);transition:border-color .12s,box-shadow .12s}   /* campo = 14px (--text-sm), conforme a doc dos tokens; o --lg fixa 16px abaixo */
 textarea.input{height:auto;padding:var(--space-2) var(--space-3);min-height:84px}
 .input--lg,.select--lg{height:var(--control-h-lg);font-size:var(--text-base)}
 .input::placeholder{color:var(--color-text-muted)}
@@ -714,6 +714,9 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 .cselect__value.is-placeholder{color:var(--color-text-muted)}
 .cselect__chev{flex:0 0 auto;display:grid;place-items:center;line-height:0;color:var(--color-text-muted);transition:transform .18s}
 .cselect__trigger[aria-expanded="true"] .cselect__chev{transform:rotate(180deg)}
+.cselect__trigger:disabled{background:var(--color-surface-2);border-color:var(--color-border);cursor:not-allowed}
+.cselect__trigger:disabled .cselect__value{color:var(--color-text-muted)}
+.cselect__trigger:disabled .cselect__chev{color:var(--color-border-strong)}
 .cselect .combo__media{color:var(--color-text-muted)}
 .cselect__panel{position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:40;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-base);box-shadow:var(--shadow-lg);padding:var(--space-1);max-height:280px;overflow:auto}
 .cselect__panel[hidden]{display:none}

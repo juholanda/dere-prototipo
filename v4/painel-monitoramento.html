@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Painel de Monitoramento</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788710169">
-  <script src="../design-system/ds-tailwind.js?v=1788710169"></script>
-  <script src="../design-system/ds-dialog.js?v=1788710169"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788726861">
+  <script src="../design-system/ds-tailwind.js?v=1788726861"></script>
+  <script src="../design-system/ds-dialog.js?v=1788726861"></script>
   <style>
     /* ===== app-shell (igual às outras telas do v4) ===== */
     body{margin:0;background:var(--color-bg)}
@@ -29,10 +29,14 @@
 
     /* ===== frescor (última posição) ===== */
     .fresh{display:flex;align-items:center;gap:var(--space-2);font-size:var(--text-xs);color:var(--color-text-onmuted);margin:0 0 var(--space-6)}
-    .fresh svg{width:14px;height:14px;flex:0 0 auto}
-    .fresh .dot{width:6px;height:6px;border-radius:50%;background:var(--color-success-fg);flex:0 0 auto}
-    .fresh button{appearance:none;background:none;border:0;padding:0;font:inherit;color:var(--color-primary);font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
-    .fresh button:focus-visible{outline:none;box-shadow:var(--ring);border-radius:var(--radius-sm)}
+    .fresh.is-stale{color:var(--color-warning-fg)}
+    .fresh__ic{width:14px;height:14px;flex:0 0 auto;color:var(--color-text-muted)}
+    .fresh.is-stale .fresh__ic{color:var(--color-warning-fg)}
+    .fresh__btn{appearance:none;background:none;border:0;padding:0;margin-left:var(--space-1);font:inherit;color:var(--color-primary);font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+    .fresh__btn:focus-visible{outline:none;box-shadow:var(--ring);border-radius:var(--radius-sm)}
+    .fresh.is-loading .fresh__ic{animation:ds-spin .8s linear infinite}
+    @keyframes ds-spin{to{transform:rotate(360deg)}}
+    @media(prefers-reduced-motion:reduce){.fresh.is-loading .fresh__ic{animation:none}}
 
     /* ===== KPIs (contadores .stat do DS) ===== */
     .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-4);margin-bottom:var(--space-6)}
@@ -43,11 +47,12 @@
     .statbtn:focus-visible{outline:none;box-shadow:var(--ring)}
     .statbtn.is-active{border-color:var(--color-primary);box-shadow:inset 0 0 0 1px var(--color-primary)}
     .kpis .stat__ic svg{width:16px;height:16px}
+    .kpis .stat{border-radius:var(--radius-2xl)}   /* 12px, igual aos cards da tela */
     .stat__foot--warn{color:var(--color-warning-fg);font-weight:600}
     .stat__foot--ok{color:var(--color-success-fg);font-weight:600}
 
     /* ===== bloco de filtros (um só, campos lado a lado) ===== */
-    .filters{display:flex;flex-wrap:wrap;gap:var(--space-4);align-items:flex-end;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:var(--space-4) var(--space-6);margin-bottom:var(--space-6)}
+    .filters{display:flex;flex-wrap:wrap;gap:var(--space-4);align-items:flex-end;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-2xl);box-shadow:var(--shadow-sm);padding:var(--space-4) var(--space-6);margin-bottom:var(--space-6)}
     .filterf{display:flex;flex-direction:column;gap:var(--space-1-5);min-width:0}
     .filterf > .flbl{font-size:var(--text-xs);color:var(--color-text-muted);font-weight:600}
     .filterf .select,.filterf .input{min-width:0}
@@ -56,8 +61,8 @@
     .filterf--reg{flex:0 0 auto;width:200px;max-width:100%}
     .filterf--busca{flex:0 0 auto;width:280px;max-width:100%}
     @container (max-width:560px){.filterf--busca,.filterf--esc,.filterf--comp,.filterf--reg{width:100%}}
-    /* filtros no padrão de campo do DS: texto 14px (--text-sm) */
-    .filters .input,.filters .cselect__trigger,.filters .cselect__value{font-size:var(--text-sm)}
+    /* cselect também no padrão de campo (14px); o .input já vem do DS */
+    .filters .cselect__trigger,.filters .cselect__value{font-size:var(--text-sm)}
     .filters__clear{margin-left:auto;align-self:flex-end}
 
     /* month picker (competência): navegação de ano + grade de meses (padrão de mercado) */
@@ -88,16 +93,25 @@
     .mtx .grp th{font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.04em;color:var(--color-text-muted);font-weight:700;padding:var(--space-2) var(--space-3);text-align:center;border-bottom:1px solid var(--color-border)}
     .mtx .grp th.gname{text-align:left}
     .mtx .grp th{position:sticky;top:0}
-    .mtx .ev th{padding:var(--space-2) var(--space-3);text-align:left;border-bottom:1px solid var(--color-border);vertical-align:bottom;font-weight:600;position:sticky;top:33px}
-    .mtx .ev th .c{display:block;font-weight:700;color:var(--color-heading);font-variant-numeric:tabular-nums}
-    .mtx .ev th .n{display:block;font-size:var(--text-xs);color:var(--color-text-muted);font-weight:500}
-    .mtx th.co{position:sticky;left:0;z-index:3;background:var(--color-surface-2);text-align:left;min-width:230px;padding:var(--space-3) var(--space-4);vertical-align:middle}
+    .mtx .ev th{padding:var(--space-2) var(--space-3);text-align:left;border-bottom:1px solid var(--color-border);vertical-align:middle;font-weight:600;position:sticky;top:33px;min-width:110px}
+    .mtx .ev th .c{display:block;font-weight:700;color:var(--color-heading);font-variant-numeric:tabular-nums;white-space:nowrap}
+    .mtx .ev th .n{display:block;font-size:var(--text-xs);color:var(--color-text-muted);font-weight:500;white-space:nowrap}
+    .mtx th.co{position:sticky;left:0;z-index:3;background:var(--color-surface-2);text-align:left;min-width:230px;padding:var(--space-3) var(--space-4);vertical-align:middle;border-right:1px solid var(--color-border)}
+    .mtx thead th.co{vertical-align:middle}   /* "Contribuinte declarante" centralizado na linha dos eventos; grupos ficam acima */
     .mtx tbody th.co{z-index:1;background:var(--color-surface);font-weight:400;border-bottom:1px solid var(--color-border)}
-    .mtx tbody td{padding:var(--space-3);text-align:left;border-bottom:1px solid var(--color-border);vertical-align:top}
+    .mtx tbody td{padding:var(--space-3);text-align:left;border-bottom:1px solid var(--color-border);vertical-align:middle}
     .mtx tbody tr:hover td,.mtx tbody tr:hover th.co{background:color-mix(in srgb,var(--color-primary) 5%,var(--color-surface))}
-    .co-name{font-size:var(--text-sm);font-weight:700;color:var(--color-heading);line-height:1.25}
-    .co-cnpj{font-size:var(--text-xs);color:var(--color-text-muted);font-variant-numeric:tabular-nums;margin-top:2px}
-    .co-tags{display:flex;gap:var(--space-1-5);margin-top:var(--space-1-5);flex-wrap:wrap}
+    .cohead{display:flex;gap:var(--space-3);align-items:flex-start}
+    .cohead__b{min-width:0}
+    .co-logo{width:var(--space-10);height:var(--space-10);border-radius:var(--radius-lg);flex:0 0 auto;display:grid;place-items:center;overflow:hidden}
+    .co-logo--code{background:var(--color-primary-subtle);color:var(--color-primary);font-weight:700;font-size:var(--text-sm)}
+    .co-logo--img{background:var(--color-surface);border:1px solid var(--color-border)}
+    .co-logo--img img{width:100%;height:100%;object-fit:cover;display:block}
+    .page-h__act .filterf{gap:var(--space-1-5)}
+    .filterf.is-disabled .flbl{color:var(--color-text-muted)}
+    .co-name{font-size:var(--text-base);font-weight:700;color:var(--color-heading);line-height:1.25}
+    .co-cnpj{font-size:var(--text-sm);color:var(--color-text-muted);font-variant-numeric:tabular-nums;margin-top:2px}
+    .co-sub{font-size:var(--text-sm);color:var(--color-text-muted);font-variant-numeric:tabular-nums;margin-top:2px;line-height:1.5}
     .cellbtn{appearance:none;background:none;border:0;padding:var(--space-1);cursor:pointer;font:inherit;display:inline-flex;flex-direction:column;align-items:center;gap:var(--space-1);border-radius:var(--radius-base)}
     .cellbtn:hover{background:var(--color-surface-2)}
     .cellbtn:focus-visible{outline:none;box-shadow:var(--ring)}
@@ -115,8 +129,19 @@
     .openbtn:focus-visible{outline:none;box-shadow:var(--ring);border-radius:var(--radius-sm)}
     .openbtn svg{width:14px;height:14px}
     .taskrow__mono svg{width:18px;height:18px}
-    .due{font-size:var(--text-xs);font-variant-numeric:tabular-nums;color:var(--color-text-muted);text-align:right;min-width:84px}
-    .due .rel{display:block;font-weight:600;margin-top:2px}
+    /* urgência: cor só no ÍCONE (como o .stat); o texto fica neutro e a descrição NÃO leva bolinha (a bolinha só ancora rótulo curto) */
+    .taskrow__why::before{content:none}
+    .taskrow--danger .taskrow__mono{background:var(--color-danger-bg);color:var(--color-danger)}
+    .taskrow--danger .taskrow__why{color:var(--color-text-muted)}
+    .taskrow--warning .taskrow__mono{background:var(--color-warning-bg);color:var(--color-warning-fg)}
+    .taskrow--warning .taskrow__why{color:var(--color-text-muted)}
+    .due{font-size:var(--text-sm);font-variant-numeric:tabular-nums;color:var(--color-text-muted);text-align:right;min-width:84px}
+    .due .rel{display:block;font-weight:600;margin-top:2px;font-size:var(--text-xs)}
+    .taskrow--click{cursor:pointer}
+    .taskrow--click:hover{background:color-mix(in srgb,var(--color-primary) 5%,var(--color-surface))}
+    .taskrow--click:focus-visible{outline:none;box-shadow:var(--ring)}
+    .taskrow__chev{flex:0 0 auto;color:var(--color-text-muted);display:grid;place-items:center}
+    .taskrow__chev svg{width:18px;height:18px}
     .rel--late{color:var(--color-danger-fg)} .rel--soon{color:var(--color-warning-fg)} .rel--ok{color:var(--color-text-muted)}
     .grouph{display:flex;align-items:center;gap:var(--space-2);margin:var(--space-6) 0 var(--space-2);font-size:var(--text-xs);font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--color-text-muted)}
     .grouph:first-child{margin-top:0}
@@ -131,6 +156,12 @@
     .activef .clear:focus-visible{outline:none;box-shadow:var(--ring);border-radius:var(--radius-sm)}
 
     /* drawer: seções internas */
+    .drhead{display:flex;gap:var(--space-3);align-items:flex-start;min-width:0}
+    .drhead__ic{flex:0 0 auto;width:var(--space-10);height:var(--space-10);border-radius:var(--radius-lg);background:var(--color-primary-subtle);color:var(--color-primary);display:grid;place-items:center}
+    .drhead__ic svg{width:20px;height:20px}
+    .drtitlerow{display:flex;align-items:center;gap:var(--space-2);flex-wrap:wrap}
+    .drdesc{font-size:var(--text-sm);color:var(--color-text-onmuted);line-height:1.5;margin:0 0 var(--space-3)}
+    .drwait{color:var(--color-text-muted);font-weight:400}
     .drsec{margin-bottom:var(--space-6)}
     .drsec:last-child{margin-bottom:0}
     .drsec__t{font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.04em;color:var(--color-text-muted);margin:0 0 var(--space-3);font-weight:700}
@@ -144,13 +175,10 @@
     .kv__v{text-align:right;color:var(--color-heading);font-weight:500}
 
     /* cabeçalho: ícone + pulso "ao vivo" sutil */
-    .ph-ic{flex:0 0 auto;width:var(--space-10);height:var(--space-10);border-radius:var(--radius-lg);background:var(--color-primary-subtle);color:var(--color-primary);display:grid;place-items:center;position:relative;animation:ph-in .4s ease}
+    .ph-ic{flex:0 0 auto;width:var(--space-10);height:var(--space-10);border-radius:var(--radius-lg);background:var(--color-primary-subtle);color:var(--color-primary);display:grid;place-items:center;animation:ph-in .4s ease}
     .ph-ic svg{width:22px;height:22px}
-    .ph-ic .live{position:absolute;top:-2px;right:-2px;width:10px;height:10px;border-radius:50%;background:var(--color-success-fg);box-shadow:0 0 0 2px var(--color-surface)}
-    .ph-ic .live::after{content:"";position:absolute;inset:0;border-radius:50%;background:var(--color-success-fg);animation:ph-pulse 2.6s ease-out infinite}
     @keyframes ph-in{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
-    @keyframes ph-pulse{0%{opacity:.55;transform:scale(1)}70%,100%{opacity:0;transform:scale(2.4)}}
-    @media(prefers-reduced-motion:reduce){.ph-ic{animation:none}.ph-ic .live::after{animation:none}}
+    @media(prefers-reduced-motion:reduce){.ph-ic{animation:none}}
 
     /* matriz: célula = bolinha + rótulo curto (sem badge) + divisória entre grupos */
     .mcell{display:inline-flex;align-items:flex-start;gap:var(--space-1-5);font-size:var(--text-xs);color:var(--color-text);font-weight:500;text-align:left;line-height:1.35}
@@ -238,36 +266,34 @@
             <div class="page-h__row">
               <div class="page-h__main">
                 <div class="page-h__title">
-                  <span class="ph-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg><span class="live"></span></span>
+                  <span class="ph-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></span>
                   <h1>Painel de Monitoramento</h1>
                 </div>
-                <p class="page-h__desc">Situação das obrigações da DeRE na Receita. A prova de conformidade é o recibo com processamento aceito; o protocolo do lote é apenas o comprovante de recebimento.</p>
+                <p class="page-h__desc">Situação das obrigações declaratórias na Receita. A prova de conformidade é o recibo com processamento aceito; o protocolo do lote é apenas o comprovante de recebimento.</p>
+              </div>
+              <div class="page-h__act">
+                <div class="filterf filterf--comp">
+                  <span class="flbl" id="lblComp">Competência</span>
+                  <div class="cselect mpwrap" id="wrapComp">
+                    <button class="cselect__trigger" type="button" id="compTrig" aria-haspopup="true" aria-expanded="false" aria-labelledby="lblComp"><span class="cselect__value" id="compVal">jan/2027</span><span class="cselect__chev"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button>
+                    <div class="mp" id="compMP" aria-label="Escolher competência" hidden></div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
         <div class="wrap">
-          <p class="fresh"><span class="dot" aria-hidden="true"></span><span id="freshTxt" role="status" aria-live="polite">Posição em 09/02/2027, 08h30</span><span aria-hidden="true">·</span><button type="button" id="btnRefresh">Atualizar</button><span aria-hidden="true">·</span><span>dados ilustrativos</span></p>
+          <p class="fresh" id="freshWrap"><svg class="fresh__ic" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M8 16H3v5"/></svg><span id="freshTxt" role="status" aria-live="polite">Atualizado há 6 min · 09/02/2027 08h30</span><button type="button" id="btnRefresh" class="fresh__btn">Atualizar</button></p>
           <span id="liveMsg" class="sr-only" role="status" aria-live="polite"></span>
 
           <div class="kpis" id="kpis" aria-label="Indicadores da competência"></div>
 
           <div class="filters" role="group" aria-label="Filtros">
-            <div class="filterf filterf--busca" id="wrapBusca">
-              <label class="flbl" for="fBusca">Buscar contribuinte</label>
-              <input id="fBusca" class="input" placeholder="Ex.: MAG Seguros ou CNPJ" autocomplete="off">
-            </div>
             <div class="filterf filterf--esc">
               <span class="flbl" id="lblEsc">Empresa</span>
               <div class="cselect" data-cs="esc" aria-label="Filtrar por empresa" aria-labelledby="lblEsc"></div>
-            </div>
-            <div class="filterf filterf--comp">
-              <span class="flbl" id="lblComp">Competência</span>
-              <div class="cselect mpwrap" id="wrapComp">
-                <button class="cselect__trigger" type="button" id="compTrig" aria-haspopup="true" aria-expanded="false" aria-labelledby="lblComp"><span class="cselect__value" id="compVal">jan/2027</span><span class="cselect__chev"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button>
-                <div class="mp" id="compMP" aria-label="Escolher competência" hidden></div>
-              </div>
             </div>
             <div class="filterf filterf--reg" id="wrapReg">
               <span class="flbl" id="lblReg">Regulador</span>
@@ -300,10 +326,13 @@
   <div class="drawer-backdrop" id="drBackdrop" hidden></div>
   <aside class="drawer drawer--sm" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drTitle" hidden>
     <div class="drawer__header">
-      <div>
-        <span class="status status--sm" id="drPill" style="margin-bottom:var(--space-2)"><span class="status__dot"></span><span id="drPillTxt">D-1001</span></span>
-        <h2 class="drawer__title" id="drTitle">—</h2>
-        <p class="co-cnpj" id="drCo" style="margin-top:var(--space-1)">—</p>
+      <div class="drhead">
+        <span class="drhead__ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg></span>
+        <div>
+          <span class="status status--sm" id="drPill" style="margin-bottom:var(--space-2)"><span class="status__dot"></span><span id="drPillTxt">Situação</span></span>
+          <div class="drtitlerow"><h2 class="drawer__title" id="drTitle">—</h2><span class="tag" id="drCode">D-1001</span></div>
+          <p class="co-cnpj" id="drCo" style="margin-top:var(--space-1)">—</p>
+        </div>
       </div>
       <button class="icon-btn" type="button" id="drClose" aria-label="Fechar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
     </div>
@@ -316,6 +345,9 @@
   var $=function(id){return document.getElementById(id);};
   function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
   function plural(n,s,p){ return n+' '+(n===1?s:p); }
+  function initials(n){ var p=String(n).trim().split(/\s+/); return (p.length===1?p[0].slice(0,2):((p[0][0]||'')+(p[1][0]||''))).toUpperCase(); }
+  var LOGOS={seg:'../Logos/MAG%20seguros.png', fin:'../Logos/mag%20financas.jpeg', cap:'../Logos/mag%20capitalizacoes.jpeg', sic:'../Logos/sicooboficial_logo.jpeg', s2u:'../Logos/logo_simple-2u_j7QQ4s.png'};
+  function logoHtml(c){ var url=LOGOS[c.emp]; if(url) return '<span class="co-logo co-logo--img"><img src="'+url+'" alt="Logo '+esc(c.nome)+'"></span>'; return '<span class="co-logo co-logo--code" aria-hidden="true">'+esc(initials(c.nome))+'</span>'; }
   function announce(msg){ var el=$('liveMsg'); if(el) el.textContent=msg; }
   var MESES=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
   function fmtComp(c){ var p=String(c).split('-'); return MESES[(+p[1]||1)-1]+'/'+p[0]; }
@@ -323,11 +355,11 @@
   /* ===== Catálogo de eventos (Leiaute DeRE v1.1.0) ===== */
   var EVENTS={
     'D-1001':{nome:'Informações do Contribuinte', col:'Contribuinte', per:'Eventual', ret:'D-9001', desc:'Evento cadastral que habilita o contribuinte na DeRE. Base de toda a cadeia.', tela:'info-contribuinte-detalhe.html'},
-    'D-1011':{nome:'PGCC · Plano Geral de Contas Comentado', col:'PGCC', per:'Eventual', ret:'D-9001', desc:'Plano de contas com codNat/codTrib. Base classificatória da apuração.', tela:'plano-contas-empresa.html'},
-    'D-1101':{nome:'Balancete Mensal', col:'Balancete', per:'Periódica', ret:'D-9101', desc:'Saldos por conta. Compõe a base de cálculo do período.', tela:null},
-    'D-1106':{nome:'Identificação de Aplicações Financeiras', col:'Aplic. fin.', per:'Periódica', ret:'D-9106', desc:'Aplicações sobre reserva técnica e ativos garantidores.', tela:null},
-    'D-2101':{nome:'Débito · Títulos de Dívida (oferta pública)', col:'Tít. dívida', per:'Periódica', ret:'D-9121', desc:'Único evento com o CNPJ do devedor emitente do título.', tela:null},
-    'D-1199':{nome:'Fechamento de Eventos Mensais', col:'Fechamento', per:'Fechamento', ret:'D-9199', desc:'Trava de orquestração. Encerra e bloqueia a competência.', tela:null}
+    'D-1011':{nome:'PGCC · Plano Geral de Contas Comentado', col:'PGCC', per:'Eventual', ret:'D-9001', desc:'Plano de contas com a natureza e a classificação tributária de cada conta. Base classificatória da apuração.', tela:'plano-contas-empresa.html'},
+    'D-1101':{nome:'Balancete Mensal', col:'Balancete', per:'Periódica mensal', ret:'D-9101', desc:'Saldos por conta. Compõe a base de cálculo do período.', tela:null},
+    'D-1106':{nome:'Identificação de Aplicações Financeiras', col:'Aplic. fin.', per:'Periódica mensal', ret:'D-9106', desc:'Aplicações sobre reserva técnica e ativos garantidores.', tela:null},
+    'D-2101':{nome:'Débito · Títulos de Dívida (oferta pública)', col:'Tít. dívida', per:'Periódica transacional', ret:'D-9121', desc:'Único evento com o CNPJ do devedor emitente do título. Ocorre quando há a operação; entra no fechamento do mês.', tela:null},
+    'D-1199':{nome:'Fechamento de Eventos Mensais', col:'Fechamento', per:'Fechamento mensal', ret:'D-9199', desc:'Trava de orquestração. Encerra e bloqueia a competência.', tela:null}
   };
   var COLS=['D-1001','D-1011','D-1101','D-1106','D-2101','D-1199'];
   var CADASTRAIS=['D-1001','D-1011'];
@@ -337,13 +369,13 @@
 
   /* situação → rótulo (nosso vocabulário, alinhado à lista) + pílula do DS */
   var ST={
-    ok:{l:'Processada com sucesso',p:'status--success',dot:'success'},
-    adv:{l:'Processada com advertências',p:'status--azul',dot:'azul'},
-    processando:{l:'Em processamento',p:'status--info',dot:'info'},
-    rejeitado:{l:'Rejeitada',p:'status--danger',dot:'danger'},
-    pendente:{l:'Em preparação',p:'status--neutral',dot:'neutral'},
-    bloqueado:{l:'Bloqueada',p:'status--warning',dot:'warning'},
-    vencido:{l:'Vencida',p:'status--danger',dot:'danger'}
+    ok:{l:'Processada com sucesso',s:'Aceita',p:'status--success',dot:'success'},
+    adv:{l:'Processada com advertências',s:'Advertências',p:'status--azul',dot:'azul'},
+    processando:{l:'Em processamento',s:'Processando',p:'status--info',dot:'info'},
+    rejeitado:{l:'Rejeitada',s:'Rejeitada',p:'status--danger',dot:'danger'},
+    pendente:{l:'Em preparação',s:'Em preparação',p:'status--neutral',dot:'neutral'},
+    bloqueado:{l:'Bloqueada',s:'Bloqueada',p:'status--warning',dot:'warning'},
+    vencido:{l:'Vencida',s:'Vencida',p:'status--danger',dot:'danger'}
   };
   function isAceita(s){ return s==='ok'||s==='adv'; }
   function isAcionavel(s){ return s==='pendente'||s==='bloqueado'||s==='rejeitado'||s==='vencido'||s==='processando'; }
@@ -420,6 +452,7 @@
 
   /* ===== Estado ===== */
   var SCOPE='', COMP='2027-01', VIEW='pend', KFILTER='', REG='';
+  var MIN_AGO=6, FRESH_STALE=120, refreshT=null;   /* frescor: minutos desde a leitura (ilustrativo); stale acima de 2h */
   var CHEV='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>';
   var EXT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>';
 
@@ -434,9 +467,7 @@
   function inScope(){
     return rowsAll().filter(function(r){
       if(SCOPE) return r.c.emp===SCOPE;
-      var fr=REG, q=$('fBusca').value.trim().toLowerCase();
-      if(fr && r.c.reg!==fr) return false;
-      if(q && !(r.c.nome.toLowerCase().indexOf(q)>=0 || r.c.cnpj.replace(/\D/g,'').indexOf(q.replace(/\D/g,''))>=0)) return false;
+      if(REG && r.c.reg!==REG) return false;
       return true;
     });
   }
@@ -497,12 +528,12 @@
       case 'rejeitado': return {a:'Corrigir e retransmitir o '+ev+'.', w:o.motivo||o.erro||'Retorno diferente de processamento aceito.'};
       case 'processando': return {a:'Aguardar o retorno da Receita.', w:'Transmitido. O protocolo não é prova; aguardando o '+EVENTS[ev].ret+'.'};
       case 'pendente': return {a:'Transmitir o '+ev+'.', w:o.obs||EVENTS[ev].desc};
-      case 'bloqueado': var d=depsPend(ev,r); return {a:'Liberar as dependências do '+ev+'.', w:d.length?('Aguardando: '+d.join(', ')+'.'):'Aguardando os eventos anteriores.'};
+      case 'bloqueado': var d=depsPend(ev,r); return {a:'Concluir os eventos anteriores.', w:d.length?('Aguardando: '+d.join(', ')+'.'):'Aguardando os eventos anteriores.'};
       default: return {a:'', w:''};
     }
   }
   function relPrazo(o){
-    if(o.st==='vencido') return {c:'late',t:'vencida'};
+    if(o.st==='vencido') return null;   /* a pílula já diz "Vencida"; não repetir na data */
     if(o.st==='processando'||o.st==='bloqueado') return null;
     if(o.dias==null) return null;
     if(o.dias<=0) return {c:'late',t:'hoje'};
@@ -550,12 +581,12 @@
         if(r0 && !r0.c.escopo){ el.innerHTML=emptyCard('x','Contribuinte dispensado',r0.c.dispensa||''); announce(r0.c.nome+' é dispensado da DeRE.'); return; }
         if(r0 && !r0.ob){ el.innerHTML=emptyCard('cal',r0.c.nome+' ainda não habilitado','Onboarding em andamento. Sem obrigações nesta competência.'); announce(r0.c.nome+' ainda não habilitado nesta competência.'); return; }
       }
-      el.innerHTML=emptyCard('check','Nenhuma pendência','Nada exige ação nos filtros desta competência. O que já foi aceito e o que não se aplica ao papel não aparecem aqui.');
+      el.innerHTML=emptyCard('check','Nenhuma pendência','Nada exige ação nos filtros desta competência. O que já foi aceito e o que não se aplica ao regulador ou à atividade do contribuinte não aparecem aqui.');
       announce('Nenhuma pendência nos filtros desta competência.');
       return;
     }
     var groups=[
-      {k:'urg', t:'Ação imediata', urg:true, mono:'late', test:function(i){ return i.o.st==='vencido'||i.o.st==='rejeitado'; }},
+      {k:'urg', t:'Requer ação', urg:true, mono:'late', test:function(i){ return i.o.st==='vencido'||i.o.st==='rejeitado'; }},
       {k:'pend',t:'A transmitir', mono:'pend', test:function(i){ return i.o.st==='pendente'; }},
       {k:'blk', t:'Bloqueadas por dependência', mono:'blk', test:function(i){ return i.o.st==='bloqueado'; }},
       {k:'proc',t:'Aguardando retorno', mono:'proc', test:function(i){ return i.o.st==='processando'; }}
@@ -568,10 +599,11 @@
         var evline=it.ev+' '+EVENTS[it.ev].nome+(it.o.rejNova?' (nova versão)':'');
         var due='';
         if(it.o.prazo){ due='<span class="due">'+esc(it.o.prazo)+(rel?'<span class="rel rel--'+rel.c+'">'+esc(rel.t)+'</span>':'')+'</span>'; }
-        return '<div class="taskrow'+tone+'">'+
+        return '<div class="taskrow taskrow--click'+tone+'" role="button" tabindex="0" data-open="'+it.r.c.emp+'|'+it.ev+'" aria-label="Abrir '+esc(it.r.c.nome+', '+it.ev)+'">'+
           '<span class="taskrow__mono" aria-hidden="true">'+ICmono[g.mono]+'</span>'+
           '<div class="taskrow__b"><p class="taskrow__t">'+esc(it.r.c.nome)+' · '+esc(evline)+'</p><p class="taskrow__why">'+esc(na.a)+' '+esc(na.w)+'</p></div>'+
-          '<div class="taskrow__side">'+pill(it.o.st)+due+'<button class="openbtn" type="button" data-open="'+it.r.c.emp+'|'+it.ev+'" aria-label="Abrir '+esc(it.r.c.nome+', '+it.ev)+'">Abrir'+CHEV+'</button></div>'+
+          '<div class="taskrow__side">'+pill(it.o.st)+due+'</div>'+
+          '<span class="taskrow__chev" aria-hidden="true">'+CHEV+'</span>'+
         '</div>';
       }).join('');
       return '<p class="grouph'+(g.urg?' is-urg':'')+'">'+esc(g.t)+'<span class="cnt">'+gi.length+'</span></p><div class="tasklist card">'+rows+'</div>';
@@ -594,7 +626,7 @@
   function mcellHtml(dotCls,label){ return '<span class="mcell"><span class="mdot mdot--'+dotCls+'" aria-hidden="true"></span><span>'+esc(label)+'</span></span>'; }
   function coCell(r,ev,gsep){
     var o=r.ob[ev], cls=gsep?' class="gsep"':'';
-    if(!o||o.st==='na') return '<td'+cls+'><span class="cellna">N/A</span></td>';
+    if(!o||o.st==='na') return '<td'+cls+'><span class="cellna">Não se aplica</span></td>';
     if(ev==='D-1199'){
       var g=gate(r), dc, dl;
       if(o.st==='ok'){ dc='success'; dl='Concluída'; } else if(g.ok){ dc='info'; dl='Liberada'; } else { dc='warning'; dl='Bloqueada'; }
@@ -607,17 +639,17 @@
   function renderMatriz(el){
     var rows=inScope();
     var head='<thead>'+
-      '<tr class="grp"><th class="co gname" scope="col" rowspan="2">Contribuinte declarante</th>'+
+      '<tr class="grp"><th class="co coempty" scope="col" aria-hidden="true"></th>'+
         '<th scope="colgroup" colspan="2">Cadastrais</th>'+
-        '<th scope="colgroup" colspan="3" class="gsep">Periódicas mensais</th>'+
+        '<th scope="colgroup" colspan="3" class="gsep">Periódicas</th>'+
         '<th scope="colgroup" class="gsep">Fechamento</th></tr>'+
-      '<tr class="ev">'+COLS.map(function(ev){ var gs=(ev==='D-1101'||ev==='D-1199')?' class="gsep"':''; return '<th scope="col"'+gs+'><span class="c">'+ev+'</span><span class="n">'+esc(EVENTS[ev].col)+'</span></th>'; }).join('')+'</tr>'+
+      '<tr class="ev"><th class="co coname" scope="col">Empresa</th>'+COLS.map(function(ev){ var gs=(ev==='D-1101'||ev==='D-1199')?' class="gsep"':''; return '<th scope="col"'+gs+'><span class="c">'+ev+'</span><span class="n">'+esc(EVENTS[ev].col)+'</span></th>'; }).join('')+'</tr>'+
       '</thead>';
     var body=rows.map(function(r){
-      var corp='<th class="co" scope="row"><div class="co-name">'+esc(r.c.nome)+'</div><div class="co-cnpj">'+esc(r.c.cnpj)+'</div><div class="co-tags"><span class="tag">'+esc(r.c.reg)+'</span><span class="tag">'+esc(r.c.papel)+'</span></div>';
-      if(!r.c.escopo){ return '<tr class="oosrow">'+corp+'</th><td colspan="6"><div class="oosmsg"><strong>Dispensado.</strong> '+esc(r.c.dispensa||'')+'</div></td></tr>'; }
-      if(!r.ob){ return '<tr class="oosrow">'+corp+'</th><td colspan="6"><div class="oosmsg">Ainda não habilitado nesta competência (onboarding em andamento).</div></td></tr>'; }
-      corp+='<button class="co-link" type="button" data-scope="'+r.c.emp+'">ver só este contribuinte '+CHEV+'</button></th>';
+      var corp='<th class="co" scope="row"><div class="cohead">'+logoHtml(r.c)+'<div class="cohead__b"><div class="co-name">'+esc(r.c.nome)+'</div><div class="co-sub">'+esc(r.c.cnpj)+' · '+esc(r.c.reg)+' · '+esc(r.c.papel)+'</div>';
+      if(!r.c.escopo){ return '<tr class="oosrow">'+corp+'</div></div></th><td colspan="6"><div class="oosmsg"><strong>Dispensado.</strong> '+esc(r.c.dispensa||'')+'</div></td></tr>'; }
+      if(!r.ob){ return '<tr class="oosrow">'+corp+'</div></div></th><td colspan="6"><div class="oosmsg">Ainda não habilitado nesta competência (onboarding em andamento).</div></td></tr>'; }
+      corp+='<button class="co-link" type="button" data-scope="'+r.c.emp+'" aria-label="Ver detalhes de '+esc(r.c.nome)+'">Ver detalhes '+CHEV+'</button></div></div></th>';
       return '<tr>'+corp+COLS.map(function(ev){ return coCell(r,ev,(ev==='D-1101'||ev==='D-1199')); }).join('')+'</tr>';
     }).join('');
     if(!rows.length){ body='<tr><td colspan="7"><div class="empty" style="padding:var(--space-8)"><p class="empty__title">Nenhum contribuinte nos filtros</p><p class="empty__text">Ajuste o regulador ou a busca.</p></div></td></tr>'; }
@@ -635,8 +667,8 @@
     var rowsHtml=COLS.map(function(ev){
       var o=r.ob[ev];
       var naEv=(!o||o.st==='na');
-      var stCell, compr=naEv?'N/A':'não transmitido', prazo=naEv?'N/A':(o.prazo||'sem prazo'), resp=naEv?'N/A':(o.resp||'N/A');
-      if(naEv){ stCell='<span class="cellna">N/A</span>'; }
+      var stCell, compr=naEv?'':'não transmitido', prazo=naEv?'':(o.prazo||'sem prazo'), resp=naEv?'':(o.resp||'Não informado');
+      if(naEv){ stCell='<span class="cellna">Não se aplica</span>'; }
       else if(ev==='D-1199'){ stCell=(o.st==='ok')?'<span class="status status--sm status--success"><span class="status__dot"></span>Concluída</span>':(g.ok?'<span class="status status--sm status--info"><span class="status__dot"></span>Liberada</span>':'<span class="status status--sm status--warning"><span class="status__dot"></span>Bloqueada</span>'); }
       else { stCell=pill(o.st)+(o.rejNova?' <span class="cellsub">nova versão rejeitada</span>':''); }
       if(!naEv && isAceita(o.st)) compr='<span class="mono" style="font-variant-numeric:tabular-nums">'+esc(recibo31(ev.replace('D-',''),COMP,o.seq))+'</span>';
@@ -646,14 +678,14 @@
     }).join('');
     el.innerHTML=''+
       '<div class="card" style="padding:var(--space-6);margin-bottom:var(--space-6)"><div style="display:flex;justify-content:space-between;gap:var(--space-4);flex-wrap:wrap;align-items:flex-start">'+
-        '<div><div class="co-name" style="font-size:var(--text-lg)">'+esc(r.c.nome)+'</div><div class="co-cnpj">'+esc(r.c.cnpj)+'</div><div class="co-tags"><span class="tag">'+esc(r.c.reg)+'</span><span class="tag">'+esc(r.c.papel)+'</span></div></div>'+
-        '<div>'+(g.fim?'<span class="status status--success"><span class="status__dot"></span>Fechamento concluído</span>':(g.ok?'<span class="status status--info"><span class="status__dot"></span>Pronto para o fechamento</span>':'<span class="status status--warning"><span class="status__dot"></span>Fechamento bloqueado</span>'))+'</div>'+
+        '<div class="cohead">'+logoHtml(r.c)+'<div class="cohead__b"><div class="co-name" style="font-size:var(--text-lg)">'+esc(r.c.nome)+'</div><div class="co-sub">'+esc(r.c.cnpj)+' · '+esc(r.c.reg)+' · '+esc(r.c.papel)+'</div></div></div>'+
+        '<div>'+(g.fim?'<span class="status status--success"><span class="status__dot"></span>Fechamento concluído</span>':(g.ok?'<span class="status status--info"><span class="status__dot"></span>Pronta para transmitir</span>':'<span class="status status--warning"><span class="status__dot"></span>Fechamento bloqueado</span>'))+'</div>'+
       '</div></div>'+
       '<div class="card"><table class="table"><thead><tr><th scope="col">Evento</th><th scope="col">Situação na Receita</th><th scope="col">Comprovante</th><th scope="col">Prazo</th><th scope="col">Responsável</th><th scope="col"><span class="sr-only">Ações</span></th></tr></thead><tbody>'+rowsHtml+'</tbody></table></div>';
     bindOpen(el);
   }
 
-  function bindOpen(scopeEl){ Array.prototype.forEach.call(scopeEl.querySelectorAll('[data-open]'),function(b){ b.addEventListener('click',function(){ var p=b.getAttribute('data-open').split('|'); openDrawer(p[0],p[1]); }); }); }
+  function bindOpen(scopeEl){ Array.prototype.forEach.call(scopeEl.querySelectorAll('[data-open]'),function(b){ b.addEventListener('click',function(){ var p=b.getAttribute('data-open').split('|'); openDrawer(p[0],p[1]); }); if(b.getAttribute('role')==='button'){ b.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); var p=b.getAttribute('data-open').split('|'); openDrawer(p[0],p[1]); } }); } }); }
 
   /* ===== drawer ===== */
   function openDrawer(emp,ev){
@@ -664,46 +696,36 @@
     if(ev==='D-1199' && o.st!=='ok'){ gateInfo=gate(r); dispSt=gateInfo.ok?'liberado':'bloqueado'; }
     var dp=ST[o.st]||{l:(dispSt==='liberado'?'Liberado':'Bloqueado'),p:(dispSt==='liberado'?'status--info':'status--warning')};
     if(ev==='D-1199' && o.st!=='ok'){ dp={l:(gateInfo.ok?'Liberada para transmitir':'Bloqueada'),p:(gateInfo.ok?'status--info':'status--warning')}; }
-    var pl=$('drPill'); pl.className='status status--sm '+dp.p; pl.style.marginBottom='var(--space-2)'; pl.innerHTML='<span class="status__dot"></span>'+ev+' · '+esc(dp.l);
+    var pl=$('drPill'); pl.className='status status--sm '+dp.p; pl.style.marginBottom='var(--space-2)'; pl.innerHTML='<span class="status__dot"></span>'+esc(dp.l);
+    $('drCode').textContent=ev;
     $('drTitle').textContent=E.nome;
     $('drCo').textContent=r.c.nome+' · '+r.c.cnpj+' · '+fmtComp(COMP);
 
-    // comprovante via .receipt do DS
-    var rec;
+    // situação: resumo em linhas (o comprovante completo fica na tela do evento)
+    function _mono(s){ return '<span class="mono">'+esc(s)+'</span>'; }
+    function _wait(s){ return '<span class="drwait">'+esc(s)+'</span>'; }
+    var recDesc, recRows;
     if(o.st==='adv'){
-      rec=receipt('info','Processada com advertências','A Receita aceitou o evento e emitiu o recibo. Há avisos não impeditivos a revisar'+(o.obs?': '+o.obs:'.'),[
-        ['Número do recibo', recibo31(ev.replace('D-',''),COMP,o.seq), 'mono strong'],
-        ['Retorno do processamento', 'Aceito com avisos (código 1)', ''],
-        ['Evento de retorno', E.ret, 'mono']
-      ]);
+      recDesc='A Receita aceitou o evento e emitiu o recibo. Há avisos não impeditivos a revisar'+(o.obs?': '+o.obs:'.');
+      recRows=[['Número do recibo', _mono(recibo31(ev.replace('D-',''),COMP,o.seq))],['Retorno do processamento','Aceito com avisos']];
     } else if(isAceita(o.st)){
-      rec=receipt('success','Processada com sucesso','A Receita processou o evento e emitiu o recibo (prova de conformidade).',[
-        ['Número do recibo', recibo31(ev.replace('D-',''),COMP,o.seq), 'mono strong'],
-        ['Retorno do processamento', 'Aceito (código 1)', ''],
-        ['Evento de retorno', E.ret, 'mono']
-      ]);
+      recDesc='A Receita processou o evento e emitiu o recibo (prova de conformidade).';
+      recRows=[['Número do recibo', _mono(recibo31(ev.replace('D-',''),COMP,o.seq))],['Retorno do processamento','Aceito']];
     } else if(o.st==='rejeitado'){
-      rec=receipt('danger','Rejeitada','O lote foi recebido, mas o evento não foi aceito. Corrija e retransmita.',[
-        ['Protocolo do lote', protocolo28(COMP,o.seq||1), 'mono'],
-        ['Retorno do processamento', 'Rejeitado (código 0)', ''],
-        ['Número do recibo', 'não emitido', 'wait']
-      ]);
+      recDesc='O lote foi recebido, mas o evento não foi aceito. Corrija e retransmita.';
+      recRows=[['Protocolo do lote', _mono(protocolo28(COMP,o.seq||1))],['Retorno do processamento','Rejeitado'],['Número do recibo', _wait('não emitido')]];
     } else if(o.st==='processando'){
-      rec=receipt('info','Em processamento','Transmitido. O protocolo do lote confirma o recebimento, mas ainda não é prova de conformidade.',[
-        ['Protocolo do lote', protocolo28(COMP,o.seq||1), 'mono'],
-        ['Retorno do processamento', 'aguardando o '+E.ret, 'wait'],
-        ['Número do recibo', 'só após o retorno aceito', 'wait']
-      ]);
+      recDesc='Transmitido. O protocolo do lote confirma o recebimento, mas ainda não é prova de conformidade.';
+      recRows=[['Protocolo do lote', _mono(protocolo28(COMP,o.seq||1))],['Retorno do processamento', _wait('aguardando o '+E.ret)],['Número do recibo', _wait('só após o retorno aceito')]];
     } else {
-      rec=receipt(o.st==='bloqueado'?'warning':'info', ST[o.st].l, o.st==='bloqueado'?'Aguardando os eventos anteriores serem aceitos.':'Ainda não transmitido nesta competência.',[
-        ['Protocolo do lote', 'não transmitido', 'wait'],
-        ['Número do recibo', '—', 'wait']
-      ]);
+      recDesc=o.st==='bloqueado'?'Aguardando os eventos anteriores serem aceitos.':'Ainda não transmitido nesta competência.';
+      recRows=[['Protocolo do lote', _wait('não transmitido')],['Número do recibo', _wait('não emitido')]];
     }
+    var rec='<p class="drdesc">'+esc(recDesc)+'</p><div class="kv">'+recRows.map(function(x){ return kv(x[0],x[1]); }).join('')+'</div>';
 
     // dependências
     var allDeps=(PRECED[ev]||[]).filter(function(d){ return r.ob[d] && r.ob[d].st!=='na'; });
-    var depsHtml=allDeps.length?allDeps.map(function(d){ return '<div class="depitem">'+pill(r.ob[d].st)+'<span class="dcode">'+d+'</span><span class="dname">'+esc(EVENTS[d].nome)+'</span></div>'; }).join(''):'<p class="depitem dname">Sem dependências de precedência.</p>';
+    var depsHtml=allDeps.length?allDeps.map(function(d){ return '<div class="depitem">'+pill(r.ob[d].st)+'<span class="dcode">'+d+'</span><span class="dname">'+esc(EVENTS[d].nome)+'</span></div>'; }).join(''):'<p class="depitem dname">Este evento não depende de outros.</p>';
 
     // observação da nova versão rejeitada (D-1001 do Sicoob)
     var extraRej = o.rejNova ? '<div class="dalert dalert--danger" role="note" style="margin-top:var(--space-3)"><span class="dalert__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></span><div class="dalert__body"><p class="dalert__title">Nova versão rejeitada ('+esc(o.rejNova.codigo)+')</p><p class="dalert__text">'+esc(o.rejNova.motivo)+'</p></div></div>' : '';
@@ -719,33 +741,28 @@
 
     $('drBody').innerHTML=
       '<div class="drsec"><p class="drsec__t">Situação</p>'+rec+extraRej+'</div>'+
-      '<div class="drsec"><p class="drsec__t">Governança</p><div class="kv">'+
+      '<div class="drsec"><p class="drsec__t">Detalhes do evento</p><div class="kv">'+
         kv('Periodicidade oficial', E.per)+
         kv('Evento de retorno', '<span class="mono">'+E.ret+'</span>')+
         kv('Prazo', esc((o.st==='na')?'não se aplica':(o.prazo||'não se aplica')))+
         kv('Responsável', esc(o.resp||'—'))+
         (o.obs?kv('Observação', esc(o.obs)):'')+
       '</div></div>'+
-      '<div class="drsec"><p class="drsec__t">Dependências (precedência)</p>'+depsHtml+'</div>'+
+      '<div class="drsec"><p class="drsec__t">Dependências</p>'+depsHtml+'</div>'+
       nextHtml;
 
-    // rodapé: ir para a tela real, ou nota quando não existe
-    var t=E.tela, href=null;
-    if(t && needsAction){
+    // rodapé: ir para a tela do evento (onde vive o comprovante completo), ou nota quando não existe
+    var t=E.tela, href=null, footLabel='Ir para o evento';
+    if(t){
       if(ev==='D-1011') href='plano-contas-empresa.html?emp='+r.c.emp;
       else if(ev==='D-1001'){ var sq=(o.st==='rejeitado'||o.rejNova)?'&st=aprovado&sit=rejeitado&rej=vigencia':(o.st==='processando')?'&st=aprovado&sit=processando':(o.st==='pendente')?'&v=1&st=rascunho':'&v=3&st=aprovado&sit=sucesso'; href='info-contribuinte-detalhe.html?emp='+r.c.emp+sq; }
     }
-    if(href){ $('drFooter').innerHTML='<a class="btn btn--primary" href="'+href+'" target="_blank" rel="noopener" aria-label="Abrir a tela do '+esc(ev)+' (nova aba)">Ir para o '+ev+' '+EXT+'</a>'; }
+    if(href){ $('drFooter').innerHTML='<a class="btn btn--primary" href="'+href+'" target="_blank" rel="noopener" aria-label="'+esc(footLabel)+' (abre em nova aba)">'+esc(footLabel)+' '+EXT+'</a>'; }
     else if(needsAction){ $('drFooter').innerHTML='<p class="stat__foot" style="margin:0">A tela deste evento ainda não faz parte do protótipo. O painel acompanha a situação.</p>'; }
     else { $('drFooter').innerHTML='<button class="btn btn--secondary" type="button" data-drclose>Fechar</button>'; }
     var dc=$('drFooter').querySelector('[data-drclose]'); if(dc) dc.addEventListener('click',function(){ dsDialog.close(); });
 
     dsDialog.open($('drBackdrop'), { dialog:$('drawer'), focus:$('drClose'), onOpen:function(){ $('drBackdrop').hidden=false; $('drawer').hidden=false; }, onClose:function(){ $('drawer').hidden=true; $('drBackdrop').hidden=true; } });
-  }
-  function receipt(state,tt,tx,rows){
-    var ic={success:'<path d="M20 6 9 17l-5-5"/>',danger:'<circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/>',info:'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>',warning:'<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/>'}[state];
-    var rr=rows.map(function(x){ var cls=x[2]||''; var vc='receipt__v'+(cls.indexOf('mono')>=0?' receipt__v--mono':'')+(cls.indexOf('strong')>=0?' receipt__v--strong':'')+(cls.indexOf('wait')>=0?' receipt__v--wait':''); return '<div class="receipt__row"><span class="receipt__k">'+esc(x[0])+'</span><span class="'+vc+'">'+esc(x[1])+'</span></div>'; }).join('');
-    return '<div class="receipt"><div class="receipt__state receipt__state--'+state+'"><span class="receipt__state-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+ic+'</svg></span><div><p class="receipt__state-tt">'+esc(tt)+'</p><p class="receipt__state-tx">'+esc(tx)+'</p></div></div><div class="receipt__rows">'+rr+'</div></div>';
   }
   function kv(k,v){ return '<div class="kv__row"><span class="kv__k">'+esc(k)+'</span><span class="kv__v">'+v+'</span></div>'; }
   $('drClose').addEventListener('click',function(){ dsDialog.close(); });
@@ -762,7 +779,20 @@
   }
   function setScope(emp){ SCOPE=emp; if(csEsc) csEsc.set(emp); syncScopeFilters(); renderKpis(); render(); }
   var BCCHEV='<svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;color:var(--color-text-muted)"><path d="m9 18 6-6-6-6"/></svg>';
-  function syncScopeFilters(){ var single=!!SCOPE; $('wrapReg').hidden=single; $('wrapBusca').hidden=single; var bc=$('bcTrail'); if(bc){ bc.innerHTML=(single && CO[SCOPE])?('Painel de Monitoramento '+BCCHEV+' '+esc(CO[SCOPE].nome)):'Painel de Monitoramento'; } }
+  function syncScopeFilters(){ var single=!!SCOPE; var rt=document.querySelector('[data-cs="reg"] .cselect__trigger'); if(rt){ rt.disabled=single; rt.setAttribute('aria-disabled',String(single)); } var wr=$('wrapReg'); if(wr) wr.classList.toggle('is-disabled', single); var bc=$('bcTrail'); if(bc){ bc.innerHTML=(single && CO[SCOPE])?('Painel de Monitoramento '+BCCHEV+' '+esc(CO[SCOPE].nome)):'Painel de Monitoramento'; } }
+  function paintFresh(state){
+    var w=$('freshWrap'), f=$('freshTxt'); if(!w||!f) return;
+    w.classList.toggle('is-loading', state==='loading');
+    w.classList.toggle('is-stale', state==='stale');
+    if(state==='loading'){ f.textContent='Atualizando a posição…'; return; }
+    if(!FRESH[COMP]){ f.textContent='Sem posição para '+fmtComp(COMP); return; }
+    if(/encerrada/i.test(FRESH[COMP])){ f.textContent=FRESH[COMP]; return; }
+    var abs=FRESH[COMP].replace('Posição em ','').replace(', ',' ');
+    f.title='Posição em '+abs;
+    if(state==='stale'){ f.textContent='Desatualizado há mais de '+Math.max(1,Math.round(MIN_AGO/60))+' h'; return; }
+    f.textContent=(MIN_AGO<=0?'Atualizado agora':('Atualizado há '+MIN_AGO+' min'));
+  }
+  function doRefresh(){ paintFresh('loading'); if(refreshT) clearTimeout(refreshT); refreshT=setTimeout(function(){ MIN_AGO=0; renderKpis(); render(); paintFresh('ok'); },600); }
 
   /* tabs por teclado (setas) */
   var tabs=[$('tabPend'),$('tabCob')];
@@ -786,15 +816,15 @@
       var head='<div class="mp__head"><button class="mp__nav" type="button" data-mpnav="-1" aria-label="Ano anterior"'+(canPrev?'':' disabled')+'><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><span class="mp__y">'+viewY+'</span><button class="mp__nav" type="button" data-mpnav="1" aria-label="Próximo ano"'+(canNext?'':' disabled')+'><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button></div>';
       var grid='<div class="mp__grid">'+MESES.map(function(mn,i){ var m=i+1, comp=viewY+'-'+String(m).padStart(2,'0'); var dis=isFuture(viewY,m)||!hasData(viewY,m); var sel=(viewY===selY&&m===selM); var cur=(viewY===curY&&m===curM); return '<button class="mp__m'+(sel?' mp__m--sel':'')+(cur&&!sel?' mp__m--cur':'')+'" type="button" data-mpm="'+comp+'"'+(dis?' disabled aria-label="'+esc(mn+'/'+viewY+', sem dados')+'"':'')+(sel?' aria-current="true"':'')+'>'+mn+'</button>'; }).join('')+'</div>';
       pop.innerHTML=head+grid;
-      pop.querySelectorAll('[data-mpnav]').forEach(function(b){ b.addEventListener('click',function(e){ e.stopPropagation(); viewY+=(+b.getAttribute('data-mpnav')); draw(); }); });
+      pop.querySelectorAll('[data-mpnav]').forEach(function(b){ b.addEventListener('click',function(e){ e.stopPropagation(); var dir=+b.getAttribute('data-mpnav'); viewY+=dir; draw(); var nb=pop.querySelector('[data-mpnav="'+dir+'"]:not(:disabled)')||pop.querySelector('[data-mpnav]:not(:disabled)')||pop.querySelector('.mp__m:not(:disabled)'); if(nb) nb.focus(); }); });
       pop.querySelectorAll('[data-mpm]').forEach(function(b){ b.addEventListener('click',function(e){ e.stopPropagation(); choose(b.getAttribute('data-mpm')); }); });
     }
     function open(){ if(!pop.hidden) return; closeAllCS(); viewY=+COMP.split('-')[0]; draw(); pop.hidden=false; trig.setAttribute('aria-expanded','true'); }
     function close(){ pop.hidden=true; trig.setAttribute('aria-expanded','false'); }
-    function choose(comp, silent){ COMP=comp; valEl.textContent=fmtComp(comp); close(); if(!silent){ trig.focus(); KFILTER=''; $('freshTxt').textContent=FRESH[COMP]||('Sem posição para '+fmtComp(COMP)); renderKpis(); render(); } }
+    function choose(comp, silent){ COMP=comp; valEl.textContent=fmtComp(comp); close(); if(!silent){ trig.focus(); KFILTER=''; MIN_AGO=0; paintFresh('ok'); renderKpis(); render(); } }
     trig.addEventListener('click',function(e){ e.stopPropagation(); pop.hidden?open():close(); });
     pop.addEventListener('click',function(e){ e.stopPropagation(); });
-    var wrap=trig.closest('.mpwrap'); if(wrap) wrap.addEventListener('focusout',function(e){ if(!wrap.contains(e.relatedTarget)) close(); });
+    var wrap=trig.closest('.mpwrap'); if(wrap) wrap.addEventListener('focusout',function(){ setTimeout(function(){ if(!pop.hidden && !wrap.contains(document.activeElement)) close(); },0); });
     trig.addEventListener('keydown',function(e){ if(pop.hidden && (e.key==='ArrowDown'||e.key==='Enter'||e.key===' ')){ e.preventDefault(); open(); pop.querySelector('.mp__m:not(:disabled)') && pop.querySelector('.mp__m--sel,.mp__m:not(:disabled)').focus(); } });
     pop.addEventListener('keydown',function(e){ if(e.key==='Escape'){ e.preventDefault(); close(); trig.focus(); } });
     valEl.textContent=fmtComp(COMP);
@@ -832,16 +862,17 @@
     csReg=buildCS(document.querySelector('[data-cs="reg"]'), regOpts, '', function(val){ REG=val; renderKpis(); render(); });
     compMP=buildMonthPicker();
   })();
-  $('fBusca').addEventListener('input',function(){ renderKpis(); render(); });
-  $('topSearch').addEventListener('click',function(){ if($('wrapBusca').hidden){ SCOPE=''; if(csEsc)csEsc.set(''); syncScopeFilters(); renderKpis(); render(); } var b=$('fBusca'); b.scrollIntoView({block:'center',behavior:'smooth'}); b.focus(); });
-  var refreshT=null;
-  $('btnRefresh').addEventListener('click',function(){ var f=$('freshTxt'); f.textContent='Atualizando…'; if(refreshT) clearTimeout(refreshT); refreshT=setTimeout(function(){ f.textContent=(FRESH[COMP]||('Sem posição para '+fmtComp(COMP)))+' · atualizado agora'; },600); renderKpis(); render(); });
-  $('btnClear').addEventListener('click',function(){ SCOPE=''; REG=''; KFILTER=''; COMP='2027-01'; $('fBusca').value=''; if(csEsc)csEsc.set(''); if(csReg)csReg.set(''); if(compMP)compMP.set('2027-01'); $('freshTxt').textContent=FRESH[COMP]||('Sem posição para '+fmtComp(COMP)); syncScopeFilters(); renderKpis(); render(); });
+  $('btnRefresh').addEventListener('click',doRefresh);
+  $('btnClear').addEventListener('click',function(){ SCOPE=''; REG=''; KFILTER=''; COMP='2027-01'; if(csEsc)csEsc.set(''); if(csReg)csReg.set(''); if(compMP)compMP.set('2027-01'); MIN_AGO=0; paintFresh('ok'); syncScopeFilters(); renderKpis(); render(); });
 
-  $('freshTxt').textContent=FRESH[COMP]||('Sem posição para '+fmtComp(COMP));
+  paintFresh('ok');
   syncScopeFilters();
   renderKpis();
   render();
+
+  /* frescor vivo: o "há X min" cresce (1/min); auto-atualiza a posição a cada 2 min sem re-puxar a lista (não some item sob o cursor). Competência encerrada não atualiza. */
+  setInterval(function(){ if(!FRESH[COMP]||/encerrada/i.test(FRESH[COMP])) return; MIN_AGO++; paintFresh(MIN_AGO>=FRESH_STALE?'stale':'ok'); },60000);
+  setInterval(function(){ if(!$('drawer').hidden) return; if(!FRESH[COMP]||/encerrada/i.test(FRESH[COMP])) return; MIN_AGO=0; paintFresh('ok'); },120000);
 
   /* menu do usuário + colapsar (padrão do DS) */
   document.querySelectorAll('[data-menu]').forEach(function(menu){ var b=menu.querySelector('button'), p=menu.querySelector('.menu__panel'); if(!b||!p) return; b.addEventListener('click',function(e){ e.stopPropagation(); var o=p.hidden; document.querySelectorAll('.menu__panel').forEach(function(x){x.hidden=true;}); p.hidden=!o; b.setAttribute('aria-expanded',String(o)); }); document.addEventListener('click',function(e){ if(!menu.contains(e.target)){ p.hidden=true; b.setAttribute('aria-expanded','false'); } }); });
@@ -850,7 +881,7 @@
 </script>
 <script>
 (function(){
-  var MYV='1788710169';
+  var MYV='1788726861';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
