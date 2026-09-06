@@ -8,9 +8,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Versões · MAG Seguros</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788666524">
-  <script src="../design-system/ds-tailwind.js?v=1788666524"></script>
-  <script src="../design-system/ds-dialog.js?v=1788666524"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788667370">
+  <script src="../design-system/ds-tailwind.js?v=1788667370"></script>
+  <script src="../design-system/ds-dialog.js?v=1788667370"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -647,6 +647,10 @@
     var hasFut=items.some(isFut);
     var minT=items[0].from.getTime();
     var maxT=Math.max(today.getTime(), Math.max.apply(null, items.map(endOfBar)));
+    /* L3 · lacuna FUTURA: a vigente tem fim e NÃO há versão que cubra depois → projeta o vão a jusante (estende o eixo p/ mostrá-lo) */
+    var _lastP=items[items.length-1];
+    var projLacuna = !!(_lastP.to) && !items.some(function(i){ return i.from.getTime() > _lastP.to.getTime(); });
+    if(projLacuna){ maxT=Math.max(maxT, _lastP.to.getTime()+DAY*90); }
     var span=Math.max(maxT-minT, DAY*60);
     function pct(t){ return ((t-minT)/span)*100; }
     var bars='', gaps='', hasGap=false, hasOverlap=false;
@@ -663,6 +667,8 @@
         else if(b.from.getTime() > a.to.getTime()+DAY+DAY){ hasGap=true; var gs=a.to.getTime()+DAY, gl=pct(gs), gw=Math.max(pct(b.from.getTime())-gl,1); gaps+='<div class="tl__gap" style="left:'+gl.toFixed(2)+'%;width:'+gw.toFixed(2)+'%"><span class="tl__gap-lbl">lacuna</span></div>'; }
       }
     }
+    /* L3 · lacuna futura projetada após a vigente com fim sem sucessora */
+    if(projLacuna){ hasGap=true; var _pgs=_lastP.to.getTime()+DAY, _pgl=pct(_pgs), _pgw=Math.max(pct(maxT)-_pgl,1); gaps+='<div class="tl__gap" style="left:'+_pgl.toFixed(2)+'%;width:'+_pgw.toFixed(2)+'%"><span class="tl__gap-lbl">sem cobertura</span></div>'; }
     var fmt=function(d){ return ('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2)+'/'+d.getFullYear(); };
     var last=items[items.length-1];
     /* marcador/tick "hoje" só quando há vigência futura (senão "hoje" = fim do eixo e colidiria com o tick final) */
@@ -769,7 +775,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788666524';
+  var MYV='1788667370';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

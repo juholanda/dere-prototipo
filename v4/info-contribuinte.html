@@ -8,9 +8,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Informações do Contribuinte</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788666524">
-  <script src="../design-system/ds-tailwind.js?v=1788666524"></script>
-  <script src="../design-system/ds-dialog.js?v=1788666524"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788667370">
+  <script src="../design-system/ds-tailwind.js?v=1788667370"></script>
+  <script src="../design-system/ds-dialog.js?v=1788667370"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     /* ===== App shell (mesmo do painel) ===== */
@@ -105,6 +105,22 @@
     /* atividades selecionadas (por regime) */
     #atvSelected{display:flex;flex-direction:column;gap:var(--space-4)}
     .atvgroup{border:1px solid var(--color-border);border-radius:var(--radius-xl);padding:var(--space-4);display:flex;flex-direction:column;gap:var(--space-3)}
+    /* L1 · grade de UFs de credenciamento (Prognósticos) */
+    .ufgrid{display:flex;flex-wrap:wrap;gap:var(--space-2)}
+    .ufchk{display:inline-flex;align-items:center;gap:6px;font-size:var(--text-sm);border:1px solid var(--color-border);border-radius:var(--radius-base);padding:4px 10px;cursor:pointer;font-variant-numeric:tabular-nums}
+    .ufchk input{margin:0}
+    .ufchk:hover{border-color:var(--color-primary)}
+    .ufchk:has(input:checked){border-color:var(--color-primary);background:var(--color-primary-subtle);color:var(--color-primary);font-weight:600}
+    .ufchk:focus-within{outline:none;box-shadow:var(--ring)}
+    /* L2 · escolha nova vigência × alteração de validade no modal de envio */
+    .vmode{display:flex;flex-direction:column;gap:var(--space-2);margin-top:var(--space-2)}
+    .vmode__opt{display:flex;gap:var(--space-2);align-items:flex-start;padding:var(--space-2) var(--space-3);border:1px solid var(--color-border);border-radius:var(--radius-base);cursor:pointer}
+    .vmode__opt:hover{border-color:var(--color-warning)}
+    .vmode__opt:has(input:checked){border-color:var(--color-warning);background:color-mix(in srgb,var(--color-warning) 8%,var(--color-surface))}
+    .vmode__opt:focus-within{outline:none;box-shadow:var(--ring)}
+    .vmode__opt input{margin-top:3px;flex:0 0 auto}
+    .vmode__b{display:flex;flex-direction:column;gap:2px;font-size:var(--text-sm)}
+    .vmode__hint{font-size:var(--text-xs);color:var(--color-text-muted);line-height:1.45}
     .atvgroup--flat{border:0;border-radius:0;padding:0}
     .atvgroup__h{display:flex;align-items:center;gap:var(--space-2);flex-wrap:wrap}
     .atvgroup__name{font-size:var(--text-lg);font-weight:600;color:var(--color-heading)}
@@ -655,6 +671,17 @@
     /* Atividades selecionadas (exibição por regime, só descrição oficial) + drawer único */
     var selectedEl=$('atvSelected'), reviewEl=$('atvSelReview');
     function picksHtml(reg,codes){ if(!codes.length) return '<span class="atvsel__empty">Nenhuma atividade selecionada.</span>'; var m=byCode(reg); return '<div class="atvpicks">'+codes.map(function(c){var a=m[c];return a?'<div class="atvpick"><span class="atvpick__cod">'+a.c+'</span><span class="atvpick__desc" title="'+esc(descOf(a))+'">'+esc(descOf(a))+'</span></div>':'';}).join('')+'</div>'; }
+    /* L1 · UFs de credenciamento (grupo UFsCredenc/UFCredenc do leiaute D-1001, Tabela 13): só o regime Prognósticos (3) declara em quais UFs há credenciamento para operar. */
+    var UFS=['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'];
+    var ufSel=[];
+    function ufBlockHtml(){
+      return '<div class="atvgroup"><div class="atvgroup__h"><span class="atvgroup__name">UFs de credenciamento</span><span class="atvgroup__tab">Tabela 13</span></div>'+
+        '<p class="cadrow__hint" style="margin:0 0 var(--space-3)">Estados onde o contribuinte tem credenciamento para operar. Opcional.</p>'+
+        '<div class="ufgrid" role="group" aria-label="UFs de credenciamento">'+UFS.map(function(uf){ return '<label class="ufchk"><input type="checkbox" name="ufcred" value="'+uf+'"'+(ufSel.indexOf(uf)>=0?' checked':'')+'><span>'+uf+'</span></label>'; }).join('')+'</div></div>';
+    }
+    function bindUfBlock(){
+      selectedEl.querySelectorAll('input[name="ufcred"]').forEach(function(cb){ cb.addEventListener('change',function(){ ufSel=[].slice.call(selectedEl.querySelectorAll('input[name="ufcred"]:checked')).map(function(x){return x.value;}); renderSelected(); if(window.__d1001Review) window.__d1001Review(); }); });
+    }
     function renderSelected(){
       var regs=selectedRegimes(), html='';
       /* regime "Outros" (sem nenhum regime setorial): não há grupo setorial a detalhar. Mostra nota em vez de seção vazia. */
@@ -668,9 +695,11 @@
         var lbl = sel[reg].length ? 'Editar atividades' : 'Adicionar atividades';
         html+='<div class="atvgroup"><div class="atvgroup__h"><span class="atvgroup__name">'+esc(TAB[reg].name)+'</span><span class="atvgroup__tab">Tabela '+TAB[reg].tab+'</span><button class="btn btn--secondary btn--sm" type="button" data-atvopen="'+reg+'" style="margin-left:auto">'+lbl+'</button></div>'+picksHtml(reg,sel[reg])+'</div>';
       });
+      if(regs.indexOf('3')>=0) html+=ufBlockHtml();   /* Prognósticos: bloco de UFs de credenciamento */
       selectedEl.innerHTML=html;
       selectedEl.querySelectorAll('[data-atvopen]').forEach(function(b){ b.addEventListener('click',function(){ openDrawer(b.getAttribute('data-atvopen')); }); });
-      if(reviewEl){ var rh=''; regs.forEach(function(reg){ if(sel[reg].length) rh+='<div class="atvgroup atvgroup--flat"><span class="atvgroup__name">'+esc(TAB[reg].name)+'</span>'+picksHtml(reg,sel[reg])+'</div>'; }); reviewEl.innerHTML = rh || '<span class="atvsel__empty">Nenhuma atividade selecionada.</span>'; }
+      bindUfBlock();
+      if(reviewEl){ var rh=''; regs.forEach(function(reg){ if(sel[reg].length) rh+='<div class="atvgroup atvgroup--flat"><span class="atvgroup__name">'+esc(TAB[reg].name)+'</span>'+picksHtml(reg,sel[reg])+'</div>'; }); if(regs.indexOf('3')>=0 && ufSel.length) rh+='<div class="atvgroup atvgroup--flat"><span class="atvgroup__name">UFs de credenciamento</span><div class="ropicks" style="margin-top:var(--space-1)">'+ufSel.map(function(u){return '<span class="atvpick__cod" style="margin:2px">'+esc(u)+'</span>';}).join('')+'</div></div>'; reviewEl.innerHTML = rh || '<span class="atvsel__empty">Nenhuma atividade selecionada.</span>'; }
     }
     /* resumo "Revisão e envio" espelha o que foi preenchido (é confissão: não pode mostrar dado fixo). */
     function regName(v){ return (TAB[v]&&TAB[v].name) || (v==='9'?'Outros':''); }
@@ -757,8 +786,15 @@
       var ini=($('iniVig')||{}).value||'';
       if(ini && _vigBaseline && ini!==_vigBaseline){
         cq.className='dalert dalert--warning'; cq.hidden=false;
-        cq.innerHTML=_IC_WARN+'<div class="dalert__body"><p class="dalert__title">Nova vigência a partir de '+esc(ini)+'</p><p class="dalert__text">Você mudou a data de início, então a Versão '+_v+' entra como <strong>nova vigência</strong>: a Versão '+_src+' (vigente) é <strong>encerrada em '+esc(_vespera(ini))+'</strong> (véspera do novo início, corte automático) e a Versão '+_v+' passa a valer a partir de '+esc(ini)+'.</p></div>';
+        /* L2 · a mudança de data pode ser NOVA VIGÊNCIA (encerra a anterior, mantém histórico) ou ALTERAÇÃO DE VALIDADE (a data foi digitada errada: reescreve, sem novo período). O usuário escolhe. */
+        var _vm=(cq.getAttribute('data-vmode')||'novavig');
+        cq.innerHTML=_IC_WARN+'<div class="dalert__body"><p class="dalert__title">Você mudou a data de início. O que deseja?</p><div class="vmode" role="radiogroup" aria-label="Tipo de mudança de data">'+
+          '<label class="vmode__opt"><input type="radio" name="vmode" value="novavig"'+(_vm==='novavig'?' checked':'')+'><span class="vmode__b"><b>Nova vigência a partir de '+esc(ini)+'</b><span class="vmode__hint">A Versão '+_src+' (vigente) é <strong>encerrada em '+esc(_vespera(ini))+'</strong> (véspera) e a Versão '+_v+' passa a valer a partir de '+esc(ini)+'. Mantém o histórico.</span></span></label>'+
+          '<label class="vmode__opt"><input type="radio" name="vmode" value="validade"'+(_vm==='validade'?' checked':'')+'><span class="vmode__b"><b>Corrigir a data que foi digitada errada</b><span class="vmode__hint"><strong>Alteração de Validade</strong>: reescreve o início da Versão '+_src+' para '+esc(ini)+', <strong>sem criar novo período</strong> nem encerrar a anterior. Use quando a data original estava incorreta.</span></span></label>'+
+          '</div></div>';
+        cq.querySelectorAll('input[name="vmode"]').forEach(function(rb){ rb.addEventListener('change',function(){ cq.setAttribute('data-vmode',rb.value); }); });
       } else {
+        cq.removeAttribute('data-vmode');
         cq.className='dalert dalert--info'; cq.hidden=false;
         cq.innerHTML=_IC_INFO+'<div class="dalert__body"><p class="dalert__title">Correção da versão vigente</p><p class="dalert__text">Você manteve a mesma vigência ('+esc(_vigBaseline)+') da Versão '+_src+'. Ao ser aprovada, a Versão '+_v+' substituirá a versão vigente, mantendo o mesmo período de vigência.</p></div>';
       }
@@ -787,7 +823,7 @@
     });
     modal.querySelectorAll('[data-confirm-close]').forEach(function(b){ b.addEventListener('click',close); });
     modal.addEventListener('click',function(e){ if(e.target===modal) close(); });
-    $('confirmSubmit').addEventListener('click',function(){ if(IS_ADMIN){ var qa=function(k){var m=new RegExp('[?&]'+k+'=([^&]+)').exec(location.search);return m?decodeURIComponent(m[1]):'';}; window.location.href='info-contribuinte-detalhe.html?emp='+(qa('emp')||'cap')+'&v='+(qa('v')||'1')+'&st=aprovado&sit=processando&fresh=1&perfil=admin'+(qa('scn')?('&scn='+qa('scn')):'')+'&sent=1'; return; } var q=function(k){var m=new RegExp('[?&]'+k+'=([^&]+)').exec(location.search);return m?decodeURIComponent(m[1]):'';}; try{ localStorage.setItem('adere.sent.d1001', q('emp')||'seg'); localStorage.setItem('adere.sent.d1001.t', String(Date.now())); var _rp=document.querySelector('input[name="regprin"]:checked'), _rl=_rp&&_rp.closest('.selectcard')&&_rp.closest('.selectcard').querySelector('.selectcard__title'); if(_rl) localStorage.setItem('adere.sent.d1001.regime', _rl.textContent.replace(/^Regime Específico de /,'').trim()); }catch(e){} try{ var _isAlt=(q('modo')==='nova' && q('from')==='detalhe'); var _kAlt='adere.d1001.altop.'+(q('emp')||'seg'); if(_isAlt){ var _ini=($('iniVig')||{}).value||''; localStorage.setItem(_kAlt, JSON.stringify({op:(_ini&&_vigBaseline&&_ini!==_vigBaseline)?'novavig':'corrigir', data:_ini})); } else { localStorage.removeItem(_kAlt); } }catch(e){} var _cen=q('cenario'); var _dest='info-contribuinte-detalhe.html?emp='+(q('emp')||'seg')+'&v='+(q('v')||'1')+'&st=revisao'+(_cen?('&cenario='+_cen):'')+(q('scn')?('&scn='+q('scn')):''); window.location.href=_dest+'&sent=1'; });
+    $('confirmSubmit').addEventListener('click',function(){ if(IS_ADMIN){ var qa=function(k){var m=new RegExp('[?&]'+k+'=([^&]+)').exec(location.search);return m?decodeURIComponent(m[1]):'';}; window.location.href='info-contribuinte-detalhe.html?emp='+(qa('emp')||'cap')+'&v='+(qa('v')||'1')+'&st=aprovado&sit=processando&fresh=1&perfil=admin'+(qa('scn')?('&scn='+qa('scn')):'')+'&sent=1'; return; } var q=function(k){var m=new RegExp('[?&]'+k+'=([^&]+)').exec(location.search);return m?decodeURIComponent(m[1]):'';}; try{ localStorage.setItem('adere.sent.d1001', q('emp')||'seg'); localStorage.setItem('adere.sent.d1001.t', String(Date.now())); var _rp=document.querySelector('input[name="regprin"]:checked'), _rl=_rp&&_rp.closest('.selectcard')&&_rp.closest('.selectcard').querySelector('.selectcard__title'); if(_rl) localStorage.setItem('adere.sent.d1001.regime', _rl.textContent.replace(/^Regime Específico de /,'').trim()); }catch(e){} try{ var _isAlt=(q('modo')==='nova' && q('from')==='detalhe'); var _kAlt='adere.d1001.altop.'+(q('emp')||'seg'); if(_isAlt){ var _ini=($('iniVig')||{}).value||''; var _mudou=(_ini&&_vigBaseline&&_ini!==_vigBaseline); var _vm=(document.querySelector('input[name="vmode"]:checked')||{}).value; var _op=_mudou?((_vm==='validade')?'validade':'novavig'):'corrigir'; localStorage.setItem(_kAlt, JSON.stringify({op:_op, data:_ini})); } else { localStorage.removeItem(_kAlt); } }catch(e){} var _cen=q('cenario'); var _dest='info-contribuinte-detalhe.html?emp='+(q('emp')||'seg')+'&v='+(q('v')||'1')+'&st=revisao'+(_cen?('&cenario='+_cen):'')+(q('scn')?('&scn='+q('scn')):''); window.location.href=_dest+'&sent=1'; });
   })();
 
   /* Tooltip da sugestão da IA (position:fixed para escapar o recorte do drawer) */
@@ -1003,7 +1039,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788666524';
+  var MYV='1788667370';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
