@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Painel de Monitoramento</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788728318">
-  <script src="../design-system/ds-tailwind.js?v=1788728318"></script>
-  <script src="../design-system/ds-dialog.js?v=1788728318"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788729317">
+  <script src="../design-system/ds-tailwind.js?v=1788729317"></script>
+  <script src="../design-system/ds-dialog.js?v=1788729317"></script>
   <style>
     /* ===== app-shell (igual às outras telas do v4) ===== */
     body{margin:0;background:var(--color-bg)}
@@ -234,7 +234,7 @@
       <div class="navlist">
         <p class="sidenav__group">Principal</p>
         <a class="sidenav__item is-active" href="painel-monitoramento.html" aria-current="page" data-tip="Painel de Monitoramento"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg><span class="sidenav__label">Painel de Monitoramento</span></a>
-        <a class="sidenav__item" href="#" data-tip="Minhas empresas"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4M10 10h4M10 14h4M10 18h4"/></svg><span class="sidenav__label">Minhas empresas</span></a>
+        <a class="sidenav__item" href="#" data-tip="Meus contribuintes"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4M10 10h4M10 14h4M10 18h4"/></svg><span class="sidenav__label">Meus contribuintes</span></a>
         <p class="sidenav__group">Cadastro</p>
         <a class="sidenav__item" href="info-contribuinte-lista.html" data-tip="Informações do Contribuinte"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg><span class="sidenav__label">Informações do Contribuinte</span></a>
         <a class="sidenav__item" href="plano-contas-lista.html" data-tip="Plano Geral de Contas Comentado"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M7 12h14M7 18h14M3 12h.01M3 18h.01"/></svg><span class="sidenav__label">Plano Geral de Contas Comentado</span></a>
@@ -292,8 +292,8 @@
 
           <div class="filters" role="group" aria-label="Filtros">
             <div class="filterf filterf--esc">
-              <span class="flbl" id="lblEsc">Empresa</span>
-              <div class="cselect" data-cs="esc" aria-label="Filtrar por empresa" aria-labelledby="lblEsc"></div>
+              <span class="flbl" id="lblEsc">Contribuinte</span>
+              <div class="cselect" data-cs="esc" aria-label="Filtrar por contribuinte" aria-labelledby="lblEsc"></div>
             </div>
             <div class="filterf filterf--reg" id="wrapReg">
               <span class="flbl" id="lblReg">Regulador</span>
@@ -643,7 +643,7 @@
         '<th scope="colgroup" colspan="2">Cadastrais</th>'+
         '<th scope="colgroup" colspan="3" class="gsep">Periódicas</th>'+
         '<th scope="colgroup" class="gsep">Fechamento</th></tr>'+
-      '<tr class="ev"><th class="co coname" scope="col">Empresa</th>'+COLS.map(function(ev){ var gs=(ev==='D-1101'||ev==='D-1199')?' class="gsep"':''; return '<th scope="col"'+gs+'><span class="c">'+ev+'</span><span class="n">'+esc(EVENTS[ev].col)+'</span></th>'; }).join('')+'</tr>'+
+      '<tr class="ev"><th class="co coname" scope="col">Contribuinte</th>'+COLS.map(function(ev){ var gs=(ev==='D-1101'||ev==='D-1199')?' class="gsep"':''; return '<th scope="col"'+gs+'><span class="c">'+ev+'</span><span class="n">'+esc(EVENTS[ev].col)+'</span></th>'; }).join('')+'</tr>'+
       '</thead>';
     var body=rows.map(function(r){
       var corp='<th class="co" scope="row"><div class="cohead">'+logoHtml(r.c)+'<div class="cohead__b"><div class="co-name">'+esc(r.c.nome)+'</div><div class="co-sub">'+esc(r.c.cnpj)+' · '+esc(r.c.reg)+' · '+esc(r.c.papel)+'</div>';
@@ -856,7 +856,7 @@
   }
   var csEsc, csReg, compMP;
   (function(){
-    var escOpts=[['','Todas as empresas ('+COMPANIES.length+')']].concat(COMPANIES.map(function(c){ return [c.emp, c.nome]; }));
+    var escOpts=[['','Todos os contribuintes ('+COMPANIES.length+')']].concat(COMPANIES.map(function(c){ return [c.emp, c.nome]; }));
     csEsc=buildCS(document.querySelector('[data-cs="esc"]'), escOpts, '', function(val){ SCOPE=val; KFILTER=''; syncScopeFilters(); renderKpis(); render(); });
     var regOpts=[['','Todos'],['BCB','BCB (financeiro)'],['SUSEP','SUSEP (seguros)'],['ANS','ANS (saúde)']];
     csReg=buildCS(document.querySelector('[data-cs="reg"]'), regOpts, '', function(val){ REG=val; renderKpis(); render(); });
@@ -881,7 +881,7 @@
 </script>
 <script>
 (function(){
-  var MYV='1788728318';
+  var MYV='1788729317';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

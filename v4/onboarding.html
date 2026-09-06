@@ -8,8 +8,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>a-DeRE · Primeiro acesso</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="../design-system/ds.css?v=1788728318">
-<script src="../design-system/ds-tailwind.js?v=1788728318"></script>
+<link rel="stylesheet" href="../design-system/ds.css?v=1788729317">
+<script src="../design-system/ds-tailwind.js?v=1788729317"></script>
 <style>
   body{margin:0;font-family:var(--font-sans);color:var(--color-text)}
   [hidden]{display:none !important}
@@ -209,11 +209,11 @@
           </li>
           <li class="wizrail__step wizrail__step--todo">
             <span class="wizrail__num">2</span>
-            <span class="wizrail__txt"><b>Adicione empresas</b><span>Informe as empresas que farão parte da sua conta.</span></span>
+            <span class="wizrail__txt"><b>Adicione contribuintes</b><span>Informe os contribuintes que farão parte da sua conta.</span></span>
           </li>
           <li class="wizrail__step wizrail__step--todo">
             <span class="wizrail__num">3</span>
-            <span class="wizrail__txt"><b>Cadastre o certificado digital</b><span>Configure o certificado de cada empresa para transmissão.</span></span>
+            <span class="wizrail__txt"><b>Cadastre o certificado digital</b><span>Configure o certificado de cada contribuinte para transmissão.</span></span>
           </li>
         </ol>
       </div>
@@ -292,31 +292,31 @@
         </div>
         <div class="head">
           <p class="stepcount">Passo 2 de 3</p>
-          <h1 tabindex="-1">Defina as empresas e os responsáveis</h1>
-          <p class="lead">Você pode adicionar até 5 empresas.</p>
+          <h1 tabindex="-1">Defina os contribuintes e os responsáveis</h1>
+          <p class="lead">Você pode adicionar até 5 contribuintes.</p>
         </div>
         <div class="sp"></div>
         <div class="card" style="width:100%">
           <div class="card__body flex flex-col gap-6">
-            <div class="card__count" id="count">0 de 5 empresas adicionadas</div>
+            <div class="card__count" id="count">0 de 5 contribuintes adicionados</div>
             <div class="empty" id="empty">
               <span class="empty__icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg></span>
-              <p class="empty__title">Nenhuma empresa adicionada</p>
-              <p class="empty__text">Cadastre as empresas que farão as declarações na a-DeRE e indique os responsáveis por cada uma.</p>
+              <p class="empty__title">Nenhum contribuinte adicionado</p>
+              <p class="empty__text">Cadastre os contribuintes que farão as declarações na a-DeRE e indique os responsáveis por cada um.</p>
             </div>
             <div class="filled" id="filled" hidden>
               <div class="colist" id="colist"></div>
             </div>
             <button class="btn btn--dashed btn--lg btn--block" id="addBtn" type="button">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              Adicionar empresa
+              Adicionar contribuinte
             </button>
           </div>
         </div>
         <div class="sp"></div>
         <div class="actions">
           <button class="btn btn--primary btn--lg" type="button" id="continuar2">Continuar</button>
-          <p class="field__msg field__msg--error" id="emprMsg" role="alert" hidden style="justify-content:center;align-self:center;text-align:center"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Adicione pelo menos uma empresa para continuar.</p>
+          <p class="field__msg field__msg--error" id="emprMsg" role="alert" hidden style="justify-content:center;align-self:center;text-align:center"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Adicione pelo menos um contribuinte para continuar.</p>
           <button class="btn btn--ghost btn--lg" type="button" id="voltar2">Voltar</button>
         </div>
       </div>
@@ -335,8 +335,8 @@
         </div>
         <div class="head">
           <p class="stepcount">Passo 3 de 3</p>
-          <h1 tabindex="-1">Cadastre o certificado por empresa</h1>
-          <p class="lead">Cada empresa utiliza seu próprio certificado digital (ICP-Brasil) para assinar e transmitir as declarações.</p>
+          <h1 tabindex="-1">Cadastre o certificado por contribuinte</h1>
+          <p class="lead">Cada contribuinte utiliza seu próprio certificado digital (ICP-Brasil) para assinar e transmitir as declarações.</p>
         </div>
         <div class="sp"></div>
         <div class="card" style="width:100%">
@@ -380,14 +380,14 @@
   <aside class="drawer drawer--md" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
     <div class="drawer__header">
       <div>
-        <h2 id="drawerTitle" tabindex="-1">Adicionar empresa</h2>
-        <p>Preencha os dados da empresa e defina os responsáveis pela declaração.</p>
+        <h2 id="drawerTitle" tabindex="-1">Adicionar contribuinte</h2>
+        <p>Preencha os dados do contribuinte e defina os responsáveis pela declaração.</p>
       </div>
       <button class="icon-btn drawer__x" id="drawerX" type="button" aria-label="Fechar" data-tooltip="Fechar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
     <div class="drawer__body">
       <section class="dsec">
-        <div class="dsec__hd"><h3 class="dsec__h">Dados da empresa</h3><p class="dsec__sub">Identifique a empresa declarante e, se quiser, adicione um logo.</p></div>
+        <div class="dsec__hd"><h3 class="dsec__h">Dados do contribuinte</h3><p class="dsec__sub">Identifique o contribuinte declarante e, se quiser, adicione um logo.</p></div>
         <div class="logo">
           <span class="logo__thumb" id="dzThumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg></span>
           <div class="logo__act">
@@ -400,7 +400,7 @@
           <label class="field__label" for="cnpj">CNPJ <span class="field__req">*</span></label>
           <input class="input input--lg" id="cnpj" inputmode="numeric" placeholder="Ex.: 33.608.308/0001-73" autocomplete="off" required aria-required="true" aria-describedby="cnpjmsg cnpjHelp">
           <p class="field__msg field__msg--error" id="cnpjmsg" role="alert" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> <span id="cnpjmsgTxt">Informe um CNPJ válido (14 dígitos).</span></p>
-          <p class="field__msg" id="cnpjHelp">Os dados cadastrais da empresa serão preenchidos automaticamente.</p>
+          <p class="field__msg" id="cnpjHelp">Os dados cadastrais do contribuinte serão preenchidos automaticamente.</p>
         </div>
         <div class="ro" id="ro">
           <div class="readonly-field"><span class="readonly-field__label">CNPJ</span><span class="readonly-field__value" id="roCnpj">—</span></div>
@@ -414,7 +414,7 @@
       <hr class="dsec__rule">
 
       <section class="dsec">
-        <div class="dsec__hd"><h3 class="dsec__h">Responsáveis <span class="dsec__n" id="respCount">(1)</span></h3><p class="dsec__sub">Pessoas responsáveis por realizar e acompanhar as atividades da empresa no sistema.</p></div>
+        <div class="dsec__hd"><h3 class="dsec__h">Responsáveis <span class="dsec__n" id="respCount">(1)</span></h3><p class="dsec__sub">Pessoas responsáveis por realizar e acompanhar as atividades do contribuinte no sistema.</p></div>
         <div class="resplist" id="resplist"></div>
         <button class="btn btn--link" id="addPersonBtn" type="button" style="align-self:flex-start"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Convidar responsável</button>
         <p class="field__msg field__msg--error" id="respMsg" role="alert" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Defina ao menos um preparador e um aprovador entre os responsáveis.</p>
@@ -422,7 +422,7 @@
     </div>
     <div class="drawer__footer">
       <button class="btn btn--ghost btn--lg" type="button" id="cancelDrawer">Cancelar</button>
-      <button class="btn btn--primary btn--lg" type="button" id="saveCompany">Adicionar empresa</button>
+      <button class="btn btn--primary btn--lg" type="button" id="saveCompany">Adicionar contribuinte</button>
     </div>
   </aside>
   </div>
@@ -433,7 +433,7 @@
     <div class="drawer__header">
       <div>
         <h2 id="certTitle" tabindex="-1">Importar certificado</h2>
-        <p id="certSub">Certificado digital da empresa.</p>
+        <p id="certSub">Certificado digital do contribuinte.</p>
       </div>
       <button class="icon-btn drawer__x" id="certX" type="button" aria-label="Fechar" data-tooltip="Fechar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
@@ -441,7 +441,7 @@
       <div class="cform">
         <div class="cinfo">
           <span class="cinfo__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span>
-          <p class="cinfo__d">Envie o certificado digital <b>ICP-Brasil válido</b> da empresa, no formato <b>.pfx</b> ou <b>.p12</b> e protegido por senha. Ele assina e transmite as declarações e pode ser da matriz, do representante legal ou de procurador habilitado.</p>
+          <p class="cinfo__d">Envie o certificado digital <b>ICP-Brasil válido</b> do contribuinte, no formato <b>.pfx</b> ou <b>.p12</b> e protegido por senha. Ele assina e transmite as declarações e pode ser da matriz, do representante legal ou de procurador habilitado.</p>
         </div>
         <label class="dropzone" id="certDrop" for="certFile">
           <span class="dropzone__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="28" height="28"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg></span>
@@ -484,7 +484,7 @@
       <div class="confirm">
         <span class="confirm__icon confirm__icon--warning"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></span>
         <div>
-          <h2 class="confirm__title" id="discardTitle" tabindex="-1">Descartar as alterações desta empresa?</h2>
+          <h2 class="confirm__title" id="discardTitle" tabindex="-1">Descartar as alterações deste contribuinte?</h2>
           <p class="confirm__text" id="discardText">As informações preenchidas não serão salvas.</p>
         </div>
       </div>
@@ -495,7 +495,7 @@
     </div>
   </div>
 
-  <script src="../design-system/ds-dialog.js?v=1788728318"></script>
+  <script src="../design-system/ds-dialog.js?v=1788729317"></script>
   <script>
     var $=function(id){return document.getElementById(id)};
 
@@ -508,7 +508,7 @@
         if(idx===n){ s.setAttribute('aria-current','step'); } else { s.removeAttribute('aria-current'); }
       });
     }
-    var STEP_LABELS={1:'Crie sua senha',2:'Adicione empresas',3:'Cadastre o certificado digital',4:'Conta ativada'};
+    var STEP_LABELS={1:'Crie sua senha',2:'Adicione contribuintes',3:'Cadastre o certificado digital',4:'Conta ativada'};
     function goStep(n){
       var map={1:'view1',2:'view2',3:'view3',4:'view4'};
       var next=$(map[n]); if(!next) return;
@@ -706,7 +706,7 @@
       if(!edit){
         editIndex=-1; resetLogo();
         $('cnpj').value=''; clearCnpjError(); $('ro').classList.remove('show'); if($('cnpjHelp'))$('cnpjHelp').hidden=false;
-        $('drawerTitle').textContent='Adicionar empresa'; resetResp();
+        $('drawerTitle').textContent='Adicionar contribuinte'; resetResp();
       }
       dsDialog.open($('drawerBd'), {focus: $('drawerTitle')});
     }
@@ -715,7 +715,7 @@
     var _discardCb=null;
     function openDiscard(cb, title){
       _discardCb=cb;
-      $('discardTitle').textContent=title||'Descartar as alterações desta empresa?';
+      $('discardTitle').textContent=title||'Descartar as alterações deste contribuinte?';
       dsDialog.open($('discardBd'), {focus: $('discardKeep')});
     }
     $('discardKeep').addEventListener('click',function(){ dsDialog.close(); _discardCb=null; });
@@ -747,7 +747,7 @@
     });
     function renderCompanies(){
       var list=$('colist'), em=$('emprMsg'); if(em && companies.length>0) em.hidden=true;
-      $('count').textContent=companies.length+' de '+MAX+' empresas adicionadas';
+      $('count').textContent=companies.length+' de '+MAX+' contribuintes adicionados';
       if(companies.length===0){ $('empty').hidden=false; $('filled').hidden=true; $('count').hidden=true; list.innerHTML=''; $('addBtn').style.display=''; return; }
       $('empty').hidden=true; $('filled').hidden=false; $('count').hidden=false; list.innerHTML='';
       companies.forEach(function(c,i){
@@ -766,7 +766,7 @@
     function editCompany(i){
       var c=companies[i]; editIndex=i;
       openDrawer(true);
-      $('drawerTitle').textContent='Editar empresa';
+      $('drawerTitle').textContent='Editar contribuinte';
       $('cnpj').value=c.cnpj; var d=onlyDigits(c.cnpj); if(d.length===14) fillFromCNPJ(d);
       resp=(c.resp||[]).map(function(p){return {nome:p.nome,email:p.email,perfis:(p.perfis||[]).slice(),admin:p.admin};}); renderResp();
       if(c.logo){ setLogo(c.logo); } else { resetLogo(); }
@@ -845,7 +845,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788728318';
+  var MYV='1788729317';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

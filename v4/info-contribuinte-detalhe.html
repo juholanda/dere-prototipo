@@ -8,9 +8,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Detalhe do contribuinte</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788728318">
-  <script src="../design-system/ds-tailwind.js?v=1788728318"></script>
-  <script src="../design-system/ds-dialog.js?v=1788728318"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788729317">
+  <script src="../design-system/ds-tailwind.js?v=1788729317"></script>
+  <script src="../design-system/ds-dialog.js?v=1788729317"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -286,7 +286,7 @@
       <div class="navlist">
         <p class="sidenav__group">Principal</p>
         <span class="sidenav__item is-disabled" data-tip="Painel de Monitoramento · em breve" aria-disabled="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg><span class="sidenav__label">Painel de Monitoramento</span></span>
-        <a class="sidenav__item" href="#" data-tip="Minhas empresas"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4M10 10h4M10 14h4M10 18h4"/></svg><span class="sidenav__label">Minhas empresas</span></a>
+        <a class="sidenav__item" href="#" data-tip="Meus contribuintes"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4M10 10h4M10 14h4M10 18h4"/></svg><span class="sidenav__label">Meus contribuintes</span></a>
         <p class="sidenav__group">Cadastro</p>
         <a class="sidenav__item is-active" href="info-contribuinte-lista.html" data-tip="Informações do Contribuinte"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg><span class="sidenav__label">Informações do Contribuinte</span></a>
         <span class="sidenav__item is-disabled" data-tip="Plano de contas · em breve" aria-disabled="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M7 12h14M7 18h14M3 12h.01M3 18h.01"/></svg><span class="sidenav__label">Plano de contas</span></span>
@@ -338,7 +338,7 @@
 
         <div class="wrap">
           <!-- contexto: empresa + dados-chave + responsáveis, tudo numa linha -->
-          <section class="card cocard" aria-label="Empresa e responsáveis">
+          <section class="card cocard" aria-label="Contribuinte e responsáveis">
             <div class="cocard__id">
               <span class="cocard__logo" id="coLogo"></span>
               <div><p class="cocard__name" id="coNome">MAG Seguros</p><p class="cocard__cnpj" id="coCnpj">CNPJ 33.608.308/0001-73</p></div>
@@ -489,7 +489,7 @@
   var EV={
     criada:      {t:'02/09/2026 · 10:47', title:'Versão criada',                 status:['Rascunho','status--neutral'],                 who:'Ricardo Alves', role:'Preparador'},
     enviada:     {t:'02/09/2026 · 11:15', title:'Enviada para revisão',          status:['Em revisão','status--warning'],             who:'Ricardo Alves', role:'Preparador'},
-    ajustes:     {t:'02/09/2026 · 14:32', title:'Ajustes solicitados',           status:['Ajustes solicitados','status--danger'],     who:'Ana Prado', role:'Aprovadora', extras:[['Comentário','O regime secundário não se aplica a esta empresa. Remova a marcação e confirme a vigência antes de reenviar.']]},
+    ajustes:     {t:'02/09/2026 · 14:32', title:'Ajustes solicitados',           status:['Ajustes solicitados','status--danger'],     who:'Ana Prado', role:'Aprovadora', extras:[['Comentário','O regime secundário não se aplica a este contribuinte. Remova a marcação e confirme a vigência antes de reenviar.']]},
     reenviada:   {t:'03/09/2026 · 09:10', title:'Reenviada para revisão',        status:['Em revisão','status--warning'],             who:'Ricardo Alves', role:'Preparador'},
     aprovada:    {t:'03/09/2026 · 11:20', title:'Aprovada pelo revisor', status:['Aprovada','status--success'], who:'Ana Prado', role:'Aprovadora'},
     transmitida: {t:'03/09/2026 · 11:22', title:'Transmitida à Receita Federal', status:['Em processamento','status--info'], who:'a-DeRE', role:'Sistema', extras:[['Protocolo',PROTO]]},
@@ -631,7 +631,7 @@
   var APV_BANNER={
     nova:['info','Nova versão aguardando sua aprovação','Revise as informações e aprove para transmitir à Receita Federal, ou solicite ajustes ao preparador.'],
     alteracao:['warning','Alteração das informações do contribuinte aguardando sua aprovação','Ao aprovar, esta versão substitui a vigente: a anterior é encerrada e a nova é transmitida à Receita.'],
-    exclusao:['danger','Exclusão de vigência aguardando sua aprovação','Ao aprovar, a vigência é encerrada na Receita e a empresa fica sem declaração vigente até registrar uma nova.']
+    exclusao:['danger','Exclusão de vigência aguardando sua aprovação','Ao aprovar, a vigência é encerrada na Receita e o contribuinte fica sem declaração vigente até registrar uma nova.']
   };
   /* motivo da exclusão (motExcl escolhido pelo preparador): mostrado no banner do aprovador */
   function exclMotivo(){ var m=''; try{ m=localStorage.getItem('adere.d1001.exclmotivo.'+empId())||''; }catch(e){} return m||'Encerramento de atividade'; }
@@ -853,7 +853,7 @@
   document.addEventListener('click',function(e){
     if(e.target.closest('[data-go-editar]')){ goEditar(); return; }
     /* rejeição por certificado/cadastro: resolvido na página Minhas empresas (tela ainda não desenhada). Placeholder. */
-    if(e.target.closest('[data-go-cert]')){ var _r=curRej(); showToast((_r.natureza==='Cadastral'?'A situação do CNPJ':'O certificado/procuração')+' é resolvido em Minhas empresas. Tela ainda não desenhada.'); return; }
+    if(e.target.closest('[data-go-cert]')){ var _r=curRej(); showToast((_r.natureza==='Cadastral'?'A situação do CNPJ':'O certificado/procuração')+' é resolvido em Meus contribuintes. Tela ainda não desenhada.'); return; }
     var op=e.target.closest('[data-opt-i]');
     if(op){ var cen=curCenario()||CENARIOS.estados; var o=cen.opts[+op.getAttribute('data-opt-i')][1];
       if(o.act==='editar'){ goEditar(); return; }
@@ -1096,7 +1096,7 @@
       var vnum=dparam('v')||'4';
       var T={ nova:['Aprovar e transmitir a Versão '+vnum+'?','A versão será enviada à Receita Federal e passa a valer quando for processada. Não dá para desfazer por aqui.','Aprovar e transmitir','btn--success'],
               alteracao:['Aprovar a alteração das informações?','A Versão '+vnum+' substitui a vigente: a anterior é encerrada e a nova é transmitida à Receita, passando a valer quando processada.','Aprovar e transmitir','btn--success'],
-              exclusao:['Aprovar a exclusão da vigência?','A vigência da Versão '+vnum+' será encerrada na Receita. A empresa fica sem declaração vigente até registrar uma nova. Não dá para desfazer por aqui.','Aprovar exclusão','btn--success'] };
+              exclusao:['Aprovar a exclusão da vigência?','A vigência da Versão '+vnum+' será encerrada na Receita. O contribuinte fica sem declaração vigente até registrar uma nova. Não dá para desfazer por aqui.','Aprovar exclusão','btn--success'] };
       var t=T[curOp]||T.nova;
       $('apTitle').textContent=t[0]; $('apLead').textContent=t[1];
       var btn=$('confirmAprovar'); btn.className='btn btn--lg '+t[3];
@@ -1120,7 +1120,7 @@
     apM.addEventListener('click',function(e){ if(e.target===apM) dsDialog.close(); });
     ajM.addEventListener('click',function(e){ if(e.target===ajM) dsDialog.close(); });
     if(pbM){ pbM.querySelectorAll('[data-close]').forEach(function(b){ b.addEventListener('click',function(){dsDialog.close();}); }); pbM.addEventListener('click',function(e){ if(e.target===pbM) dsDialog.close(); }); }
-    if(compM){ compM.addEventListener('click',function(e){ if(e.target.closest('[data-comp-dl]')){ showToast('Comprovante gerado para download.'); return; } if(e.target.closest('[data-comp-fix]')){ var _rc=curRej(); showToast((_rc.natureza==='Cadastral'?'A situação do CNPJ':'O certificado/procuração')+' é resolvido em Minhas empresas. Tela ainda não desenhada.'); return; } if(e.target===compM || e.target.closest('[data-close-comp]')) dsDialog.close(); }); }
+    if(compM){ compM.addEventListener('click',function(e){ if(e.target.closest('[data-comp-dl]')){ showToast('Comprovante gerado para download.'); return; } if(e.target.closest('[data-comp-fix]')){ var _rc=curRej(); showToast((_rc.natureza==='Cadastral'?'A situação do CNPJ':'O certificado/procuração')+' é resolvido em Meus contribuintes. Tela ainda não desenhada.'); return; } if(e.target===compM || e.target.closest('[data-close-comp]')) dsDialog.close(); }); }
     /* switcher "Motivo" da barra de demo: troca o tipo de rejeição e atualiza banner + comprovante ao vivo */
     document.addEventListener('change',function(e){
       var r=e.target.closest && e.target.closest('#demoRej'); if(!r) return;
@@ -1317,7 +1317,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788728318';
+  var MYV='1788729317';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

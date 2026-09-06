@@ -7,7 +7,7 @@
   <meta http-equiv="Expires" content="0">
   <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>a-DeRE · Fluxos</title>
-<link rel="stylesheet" href="../design-system/ds.css?v=1788728318">
+<link rel="stylesheet" href="../design-system/ds.css?v=1788729317">
 <style>
   body{margin:0;background:var(--color-surface-2);font-family:var(--font-sans);color:var(--color-text)}
   .wrap{max-width:840px;margin:0 auto;padding:var(--space-12) var(--space-4)}
@@ -113,7 +113,7 @@
       <div class="flow">
         <div class="flow__head">
           <span class="flow__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg></span>
-          <div><span class="flow__n">Fluxo 3</span><h2>Informações do contribuinte (D-1001)</h2><p>Lista das empresas, versões, detalhe e os fluxos de alteração e exclusão, com aprovação antes da Receita.</p></div>
+          <div><span class="flow__n">Fluxo 3</span><h2>Informações do contribuinte (D-1001)</h2><p>Lista dos contribuintes, versões, detalhe e os fluxos de alteração e exclusão, com aprovação antes da Receita.</p></div>
         </div>
         <div class="flow__scn">
           <span class="flow__scn-lbl">Começar</span>
@@ -138,15 +138,15 @@
       <div class="flow">
         <div class="flow__head">
           <span class="flow__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M7 12h14M7 18h14M3 12h.01M3 18h.01"/></svg></span>
-          <div><span class="flow__n">Fluxo 4</span><h2>Plano Geral de Contas Comentado (D-1011)</h2><p>Lista das empresas e a classificação por IA: importar a planilha, ver o carregamento, a triagem por grupo e a tabela de contas editável.</p></div>
+          <div><span class="flow__n">Fluxo 4</span><h2>Plano Geral de Contas Comentado (D-1011)</h2><p>Lista dos contribuintes e a classificação por IA: importar a planilha, ver o carregamento, a triagem por grupo e a tabela de contas editável.</p></div>
         </div>
         <div class="flow__scn">
           <span class="flow__scn-lbl">Começar por</span>
-          <a class="scn scn--main" href="plano-contas-lista.html?scn=pop">Ver o plano de contas por empresa <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+          <a class="scn scn--main" href="plano-contas-lista.html?scn=pop">Ver o plano de contas por contribuinte <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
           <span class="flow__scn-lbl" style="margin-top:var(--space-3)">Cenários</span>
-          <a class="scn" href="plano-contas-lista.html?scn=new">Primeiro acesso · empresas vazias</a>
+          <a class="scn" href="plano-contas-lista.html?scn=new">Primeiro acesso · contribuintes vazios</a>
           <a class="scn" href="plano-contas-classificar.html?emp=cap&modo=nova">Preencher · importar → carregamento → triagem → tabela</a>
-          <a class="scn" href="plano-contas-classificar.html?emp=cap&modo=nova&tipo=primeiro">Primeiro plano da empresa (empresa nova)</a>
+          <a class="scn" href="plano-contas-classificar.html?emp=cap&modo=nova&tipo=primeiro">Primeiro plano do contribuinte (contribuinte novo)</a>
         </div>
       </div>
     </div>
@@ -167,7 +167,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788728318';
+  var MYV='1788729317';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

@@ -8,8 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Detalhe do Plano de Contas</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788728318">
-  <script src="../design-system/ds-tailwind.js?v=1788728318"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788729317">
+  <script src="../design-system/ds-tailwind.js?v=1788729317"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -188,7 +188,7 @@
       <div class="navlist">
         <p class="sidenav__group">Principal</p>
         <span class="sidenav__item is-disabled" data-tip="Painel de Monitoramento · em breve" aria-disabled="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg><span class="sidenav__label">Painel de Monitoramento</span></span>
-        <a class="sidenav__item" href="#" data-tip="Minhas empresas"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4M10 10h4M10 14h4M10 18h4"/></svg><span class="sidenav__label">Minhas empresas</span></a>
+        <a class="sidenav__item" href="#" data-tip="Meus contribuintes"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4M10 10h4M10 14h4M10 18h4"/></svg><span class="sidenav__label">Meus contribuintes</span></a>
         <p class="sidenav__group">Cadastro</p>
         <a class="sidenav__item" href="info-contribuinte-lista.html" data-tip="Informações do Contribuinte"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg><span class="sidenav__label">Informações do Contribuinte</span></a>
         <a class="sidenav__item is-active" href="plano-contas-lista.html" data-tip="Plano de contas"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M7 12h14M7 18h14M3 12h.01M3 18h.01"/></svg><span class="sidenav__label">Plano de contas</span></a>
@@ -319,7 +319,7 @@
     },
     processando:{
       tone:'warning', ic:CLOCK, pill:'status--warning', label:'Transmitido · em processamento', ver:'Versão 1', sub:'Em processamento',
-      desc:'Aprovado por Ana Prado, assinado com o e-CNPJ A1 da empresa e transmitido à Receita. O processamento é assíncrono: o resultado (recibo ou rejeição) chega em seguida e aparece aqui e no painel.',
+      desc:'Aprovado por Ana Prado, assinado com o e-CNPJ A1 do contribuinte e transmitido à Receita. O processamento é assíncrono: o resultado (recibo ou rejeição) chega em seguida e aparece aqui e no painel.',
       meta:[{k:'Enviado por',by:'Ricardo Alves',v:'hoje, 15:40'},{k:'Aprovado por',by:'Ana Prado',v:'hoje, 16:05'},{k:'Protocolo (Receita)',v:'PT-2026.09.51001'}],
       comment:null,
       topActions:'<button class="btn btn--ghost" type="button">Acompanhar processamento</button>',
@@ -356,7 +356,7 @@
       '<p class="statusbar__desc">'+esc(s.desc)+'</p>'+comment+'</div>'+
       (s.cardActions?'<div class="statusbar__actions">'+s.cardActions+'</div>':'');
     if($('pageActions')) $('pageActions').innerHTML = s.topActions;
-    var company='<div><p class="submeta__k">Empresa</p><div class="submeta__v"><span class="submeta__logo"><img src="../Logos/MAG%20seguros.png" alt=""></span><span>MAG Seguros <span class="num" style="color:var(--color-text-muted);font-weight:400">· 33.608.308/0001-73</span></span></div></div>';
+    var company='<div><p class="submeta__k">Contribuinte</p><div class="submeta__v"><span class="submeta__logo"><img src="../Logos/MAG%20seguros.png" alt=""></span><span>MAG Seguros <span class="num" style="color:var(--color-text-muted);font-weight:400">· 33.608.308/0001-73</span></span></div></div>';
     $('submeta').innerHTML=company+s.meta.map(function(m){
       var v = m.by ? '<span class="avatar avatar--sm">'+initials(m.by)+'</span>'+esc(m.by)+(m.v?' <span class="num" style="color:var(--color-text-muted);font-weight:400">· '+esc(m.v)+'</span>':'') : '<span class="num">'+esc(m.v)+'</span>';
       return '<div><p class="submeta__k">'+esc(m.k)+'</p><div class="submeta__v">'+v+'</div></div>';
@@ -557,7 +557,7 @@
 </script>
 <script>
 (function(){
-  var MYV='1788728318';
+  var MYV='1788729317';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

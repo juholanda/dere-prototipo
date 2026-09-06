@@ -8,8 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Painel de Monitoramento</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788728318">
-  <script src="../design-system/ds-tailwind.js?v=1788728318"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788729317">
+  <script src="../design-system/ds-tailwind.js?v=1788729317"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     /* ===== App shell ===== */
@@ -215,7 +215,7 @@
       <div class="navlist">
         <p class="sidenav__group">Principal</p>
         <a class="sidenav__item is-active" href="#" aria-current="page" data-tip="Painel de Monitoramento"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg><span class="sidenav__label">Painel de Monitoramento</span></a>
-        <a class="sidenav__item" href="#" data-tip="Minhas empresas"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4M10 10h4M10 14h4M10 18h4"/></svg><span class="sidenav__label">Minhas empresas</span></a>
+        <a class="sidenav__item" href="#" data-tip="Meus contribuintes"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4M10 10h4M10 14h4M10 18h4"/></svg><span class="sidenav__label">Meus contribuintes</span></a>
         <p class="sidenav__group">Cadastro</p>
         <a class="sidenav__item" href="info-contribuinte-lista.html" data-tip="Informações do Contribuinte"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg><span class="sidenav__label">Informações do Contribuinte</span></a>
         <span class="sidenav__item is-disabled" data-tip="Plano de contas · em breve" aria-disabled="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M7 12h14M7 18h14M3 12h.01M3 18h.01"/></svg><span class="sidenav__label">Plano de contas</span></span>
@@ -248,7 +248,7 @@
             <div class="page-h__row">
               <h1>Painel de Monitoramento</h1>
             </div>
-            <p id="pageHint">Acompanhe a situação, as transmissões e os prazos das empresas que você administra.</p>
+            <p id="pageHint">Acompanhe a situação, as transmissões e os prazos dos contribuintes que você administra.</p>
           </div>
         </div>
 
@@ -274,7 +274,7 @@
             </div>
             <div class="stat">
               <span class="stat__ic stat__ic--success"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span>
-              <span class="stat__label">Empresas prontas</span>
+              <span class="stat__label">Contribuintes prontos</span>
               <span class="stat__value" id="kpiConfig">0 <span class="kpi-sub">de 3</span></span>
               <span class="stat__foot" id="kpiConfigFoot">Ainda há configurações pendentes</span>
             </div>
@@ -298,16 +298,16 @@
               <div class="panel__head panel__head--static">
                 <div class="panel__titles">
                   <div class="panel__h"><h2 id="h-ev">Eventos</h2></div>
-                  <p class="panel__sub">Acompanhe as ações realizadas, transmissões e retornos das suas empresas.</p>
+                  <p class="panel__sub">Acompanhe as ações realizadas, transmissões e retornos dos seus contribuintes.</p>
                 </div>
               </div>
               <div class="panel__body" id="evBodyWrap">
                 <div class="evfilters">
                   <div class="evfilters__search">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                    <input class="input" id="evSearch" type="search" placeholder="Buscar por empresa ou evento" aria-label="Buscar eventos">
+                    <input class="input" id="evSearch" type="search" placeholder="Buscar por contribuinte ou evento" aria-label="Buscar eventos">
                   </div>
-                  <div class="cselect evfilters__cs" data-cselect data-filter="emp" aria-label="Filtrar por empresa"></div>
+                  <div class="cselect evfilters__cs" data-cselect data-filter="emp" aria-label="Filtrar por contribuinte"></div>
                   <div class="cselect evfilters__cs evfilters__cs--wide" data-cselect data-filter="tipo" aria-label="Filtrar por tipo de evento"></div>
                   <div class="cselect evfilters__cs" data-cselect data-filter="sit" aria-label="Filtrar por situação"></div>
                   <button class="btn btn--ghost btn--sm evfilters__clear" id="fClear" type="button" hidden>
@@ -319,7 +319,7 @@
                   <table class="table" id="evTable">
                     <thead>
                       <tr>
-                        <th scope="col" class="sortable" data-sort="emp" aria-sort="none" tabindex="0">Empresa</th>
+                        <th scope="col" class="sortable" data-sort="emp" aria-sort="none" tabindex="0">Contribuinte</th>
                         <th scope="col" class="sortable" data-sort="ev" aria-sort="none" tabindex="0">Evento</th>
                         <th scope="col" class="sortable" data-sort="sit" aria-sort="none" tabindex="0">Situação</th>
                         <th scope="col" class="sortable" data-sort="resp" aria-sort="none" tabindex="0">Responsável</th>
@@ -695,7 +695,7 @@
   function renderKpis(){
     var prontas=empresas.filter(function(e){var d=ev(e,'D-1001'),p=ev(e,'D-1011');return d&&isDone(d.st)&&p&&isDone(p.st);}).length;
     $('kpiConfig').innerHTML=prontas+' <span class="kpi-sub">de '+empresas.length+'</span>';
-    $('kpiConfigFoot').textContent = prontas>=empresas.length ? 'Todas as empresas estão prontas' : 'Ainda há configurações pendentes';
+    $('kpiConfigFoot').textContent = prontas>=empresas.length ? 'Todos os contribuintes estão prontos' : 'Ainda há configurações pendentes';
     var bal=empresas.filter(function(e){var m=ev(e,'D-1101');return m&&isDone(m.st);}).length;
     $('kpiBal').innerHTML=bal+' <span class="kpi-sub">de '+empresas.length+'</span>';
   }
@@ -754,7 +754,7 @@
   /* Filtros da tabela de eventos — cselect do ds (dropdown personalizado) */
   (function(){
     var OPTS={
-      emp:[['','Todas as empresas'],['seg','MAG Seguros'],['fin','MAG Finanças'],['cap','MAG Capitalização'],['sic','Sicoob Seguradora'],['sim','Simple2u']],
+      emp:[['','Todos os contribuintes'],['seg','MAG Seguros'],['fin','MAG Finanças'],['cap','MAG Capitalização'],['sic','Sicoob Seguradora'],['sim','Simple2u']],
       tipo:[['','Todos os eventos'],['D-1001','Informações do Contribuinte'],['D-1011','Plano de contas'],['D-1101','Balancete']],
       sit:[['','Todas as situações'],['processando','Em processamento'],['sucesso','Processada com sucesso'],['avisos','Processada com avisos'],['rejeitado','Rejeitado'],['revisao','Em revisão']]
     };
@@ -837,7 +837,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788728318';
+  var MYV='1788729317';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

@@ -8,8 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Plano de Contas · Nova versão</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788728318">
-  <script src="../design-system/ds-tailwind.js?v=1788728318"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788729317">
+  <script src="../design-system/ds-tailwind.js?v=1788729317"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -302,7 +302,7 @@
       <div class="navlist">
         <p class="sidenav__group">Principal</p>
         <span class="sidenav__item is-disabled" data-tip="Painel de Monitoramento · em breve" aria-disabled="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg><span class="sidenav__label">Painel de Monitoramento</span></span>
-        <a class="sidenav__item" href="#" data-tip="Minhas empresas"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4M10 10h4M10 14h4M10 18h4"/></svg><span class="sidenav__label">Minhas empresas</span></a>
+        <a class="sidenav__item" href="#" data-tip="Meus contribuintes"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4M10 10h4M10 14h4M10 18h4"/></svg><span class="sidenav__label">Meus contribuintes</span></a>
         <p class="sidenav__group">Cadastro</p>
         <a class="sidenav__item" href="info-contribuinte-lista.html" data-tip="Informações do Contribuinte"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg><span class="sidenav__label">Informações do Contribuinte</span></a>
         <a class="sidenav__item is-active" href="plano-contas-lista.html" aria-current="page" data-tip="Plano Geral de Contas Comentado"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M7 12h14M7 18h14M3 12h.01M3 18h.01"/></svg><span class="sidenav__label">Plano Geral de Contas Comentado</span></a>
@@ -351,7 +351,7 @@
             <div class="dalert dalert--info" role="note" style="margin-bottom:var(--space-6);align-items:center">
               <span class="dalert__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span>
               <div class="dalert__body">
-                <p class="dalert__text">Você pode preparar o plano agora. A <b>transmissão</b> à Receita será liberada após o processamento das Informações do Contribuinte (D-1001) desta empresa.</p>
+                <p class="dalert__text">Você pode preparar o plano agora. A <b>transmissão</b> à Receita será liberada após o processamento das Informações do Contribuinte (D-1001) deste contribuinte.</p>
               </div>
               <a class="btn btn--secondary dalert__act" id="d1001Link" href="info-contribuinte-empresa.html?emp=cap">Ver D-1001<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a>
             </div>
@@ -361,7 +361,7 @@
               <div class="card__body">
                 <div class="planmeta">
                   <div class="planmeta__i">
-                    <span class="planmeta__k">Empresa</span>
+                    <span class="planmeta__k">Contribuinte</span>
                     <span class="planmeta__v"><span class="emplogo"><img id="pmLogo" src="../Logos/mag%20capitalizacoes.jpeg" alt=""></span><span id="pmNome">MAG Capitalização</span></span>
                   </div>
                   <div class="planmeta__i">
@@ -369,7 +369,7 @@
                     <span class="planmeta__v"><span id="pmRef">SUSEP</span></span>
                   </div>
                   <div class="planmeta__i">
-                    <span class="planmeta__k"><span>Freq. de encerramento <span class="field__req">*</span></span> <span class="tooltip tooltip--top lbltip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" tabindex="0" role="img" aria-label="Frequência de encerramento: periodicidade em que a empresa encerra as contas de resultado"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg><span class="tooltip__bubble tooltip__bubble--stack" role="tooltip">Frequência de encerramento: periodicidade em que a empresa encerra as contas de resultado</span></span></span>
+                    <span class="planmeta__k"><span>Freq. de encerramento <span class="field__req">*</span></span> <span class="tooltip tooltip--top lbltip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" tabindex="0" role="img" aria-label="Frequência de encerramento: periodicidade em que o contribuinte encerra as contas de resultado"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg><span class="tooltip__bubble tooltip__bubble--stack" role="tooltip">Frequência de encerramento: periodicidade em que o contribuinte encerra as contas de resultado</span></span></span>
                     <div class="cselect" data-cselect>
                       <button class="cselect__trigger" type="button" data-cselect-btn aria-haspopup="listbox" aria-expanded="false" aria-required="true"><span class="cselect__value" data-cselect-label>Mensal</span><span class="cselect__chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span></button>
                       <div class="cselect__panel" data-cselect-panel hidden role="listbox">
@@ -918,7 +918,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788728318';
+  var MYV='1788729317';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
