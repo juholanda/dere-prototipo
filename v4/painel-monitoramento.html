@@ -6,128 +6,160 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Painel de Monitoramento</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788668170">
-  <script src="../design-system/ds-tailwind.js?v=1788668170"></script>
-  <script src="../design-system/ds-dialog.js?v=1788668170"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788672452">
+  <script src="../design-system/ds-tailwind.js?v=1788672452"></script>
+  <script src="../design-system/ds-dialog.js?v=1788672452"></script>
   <style>
+    /* ===== app-shell (igual às outras telas do v4) ===== */
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
     .shell > .sidenav{border:0;border-radius:0;padding:0;position:relative!important;transform:none!important;visibility:visible!important;z-index:auto!important;transition:width .18s ease}
     .brandrow{height:64px;flex:0 0 auto;display:flex;align-items:center;gap:var(--space-3);padding:0 var(--space-4) 0 var(--space-6);border-bottom:1px solid var(--color-border)}
     .brandrow .wm{font-weight:800;font-size:var(--text-lg);letter-spacing:-.01em;color:var(--color-heading)}
-    .brandrow .avatar{background:color-mix(in srgb, var(--color-on-navy) 14%, transparent);color:var(--color-on-navy);width:34px;height:34px;font-size:var(--text-sm);flex:0 0 auto;font-weight:800}
+    .brandrow .avatar{background:color-mix(in srgb, var(--color-on-navy) 14%, transparent);color:var(--color-on-navy);width:36px;height:36px;font-size:var(--text-sm);flex:0 0 auto;font-weight:800}
     .navlist{flex:1;overflow:auto;min-height:0;padding:var(--space-3) var(--space-3) 0;display:flex;flex-direction:column;gap:2px}
     .col{flex:1;display:flex;flex-direction:column;min-width:0;min-height:0}
     .topbar{height:64px;flex:0 0 auto;background:var(--color-surface);border-bottom:1px solid var(--color-border);display:flex;align-items:center;gap:var(--space-4);padding:0 var(--space-6)}
     .content{flex:1;overflow:auto;min-height:0;background:var(--slate-100);scrollbar-gutter:stable}
-    .dark .content,:root[data-theme="dark"] .content{background:var(--color-bg)}
-    .wrap{padding:var(--space-8) var(--space-10);max-width:1600px;width:100%;margin:0 auto;box-sizing:border-box}
+    :root[data-theme="dark"] .content{background:var(--color-bg)}
+    .wrap{padding:var(--space-8) var(--space-10);max-width:1600px;width:100%;margin:0 auto;box-sizing:border-box;container-type:inline-size}
     .bc{display:flex;align-items:center;gap:var(--space-2);font-size:var(--text-sm);min-width:0;overflow:hidden}
-    .bc a{color:var(--color-primary);text-decoration:none;white-space:nowrap;font-weight:500}
     .bc span{color:var(--color-text);font-weight:400;white-space:nowrap}
     .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 
-    /* header da página */
-    .ph{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--space-6);flex-wrap:wrap;margin-bottom:var(--space-6)}
-    .ph__title{font-size:var(--text-2xl);font-weight:700;color:var(--color-heading);margin:0;letter-spacing:-.01em}
-    .ph__desc{font-size:var(--text-sm);color:var(--color-text-muted);margin:var(--space-2) 0 0;max-width:70ch}
-    .compbox{display:flex;flex-direction:column;gap:var(--space-2);align-items:flex-end}
-    .complbl{font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.05em;color:var(--color-text-muted);font-weight:700}
-    .posdate{font-size:var(--text-xs);color:var(--color-text-muted)}
+    /* ===== frescor (última posição) ===== */
+    .fresh{display:flex;align-items:center;gap:var(--space-2);font-size:var(--text-xs);color:var(--color-text-muted);margin:0 0 var(--space-6)}
+    .fresh svg{width:14px;height:14px;flex:0 0 auto}
+    .fresh .dot{width:6px;height:6px;border-radius:50%;background:var(--color-success-fg);flex:0 0 auto}
+    .fresh button{appearance:none;background:none;border:0;padding:0;font:inherit;color:var(--color-primary);font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+    .fresh button:focus-visible{outline:none;box-shadow:var(--ring);border-radius:var(--radius-sm)}
 
-    /* KPIs */
-    .kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:var(--space-4);margin-bottom:var(--space-6)}
-    @media(max-width:1120px){.kpis{grid-template-columns:repeat(3,1fr)}}
-    @media(max-width:640px){.kpis{grid-template-columns:repeat(2,1fr)}}
-    .kpi{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-2xl);box-shadow:var(--shadow-sm);padding:var(--space-4) var(--space-4);position:relative;overflow:hidden}
-    .kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--color-border)}
-    .kpi--ok::before{background:var(--color-success-fg)} .kpi--info::before{background:var(--color-info)} .kpi--warn::before{background:var(--color-warning)} .kpi--err::before{background:var(--color-danger)} .kpi--navy::before{background:var(--color-primary)}
-    .kpi__n{font-size:var(--text-3xl);font-weight:700;letter-spacing:-.02em;line-height:1;font-variant-numeric:tabular-nums;color:var(--color-heading)}
-    .kpi--ok .kpi__n{color:var(--color-success-fg)} .kpi--info .kpi__n{color:var(--color-info)} .kpi--warn .kpi__n{color:var(--color-warning)} .kpi--err .kpi__n{color:var(--color-danger)} .kpi--navy .kpi__n{color:var(--color-primary)}
-    .kpi__l{font-size:var(--text-xs);color:var(--color-text-muted);margin-top:var(--space-2);line-height:1.35}
-    .kpi__flag{position:absolute;top:var(--space-3);right:var(--space-3)}
+    /* ===== KPIs (contadores .stat do DS) ===== */
+    .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-4);margin-bottom:var(--space-6)}
+    @container (max-width:1080px){.kpis{grid-template-columns:repeat(2,1fr)}}
+    @container (max-width:560px){.kpis{grid-template-columns:1fr}}
+    .statbtn{cursor:pointer;text-align:left;font:inherit;color:inherit;width:100%}
+    .statbtn:hover{border-color:var(--color-border-strong)}
+    .statbtn:focus-visible{outline:none;box-shadow:var(--ring)}
+    .statbtn.is-active{border-color:var(--color-primary);box-shadow:inset 0 0 0 1px var(--color-primary)}
+    .kpis .stat__ic svg{width:16px;height:16px}
+    .stat__foot--warn{color:var(--color-warning-fg);font-weight:600}
+    .stat__foot--ok{color:var(--color-success-fg);font-weight:600}
 
-    /* toolbar */
-    .toolbar{display:flex;gap:var(--space-3);flex-wrap:wrap;align-items:center;margin-bottom:var(--space-4)}
-    .toolbar .spacer{flex:1}
-    .fld{display:flex;align-items:center;gap:var(--space-2)}
-    .fld > label{font-size:var(--text-xs);color:var(--color-text-muted);font-weight:600}
+    /* ===== bloco de filtros (um só, campos lado a lado) ===== */
+    .filters{display:flex;flex-wrap:wrap;gap:var(--space-4);align-items:flex-end;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:var(--space-4) var(--space-6);margin-bottom:var(--space-6)}
+    .filterf{display:flex;flex-direction:column;gap:var(--space-1-5);min-width:0}
+    .filterf > .flbl{font-size:var(--text-xs);color:var(--color-text-muted);font-weight:600}
+    .filterf .select,.filterf .input{min-width:0}
+    .filterf--esc{flex:0 0 auto;width:240px;max-width:100%}
+    .filterf--comp{flex:0 0 auto;width:190px;max-width:100%}
+    .filterf--reg{flex:0 0 auto;width:200px;max-width:100%}
+    .filterf--busca{flex:0 0 auto;width:280px;max-width:100%}
+    @container (max-width:560px){.filterf--busca,.filterf--esc,.filterf--comp,.filterf--reg{width:100%}}
+    /* filtros no padrão de campo do DS: texto 14px (--text-sm) */
+    .filters .input,.filters .cselect__trigger,.filters .cselect__value{font-size:var(--text-sm)}
+    .filters__clear{margin-left:auto;align-self:flex-end}
 
-    /* matriz */
-    .mtx-scroll{overflow-x:auto;scrollbar-gutter:stable}
-    table.mtx{width:100%;border-collapse:separate;border-spacing:0;min-width:1120px;font-size:var(--text-sm)}
-    table.mtx thead th{background:var(--color-surface-2);position:sticky;top:0;z-index:2}
-    .mtx .ghead th{font-size:var(--text-2xs);text-transform:uppercase;letter-spacing:.04em;color:var(--color-text-muted);font-weight:700;padding:var(--space-2) var(--space-2);text-align:center;border-bottom:1px solid var(--color-border)}
-    .mtx .ghead th.gcorp{text-align:left}
-    .mtx .ehead th{padding:var(--space-2) var(--space-2);text-align:center;border-bottom:2px solid var(--color-border);font-weight:600;color:var(--color-text-muted);vertical-align:bottom}
-    .mtx .ehead th.corp{text-align:left;position:sticky;left:0;background:var(--color-surface-2);z-index:3;min-width:230px;padding-left:var(--space-4)}
-    .mtx .ehead .evc{font-weight:700;color:var(--color-heading);display:block;font-variant-numeric:tabular-nums}
-    .mtx .ehead .evn{font-size:var(--text-2xs);color:var(--color-text-muted);font-weight:500;display:block}
-    table.mtx tbody td{border-bottom:1px solid var(--color-border);padding:var(--space-3) var(--space-2);text-align:center;vertical-align:middle}
-    td.corp{position:sticky;left:0;background:var(--color-surface);z-index:1;text-align:left;padding:var(--space-3) var(--space-4);border-right:1px solid var(--color-border)}
-    tbody tr:hover td{background:var(--color-surface-2)}
-    tbody tr:hover td.corp{background:var(--color-surface-2)}
-    .co-name{font-size:var(--text-sm);font-weight:700;color:var(--color-heading);line-height:1.2}
+    /* month picker (competência): navegação de ano + grade de meses (padrão de mercado) */
+    .mpwrap{position:relative}
+    .mp{position:absolute;z-index:70;top:calc(100% + var(--space-1));left:0;width:15rem;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);padding:var(--space-3)}
+    .mp[hidden]{display:none}
+    .mp__head{display:flex;align-items:center;gap:var(--space-1);margin-bottom:var(--space-2)}
+    .mp__y{flex:1 1 auto;text-align:center;font-size:var(--text-sm);font-weight:700;color:var(--color-heading);font-variant-numeric:tabular-nums}
+    .mp__nav{flex:0 0 auto;width:var(--space-8);height:var(--space-8);display:inline-flex;align-items:center;justify-content:center;border:1px solid transparent;border-radius:var(--radius-base);background:none;color:var(--color-text-onmuted);cursor:pointer}
+    .mp__nav:hover:not(:disabled){background:var(--color-surface-2);color:var(--color-heading)}
+    .mp__nav:disabled{opacity:.4;cursor:default}
+    .mp__nav:focus-visible{outline:none;box-shadow:var(--ring)}
+    .mp__grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-1)}
+    .mp__m{padding:var(--space-2) var(--space-1);font-family:inherit;font-size:var(--text-sm);font-weight:500;color:var(--color-text);background:none;border:1px solid transparent;border-radius:var(--radius-base);cursor:pointer;text-transform:capitalize}
+    .mp__m:hover:not(:disabled){background:var(--color-primary-subtle);color:var(--color-primary)}
+    .mp__m:disabled{color:var(--color-text-muted);opacity:.45;cursor:default}
+    .mp__m--cur{border-color:var(--color-border-strong)}
+    .mp__m--sel,.mp__m--sel:hover{background:var(--color-primary);color:var(--color-primary-contrast);font-weight:600}
+    .mp__m:focus-visible{outline:none;box-shadow:var(--ring)}
+
+    /* ===== tabs de visão ===== */
+    .viewtabs{margin-bottom:var(--space-6)}
+
+    /* ===== matriz (único componente realmente novo; candidato a virar .matrix no DS) ===== */
+    .mtx-wrap{overflow:auto;max-height:calc(100vh - 360px);border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-surface)}
+    table.mtx{width:100%;border-collapse:separate;border-spacing:0;min-width:900px;font-size:var(--text-sm)}
+    .mtx thead th{position:sticky;top:0;z-index:2;background:var(--color-surface-2)}
+    .mtx .grp th{font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.04em;color:var(--color-text-muted);font-weight:700;padding:var(--space-2) var(--space-3);text-align:center;border-bottom:1px solid var(--color-border)}
+    .mtx .grp th.gname{text-align:left}
+    .mtx .ev th{padding:var(--space-2) var(--space-3);text-align:left;border-bottom:1px solid var(--color-border);vertical-align:bottom;font-weight:600}
+    .mtx .ev th .c{display:block;font-weight:700;color:var(--color-heading);font-variant-numeric:tabular-nums}
+    .mtx .ev th .n{display:block;font-size:var(--text-xs);color:var(--color-text-muted);font-weight:500}
+    .mtx th.co{position:sticky;left:0;z-index:3;background:var(--color-surface-2);text-align:left;min-width:230px;padding:var(--space-3) var(--space-4);vertical-align:middle}
+    .mtx tbody th.co{z-index:1;background:var(--color-surface);font-weight:400;border-bottom:1px solid var(--color-border)}
+    .mtx tbody td{padding:var(--space-3);text-align:left;border-bottom:1px solid var(--color-border);vertical-align:top}
+    .mtx tbody tr:hover td,.mtx tbody tr:hover th.co{background:color-mix(in srgb,var(--color-primary) 5%,var(--color-surface))}
+    .co-name{font-size:var(--text-sm);font-weight:700;color:var(--color-heading);line-height:1.25}
     .co-cnpj{font-size:var(--text-xs);color:var(--color-text-muted);font-variant-numeric:tabular-nums;margin-top:2px}
     .co-tags{display:flex;gap:var(--space-1-5);margin-top:var(--space-1-5);flex-wrap:wrap}
-    .cotag{font-size:var(--text-2xs);font-weight:700;padding:1px 7px;border-radius:var(--radius-sm);background:var(--color-surface-2);color:var(--color-text-muted);border:1px solid var(--color-border)}
-    .cellbtn{background:none;border:0;padding:0;cursor:pointer;font:inherit;display:inline-flex}
-    .cellbtn:focus-visible{outline:none;box-shadow:var(--ring);border-radius:var(--radius-pill)}
-    td.gate{background:color-mix(in srgb,var(--color-warning) 5%,var(--color-surface));border-left:1px solid var(--color-border)}
-    tbody tr:hover td.gate{background:color-mix(in srgb,var(--color-warning) 9%,var(--color-surface))}
-    .rowlink{background:none;border:0;color:var(--color-primary);font:inherit;font-size:var(--text-xs);font-weight:600;cursor:pointer;margin-top:var(--space-2);padding:0;display:inline-flex;align-items:center;gap:4px}
-    .rowlink:hover{text-decoration:underline}
-    .oos td{background:var(--color-surface-2)} .oos .co-name{color:var(--color-text-muted)}
-    .oosmsg{font-size:var(--text-sm);color:var(--color-text-muted);font-style:italic;text-align:left}
-    .namic{width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block}
+    .cellbtn{appearance:none;background:none;border:0;padding:var(--space-1);cursor:pointer;font:inherit;display:inline-flex;flex-direction:column;align-items:center;gap:var(--space-1);border-radius:var(--radius-base)}
+    .cellbtn:hover{background:var(--color-surface-2)}
+    .cellbtn:focus-visible{outline:none;box-shadow:var(--ring)}
+    .cellna{font-size:var(--text-xs);color:var(--color-text-muted);font-weight:600}
+    .cellsub{font-size:var(--text-xs);color:var(--color-warning-fg);font-weight:600}
+    .co-link{appearance:none;background:none;border:0;color:var(--color-primary);font:inherit;font-size:var(--text-xs);font-weight:600;cursor:pointer;margin-top:var(--space-2);padding:0;display:inline-flex;align-items:center;gap:4px}
+    .co-link:hover{text-decoration:underline}
+    .co-link svg{width:13px;height:13px}
+    .oosrow th.co .co-name{color:var(--color-text-muted)}
+    .oosmsg{font-size:var(--text-sm);color:var(--color-text-muted);text-align:left;padding:var(--space-3) var(--space-4)}
 
-    /* lista pendências */
-    .plist{display:flex;flex-direction:column;gap:var(--space-3)}
-    .pgh{font-size:var(--text-xs);font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--color-text-muted);display:flex;align-items:center;gap:var(--space-2);margin:var(--space-4) 0 0}
-    .pgh.urg{color:var(--color-danger)}
-    .pgh .cnt{background:var(--color-surface-2);color:var(--color-text-muted);font-size:var(--text-2xs);padding:1px 8px;border-radius:var(--radius-pill);font-weight:700}
-    .pgh.urg .cnt{background:var(--color-danger-bg);color:var(--color-danger-fg)}
-    .prow{display:grid;grid-template-columns:minmax(180px,1fr) 190px minmax(200px,1.4fr) 150px;gap:var(--space-4);align-items:center;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-xl);padding:var(--space-4) var(--space-4)}
-    @media(max-width:900px){.prow{grid-template-columns:1fr;gap:var(--space-2)}}
-    .prow__co{font-size:var(--text-sm);font-weight:700;color:var(--color-heading)}
-    .prow__co small{display:block;font-size:var(--text-xs);color:var(--color-text-muted);font-variant-numeric:tabular-nums;font-weight:400;margin-top:2px}
-    .prow__ev{font-size:var(--text-sm);display:flex;flex-direction:column;gap:var(--space-1-5)}
-    .prow__evc{font-weight:700;color:var(--color-heading);font-variant-numeric:tabular-nums}
-    .prow__evn{font-size:var(--text-xs);color:var(--color-text-muted)}
-    .prow__act{font-size:var(--text-sm);color:var(--color-text)}
-    .prow__why{color:var(--color-text-muted);font-size:var(--text-xs);margin-top:2px}
-    .prow__due{text-align:right}
-    @media(max-width:900px){.prow__due{text-align:left}}
-    .prow__d{font-size:var(--text-xs);font-variant-numeric:tabular-nums;color:var(--color-text-muted)}
-    .prow__rel{font-size:var(--text-2xs);font-weight:700;margin-top:2px}
-    .rel--late{color:var(--color-danger)} .rel--soon{color:var(--color-warning)} .rel--ok{color:var(--color-success-fg)}
+    /* fila: botão "abrir" no lado da taskrow */
+    .openbtn{appearance:none;background:none;border:0;color:var(--color-primary);font:inherit;font-size:var(--text-sm);font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:4px;padding:var(--space-1) var(--space-1)}
+    .openbtn:hover{text-decoration:underline}
+    .openbtn:focus-visible{outline:none;box-shadow:var(--ring);border-radius:var(--radius-sm)}
+    .openbtn svg{width:14px;height:14px}
+    .due{font-size:var(--text-xs);font-variant-numeric:tabular-nums;color:var(--color-text-muted);text-align:right;min-width:84px}
+    .due .rel{display:block;font-weight:600;margin-top:2px}
+    .rel--late{color:var(--color-danger-fg)} .rel--soon{color:var(--color-warning-fg)} .rel--ok{color:var(--color-text-muted)}
+    .grouph{display:flex;align-items:center;gap:var(--space-2);margin:var(--space-6) 0 var(--space-2);font-size:var(--text-xs);font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--color-text-muted)}
+    .grouph:first-child{margin-top:0}
+    .grouph.is-urg{color:var(--color-danger-fg)}
+    .grouph .cnt{background:var(--color-surface-2);color:var(--color-text-muted);font-size:var(--text-xs);padding:0 var(--space-2);border-radius:var(--radius-pill);font-weight:700}
+    .grouph.is-urg .cnt{background:var(--color-danger-bg);color:var(--color-danger-fg)}
+    .tasklist.card{margin-bottom:0}
 
-    /* legenda */
-    .legend{display:flex;gap:var(--space-4);flex-wrap:wrap;font-size:var(--text-xs);color:var(--color-text-muted);padding:var(--space-3) var(--space-4);border:1px dashed var(--color-border);border-radius:var(--radius-lg);margin-bottom:var(--space-4)}
-    .legend .li{display:inline-flex;align-items:center;gap:var(--space-2)}
+    /* chip de filtro ativo (do KPI) */
+    .activef{display:inline-flex;align-items:center;gap:var(--space-2);font-size:var(--text-sm);color:var(--color-text-onmuted);margin-bottom:var(--space-4)}
+    .activef .clear{appearance:none;background:none;border:0;color:var(--color-primary);font:inherit;font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+    .activef .clear:focus-visible{outline:none;box-shadow:var(--ring);border-radius:var(--radius-sm)}
 
-    /* drawer (reusa .drawer/.scrim do ds-dialog via markup) */
-    .mdrawer{position:fixed;top:0;right:0;height:100vh;width:460px;max-width:94vw;background:var(--color-surface);box-shadow:var(--shadow-lg);transform:translateX(100%);transition:transform .22s cubic-bezier(.2,.7,.2,1);z-index:60;display:flex;flex-direction:column;border-left:1px solid var(--color-border)}
-    .mdrawer.is-open{transform:none}
-    @media(prefers-reduced-motion:reduce){.mdrawer{transition:none}}
-    .mdrawer__h{padding:var(--space-4) var(--space-6);border-bottom:1px solid var(--color-border);display:flex;align-items:flex-start;justify-content:space-between;gap:var(--space-3)}
-    .mdrawer__b{padding:var(--space-4) var(--space-6);overflow-y:auto;flex:1}
-    .mdsec{margin-bottom:var(--space-6)}
-    .mdsec h4{font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.04em;color:var(--color-text-muted);margin:0 0 var(--space-3);font-weight:700}
-    .mdrow{display:flex;justify-content:space-between;gap:var(--space-4);font-size:var(--text-sm);padding:var(--space-2) 0;border-bottom:1px dashed var(--color-border)}
-    .mdrow:last-child{border-bottom:0}
-    .mdrow .k{color:var(--color-text-muted)}
-    .mdrow .v{text-align:right}
-    .mono{font-variant-numeric:tabular-nums;font-feature-settings:"tnum";letter-spacing:.01em;word-break:break-all}
-    .recibo{padding:var(--space-4);border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-surface-2);font-size:var(--text-sm);display:flex;flex-direction:column;gap:var(--space-2)}
-    .recibo .rr{display:flex;justify-content:space-between;gap:var(--space-3)}
+    /* drawer: seções internas */
+    .drsec{margin-bottom:var(--space-6)}
+    .drsec:last-child{margin-bottom:0}
+    .drsec h3{font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.04em;color:var(--color-text-muted);margin:0 0 var(--space-3);font-weight:700}
     .depitem{display:flex;align-items:center;gap:var(--space-2);font-size:var(--text-sm);padding:var(--space-1-5) 0}
-    .nextbox{background:var(--color-primary-subtle);border:1px solid var(--color-primary);border-radius:var(--radius-lg);padding:var(--space-4)}
-    .nextbox .nh{font-size:var(--text-2xs);text-transform:uppercase;letter-spacing:.05em;color:var(--color-primary);font-weight:700;margin-bottom:var(--space-1-5)}
-    .nextbox .na{font-weight:600;color:var(--color-heading);font-size:var(--text-sm);line-height:1.4}
-    .nextbox .nw{font-size:var(--text-xs);color:var(--color-text-muted);margin-top:var(--space-1-5)}
+    .depitem .dcode{font-weight:600;font-variant-numeric:tabular-nums}
+    .depitem .dname{color:var(--color-text-muted)}
+    .kv{display:flex;flex-direction:column;gap:0}
+    .kv__row{display:flex;justify-content:space-between;gap:var(--space-4);font-size:var(--text-sm);padding:var(--space-2) 0;border-top:1px solid var(--color-divider)}
+    .kv__row:first-child{border-top:0}
+    .kv__k{color:var(--color-text-muted)}
+    .kv__v{text-align:right;color:var(--color-heading);font-weight:500}
 
-    .expwarn{display:flex;gap:var(--space-2);align-items:center;font-size:var(--text-xs);color:var(--color-warning);background:var(--color-warning-bg);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-2) var(--space-3);margin-bottom:var(--space-6)}
+    /* cabeçalho: ícone + pulso "ao vivo" sutil */
+    .ph-ic{flex:0 0 auto;width:var(--space-10);height:var(--space-10);border-radius:var(--radius-lg);background:var(--color-primary-subtle);color:var(--color-primary);display:grid;place-items:center;position:relative;animation:ph-in .4s ease}
+    .ph-ic svg{width:22px;height:22px}
+    .ph-ic .live{position:absolute;top:-2px;right:-2px;width:10px;height:10px;border-radius:50%;background:var(--color-success-fg);box-shadow:0 0 0 2px var(--color-surface)}
+    .ph-ic .live::after{content:"";position:absolute;inset:0;border-radius:50%;background:var(--color-success-fg);animation:ph-pulse 2.6s ease-out infinite}
+    @keyframes ph-in{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+    @keyframes ph-pulse{0%{opacity:.55;transform:scale(1)}70%,100%{opacity:0;transform:scale(2.4)}}
+    @media(prefers-reduced-motion:reduce){.ph-ic{animation:none}.ph-ic .live::after{animation:none}}
+
+    /* matriz: célula = bolinha + rótulo curto (sem badge) + divisória entre grupos */
+    .mcell{display:inline-flex;align-items:flex-start;gap:var(--space-1-5);font-size:var(--text-xs);color:var(--color-text);font-weight:500;text-align:left;line-height:1.35}
+    .mdot{width:8px;height:8px;border-radius:50%;flex:0 0 auto;margin-top:4px;background:var(--color-text-muted)}
+    .mdot--success{background:var(--color-success-fg)}
+    .mdot--azul{background:var(--color-azul-fg)}
+    .mdot--info{background:var(--color-info-fg)}
+    .mdot--danger{background:var(--color-danger-fg)}
+    .mdot--warning{background:var(--color-warning)}
+    .mdot--neutral{background:var(--color-text-muted)}
+    .mtx .gsep{border-left:1px solid var(--color-border)}
   </style>
 </head>
 <body>
@@ -199,334 +231,597 @@
       </header>
 
       <main id="conteudo" tabindex="-1" class="content skip-target">
+        <div class="page-h">
+          <div class="wrap">
+            <div class="page-h__row">
+              <div class="page-h__main">
+                <div class="page-h__title">
+                  <span class="ph-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg><span class="live"></span></span>
+                  <h1>Painel de Monitoramento</h1>
+                </div>
+                <p class="page-h__desc">Situação das obrigações da DeRE na Receita. A prova de conformidade é o recibo com processamento aceito; o protocolo do lote é apenas o comprovante de recebimento.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="wrap">
-          <div class="expwarn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 9v4M12 17h.01"/><path d="m10.29 3.86-8.4 14.55A2 2 0 0 0 3.62 21h16.76a2 2 0 0 0 1.73-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg><span><strong>Experimental.</strong> Tela em avaliação interna, ainda não liberada para o time.</span></div>
+          <p class="fresh"><span class="dot" aria-hidden="true"></span><span id="freshTxt">Posição em 09/02/2027, 08h30</span><span aria-hidden="true">·</span><button type="button" id="btnRefresh">Atualizar</button><span aria-hidden="true">·</span><span>dados ilustrativos</span></p>
 
-          <div class="ph">
-            <div>
-              <h1 class="ph__title">Painel de Monitoramento</h1>
-              <p class="ph__desc">Situação das obrigações da DeRE por contribuinte declarante do grupo, em todos os eventos. A prova de conformidade é o <strong>recibo</strong> (nrRecibo) com <strong>cdRetorno = 1</strong>; o protocolo do lote é apenas o comprovante de recebimento.</p>
-            </div>
-            <div class="compbox">
-              <span class="complbl" id="compLbl">Competência (perApur)</span>
-              <div class="segmented" role="tablist" aria-labelledby="compLbl">
-                <button class="segmented__btn is-active" data-comp="2027-01" role="tab" aria-selected="true">jan/2027</button>
-                <button class="segmented__btn" data-comp="2026-12" role="tab" aria-selected="false">dez/2026</button>
-              </div>
-              <span class="posdate" id="posDate"></span>
-            </div>
-          </div>
+          <div class="kpis" id="kpis" aria-label="Indicadores da competência"></div>
 
-          <div class="kpis" id="kpis" aria-label="Indicadores"></div>
-
-          <div class="toolbar">
-            <div class="segmented" role="tablist" aria-label="Visualização">
-              <button class="segmented__btn is-active" id="vwMtx" type="button" role="tab" aria-selected="true">Matriz contribuinte × evento</button>
-              <button class="segmented__btn" id="vwPend" type="button" role="tab" aria-selected="false">Fila de pendências</button>
+          <div class="filters" role="group" aria-label="Filtros">
+            <div class="filterf filterf--busca" id="wrapBusca">
+              <label class="flbl" for="fBusca">Buscar contribuinte</label>
+              <input id="fBusca" class="input" placeholder="Ex.: MAG Seguros ou CNPJ" autocomplete="off">
             </div>
-            <div class="fld"><label for="fSetor">Regulador</label>
-              <select id="fSetor" class="select" style="min-width:180px"><option value="">Todos</option><option value="BCB">BCB (financeiro)</option><option value="SUSEP">SUSEP (seguros)</option><option value="ANS">ANS (saúde)</option></select>
+            <div class="filterf filterf--esc">
+              <span class="flbl" id="lblEsc">Empresa</span>
+              <div class="cselect" data-cs="esc" aria-label="Filtrar por empresa" aria-labelledby="lblEsc"></div>
             </div>
-            <div class="fld"><label for="fStatus">Situação</label>
-              <select id="fStatus" class="select" style="min-width:190px"><option value="">Todas</option><option value="pend">Pendentes / bloqueadas</option><option value="rejeitado">Rejeitadas</option><option value="processando">Em processamento</option><option value="vencido">Vencidas</option><option value="ok">Concluídas (aceitas)</option></select>
-            </div>
-            <div class="spacer"></div>
-            <input class="input" id="fSearch" placeholder="Ex.: MAG Seguros ou CNPJ" aria-label="Buscar contribuinte" style="min-width:220px">
-          </div>
-
-          <!-- MATRIZ -->
-          <section id="viewMtx">
-            <div class="legend" aria-label="Legenda de situações">
-              <span class="li"><span class="status status--sm status--success"><span class="status__dot"></span>Aceita</span> recibo + cdRetorno=1</span>
-              <span class="li"><span class="status status--sm status--info"><span class="status__dot"></span>Em processamento</span> só protocolo</span>
-              <span class="li"><span class="status status--sm status--danger"><span class="status__dot"></span>Rejeitada</span></span>
-              <span class="li"><span class="status status--sm status--warning"><span class="status__dot"></span>Bloqueada</span> depende de outro evento</span>
-              <span class="li"><span class="status status--sm status--neutral"><span class="status__dot"></span>Pendente</span></span>
-              <span class="li"><span class="cotag">N/A</span> não se aplica ao papel</span>
-            </div>
-            <div class="card">
-              <div class="mtx-scroll">
-                <table class="mtx">
-                  <thead>
-                    <tr class="ghead"><th class="gcorp">Contribuinte declarante</th><th colspan="2">Estruturais</th><th colspan="3">Periódicas mensais</th><th>Fechamento</th><th>Trava</th></tr>
-                    <tr class="ehead">
-                      <th class="corp">CNPJ · regulador · papel</th>
-                      <th><span class="evc">D-1001</span><span class="evn">Contribuinte</span></th>
-                      <th><span class="evc">D-1011</span><span class="evn">PGCC</span></th>
-                      <th><span class="evc">D-1101</span><span class="evn">Balancete</span></th>
-                      <th><span class="evc">D-1106</span><span class="evn">Aplic. fin.</span></th>
-                      <th><span class="evc">D-2101</span><span class="evn">Tít. dívida</span></th>
-                      <th><span class="evc">D-1199</span><span class="evn">Fechamento</span></th>
-                      <th><span class="evc">D-1199</span><span class="evn">liberado?</span></th>
-                    </tr>
-                  </thead>
-                  <tbody id="mtxBody"></tbody>
-                </table>
+            <div class="filterf filterf--comp">
+              <span class="flbl" id="lblComp">Competência</span>
+              <div class="cselect mpwrap" id="wrapComp">
+                <button class="cselect__trigger" type="button" id="compTrig" aria-haspopup="dialog" aria-expanded="false" aria-labelledby="lblComp"><span class="cselect__value" id="compVal">jan/2027</span><span class="cselect__chev"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button>
+                <div class="mp" id="compMP" role="dialog" aria-label="Escolher competência" hidden></div>
               </div>
             </div>
-            <div class="dalert dalert--warning" role="status" style="margin-top:var(--space-6)"><span class="dalert__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg></span><div class="dalert__body"><p class="dalert__title">O Fechamento Mensal (D-1199) é a trava de orquestração</p><p class="dalert__text">Só é liberado quando todas as obrigações aplicáveis do contribuinte estão <strong>aceitas</strong> (cdRetorno=1). Ao ser aceito, encerra e bloqueia a competência e aciona a aferição no D-9199.</p></div></div>
+            <div class="filterf filterf--reg" id="wrapReg">
+              <span class="flbl" id="lblReg">Regulador</span>
+              <div class="cselect" data-cs="reg" aria-label="Filtrar por regulador" aria-labelledby="lblReg"></div>
+            </div>
+            <button class="btn btn--ghost btn--sm filters__clear" type="button" id="btnClear"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></svg>Limpar filtros</button>
+          </div>
+
+          <div class="tabs viewtabs" role="tablist" aria-label="Visualização">
+            <button class="tab is-active" id="tabPend" type="button" role="tab" aria-selected="true" aria-controls="viewPend"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8M13 12h8M13 18h8"/></svg>Pendências</button>
+            <button class="tab" id="tabCob" type="button" role="tab" aria-selected="false" aria-controls="viewCob"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>Cobertura</button>
+          </div>
+
+          <!-- PENDÊNCIAS (herói) -->
+          <section id="viewPend" class="tabs__panel" role="tabpanel" tabindex="0" aria-labelledby="tabPend">
+            <div id="activeFilter"></div>
+            <div id="pendList"></div>
           </section>
 
-          <!-- PENDÊNCIAS -->
-          <section id="viewPend" hidden>
-            <div class="dalert dalert--info" role="status" style="margin-bottom:var(--space-6)"><span class="dalert__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span><div class="dalert__body"><p class="dalert__title">Fila de trabalho do grupo</p><p class="dalert__text">Só as obrigações que exigem ação, ordenadas por urgência do prazo. N/A e obrigações já aceitas não aparecem aqui.</p></div></div>
-            <div class="plist" id="pendList"></div>
+          <!-- COBERTURA -->
+          <section id="viewCob" class="tabs__panel" role="tabpanel" tabindex="0" aria-labelledby="tabCob" hidden>
+            <div id="cobBody"></div>
           </section>
         </div>
       </main>
     </div>
   </div>
 
-  <!-- DRAWER -->
-  <div class="scrim" id="drScrim" hidden></div>
-  <aside class="mdrawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drTitle" hidden>
-    <div class="mdrawer__h">
+  <!-- DRAWER (usa .drawer + .drawer-backdrop + dsDialog do DS) -->
+  <div class="drawer-backdrop" id="drBackdrop" hidden></div>
+  <aside class="drawer drawer--sm" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drTitle" hidden>
+    <div class="drawer__header">
       <div>
-        <span class="status status--sm" id="drEvPill" style="margin-bottom:var(--space-2)"><span class="status__dot"></span><span id="drEv">D-1001</span></span>
-        <div class="ph__title" id="drTitle" style="font-size:var(--text-lg)">—</div>
-        <div class="co-cnpj" id="drCo" style="margin-top:var(--space-1)">—</div>
+        <span class="status status--sm" id="drPill" style="margin-bottom:var(--space-2)"><span class="status__dot"></span><span id="drPillTxt">D-1001</span></span>
+        <h2 class="drawer__title" id="drTitle">—</h2>
+        <p class="co-cnpj" id="drCo" style="margin-top:var(--space-1)">—</p>
       </div>
       <button class="icon-btn" type="button" id="drClose" aria-label="Fechar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
     </div>
-    <div class="mdrawer__b" id="drBody"></div>
+    <div class="drawer__body" id="drBody"></div>
+    <div class="drawer__footer" id="drFooter"></div>
   </aside>
 
 <script>
 (function(){
   var $=function(id){return document.getElementById(id);};
   function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  var MESES=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  function fmtComp(c){ var p=String(c).split('-'); return MESES[(+p[1]||1)-1]+'/'+p[0]; }
 
-  /* ===== Catálogo de eventos (leiaute DeRE v1.1.0) ===== */
+  /* ===== Catálogo de eventos (Leiaute DeRE v1.1.0) ===== */
   var EVENTS={
-    'D-1001':{nome:'Informações do Contribuinte', grupo:'Estrutural', ret:'D-9001', desc:'Evento cadastral que habilita o contribuinte na DeRE. Base de tudo.', tela:'info-contribuinte-detalhe.html'},
-    'D-1011':{nome:'PGCC · Plano Geral de Contas Comentado', grupo:'Estrutural', ret:'D-9001', desc:'Plano de contas com codNat/codTrib. Base classificatória da apuração.', tela:'plano-contas-empresa.html'},
-    'D-1101':{nome:'Balancete Mensal', grupo:'Periódica', ret:'D-9101', desc:'Saldos por conta. Compõe a base de cálculo do período.', tela:null},
-    'D-1106':{nome:'Identificação de Aplicações Financeiras', grupo:'Periódica', ret:'D-9106', desc:'Ativos garantidores e reservas técnicas.', tela:null},
-    'D-2101':{nome:'Débito · Títulos de Dívida (oferta pública)', grupo:'Periódica', ret:'D-9121', desc:'Único evento com CNPJDevedor.', tela:null},
-    'D-1199':{nome:'Fechamento de Eventos Mensais', grupo:'Fechamento', ret:'D-9199', desc:'Trava de orquestração. Encerra e bloqueia a competência.', tela:null}
+    'D-1001':{nome:'Informações do Contribuinte', col:'Contribuinte', per:'Eventual', ret:'D-9001', desc:'Evento cadastral que habilita o contribuinte na DeRE. Base de toda a cadeia.', tela:'info-contribuinte-detalhe.html'},
+    'D-1011':{nome:'PGCC · Plano Geral de Contas Comentado', col:'PGCC', per:'Eventual', ret:'D-9001', desc:'Plano de contas com codNat/codTrib. Base classificatória da apuração.', tela:'plano-contas-empresa.html'},
+    'D-1101':{nome:'Balancete Mensal', col:'Balancete', per:'Periódica', ret:'D-9101', desc:'Saldos por conta. Compõe a base de cálculo do período.', tela:null},
+    'D-1106':{nome:'Identificação de Aplicações Financeiras', col:'Aplic. fin.', per:'Periódica', ret:'D-9106', desc:'Aplicações sobre reserva técnica e ativos garantidores.', tela:null},
+    'D-2101':{nome:'Débito · Títulos de Dívida (oferta pública)', col:'Tít. dívida', per:'Periódica', ret:'D-9121', desc:'Único evento com o CNPJ do devedor emitente do título.', tela:null},
+    'D-1199':{nome:'Fechamento de Eventos Mensais', col:'Fechamento', per:'Fechamento', ret:'D-9199', desc:'Trava de orquestração. Encerra e bloqueia a competência.', tela:null}
   };
   var COLS=['D-1001','D-1011','D-1101','D-1106','D-2101','D-1199'];
+  var CADASTRAIS=['D-1001','D-1011'];
   var PERIODICAS=['D-1101','D-1106','D-2101'];
-  /* situação → rótulo (nosso vocabulário) + classe de pílula do DS */
-  var ST={ ok:{l:'Processada com sucesso',p:'status--success'}, adv:{l:'Processada com advertências',p:'status--azul'}, processando:{l:'Em processamento',p:'status--info'}, rejeitado:{l:'Rejeitada',p:'status--danger'}, pendente:{l:'Pendente',p:'status--neutral'}, bloqueado:{l:'Bloqueada',p:'status--warning'}, vencido:{l:'Vencida',p:'status--danger'}, na:{l:'N/A',p:''} };
-  function isAceita(s){ return s==='ok'||s==='adv'; }
-  function isPend(s){ return s==='pendente'||s==='bloqueado'; }
-  function isAcionavel(s){ return s==='pendente'||s==='bloqueado'||s==='rejeitado'||s==='vencido'||s==='processando'; }
-  function pill(s){ var d=ST[s]||{l:s,p:''}; return '<span class="status status--sm '+d.p+'"><span class="status__dot"></span>'+esc(d.l)+'</span>'; }
+  /* mapa único de precedência (usado por gate, deps e drawer) */
+  var PRECED={ 'D-1011':['D-1001'], 'D-1101':['D-1001','D-1011'], 'D-1106':['D-1001','D-1011'], 'D-2101':['D-1001','D-1011'], 'D-1199':['D-1101','D-1106','D-2101'] };
 
-  /* recibo ilustrativo de 31 chars (competência AAAAMM nas pos. 6-11, como o leiaute) */
-  function recibo31(evNum, comp, seq){ var c=(comp||'2027-01').replace('-',''); var tail=('0000000000000000000'+String(seq||1)).slice(-21); return String(evNum)+c+tail; }
-  function protocolo28(comp, seq){ var c=(comp||'2027-01').replace('-',''); return '99'+c+('000000000000000000'+String(seq||1)).slice(-20); }
-
-  function ob(st, extra){ var o=Object.assign({st:st}, extra||{}); return o; }
-  /* ===== Dados do grupo (consistentes com as telas: MAG Seguros/Finanças/Capitalização, Sicoob, Simple2u) + 2 ilustrativos p/ variedade de regulador ===== */
-  var DATA={
-    '2027-01':[
-      {emp:'seg', cnpj:'33.608.308/0001-73', nome:'MAG Seguros', setor:'SUSEP', papel:'Seguradora / previdência', escopo:true, ob:{
-        'D-1001':ob('adv',{seq:107,prazo:'—',resp:'Fiscal',obs:'Vigente com advertência não impeditiva.'}),
-        'D-1011':ob('ok',{seq:124,prazo:'—',resp:'Fiscal'}),
-        'D-1101':ob('processando',{seq:340,prazo:'15/02/2027',resp:'Contabilidade'}),
-        'D-1106':ob('pendente',{seq:0,prazo:'15/02/2027',resp:'Tesouraria',obs:'Ativos garantidores da reserva técnica.'}),
-        'D-2101':ob('na'),
-        'D-1199':ob('bloqueado',{prazo:'25/02/2027',resp:'Controladoria'}) }},
-      {emp:'fin', cnpj:'21.995.256/0001-56', nome:'MAG Finanças', setor:'BCB', papel:'Serviços financeiros', escopo:true, ob:{
-        'D-1001':ob('ok',{seq:104,prazo:'—',resp:'Compliance'}),
-        'D-1011':ob('ok',{seq:121,prazo:'—',resp:'Compliance'}),
-        'D-1101':ob('ok',{seq:351,prazo:'15/02/2027',resp:'Contabilidade'}),
-        'D-1106':ob('na'), 'D-2101':ob('na'),
-        'D-1199':ob('ok',{seq:502,prazo:'25/02/2027',resp:'Controladoria',obs:'Competência encerrada e bloqueada.'}) }},
-      {emp:'cap', cnpj:'52.780.551/0001-19', nome:'MAG Capitalização', setor:'SUSEP', papel:'Sociedade de capitalização', escopo:true, ob:{
-        'D-1001':ob('ok',{seq:110,prazo:'—',resp:'Fiscal',obs:'Vigência com fim em 30/09/2026 (atenção à lacuna futura).'}),
-        'D-1011':ob('ok',{seq:127,prazo:'—',resp:'Fiscal'}),
-        'D-1101':ob('vencido',{prazo:'15/02/2027',resp:'Contabilidade',obs:'Balancete não transmitido após o prazo.'}),
-        'D-1106':ob('pendente',{prazo:'15/02/2027',resp:'Tesouraria'}),
-        'D-2101':ob('na'),
-        'D-1199':ob('bloqueado',{prazo:'25/02/2027',resp:'Controladoria'}) }},
-      {emp:'sic', cnpj:'26.314.512/0001-16', nome:'Sicoob Seguradora', setor:'SUSEP', papel:'Seguradora (cooperativa)', escopo:true, ob:{
-        'D-1001':ob('rejeitado',{seq:0,prazo:'09/02/2027',resp:'Fiscal',erro:'MS1097 · sobreposição de vigência: as datas se sobrepõem a um período existente.'}),
-        'D-1011':ob('bloqueado',{prazo:'12/02/2027',resp:'Fiscal'}),
-        'D-1101':ob('bloqueado',{prazo:'15/02/2027',resp:'Contabilidade'}),
-        'D-1106':ob('na'), 'D-2101':ob('na'),
-        'D-1199':ob('bloqueado',{prazo:'25/02/2027',resp:'Controladoria'}) }},
-      {emp:'s2u', cnpj:'40.997.879/0001-02', nome:'Simple2u', setor:'BCB', papel:'Sociedade de participação', escopo:true, onboarding:true, ob:{
-        'D-1001':ob('pendente',{prazo:'09/02/2027',resp:'Onboarding a-DeRE',obs:'Cadastro do contribuinte pendente. Bloqueia toda a cadeia.'}),
-        'D-1011':ob('bloqueado',{prazo:'12/02/2027',resp:'Onboarding a-DeRE'}),
-        'D-1101':ob('bloqueado',{prazo:'15/02/2027',resp:'Contabilidade'}),
-        'D-1106':ob('bloqueado',{prazo:'15/02/2027',resp:'Tesouraria'}),
-        'D-2101':ob('na'),
-        'D-1199':ob('bloqueado',{prazo:'25/02/2027',resp:'Controladoria'}) }},
-      {emp:'vit', cnpj:'19.324.777/0001-08', nome:'Vitalis Saúde Operadora', setor:'ANS', papel:'Operadora de plano de saúde', escopo:true, ilustr:true, ob:{
-        'D-1001':ob('ok',{seq:130,prazo:'—',resp:'Fiscal'}),
-        'D-1011':ob('ok',{seq:140,prazo:'—',resp:'Fiscal'}),
-        'D-1101':ob('processando',{seq:360,prazo:'15/02/2027',resp:'Contabilidade'}),
-        'D-1106':ob('na'), 'D-2101':ob('na'),
-        'D-1199':ob('bloqueado',{prazo:'25/02/2027',resp:'Controladoria'}) }},
-      {emp:'zip', cnpj:'34.170.784/0001-09', nome:'Zippi Tecnologia', setor:'BCB', papel:'Correspondente bancário', escopo:false, ilustr:true,
-        motivo:'Papel de correspondente (não presta o serviço em nome próprio). Enquadramento como contribuinte DeRE em avaliação — a obrigação recai sobre os parceiros.'}
-    ],
-    '2026-12':[
-      {emp:'seg', cnpj:'33.608.308/0001-73', nome:'MAG Seguros', setor:'SUSEP', papel:'Seguradora / previdência', escopo:true, ob:{
-        'D-1001':ob('ok',{seq:90,prazo:'—'}), 'D-1011':ob('ok',{seq:99,prazo:'—'}), 'D-1101':ob('ok',{seq:300,prazo:'15/01/2027'}), 'D-1106':ob('ok',{seq:305,prazo:'15/01/2027'}), 'D-2101':ob('na'), 'D-1199':ob('ok',{seq:320,prazo:'25/01/2027',obs:'Encerrada.'}) }},
-      {emp:'fin', cnpj:'21.995.256/0001-56', nome:'MAG Finanças', setor:'BCB', papel:'Serviços financeiros', escopo:true, ob:{
-        'D-1001':ob('ok',{seq:91,prazo:'—'}), 'D-1011':ob('ok',{seq:100,prazo:'—'}), 'D-1101':ob('ok',{seq:311,prazo:'15/01/2027'}), 'D-1106':ob('na'), 'D-2101':ob('na'), 'D-1199':ob('ok',{seq:322,prazo:'25/01/2027',obs:'Encerrada.'}) }},
-      {emp:'cap', cnpj:'52.780.551/0001-19', nome:'MAG Capitalização', setor:'SUSEP', papel:'Sociedade de capitalização', escopo:true, ob:{
-        'D-1001':ob('ok',{seq:93,prazo:'—'}), 'D-1011':ob('ok',{seq:102,prazo:'—'}), 'D-1101':ob('ok',{seq:316,prazo:'15/01/2027'}), 'D-1106':ob('ok',{seq:318,prazo:'15/01/2027'}), 'D-2101':ob('na'), 'D-1199':ob('ok',{seq:326,prazo:'25/01/2027',obs:'Encerrada.'}) }},
-      {emp:'sic', cnpj:'26.314.512/0001-16', nome:'Sicoob Seguradora', setor:'SUSEP', papel:'Seguradora (cooperativa)', escopo:true, ob:{
-        'D-1001':ob('ok',{seq:95,prazo:'—'}), 'D-1011':ob('ok',{seq:103,prazo:'—'}), 'D-1101':ob('ok',{seq:330,prazo:'15/01/2027'}), 'D-1106':ob('na'), 'D-2101':ob('na'), 'D-1199':ob('ok',{seq:340,prazo:'25/01/2027',obs:'Encerrada.'}) }},
-      {emp:'vit', cnpj:'19.324.777/0001-08', nome:'Vitalis Saúde Operadora', setor:'ANS', papel:'Operadora de plano de saúde', escopo:true, ilustr:true, ob:{
-        'D-1001':ob('ok',{seq:120,prazo:'—'}), 'D-1011':ob('ok',{seq:130,prazo:'—'}), 'D-1101':ob('ok',{seq:350,prazo:'15/01/2027'}), 'D-1106':ob('na'), 'D-2101':ob('na'), 'D-1199':ob('ok',{seq:360,prazo:'25/01/2027',obs:'Encerrada.'}) }},
-      {emp:'s2u', cnpj:'40.997.879/0001-02', nome:'Simple2u', setor:'BCB', papel:'Sociedade de participação', escopo:true, foraComp:true, motivoComp:'Ainda não habilitada na DeRE nesta competência (onboarding iniciado em jan/2027).'},
-      {emp:'zip', cnpj:'34.170.784/0001-09', nome:'Zippi Tecnologia', setor:'BCB', papel:'Correspondente bancário', escopo:false, ilustr:true, motivo:'Enquadramento como contribuinte DeRE em avaliação.'}
-    ]
+  /* situação → rótulo (nosso vocabulário, alinhado à lista) + pílula do DS */
+  var ST={
+    ok:{l:'Processada com sucesso',p:'status--success',dot:'success'},
+    adv:{l:'Processada com advertências',p:'status--azul',dot:'azul'},
+    processando:{l:'Em processamento',p:'status--info',dot:'info'},
+    rejeitado:{l:'Rejeitada',p:'status--danger',dot:'danger'},
+    pendente:{l:'Em preparação',p:'status--neutral',dot:'neutral'},
+    bloqueado:{l:'Bloqueada',p:'status--warning',dot:'warning'},
+    vencido:{l:'Vencida',p:'status--danger',dot:'danger'}
   };
-  var POS={'2027-01':'Posição em 09/02/2027','2026-12':'Posição em 26/01/2027 · encerrada'};
+  function isAceita(s){ return s==='ok'||s==='adv'; }
+  function isAcionavel(s){ return s==='pendente'||s==='bloqueado'||s==='rejeitado'||s==='vencido'||s==='processando'; }
+  function pill(s,sm){ var d=ST[s]||{l:s,p:''}; return '<span class="status status--sm '+d.p+'"><span class="status__dot"></span>'+esc(d.l)+'</span>'; }
+
+  /* recibo (31) e protocolo (28) ilustrativos. Competência (AAAAMM) a partir do 6º caractere, como o leiaute. */
+  function recibo31(evNum, comp, seq){ var c=String(comp).replace('-',''); return String(evNum).padStart(5,'0')+c+String(seq||1).padStart(20,'0'); }
+  function protocolo28(comp, seq){ var c=String(comp).replace('-',''); return '99'+c+String(seq||1).padStart(20,'0'); }
+
+  /* ===== Identidade dos contribuintes (fonte única; mesmos CNPJs da lista) ===== */
+  var COMPANIES=[
+    {emp:'seg', nome:'MAG Seguros',            cnpj:'33.608.308/0001-73', reg:'SUSEP', papel:'Seguradora / previdência',    escopo:true},
+    {emp:'fin', nome:'MAG Finanças',           cnpj:'21.995.256/0001-56', reg:'BCB',   papel:'Serviços financeiros',        escopo:true},
+    {emp:'cap', nome:'MAG Capitalização',      cnpj:'52.780.551/0001-19', reg:'SUSEP', papel:'Sociedade de capitalização',  escopo:true},
+    {emp:'sic', nome:'Sicoob Seguradora',      cnpj:'26.314.512/0001-16', reg:'SUSEP', papel:'Seguradora (cooperativa)',    escopo:true},
+    {emp:'s2u', nome:'Simple2u',               cnpj:'40.997.879/0001-02', reg:'BCB',   papel:'Sociedade de participação',   escopo:true},
+    {emp:'vit', nome:'Vitalis Saúde Operadora',cnpj:'19.324.777/0001-08', reg:'ANS',   papel:'Operadora de plano de saúde', escopo:true, ilustr:true},
+    {emp:'zip', nome:'Zippi Tecnologia',       cnpj:'34.170.784/0001-09', reg:'BCB',   papel:'Correspondente bancário',     escopo:false, ilustr:true,
+       dispensa:'Correspondente bancário atua por conta e sob as diretrizes da instituição financeira. É dispensa expressa (LC 214/2025, art. 183, §1º, inciso X); a obrigação recai sobre a instituição financeira.'}
+  ];
+  var CO={}; COMPANIES.forEach(function(c){ CO[c.emp]=c; });
+
+  function ob(st, extra){ return Object.assign({st:st}, extra||{}); }
+  /* ===== Obrigações por competência (só o que muda no tempo) ===== */
+  var DATA={
+    '2027-01':{
+      seg:{ 'D-1001':ob('adv',{seq:107,resp:'Fiscal',obs:'Vigente com advertência não impeditiva.'}),
+            'D-1011':ob('ok',{seq:124,resp:'Fiscal'}),
+            'D-1101':ob('processando',{seq:340,prazo:'15/02/2027',dias:6,resp:'Contabilidade'}),
+            'D-1106':ob('pendente',{prazo:'15/02/2027',dias:6,resp:'Tesouraria',obs:'Aplicações sobre a reserva técnica ainda não transmitidas.'}),
+            'D-2101':ob('na'),
+            'D-1199':ob('bloqueado',{prazo:'25/02/2027',dias:16,resp:'Controladoria'}) },
+      fin:{ 'D-1001':ob('ok',{seq:104,resp:'Compliance'}),
+            'D-1011':ob('ok',{seq:121,resp:'Compliance'}),
+            'D-1101':ob('ok',{seq:351,prazo:'15/02/2027',resp:'Contabilidade'}),
+            'D-1106':ob('na'), 'D-2101':ob('na'),
+            'D-1199':ob('ok',{seq:502,prazo:'25/02/2027',resp:'Controladoria',obs:'Competência encerrada e bloqueada.'}) },
+      cap:{ 'D-1001':ob('ok',{seq:110,resp:'Fiscal',obs:'Vigência com fim em 30/09/2026. Atenção à lacuna futura de cobertura.'}),
+            'D-1011':ob('ok',{seq:127,resp:'Fiscal'}),
+            'D-1101':ob('vencido',{prazo:'15/02/2027',dias:-3,resp:'Contabilidade',obs:'Balancete não transmitido após o prazo.'}),
+            'D-1106':ob('pendente',{prazo:'15/02/2027',dias:6,resp:'Tesouraria'}),
+            'D-2101':ob('na'),
+            'D-1199':ob('bloqueado',{prazo:'25/02/2027',dias:16,resp:'Controladoria'}) },
+      sic:{ 'D-1001':ob('ok',{seq:95,resp:'Fiscal',rejNova:{codigo:'MS1097',prazo:'09/02/2027',dias:0,motivo:'A nova versão (v4) foi rejeitada por sobreposição de vigência (as datas se sobrepõem a um período existente). A versão vigente (v3) permanece aceita e não é derrubada.'}}),
+            'D-1011':ob('ok',{seq:103,resp:'Fiscal'}),
+            'D-1101':ob('pendente',{prazo:'15/02/2027',dias:6,resp:'Contabilidade'}),
+            'D-1106':ob('na'), 'D-2101':ob('na'),
+            'D-1199':ob('bloqueado',{prazo:'25/02/2027',dias:16,resp:'Controladoria'}) },
+      s2u:{ 'D-1001':ob('pendente',{prazo:'09/02/2027',dias:0,resp:'Onboarding a-DeRE',obs:'Cadastro do contribuinte pendente. Bloqueia toda a cadeia.'}),
+            'D-1011':ob('bloqueado',{prazo:'12/02/2027',dias:3,resp:'Onboarding a-DeRE'}),
+            'D-1101':ob('bloqueado',{prazo:'15/02/2027',dias:6,resp:'Contabilidade'}),
+            'D-1106':ob('bloqueado',{prazo:'15/02/2027',dias:6,resp:'Tesouraria'}),
+            'D-2101':ob('na'),
+            'D-1199':ob('bloqueado',{prazo:'25/02/2027',dias:16,resp:'Controladoria'}) },
+      vit:{ 'D-1001':ob('ok',{seq:130,resp:'Fiscal'}),
+            'D-1011':ob('ok',{seq:140,resp:'Fiscal'}),
+            'D-1101':ob('processando',{seq:360,prazo:'15/02/2027',dias:6,resp:'Contabilidade'}),
+            'D-1106':ob('processando',{seq:362,prazo:'15/02/2027',dias:6,resp:'Tesouraria',obs:'Ativos garantidores da operadora de saúde.'}),
+            'D-2101':ob('na'),
+            'D-1199':ob('bloqueado',{prazo:'25/02/2027',dias:16,resp:'Controladoria'}) }
+    },
+    '2026-12':{
+      seg:{ 'D-1001':ob('ok',{seq:90}), 'D-1011':ob('ok',{seq:99}), 'D-1101':ob('ok',{seq:300,prazo:'15/01/2027'}), 'D-1106':ob('ok',{seq:305,prazo:'15/01/2027'}), 'D-2101':ob('na'), 'D-1199':ob('ok',{seq:320,prazo:'25/01/2027',obs:'Encerrada.'}) },
+      fin:{ 'D-1001':ob('ok',{seq:91}), 'D-1011':ob('ok',{seq:100}), 'D-1101':ob('ok',{seq:311,prazo:'15/01/2027'}), 'D-1106':ob('na'), 'D-2101':ob('na'), 'D-1199':ob('ok',{seq:322,prazo:'25/01/2027',obs:'Encerrada.'}) },
+      cap:{ 'D-1001':ob('ok',{seq:93}), 'D-1011':ob('ok',{seq:102}), 'D-1101':ob('ok',{seq:316,prazo:'15/01/2027'}), 'D-1106':ob('ok',{seq:318,prazo:'15/01/2027'}), 'D-2101':ob('na'), 'D-1199':ob('ok',{seq:326,prazo:'25/01/2027',obs:'Encerrada.'}) },
+      sic:{ 'D-1001':ob('ok',{seq:88}), 'D-1011':ob('ok',{seq:96}), 'D-1101':ob('ok',{seq:330,prazo:'15/01/2027'}), 'D-1106':ob('na'), 'D-2101':ob('na'), 'D-1199':ob('ok',{seq:340,prazo:'25/01/2027',obs:'Encerrada.'}) },
+      vit:{ 'D-1001':ob('ok',{seq:120}), 'D-1011':ob('ok',{seq:130}), 'D-1101':ob('ok',{seq:350,prazo:'15/01/2027'}), 'D-1106':ob('ok',{seq:352,prazo:'15/01/2027'}), 'D-2101':ob('na'), 'D-1199':ob('ok',{seq:360,prazo:'25/01/2027',obs:'Encerrada.'}) }
+      /* s2u ausente nesta competência: ainda não habilitada (onboarding iniciado em jan/2027) */
+    }
+  };
+  /* competências oferecidas no seletor (atual + anteriores). As que não têm dados mostram estado vazio. */
+  var COMP_LIST=['2027-01','2026-12','2026-11','2026-10','2026-09','2026-08','2026-07','2026-06','2026-05','2026-04','2026-03','2026-02'];
+  var FRESH={'2027-01':'Posição em 09/02/2027, 08h30','2026-12':'Competência encerrada em 26/01/2027'};
 
   /* ===== Estado ===== */
-  var COMP='2027-01', VIEW='mtx';
-  var CHEV='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>';
+  var SCOPE='', COMP='2027-01', VIEW='pend', KFILTER='', REG='';
+  var CHEV='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>';
+  var EXT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>';
 
-  function ativas(){ return DATA[COMP].filter(function(c){ return !c.foraComp; }); }
-  function obsAplicaveis(c){ if(!c.escopo||!c.ob) return []; return COLS.filter(function(ev){ return c.ob[ev] && c.ob[ev].st!=='na'; }).map(function(ev){ return {ev:ev,o:c.ob[ev]}; }); }
-  function detalheHref(c,ev){ var t=EVENTS[ev].tela; if(!t||!c.emp) return null; if(ev==='D-1011') return 'plano-contas-empresa.html?emp='+c.emp; var o=c.ob[ev]; var sitq=(o.st==='rejeitado')?'&st=aprovado&sit=rejeitado&rej=vigencia':(o.st==='processando')?'&st=aprovado&sit=processando':(o.st==='pendente')?'':'&st=aprovado&sit=sucesso'; return 'info-contribuinte-detalhe.html?emp='+c.emp+(o.st==='pendente'?'&v=1&st=rascunho':('&v=3'+sitq)); }
+  /* linhas da competência atual: junta identidade (COMPANIES) + obrigações (DATA) */
+  function rowsAll(){
+    var d=DATA[COMP]||{};
+    return COMPANIES.map(function(c){ return {c:c, ob:(c.escopo?d[c.emp]:null), habil:(!c.escopo || !!d[c.emp])}; });
+  }
+  function obsAplic(r){ if(!r.ob) return []; return COLS.filter(function(ev){ return r.ob[ev] && r.ob[ev].st!=='na'; }).map(function(ev){ return {ev:ev,o:r.ob[ev]}; }); }
 
-  /* ===== KPIs ===== */
+  /* filtros: escopo (empresa), regulador e busca (só quando escopo = todas) */
+  function inScope(){
+    return rowsAll().filter(function(r){
+      if(SCOPE) return r.c.emp===SCOPE;
+      var fr=REG, q=$('fBusca').value.trim().toLowerCase();
+      if(fr && r.c.reg!==fr) return false;
+      if(q && !(r.c.nome.toLowerCase().indexOf(q)>=0 || r.c.cnpj.replace(/\D/g,'').indexOf(q.replace(/\D/g,''))>=0)) return false;
+      return true;
+    });
+  }
+
+  /* trava do D-1199: só libera quando as aplicáveis estão ACEITAS (cdRetorno=1; inclui advertências) */
+  function gate(r){
+    if(!r.ob) return {ok:false,motivo:'Contribuinte ainda não habilitado nesta competência.'};
+    if(r.ob['D-1199'] && r.ob['D-1199'].st==='ok') return {ok:true,fim:true,motivo:'Fechamento concluído. Competência encerrada e bloqueada.'};
+    var est=CADASTRAIS.filter(function(ev){ return r.ob[ev] && !isAceita(r.ob[ev].st); });
+    if(est.length) return {ok:false,motivo:'Cadastrais não aceitas: '+est.join(', ')+'.'};
+    var per=PERIODICAS.filter(function(ev){ return r.ob[ev] && r.ob[ev].st!=='na' && !isAceita(r.ob[ev].st); });
+    if(per.length) return {ok:false,motivo:'Periódicas não aceitas: '+per.join(', ')+'.'};
+    return {ok:true,motivo:'Todas as obrigações aplicáveis estão aceitas. Pode transmitir o D-1199.'};
+  }
+  function depsPend(ev,r){ return (PRECED[ev]||[]).filter(function(d){ return r.ob[d] && r.ob[d].st!=='na' && !isAceita(r.ob[d].st); }); }
+
+  /* ===== KPIs (contadores .stat) ===== */
   function renderKpis(){
-    var comps=ativas().filter(function(c){return c.escopo&&c.ob;});
+    var rows=inScope().filter(function(r){ return r.c.escopo && r.ob; });
     var total=0,aceito=0,proc=0,pend=0,rej=0,venc=0;
-    comps.forEach(function(c){ obsAplicaveis(c).forEach(function(x){ total++; var s=x.o.st; if(isAceita(s))aceito++; else if(s==='processando')proc++; else if(s==='rejeitado')rej++; else if(s==='vencido')venc++; else if(isPend(s))pend++; }); });
+    rows.forEach(function(r){ obsAplic(r).forEach(function(x){ total++; var s=x.o.st; if(isAceita(s))aceito++; else if(s==='processando')proc++; else if(s==='rejeitado')rej++; else if(s==='vencido')venc++; else if(s==='pendente'||s==='bloqueado')pend++; if(x.o.rejNova)rej++; }); });
     var conf=total?Math.round(aceito/total*100):0;
-    var fora=ativas().filter(function(c){return !c.escopo;}).length;
-    var flagBad='<span class="kpi__flag"><span class="status status--sm status--danger"><span class="status__dot"></span>ação</span></span>';
-    var flagUrg='<span class="kpi__flag"><span class="status status--sm status--danger"><span class="status__dot"></span>urgente</span></span>';
-    var cards=[
-      {c:'navy',n:comps.length,l:'Contribuintes em escopo'+(fora?(' · '+fora+' fora de escopo'):'')},
-      {c:'ok',n:conf+'%',l:'Conformidade · '+aceito+'/'+total+' aceitas'},
-      {c:'warn',n:pend,l:'Pendentes / bloqueadas'},
-      {c:'info',n:proc,l:'Em processamento (aguardando retorno)'},
-      {c:'err',n:rej,l:'Rejeitadas · retransmitir',flag:rej?flagBad:''},
-      {c:'err',n:venc,l:'Vencidas · prazo excedido',flag:venc?flagUrg:''}
-    ];
-    $('kpis').innerHTML=cards.map(function(k){ return '<div class="kpi kpi--'+k.c+'">'+(k.flag||'')+'<div class="kpi__n">'+esc(k.n)+'</div><div class="kpi__l">'+esc(k.l)+'</div></div>'; }).join('');
+    var acao=rej+venc;
+    var ICc='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>';
+    var ICa='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg>';
+    var ICp='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6M16 12h-6M13 16H10"/></svg>';
+    var ICw='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>';
+    var confFoot=total?(aceito+' de '+total+' obrigações aceitas'):'sem obrigações na competência';
+    var html='';
+    // Conformidade (display, não filtra)
+    html+='<div class="stat"><span class="stat__ic'+(conf===100&&total?' stat__ic--success':'')+'">'+ICc+'</span><span class="stat__label">Conformidade</span><span class="stat__value">'+(total?conf+'%':'—')+'</span><span class="stat__foot'+(conf===100&&total?' stat__foot--ok':'')+'">'+esc(confFoot)+'</span></div>';
+    // Requer ação (filtra)
+    html+=kpiBtn('acao','Requer ação',acao,(acao?ICa:ICa),acao?'danger':'', acao?(rej+' rejeitadas, '+venc+' vencidas'):'nada rejeitado ou vencido', acao>0);
+    // A transmitir (filtra)
+    html+=kpiBtn('pend','A transmitir',pend,ICp,'', pend?'pendentes e bloqueadas':'nada a transmitir', false);
+    // Aguardando retorno (filtra)
+    html+=kpiBtn('processando','Aguardando retorno',proc,ICw,'', proc?'em processamento na Receita':'nada em processamento', false);
+    $('kpis').innerHTML=html;
+    Array.prototype.forEach.call($('kpis').querySelectorAll('[data-kpi]'),function(b){ b.addEventListener('click',function(){ setKpiFilter(b.getAttribute('data-kpi')); }); });
+  }
+  function kpiBtn(key,label,n,ic,tone,foot,warn){
+    var act=(KFILTER===key)?' is-active':'';
+    var icc=tone==='danger'?' stat__ic--danger':'';
+    var footc=warn?' stat__foot--warn':'';
+    return '<button type="button" class="stat statbtn'+act+'" data-kpi="'+key+'" aria-pressed="'+(KFILTER===key)+'"><span class="stat__ic'+icc+'">'+ic+'</span><span class="stat__label">'+esc(label)+'</span><span class="stat__value">'+n+'</span><span class="stat__foot'+footc+'">'+esc(foot)+'</span></button>';
+  }
+  function setKpiFilter(key){
+    KFILTER=(KFILTER===key)?'':key;
+    if(KFILTER && VIEW!=='pend') setView('pend'); else { renderKpis(); render(); }
   }
 
-  /* ===== filtros ===== */
-  function passa(c){
-    var fs=$('fSetor').value, fst=$('fStatus').value, q=$('fSearch').value.trim().toLowerCase();
-    if(fs && c.setor!==fs) return false;
-    if(q && !(c.nome.toLowerCase().indexOf(q)>=0 || c.cnpj.replace(/\D/g,'').indexOf(q.replace(/\D/g,''))>=0)) return false;
-    if(fst){ if(!c.escopo||!c.ob) return false; var has=obsAplicaveis(c).some(function(x){ return statusFiltro(x.o.st,fst); }); if(!has) return false; }
-    return true;
-  }
-  function statusFiltro(s,f){ if(!f) return true; if(f==='pend') return isPend(s); if(f==='ok') return isAceita(s); return s===f; }
-
-  /* ===== trava D-1199 ===== */
-  function gate(c){
-    if(c.ob['D-1199'] && c.ob['D-1199'].st==='ok') return {ok:true,motivo:'Fechamento concluído.'};
-    var est=['D-1001','D-1011'].filter(function(ev){ return c.ob[ev] && c.ob[ev].st!=='ok'; });
-    if(est.length) return {ok:false,motivo:'Estruturais não aceitas: '+est.join(', ')};
-    var per=PERIODICAS.filter(function(ev){ return c.ob[ev] && c.ob[ev].st!=='na' && c.ob[ev].st!=='ok'; });
-    if(per.length) return {ok:false,motivo:'Periódicas não aceitas: '+per.join(', ')};
-    return {ok:true,motivo:'Todas as obrigações aceitas — pode transmitir o D-1199.'};
-  }
-  function deps(ev,c){ var chain={'D-1011':['D-1001'],'D-1101':['D-1001','D-1011'],'D-1106':['D-1001','D-1011'],'D-2101':['D-1001','D-1011'],'D-1199':['D-1101','D-1106','D-2101']}; return (chain[ev]||[]).filter(function(d){ return c.ob[d] && c.ob[d].st!=='na' && c.ob[d].st!=='ok'; }); }
-
-  /* ===== matriz ===== */
-  function renderMatriz(){
-    var comps=ativas().filter(passa), body=$('mtxBody');
-    if(!comps.length){ body.innerHTML='<tr><td colspan="8" style="text-align:center;padding:var(--space-10);color:var(--color-text-muted)">Nenhum contribuinte corresponde aos filtros.</td></tr>'; return; }
-    body.innerHTML=comps.map(function(c){
-      var idx=DATA[COMP].indexOf(c);
-      var corp='<td class="corp"><div class="co-name">'+esc(c.nome)+'</div><div class="co-cnpj">'+esc(c.cnpj)+'</div><div class="co-tags"><span class="cotag">'+esc(c.setor)+'</span><span class="cotag">'+esc(c.papel)+'</span>'+(c.onboarding?'<span class="cotag">onboarding</span>':'')+'</div>';
-      if(!c.escopo){ return '<tr class="oos">'+corp+'</td><td colspan="7"><div class="oosmsg">Fora de escopo DeRE · '+esc(c.motivo||'')+'</div></td></tr>'; }
-      corp+='<button class="rowlink" type="button" data-co="'+idx+'">ver detalhe do contribuinte '+CHEV+'</button></td>';
-      var cells=COLS.map(function(ev){ var o=c.ob[ev]; if(!o||o.st==='na') return '<td><span class="cotag">N/A</span></td>'; return '<td><button class="cellbtn" type="button" data-cell="'+idx+'|'+ev+'" aria-label="'+esc(EVENTS[ev].nome+' — '+ST[o.st].l)+'">'+pill(o.st)+'</button></td>'; }).join('');
-      var g=gate(c);
-      var gcell='<td class="gate">'+(g.ok?'<span class="status status--sm status--success"><span class="status__dot"></span>Liberado</span>':'<span class="status status--sm status--warning" title="'+esc(g.motivo)+'"><span class="status__dot"></span>Travado</span>')+'</td>';
-      return '<tr>'+corp+cells+gcell+'</tr>';
-    }).join('');
-    body.querySelectorAll('[data-cell]').forEach(function(b){ b.addEventListener('click',function(){ var p=b.getAttribute('data-cell').split('|'); openDrawer(+p[0],p[1]); }); });
-    body.querySelectorAll('[data-co]').forEach(function(b){ b.addEventListener('click',function(){ var c=DATA[COMP][+b.getAttribute('data-co')]; var ev=COLS.filter(function(e){ return c.ob[e] && isAcionavel(c.ob[e].st); })[0]||'D-1001'; openDrawer(+b.getAttribute('data-co'),ev); }); });
-  }
-
-  /* ===== próxima ação ===== */
-  function proxAcao(ev,o,c){
+  /* ===== próxima ação + prazo ===== */
+  function proxAcao(ev,o,r){
     switch(o.st){
-      case 'vencido': return {a:'Transmitir '+ev+' imediatamente',w:'Prazo '+(o.prazo||'')+' vencido. '+(o.obs||'')};
-      case 'rejeitado': return {a:'Corrigir e retransmitir '+ev,w:o.erro||'Retorno diferente de cdRetorno=1.'};
-      case 'processando': return {a:'Aguardar/consultar o retorno de '+ev,w:'Transmitido. O protocolo não é prova — aguardando '+EVENTS[ev].ret+'.'};
-      case 'pendente': return {a:'Transmitir '+ev,w:o.obs||EVENTS[ev].desc};
-      case 'bloqueado': var d=deps(ev,c); return {a:'Liberar dependências de '+ev,w:d.length?('Bloqueado por: '+d.join(', ')+'.'):'Aguardando eventos anteriores.'};
-      default: return {a:'—',w:''};
+      case 'vencido': return {a:'Transmitir o '+ev+' imediatamente.', w:'Prazo de '+(o.prazo||'')+' vencido. '+(o.obs||'')};
+      case 'rejeitado': return {a:'Corrigir e retransmitir o '+ev+'.', w:o.motivo||o.erro||'Retorno diferente de processamento aceito.'};
+      case 'processando': return {a:'Aguardar o retorno da Receita.', w:'Transmitido. O protocolo não é prova; aguardando o '+EVENTS[ev].ret+'.'};
+      case 'pendente': return {a:'Transmitir o '+ev+'.', w:o.obs||EVENTS[ev].desc};
+      case 'bloqueado': var d=depsPend(ev,r); return {a:'Liberar as dependências do '+ev+'.', w:d.length?('Aguardando: '+d.join(', ')+'.'):'Aguardando os eventos anteriores.'};
+      default: return {a:'', w:''};
     }
   }
-  function relPrazo(o){ if(o.st==='vencido') return {c:'late',t:'VENCIDA'}; if(!o.prazo||o.prazo==='—') return {c:'ok',t:'sem prazo'}; if(/09\/02|12\/02/.test(o.prazo)) return {c:'late',t:'no limite'}; if(/15\/02/.test(o.prazo)) return {c:'soon',t:'≤ 6 dias'}; return {c:'ok',t:'com folga'}; }
-
-  /* ===== pendências ===== */
-  function renderPend(){
-    var comps=ativas().filter(passa).filter(function(c){return c.escopo&&c.ob;}), items=[];
-    comps.forEach(function(c){ var idx=DATA[COMP].indexOf(c); obsAplicaveis(c).forEach(function(x){ if(!isAcionavel(x.o.st)) return; if($('fStatus').value && !statusFiltro(x.o.st,$('fStatus').value)) return; items.push({c:c,idx:idx,ev:x.ev,o:x.o}); }); });
-    var rank={vencido:0,rejeitado:1,pendente:2,bloqueado:3,processando:4};
-    items.sort(function(a,b){ return rank[a.o.st]-rank[b.o.st]; });
-    var groups=[{k:'urg',t:'Ação imediata · vencidas e rejeitadas',urg:true,test:function(i){return i.o.st==='vencido'||i.o.st==='rejeitado';}},{k:'act',t:'A transmitir',test:function(i){return i.o.st==='pendente';}},{k:'blk',t:'Bloqueadas por dependência',test:function(i){return i.o.st==='bloqueado';}},{k:'trn',t:'Em processamento · aguardando retorno',test:function(i){return i.o.st==='processando';}}];
-    var el=$('pendList');
-    if(!items.length){ el.innerHTML='<div class="dalert dalert--success" role="status"><span class="dalert__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><div class="dalert__body"><p class="dalert__title">Nenhuma pendência</p><p class="dalert__text">Nada exige ação nos filtros selecionados nesta competência.</p></div></div>'; return; }
-    el.innerHTML=groups.map(function(g){ var gi=items.filter(g.test); if(!gi.length) return ''; return '<div class="pgh'+(g.urg?' urg':'')+'">'+esc(g.t)+'<span class="cnt">'+gi.length+'</span></div>'+gi.map(function(it){ var na=proxAcao(it.ev,it.o,it.c), rel=relPrazo(it.o); return '<div class="prow"><div class="prow__co">'+esc(it.c.nome)+'<small>'+esc(it.c.cnpj)+' · '+esc(it.c.setor)+'</small></div><div class="prow__ev"><span>'+pill(it.o.st)+'</span><span class="prow__evc">'+it.ev+'</span><span class="prow__evn">'+esc(EVENTS[it.ev].nome)+'</span></div><div class="prow__act">'+esc(na.a)+'<div class="prow__why">'+esc(na.w)+'</div></div><div class="prow__due"><div class="prow__d">'+esc(it.o.prazo||'—')+'</div><div class="prow__rel rel--'+rel.c+'">'+esc(rel.t)+'</div><button class="rowlink" type="button" data-open="'+it.idx+'|'+it.ev+'" style="margin-top:var(--space-2)">abrir '+CHEV+'</button></div></div>'; }).join(''); }).join('');
-    el.querySelectorAll('[data-open]').forEach(function(b){ b.addEventListener('click',function(){ var p=b.getAttribute('data-open').split('|'); openDrawer(+p[0],p[1]); }); });
+  function relPrazo(o){
+    if(o.st==='vencido') return {c:'late',t:'vencida'};
+    if(o.st==='processando'||o.st==='bloqueado') return null;
+    if(o.dias==null) return null;
+    if(o.dias<=0) return {c:'late',t:'hoje'};
+    if(o.dias<=3) return {c:'late',t:'em '+o.dias+' dia'+(o.dias>1?'s':'')};
+    if(o.dias<=7) return {c:'soon',t:'em '+o.dias+' dias'};
+    return {c:'ok',t:'em '+o.dias+' dias'};
   }
+  var ICmono={
+    late:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg>',
+    pend:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/></svg>',
+    blk:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',
+    proc:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>'
+  };
+
+  /* ===== fila de pendências (.tasklist) ===== */
+  function collectItems(){
+    var items=[];
+    inScope().filter(function(r){ return r.c.escopo && r.ob; }).forEach(function(r){
+      obsAplic(r).forEach(function(x){
+        if(isAcionavel(x.o.st)) items.push({r:r,ev:x.ev,o:x.o});
+        if(x.o.rejNova) items.push({r:r,ev:x.ev,o:Object.assign({st:'rejeitado',rejNova:true,prazo:x.o.rejNova.prazo,dias:x.o.rejNova.dias,motivo:x.o.rejNova.motivo,codigo:x.o.rejNova.codigo},{}),naoBloqueia:true});
+      });
+    });
+    return items;
+  }
+  function renderPend(){
+    var items=collectItems();
+    if(KFILTER==='acao') items=items.filter(function(i){ return i.o.st==='vencido'||i.o.st==='rejeitado'; });
+    else if(KFILTER==='pend') items=items.filter(function(i){ return i.o.st==='pendente'||i.o.st==='bloqueado'; });
+    else if(KFILTER==='processando') items=items.filter(function(i){ return i.o.st==='processando'; });
+
+    // chip de filtro ativo
+    var af=$('activeFilter'); var lbl={acao:'Requer ação (rejeitadas e vencidas)',pend:'A transmitir (pendentes e bloqueadas)',processando:'Aguardando retorno'}[KFILTER];
+    af.innerHTML=lbl?('<p class="activef">Filtrando por: <strong>'+esc(lbl)+'</strong><button type="button" class="clear" id="clearF">Limpar filtro</button></p>'):'';
+    if($('clearF')) $('clearF').addEventListener('click',function(){ KFILTER=''; renderKpis(); render(); });
+
+    var el=$('pendList');
+    if(!items.length){
+      el.innerHTML='<div class="card"><div class="empty"><span class="empty__icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><p class="empty__title">Nenhuma pendência</p><p class="empty__text">Nada exige ação nos filtros desta competência. O que já foi aceito e o que não se aplica ao papel não aparecem aqui.</p></div></div>';
+      return;
+    }
+    var groups=[
+      {k:'urg', t:'Ação imediata', urg:true, mono:'late', test:function(i){ return i.o.st==='vencido'||i.o.st==='rejeitado'; }},
+      {k:'pend',t:'A transmitir', mono:'pend', test:function(i){ return i.o.st==='pendente'; }},
+      {k:'blk', t:'Bloqueadas por dependência', mono:'blk', test:function(i){ return i.o.st==='bloqueado'; }},
+      {k:'proc',t:'Aguardando retorno', mono:'proc', test:function(i){ return i.o.st==='processando'; }}
+    ];
+    el.innerHTML=groups.map(function(g){
+      var gi=items.filter(g.test); if(!gi.length) return '';
+      var rows=gi.map(function(it){
+        var na=proxAcao(it.ev,it.o,it.r), rel=relPrazo(it.o);
+        var tone=(g.k==='urg')?' taskrow--danger':(g.k==='blk'?' taskrow--warning':'');
+        var evline=it.ev+' '+EVENTS[it.ev].nome+(it.o.rejNova?' (nova versão)':'');
+        var due='';
+        if(it.o.prazo){ due='<span class="due">'+esc(it.o.prazo)+(rel?'<span class="rel rel--'+rel.c+'">'+esc(rel.t)+'</span>':'')+'</span>'; }
+        return '<div class="taskrow'+tone+'">'+
+          '<span class="taskrow__mono" aria-hidden="true">'+ICmono[g.mono]+'</span>'+
+          '<div class="taskrow__b"><p class="taskrow__t">'+esc(it.r.c.nome)+' · '+esc(evline)+'</p><p class="taskrow__why">'+esc(na.a)+' '+esc(na.w)+'</p></div>'+
+          '<div class="taskrow__side">'+pill(it.o.st)+due+'<button class="openbtn" type="button" data-open="'+it.r.c.emp+'|'+it.ev+'" aria-label="Abrir '+esc(it.r.c.nome+', '+it.ev)+'">Abrir'+CHEV+'</button></div>'+
+        '</div>';
+      }).join('');
+      return '<h3 class="grouph'+(g.urg?' is-urg':'')+'">'+esc(g.t)+'<span class="cnt">'+gi.length+'</span></h3><div class="tasklist card">'+rows+'</div>';
+    }).join('');
+    bindOpen(el);
+  }
+
+  /* ===== cobertura: matriz (N empresas) ou detalhe por evento (1 empresa) ===== */
+  function renderCob(){
+    var el=$('cobBody');
+    if(!DATA[COMP]){
+      el.innerHTML='<div class="card"><div class="empty"><span class="empty__icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span><p class="empty__title">Sem dados para '+esc(fmtComp(COMP))+'</p><p class="empty__text">Esta competência ainda não tem posição registrada. Selecione outra competência no filtro.</p></div></div>';
+      return;
+    }
+    if(SCOPE){ renderDetalhe(el); } else { renderMatriz(el); }
+  }
+
+  function mcellHtml(dotCls,label){ return '<span class="mcell"><span class="mdot mdot--'+dotCls+'" aria-hidden="true"></span><span>'+esc(label)+'</span></span>'; }
+  function coCell(r,ev,gsep){
+    var o=r.ob[ev], cls=gsep?' class="gsep"':'';
+    if(!o||o.st==='na') return '<td'+cls+'><span class="cellna">N/A</span></td>';
+    if(ev==='D-1199'){
+      var g=gate(r), dc, dl;
+      if(o.st==='ok'){ dc='success'; dl='Encerrada'; } else if(g.ok){ dc='info'; dl='Liberada'; } else { dc='warning'; dl='Bloqueada'; }
+      return '<td'+cls+'><button class="cellbtn" type="button" data-open="'+r.c.emp+'|D-1199" aria-label="'+esc('Fechamento: '+dl+', '+r.c.nome)+'">'+mcellHtml(dc,dl)+'</button></td>';
+    }
+    var sub=o.rejNova?'<span class="cellsub">nova versão rejeitada</span>':'';
+    return '<td'+cls+'><button class="cellbtn" type="button" data-open="'+r.c.emp+'|'+ev+'" aria-label="'+esc(EVENTS[ev].nome+', '+r.c.nome+', '+ST[o.st].l)+'">'+mcellHtml(ST[o.st].dot,ST[o.st].l)+sub+'</button></td>';
+  }
+
+  function renderMatriz(el){
+    var rows=inScope();
+    var head='<thead>'+
+      '<tr class="grp"><th class="co gname" scope="col" rowspan="2">Contribuinte declarante</th>'+
+        '<th scope="colgroup" colspan="2">Cadastrais</th>'+
+        '<th scope="colgroup" colspan="3" class="gsep">Periódicas mensais</th>'+
+        '<th scope="colgroup" class="gsep">Fechamento</th></tr>'+
+      '<tr class="ev">'+COLS.map(function(ev){ var gs=(ev==='D-1101'||ev==='D-1199')?' class="gsep"':''; return '<th scope="col"'+gs+'><span class="c">'+ev+'</span><span class="n">'+esc(EVENTS[ev].col)+'</span></th>'; }).join('')+'</tr>'+
+      '</thead>';
+    var body=rows.map(function(r){
+      var corp='<th class="co" scope="row"><div class="co-name">'+esc(r.c.nome)+'</div><div class="co-cnpj">'+esc(r.c.cnpj)+'</div><div class="co-tags"><span class="tag">'+esc(r.c.reg)+'</span><span class="tag">'+esc(r.c.papel)+'</span></div>';
+      if(!r.c.escopo){ return '<tr class="oosrow">'+corp+'</th><td colspan="6"><div class="oosmsg"><strong>Dispensado.</strong> '+esc(r.c.dispensa||'')+'</div></td></tr>'; }
+      if(!r.ob){ return '<tr class="oosrow">'+corp+'</th><td colspan="6"><div class="oosmsg">Ainda não habilitado nesta competência (onboarding em andamento).</div></td></tr>'; }
+      corp+='<button class="co-link" type="button" data-scope="'+r.c.emp+'">ver só este contribuinte '+CHEV+'</button></th>';
+      return '<tr>'+corp+COLS.map(function(ev){ return coCell(r,ev,(ev==='D-1101'||ev==='D-1199')); }).join('')+'</tr>';
+    }).join('');
+    if(!rows.length){ body='<tr><td colspan="7"><div class="empty" style="padding:var(--space-8)"><p class="empty__title">Nenhum contribuinte nos filtros</p><p class="empty__text">Ajuste o regulador ou a busca.</p></div></td></tr>'; }
+    el.innerHTML='<div class="mtx-wrap"><table class="mtx">'+head+'<tbody>'+body+'</tbody></table></div>';
+    bindOpen(el);
+    Array.prototype.forEach.call(el.querySelectorAll('[data-scope]'),function(b){ b.addEventListener('click',function(){ setScope(b.getAttribute('data-scope')); }); });
+  }
+
+  function renderDetalhe(el){
+    var r=inScope()[0];
+    if(!r){ el.innerHTML=''; return; }
+    if(!r.c.escopo){ el.innerHTML='<div class="card"><div class="empty"><span class="empty__icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></span><p class="empty__title">'+esc(r.c.nome)+' é dispensado</p><p class="empty__text">'+esc(r.c.dispensa||'')+'</p></div></div>'; return; }
+    if(!r.ob){ el.innerHTML='<div class="card"><div class="empty"><p class="empty__title">'+esc(r.c.nome)+' ainda não habilitado</p><p class="empty__text">Onboarding em andamento; sem obrigações nesta competência.</p></div></div>'; return; }
+    var g=gate(r);
+    var rowsHtml=COLS.map(function(ev){
+      var o=r.ob[ev];
+      var naEv=(!o||o.st==='na');
+      var stCell, compr='—', prazo=naEv?'—':(o.prazo||'—'), resp=naEv?'—':(o.resp||'—');
+      if(naEv){ stCell='<span class="cellna">N/A</span>'; }
+      else if(ev==='D-1199'){ stCell=(o.st==='ok')?'<span class="status status--sm status--success"><span class="status__dot"></span>Encerrada</span>':(g.ok?'<span class="status status--sm status--info"><span class="status__dot"></span>Liberado</span>':'<span class="status status--sm status--warning"><span class="status__dot"></span>Bloqueado</span>'); }
+      else { stCell=pill(o.st)+(o.rejNova?' <span class="cellsub">nova versão rejeitada</span>':''); }
+      if(!naEv && isAceita(o.st)) compr='<span class="mono" style="font-variant-numeric:tabular-nums">'+esc(recibo31(ev.replace('D-',''),COMP,o.seq))+'</span>';
+      else if(!naEv && (o.st==='processando'||o.st==='rejeitado')) compr='<span class="mono" style="font-variant-numeric:tabular-nums;color:var(--color-text-muted)">'+esc(protocolo28(COMP,o.seq||1))+'</span>';
+      var open=naEv?'':'<button class="openbtn" type="button" data-open="'+r.c.emp+'|'+ev+'">Abrir'+CHEV+'</button>';
+      return '<tr><td><strong style="font-variant-numeric:tabular-nums">'+ev+'</strong><br><span style="font-size:var(--text-xs);color:var(--color-text-muted)">'+esc(EVENTS[ev].nome)+'</span></td><td>'+stCell+'</td><td>'+compr+'</td><td style="font-variant-numeric:tabular-nums">'+esc(prazo)+'</td><td>'+esc(resp)+'</td><td style="text-align:right">'+open+'</td></tr>';
+    }).join('');
+    el.innerHTML=''+
+      '<div class="card" style="padding:var(--space-6);margin-bottom:var(--space-6)"><div style="display:flex;justify-content:space-between;gap:var(--space-4);flex-wrap:wrap;align-items:flex-start">'+
+        '<div><div class="co-name" style="font-size:var(--text-lg)">'+esc(r.c.nome)+'</div><div class="co-cnpj">'+esc(r.c.cnpj)+'</div><div class="co-tags"><span class="tag">'+esc(r.c.reg)+'</span><span class="tag">'+esc(r.c.papel)+'</span></div></div>'+
+        '<div>'+(g.fim?'<span class="status status--success"><span class="status__dot"></span>Fechamento concluído</span>':(g.ok?'<span class="status status--info"><span class="status__dot"></span>Pronto para o fechamento</span>':'<span class="status status--warning"><span class="status__dot"></span>Fechamento bloqueado</span>'))+'</div>'+
+      '</div></div>'+
+      '<div class="card"><table class="table"><thead><tr><th scope="col">Evento</th><th scope="col">Situação na Receita</th><th scope="col">Comprovante</th><th scope="col">Prazo</th><th scope="col">Responsável</th><th scope="col"><span class="sr-only">Ações</span></th></tr></thead><tbody>'+rowsHtml+'</tbody></table></div>';
+    bindOpen(el);
+  }
+
+  function bindOpen(scopeEl){ Array.prototype.forEach.call(scopeEl.querySelectorAll('[data-open]'),function(b){ b.addEventListener('click',function(){ var p=b.getAttribute('data-open').split('|'); openDrawer(p[0],p[1]); }); }); }
 
   /* ===== drawer ===== */
-  var lastFocus=null;
-  function openDrawer(idx,ev){
-    var c=DATA[COMP][idx], o=c.ob[ev], E=EVENTS[ev];
-    lastFocus=document.activeElement;
-    var dp=ST[o.st]||{l:o.st,p:''};
-    var pillEl=$('drEvPill'); pillEl.className='status status--sm '+dp.p; pillEl.style.marginBottom='var(--space-2)'; pillEl.innerHTML='<span class="status__dot"></span>'+ev+' · '+esc(dp.l);
+  function openDrawer(emp,ev){
+    var r=rowsAll().filter(function(x){ return x.c.emp===emp; })[0]; if(!r||!r.ob) return;
+    var o=r.ob[ev], E=EVENTS[ev];
+    // estado exibido (D-1199 usa a trava)
+    var dispSt=o.st, gateInfo=null;
+    if(ev==='D-1199' && o.st!=='ok'){ gateInfo=gate(r); dispSt=gateInfo.ok?'liberado':'bloqueado'; }
+    var dp=ST[o.st]||{l:(dispSt==='liberado'?'Liberado':'Bloqueado'),p:(dispSt==='liberado'?'status--info':'status--warning')};
+    if(ev==='D-1199' && o.st!=='ok'){ dp={l:(gateInfo.ok?'Liberado para transmitir':'Bloqueado'),p:(gateInfo.ok?'status--info':'status--warning')}; }
+    var pl=$('drPill'); pl.className='status status--sm '+dp.p; pl.style.marginBottom='var(--space-2)'; pl.innerHTML='<span class="status__dot"></span>'+ev+' · '+esc(dp.l);
     $('drTitle').textContent=E.nome;
-    $('drCo').textContent=c.nome+' · '+c.cnpj+' · '+COMP;
-    var recibo;
-    if(isAceita(o.st)){ recibo='<div class="recibo"><div class="rr"><span class="k">Recibo (nrRecibo)</span><span class="v mono">'+esc(recibo31(ev.replace('D-',''),COMP,o.seq))+'</span></div><div class="rr"><span class="k">cdRetorno</span><span class="v"><span class="status status--sm status--success"><span class="status__dot"></span>1 · processado</span></span></div><div class="rr"><span class="k">Evento de retorno</span><span class="v mono">'+E.ret+'</span></div></div>'; }
-    else if(o.st==='rejeitado'){ recibo='<div class="recibo"><div class="rr"><span class="k">Protocolo do lote</span><span class="v mono">'+esc(protocolo28(COMP,o.seq||1))+'</span></div><div class="rr"><span class="k">cdRetorno</span><span class="v"><span class="status status--sm status--danger"><span class="status__dot"></span>0 · rejeitado</span></span></div><div class="rr"><span class="k">Recibo (nrRecibo)</span><span class="v">— (não emitido)</span></div></div>'; }
-    else if(o.st==='processando'){ recibo='<div class="recibo"><div class="rr"><span class="k">Protocolo do lote</span><span class="v mono">'+esc(protocolo28(COMP,o.seq||1))+'</span></div><div class="rr"><span class="k">cdRetorno</span><span class="v">aguardando '+E.ret+'</span></div><div class="rr"><span class="k">Recibo (nrRecibo)</span><span class="v">— (só com cdRetorno=1)</span></div></div>'; }
-    else { recibo='<div class="recibo"><div class="rr"><span class="k">Protocolo do lote</span><span class="v">— (não transmitido)</span></div><div class="rr"><span class="k">Recibo (nrRecibo)</span><span class="v">—</span></div></div>'; }
-    var chainMap={'D-1011':['D-1001'],'D-1101':['D-1001','D-1011'],'D-1106':['D-1001','D-1011'],'D-2101':['D-1001','D-1011'],'D-1199':['D-1101','D-1106','D-2101']};
-    var allDeps=(chainMap[ev]||[]).filter(function(d){ return c.ob[d] && c.ob[d].st!=='na'; });
-    var depsHtml=allDeps.length?allDeps.map(function(d){ return '<div class="depitem">'+pill(c.ob[d].st)+' <span class="mono" style="font-weight:600">'+d+'</span> <span style="color:var(--color-text-muted)">'+esc(EVENTS[d].nome)+'</span></div>'; }).join(''):'<div class="depitem" style="color:var(--color-text-muted)">Sem dependências de precedência.</div>';
-    var na=proxAcao(ev,o,c);
-    var href=detalheHref(c,ev);
-    var acao='';
-    if(!isAceita(o.st)){ if(href){ acao='<a class="btn btn--primary" href="'+href+'" style="margin-top:var(--space-3)">Ir para '+ev+' '+CHEV+'</a>'; } else { acao='<p class="nw" style="margin-top:var(--space-2)">A tela deste evento ainda não faz parte do protótipo (monitoramento apenas).</p>'; } }
+    $('drCo').textContent=r.c.nome+' · '+r.c.cnpj+' · '+fmtComp(COMP);
+
+    // comprovante via .receipt do DS
+    var rec;
+    if(isAceita(o.st)){
+      rec=receipt('success','Processada com sucesso','A Receita processou o evento e emitiu o recibo (prova de conformidade).',[
+        ['Número do recibo', recibo31(ev.replace('D-',''),COMP,o.seq), 'mono strong'],
+        ['Retorno do processamento', 'Aceito (código 1)', ''],
+        ['Evento de retorno', E.ret, 'mono']
+      ]);
+    } else if(o.st==='rejeitado'){
+      rec=receipt('danger','Rejeitada','O lote foi recebido, mas o evento não foi aceito. Corrija e retransmita.',[
+        ['Protocolo do lote', protocolo28(COMP,o.seq||1), 'mono'],
+        ['Retorno do processamento', 'Rejeitado (código 0)', ''],
+        ['Número do recibo', 'não emitido', 'wait']
+      ]);
+    } else if(o.st==='processando'){
+      rec=receipt('info','Em processamento','Transmitido. O protocolo do lote confirma o recebimento, mas ainda não é prova de conformidade.',[
+        ['Protocolo do lote', protocolo28(COMP,o.seq||1), 'mono'],
+        ['Retorno do processamento', 'aguardando o '+E.ret, 'wait'],
+        ['Número do recibo', 'só após o retorno aceito', 'wait']
+      ]);
+    } else {
+      rec=receipt(o.st==='bloqueado'?'warning':'info', ST[o.st].l, o.st==='bloqueado'?'Aguardando os eventos anteriores serem aceitos.':'Ainda não transmitido nesta competência.',[
+        ['Protocolo do lote', 'não transmitido', 'wait'],
+        ['Número do recibo', '—', 'wait']
+      ]);
+    }
+
+    // dependências
+    var allDeps=(PRECED[ev]||[]).filter(function(d){ return r.ob[d] && r.ob[d].st!=='na'; });
+    var depsHtml=allDeps.length?allDeps.map(function(d){ return '<div class="depitem">'+pill(r.ob[d].st)+'<span class="dcode">'+d+'</span><span class="dname">'+esc(EVENTS[d].nome)+'</span></div>'; }).join(''):'<p class="depitem dname">Sem dependências de precedência.</p>';
+
+    // observação da nova versão rejeitada (D-1001 do Sicoob)
+    var extraRej = o.rejNova ? '<div class="dalert dalert--danger" role="note" style="margin-top:var(--space-3)"><span class="dalert__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></span><div class="dalert__body"><p class="dalert__title">Nova versão rejeitada ('+esc(o.rejNova.codigo)+')</p><p class="dalert__text">'+esc(o.rejNova.motivo)+'</p></div></div>' : '';
+
+    // próxima ação
+    var na, needsAction=false;
+    if(ev==='D-1199' && o.st!=='ok'){ na={a:gateInfo.ok?'Transmitir o Fechamento Mensal (D-1199).':'Concluir as obrigações pendentes.', w:gateInfo.motivo}; needsAction=true; }
+    else if(o.rejNova && isAceita(o.st)){ na={a:'Corrigir e retransmitir a nova versão do '+ev+'.', w:o.rejNova.motivo}; needsAction=true; }
+    else if(isAcionavel(o.st)){ na=proxAcao(ev,o,r); needsAction=true; }
+    else { na=null; }
+
+    var nextHtml=na?('<div class="drsec"><h3>Próxima ação</h3><div class="dalert '+((o.st==='vencido'||o.st==='rejeitado')?'dalert--danger':'dalert--info')+'" role="note" style="margin-bottom:0"><span class="dalert__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span><div class="dalert__body"><p class="dalert__title">'+esc(na.a)+'</p><p class="dalert__text">'+esc(na.w)+'</p></div></div></div>'):'';
+
     $('drBody').innerHTML=
-      '<div class="mdsec"><h4>Situação</h4><div style="margin-bottom:var(--space-3)">'+pill(o.st)+' <span style="font-size:var(--text-sm);color:var(--color-text-muted)">'+esc(E.desc)+'</span></div>'+recibo+(o.erro?'<div class="expwarn" style="margin-top:var(--space-3)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="10"/></svg><span>'+esc(o.erro)+'</span></div>':'')+'</div>'+
-      '<div class="mdsec"><h4>Governança</h4><div class="mdrow"><span class="k">Grupo</span><span class="v">'+esc(E.grupo)+'</span></div><div class="mdrow"><span class="k">Evento de retorno</span><span class="v mono">'+E.ret+'</span></div><div class="mdrow"><span class="k">Prazo</span><span class="v">'+esc(o.prazo||'—')+'</span></div><div class="mdrow"><span class="k">Responsável</span><span class="v">'+esc(o.resp||'—')+'</span></div>'+(o.obs?'<div class="mdrow"><span class="k">Observação</span><span class="v" style="max-width:240px">'+esc(o.obs)+'</span></div>':'')+'</div>'+
-      '<div class="mdsec"><h4>Dependências (precedência)</h4>'+depsHtml+'</div>'+
-      '<div class="mdsec"><div class="nextbox"><div class="nh">Próxima ação</div><div class="na">'+esc(na.a)+'</div><div class="nw">'+esc(na.w)+'</div>'+acao+'</div></div>';
-    $('drScrim').hidden=false; var dr=$('drawer'); dr.hidden=false; requestAnimationFrame(function(){ dr.classList.add('is-open'); });
-    document.body.style.overflow='hidden';
-    $('drClose').focus();
+      '<div class="drsec"><h3>Situação</h3>'+rec+extraRej+'</div>'+
+      '<div class="drsec"><h3>Governança</h3><div class="kv">'+
+        kv('Periodicidade oficial', E.per)+
+        kv('Evento de retorno', '<span class="mono">'+E.ret+'</span>')+
+        kv('Prazo', esc((o.st==='na')?'não se aplica':(o.prazo||'não se aplica')))+
+        kv('Responsável', esc(o.resp||'—'))+
+        (o.obs?kv('Observação', esc(o.obs)):'')+
+      '</div></div>'+
+      '<div class="drsec"><h3>Dependências (precedência)</h3>'+depsHtml+'</div>'+
+      nextHtml;
+
+    // rodapé: ir para a tela real, ou nota quando não existe
+    var t=E.tela, href=null;
+    if(t && needsAction){
+      if(ev==='D-1011') href='plano-contas-empresa.html?emp='+r.c.emp;
+      else if(ev==='D-1001'){ var sq=(o.st==='rejeitado'||o.rejNova)?'&st=aprovado&sit=rejeitado&rej=vigencia':(o.st==='processando')?'&st=aprovado&sit=processando':(o.st==='pendente')?'&v=1&st=rascunho':'&v=3&st=aprovado&sit=sucesso'; href='info-contribuinte-detalhe.html?emp='+r.c.emp+sq; }
+    }
+    if(href){ $('drFooter').innerHTML='<a class="btn btn--primary" href="'+href+'" target="_blank" rel="noopener" aria-label="Abrir a tela do '+esc(ev)+' (nova aba)">Ir para o '+ev+' '+EXT+'</a>'; }
+    else if(needsAction){ $('drFooter').innerHTML='<p class="stat__foot" style="margin:0">A tela deste evento ainda não faz parte do protótipo. O painel acompanha a situação.</p>'; }
+    else { $('drFooter').innerHTML='<button class="btn btn--secondary" type="button" data-drclose>Fechar</button>'; }
+    var dc=$('drFooter').querySelector('[data-drclose]'); if(dc) dc.addEventListener('click',function(){ dsDialog.close(); });
+
+    dsDialog.open($('drBackdrop'), { dialog:$('drawer'), focus:$('drClose'), onOpen:function(){ $('drBackdrop').hidden=false; $('drawer').hidden=false; }, onClose:function(){ $('drawer').hidden=true; $('drBackdrop').hidden=true; } });
   }
-  function closeDrawer(){ var dr=$('drawer'); dr.classList.remove('is-open'); $('drScrim').hidden=true; document.body.style.overflow=''; setTimeout(function(){ dr.hidden=true; },220); if(lastFocus)try{lastFocus.focus();}catch(e){} }
-  $('drClose').addEventListener('click',closeDrawer);
-  $('drScrim').addEventListener('click',closeDrawer);
-  document.addEventListener('keydown',function(e){ if(e.key==='Escape' && !$('drawer').hidden) closeDrawer(); });
+  function receipt(state,tt,tx,rows){
+    var ic={success:'<path d="M20 6 9 17l-5-5"/>',danger:'<circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/>',info:'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>',warning:'<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/>'}[state];
+    var rr=rows.map(function(x){ var cls=x[2]||''; var vc='receipt__v'+(cls.indexOf('mono')>=0?' receipt__v--mono':'')+(cls.indexOf('strong')>=0?' receipt__v--strong':'')+(cls.indexOf('wait')>=0?' receipt__v--wait':''); return '<div class="receipt__row"><span class="receipt__k">'+esc(x[0])+'</span><span class="'+vc+'">'+esc(x[1])+'</span></div>'; }).join('');
+    return '<div class="receipt"><div class="receipt__state receipt__state--'+state+'"><span class="receipt__state-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+ic+'</svg></span><div><p class="receipt__state-tt">'+esc(tt)+'</p><p class="receipt__state-tx">'+esc(tx)+'</p></div></div><div class="receipt__rows">'+rr+'</div></div>';
+  }
+  function kv(k,v){ return '<div class="kv__row"><span class="kv__k">'+esc(k)+'</span><span class="kv__v">'+v+'</span></div>'; }
+  $('drClose').addEventListener('click',function(){ dsDialog.close(); });
+  $('drBackdrop').addEventListener('click',function(){ dsDialog.close(); });
 
   /* ===== controladores ===== */
-  function render(){ renderKpis(); if(VIEW==='mtx') renderMatriz(); else renderPend(); }
-  function setView(v){ VIEW=v; $('vwMtx').classList.toggle('is-active',v==='mtx'); $('vwMtx').setAttribute('aria-selected',String(v==='mtx')); $('vwPend').classList.toggle('is-active',v==='pend'); $('vwPend').setAttribute('aria-selected',String(v==='pend')); $('viewMtx').hidden=(v!=='mtx'); $('viewPend').hidden=(v!=='pend'); render(); }
-  $('vwMtx').addEventListener('click',function(){ setView('mtx'); });
-  $('vwPend').addEventListener('click',function(){ setView('pend'); });
-  ['fSetor','fStatus','fSearch'].forEach(function(id){ $(id).addEventListener('input',render); $(id).addEventListener('change',render); });
-  document.querySelectorAll('[data-comp]').forEach(function(b){ b.addEventListener('click',function(){ document.querySelectorAll('[data-comp]').forEach(function(x){ x.classList.remove('is-active'); x.setAttribute('aria-selected','false'); }); b.classList.add('is-active'); b.setAttribute('aria-selected','true'); COMP=b.getAttribute('data-comp'); $('posDate').textContent=POS[COMP]; closeDrawer(); render(); }); });
-  $('posDate').textContent=POS[COMP];
+  function render(){ if(VIEW==='pend') renderPend(); else renderCob(); }
+  function setView(v){
+    VIEW=v;
+    $('tabPend').classList.toggle('is-active',v==='pend'); $('tabPend').setAttribute('aria-selected',String(v==='pend'));
+    $('tabCob').classList.toggle('is-active',v==='cob'); $('tabCob').setAttribute('aria-selected',String(v==='cob'));
+    $('viewPend').hidden=(v!=='pend'); $('viewCob').hidden=(v!=='cob');
+    renderKpis(); render();
+  }
+  function setScope(emp){ SCOPE=emp; if(csEsc) csEsc.set(emp); syncScopeFilters(); renderKpis(); render(); }
+  function syncScopeFilters(){ var single=!!SCOPE; $('wrapReg').hidden=single; $('wrapBusca').hidden=single; }
+
+  /* tabs por teclado (setas) */
+  var tabs=[$('tabPend'),$('tabCob')];
+  tabs.forEach(function(t,i){ t.addEventListener('click',function(){ setView(i===0?'pend':'cob'); }); t.addEventListener('keydown',function(e){ var j=null; if(e.key==='ArrowRight')j=(i+1)%2; else if(e.key==='ArrowLeft')j=(i+1)%2; else return; e.preventDefault(); tabs[j].focus(); setView(j===0?'pend':'cob'); }); });
+
+  /* ===== cselect do DS (dropdown estilizado; mesmo padrão de painel.html) ===== */
+  var CHEVI='<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
+  var CHECKI='<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+  function closeAllCS(){ document.querySelectorAll('[data-cselect-panel]').forEach(function(p){ if(p.hidden) return; p.hidden=true; var t=p.parentElement.querySelector('.cselect__trigger'); if(t) t.setAttribute('aria-expanded','false'); }); var mp=document.getElementById('compMP'); if(mp&&!mp.hidden){ mp.hidden=true; var ct=document.getElementById('compTrig'); if(ct) ct.setAttribute('aria-expanded','false'); } }
+  document.addEventListener('click', closeAllCS);
+  /* ===== month picker (competência): navegação de ano + grade de meses ===== */
+  function buildMonthPicker(){
+    var trig=$('compTrig'), pop=$('compMP'), valEl=$('compVal');
+    var curY=2027, curM=1;                         /* competência "atual" do cenário: jan/2027 */
+    var minY=2026, viewY=+COMP.split('-')[0];
+    function hasData(y,m){ return !!DATA[y+'-'+String(m).padStart(2,'0')]; }
+    function isFuture(y,m){ return (y>curY)||(y===curY&&m>curM); }
+    function draw(){
+      var selY=+COMP.split('-')[0], selM=+COMP.split('-')[1];
+      var canPrev=viewY>minY, canNext=viewY<curY;
+      var head='<div class="mp__head"><button class="mp__nav" type="button" data-mpnav="-1" aria-label="Ano anterior"'+(canPrev?'':' disabled')+'><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><span class="mp__y">'+viewY+'</span><button class="mp__nav" type="button" data-mpnav="1" aria-label="Próximo ano"'+(canNext?'':' disabled')+'><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button></div>';
+      var grid='<div class="mp__grid">'+MESES.map(function(mn,i){ var m=i+1, comp=viewY+'-'+String(m).padStart(2,'0'); var dis=isFuture(viewY,m)||!hasData(viewY,m); var sel=(viewY===selY&&m===selM); var cur=(viewY===curY&&m===curM); return '<button class="mp__m'+(sel?' mp__m--sel':'')+(cur&&!sel?' mp__m--cur':'')+'" type="button" data-mpm="'+comp+'"'+(dis?' disabled aria-label="'+esc(mn+'/'+viewY+', sem dados')+'"':'')+(sel?' aria-current="true"':'')+'>'+mn+'</button>'; }).join('')+'</div>';
+      pop.innerHTML=head+grid;
+      pop.querySelectorAll('[data-mpnav]').forEach(function(b){ b.addEventListener('click',function(e){ e.stopPropagation(); viewY+=(+b.getAttribute('data-mpnav')); draw(); }); });
+      pop.querySelectorAll('[data-mpm]').forEach(function(b){ b.addEventListener('click',function(e){ e.stopPropagation(); choose(b.getAttribute('data-mpm')); }); });
+    }
+    function open(){ if(!pop.hidden) return; closeAllCS(); viewY=+COMP.split('-')[0]; draw(); pop.hidden=false; trig.setAttribute('aria-expanded','true'); }
+    function close(){ pop.hidden=true; trig.setAttribute('aria-expanded','false'); }
+    function choose(comp, silent){ COMP=comp; valEl.textContent=fmtComp(comp); close(); if(!silent){ KFILTER=''; $('freshTxt').textContent=FRESH[COMP]||('Sem posição para '+fmtComp(COMP)); renderKpis(); render(); } }
+    trig.addEventListener('click',function(e){ e.stopPropagation(); pop.hidden?open():close(); });
+    pop.addEventListener('click',function(e){ e.stopPropagation(); });
+    trig.addEventListener('keydown',function(e){ if(pop.hidden && (e.key==='ArrowDown'||e.key==='Enter'||e.key===' ')){ e.preventDefault(); open(); pop.querySelector('.mp__m:not(:disabled)') && pop.querySelector('.mp__m--sel,.mp__m:not(:disabled)').focus(); } });
+    pop.addEventListener('keydown',function(e){ if(e.key==='Escape'){ e.preventDefault(); close(); trig.focus(); } });
+    valEl.textContent=fmtComp(COMP);
+    return { set:function(comp){ choose(comp, true); } };
+  }
+  function optIndex(opts,val){ for(var i=0;i<opts.length;i++){ if(opts[i][0]===val) return i; } return 0; }
+  function buildCS(root, opts, cur, onChange){
+    var ci=optIndex(opts,cur);
+    root.innerHTML='<button class="cselect__trigger" type="button" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-label="'+esc(root.getAttribute('aria-label')||'')+'"><span class="cselect__value">'+esc(opts[ci][1])+'</span><span class="cselect__chev">'+CHEVI+'</span></button>'+
+      '<div class="combo__panel" role="listbox" hidden data-cselect-panel>'+opts.map(function(o,i){ return '<button class="combo__opt'+(i===ci?' is-selected':'')+'" role="option" type="button" data-value="'+esc(o[0])+'" aria-selected="'+(i===ci?'true':'false')+'"><span class="combo__main"><span class="combo__label">'+esc(o[1])+'</span></span><span class="combo__check">'+CHECKI+'</span></button>'; }).join('')+'</div>';
+    var trigger=root.querySelector('.cselect__trigger'), panel=root.querySelector('[data-cselect-panel]'), valEl=root.querySelector('.cselect__value'),
+        els=[].slice.call(panel.querySelectorAll('[role="option"]')), active=-1;
+    function open(){ if(!panel.hidden) return; closeAllCS(); panel.hidden=false; trigger.setAttribute('aria-expanded','true'); var s=-1; els.forEach(function(o,i){ if(o.getAttribute('aria-selected')==='true') s=i; }); setActive(s<0?0:s); }
+    function close(){ panel.hidden=true; trigger.setAttribute('aria-expanded','false'); }
+    function setActive(i){ active=i; els.forEach(function(o,j){ o.classList.toggle('is-active',j===i); }); if(els[i]) els[i].scrollIntoView({block:'nearest'}); }
+    function choose(i, silent){ els.forEach(function(o,j){ var s=j===i; o.setAttribute('aria-selected',s?'true':'false'); o.classList.toggle('is-selected',s); }); valEl.textContent=els[i].querySelector('.combo__label').textContent; close(); if(!silent) onChange(els[i].getAttribute('data-value')); }
+    trigger.addEventListener('click',function(e){ e.stopPropagation(); panel.hidden?open():close(); });
+    els.forEach(function(o,i){ o.addEventListener('click',function(e){ e.stopPropagation(); choose(i); }); o.addEventListener('mousemove',function(){ setActive(i); }); });
+    root.addEventListener('keydown',function(e){
+      if(panel.hidden){ if(e.key==='ArrowDown'||e.key==='Enter'||e.key===' '){ e.preventDefault(); open(); } return; }
+      if(e.key==='Escape'){ e.preventDefault(); close(); trigger.focus(); }
+      else if(e.key==='ArrowDown'){ e.preventDefault(); setActive(Math.min(active+1,els.length-1)); }
+      else if(e.key==='ArrowUp'){ e.preventDefault(); setActive(Math.max(active-1,0)); }
+      else if(e.key==='Home'){ e.preventDefault(); setActive(0); }
+      else if(e.key==='End'){ e.preventDefault(); setActive(els.length-1); }
+      else if(e.key==='Enter'||e.key===' '){ e.preventDefault(); if(active>=0) choose(active); }
+    });
+    return { set:function(val){ var i=optIndex(opts,val); choose(i, true); } };
+  }
+  var csEsc, csReg, compMP;
+  (function(){
+    var escOpts=[['','Todas as empresas ('+COMPANIES.length+')']].concat(COMPANIES.map(function(c){ return [c.emp, c.nome]; }));
+    csEsc=buildCS(document.querySelector('[data-cs="esc"]'), escOpts, '', function(val){ SCOPE=val; KFILTER=''; syncScopeFilters(); renderKpis(); render(); });
+    var regOpts=[['','Todos'],['BCB','BCB (financeiro)'],['SUSEP','SUSEP (seguros)'],['ANS','ANS (saúde)']];
+    csReg=buildCS(document.querySelector('[data-cs="reg"]'), regOpts, '', function(val){ REG=val; renderKpis(); render(); });
+    compMP=buildMonthPicker();
+  })();
+  $('fBusca').addEventListener('input',function(){ renderKpis(); render(); });
+  $('btnRefresh').addEventListener('click',function(){ $('freshTxt').textContent=FRESH[COMP]||('Sem posição para '+fmtComp(COMP)); renderKpis(); render(); });
+  $('btnClear').addEventListener('click',function(){ SCOPE=''; REG=''; KFILTER=''; COMP='2027-01'; $('fBusca').value=''; if(csEsc)csEsc.set(''); if(csReg)csReg.set(''); if(compMP)compMP.set('2027-01'); $('freshTxt').textContent=FRESH[COMP]||('Sem posição para '+fmtComp(COMP)); syncScopeFilters(); renderKpis(); render(); });
+
+  $('freshTxt').textContent=FRESH[COMP]||('Sem posição para '+fmtComp(COMP));
+  syncScopeFilters();
+  renderKpis();
   render();
 
-  /* menu do usuário (padrão do DS) */
+  /* menu do usuário + colapsar (padrão do DS) */
   document.querySelectorAll('[data-menu]').forEach(function(menu){ var b=menu.querySelector('button'), p=menu.querySelector('.menu__panel'); if(!b||!p) return; b.addEventListener('click',function(e){ e.stopPropagation(); var o=p.hidden; document.querySelectorAll('.menu__panel').forEach(function(x){x.hidden=true;}); p.hidden=!o; b.setAttribute('aria-expanded',String(o)); }); document.addEventListener('click',function(e){ if(!menu.contains(e.target)){ p.hidden=true; b.setAttribute('aria-expanded','false'); } }); });
   document.querySelectorAll('[data-sidenav-toggle]').forEach(function(btn){ var nav=btn.closest('[data-sidenav]'); btn.addEventListener('click',function(){ var c=nav.classList.toggle('is-collapsed'); btn.setAttribute('aria-expanded',String(!c)); try{ localStorage.setItem('adere.nav.collapsed', c?'1':'0'); }catch(e){} }); });
 })();
 </script>
 <script>
 (function(){
-  var MYV='1788668170';
+  var MYV='1788672452';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
