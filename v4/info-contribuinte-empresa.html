@@ -8,9 +8,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Versões · MAG Seguros</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788625575">
-  <script src="../design-system/ds-tailwind.js?v=1788625575"></script>
-  <script src="../design-system/ds-dialog.js?v=1788625575"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788666524">
+  <script src="../design-system/ds-tailwind.js?v=1788666524"></script>
+  <script src="../design-system/ds-dialog.js?v=1788666524"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -272,7 +272,10 @@
         </nav>
         <div class="flex items-center gap-1" style="margin-left:auto">
           <span class="tooltip"><button class="icon-btn" type="button" aria-label="Buscar"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></button><span class="tooltip__bubble" role="tooltip">Buscar</span></span>
-          <span class="tooltip"><button class="icon-btn" aria-label="Notificações, 3 pendências" style="position:relative"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="badge badge--danger" style="position:absolute;top:3px;right:3px">3</span></button><span class="tooltip__bubble" role="tooltip">Notificações</span></span>
+          <div class="menu" data-menu>
+            <span class="tooltip"><button class="icon-btn" type="button" id="notifBtn" aria-haspopup="true" aria-expanded="false" aria-label="Notificações" style="position:relative"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="badge badge--danger icon-btn__badge" id="notifBadge" hidden>0</span></button><span class="tooltip__bubble" role="tooltip">Notificações</span></span>
+            <div class="menu__panel notifpanel" hidden role="region" aria-label="Notificações"><div class="notifpanel__head">Notificações</div><div class="notifpanel__list" id="notifList"></div></div>
+          </div>
         </div>
         <span aria-hidden="true" style="width:1px;height:22px;background:var(--color-divider);flex:0 0 auto"></span>
         <div class="menu" data-menu>
@@ -610,6 +613,24 @@
   }
   renderVersions();
 
+  /* Notificações do sino (contexto da empresa): versão em ajustes/rejeitada, ou exclusão em processamento */
+  (function(){
+    var _NAL='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg>';
+    var _NIN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>';
+    var list=document.getElementById('notifList'), badge=document.getElementById('notifBadge'), btn=document.getElementById('notifBtn'); if(!list) return;
+    var items=[];
+    (VERSIONS||[]).forEach(function(v){
+      var base='info-contribuinte-detalhe.html?emp='+EMP+'&v='+v.n;
+      if(v.sit==='ajustes'){ items.push({tone:'danger',ic:_NAL,title:'Ajustes solicitados',text:'Versão '+v.n+' devolvida com ajustes. Corrija e reenvie.',href:base+'&st=ajuste'}); }
+      else if(v.sit==='rejeitado'){ items.push({tone:'danger',ic:_NAL,title:'Rejeitada pela Receita',text:'Versão '+v.n+' rejeitada. Veja o motivo e reenvie.',href:base+'&st=aprovado&sit=rejeitado&rej=vigencia'}); }
+      else if(v.exclProc){ items.push({tone:'info',ic:_NIN,title:'Exclusão em processamento',text:'A exclusão da Versão '+v.n+' aguarda a Receita concluir.',href:base+'&st=aprovado&sit=processando&op=exclusao'}); }
+    });
+    if(!items.length){ list.innerHTML='<p class="notifpanel__empty">Nenhuma notificação nova.</p>'; }
+    else { list.innerHTML=items.map(function(n){ return '<a class="notifitem notifitem--unread" href="'+n.href+'"><span class="notifitem__ic notifitem__ic--'+n.tone+'">'+n.ic+'</span><span class="notifitem__body"><span class="notifitem__title">'+esc(n.title)+'</span><span class="notifitem__text">'+esc(n.text)+'</span></span></a>'; }).join(''); }
+    if(badge){ if(items.length){ badge.textContent=String(items.length); badge.hidden=false; } else { badge.hidden=true; } }
+    if(btn){ btn.setAttribute('aria-label', items.length?('Notificações, '+items.length+' não lida'+(items.length>1?'s':'')):'Notificações'); }
+  })();
+
   /* Linha do tempo das vigências (barras por versão; destaca lacuna/sobreposição) */
   function pdate(s){ var m=/(\d{2})\/(\d{2})\/(\d{4})/.exec(s||''); return m?new Date(+m[3],+m[2]-1,+m[1]):null; }
   function parseVig(v){ if(!v||v==='—') return null; var open=/em aberto/.test(v); var m=(v.match(/\d{2}\/\d{2}\/\d{4}/g)||[]); if(!m.length) return null; return {from:pdate(m[0]), to:open?null:(m[1]?pdate(m[1]):null), open:open}; }
@@ -748,7 +769,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788625575';
+  var MYV='1788666524';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
