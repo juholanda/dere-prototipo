@@ -8,8 +8,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>a-DeRE · Primeiro acesso</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="../design-system/ds.css?v=1788743011">
-<script src="../design-system/ds-tailwind.js?v=1788743011"></script>
+<link rel="stylesheet" href="../design-system/ds.css?v=1788765120">
+<script src="../design-system/ds-tailwind.js?v=1788765120"></script>
 <style>
   body{margin:0;font-family:var(--font-sans);color:var(--color-text)}
   [hidden]{display:none !important}
@@ -495,7 +495,7 @@
     </div>
   </div>
 
-  <script src="../design-system/ds-dialog.js?v=1788743011"></script>
+  <script src="../design-system/ds-dialog.js?v=1788765120"></script>
   <script>
     var $=function(id){return document.getElementById(id)};
 
@@ -622,7 +622,7 @@
         var el=document.createElement('div');
         if(p._edit){
           el.className='resp resp--edit';
-          var checks=(p.admin?'<div class="rf-adminnote"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg><span>Faz tudo: preparar, aprovar e transmitir à Receita. Não precisa de aprovação de terceiros.</span></div>':PERFIS.map(function(pf){var on=p.perfis.indexOf(pf.k)>=0;return '<label class="check"><input type="checkbox" data-k="'+pf.k+'"'+(on?' checked':'')+'> '+pf.k+'</label>';}).join(''));
+          var checks=(p.admin?'<div class="rf-adminnote"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg><span>Pode preparar, aprovar e transmitir à Receita Federal sem depender de aprovação de terceiros.</span></div>':PERFIS.map(function(pf){var on=p.perfis.indexOf(pf.k)>=0;return '<label class="check"><input type="checkbox" data-k="'+pf.k+'"'+(on?' checked':'')+'> '+pf.k+'</label>';}).join(''));
           var ERRIC='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
           el.innerHTML=
             '<div class="rf-head"><span class="rf-title">'+(p._new?'Novo responsável':'Editar responsável')+'</span><button class="icon-btn icon-btn--sm rf-cancel" type="button" data-tooltip="Cancelar" aria-label="Cancelar edição"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div>'+
@@ -845,7 +845,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788743011';
+  var MYV='1788765120';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

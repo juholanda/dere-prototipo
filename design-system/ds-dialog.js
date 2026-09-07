@@ -35,7 +35,13 @@ window.dsDialog = (function () {
   /* marca tudo no <body> como inert, menos o backdrop do diálogo (e os diálogos já abertos abaixo dele) */
   function setInert(keep, on) {
     Array.prototype.forEach.call(document.body.children, function (c) {
-      if (c === keep || (c.tagName === 'SCRIPT')) return;
+      if (c.tagName === 'SCRIPT') return;
+      if (c === keep) {
+        /* o diálogo do topo NUNCA pode ficar inert: se um diálogo de baixo já o marcou
+           (ele era irmão inerte antes de abrir), libere-o agora — senão trava tudo. */
+        if (c.hasAttribute('data-dsinert')) { c.removeAttribute('inert'); c.removeAttribute('data-dsinert'); }
+        return;
+      }
       if (on) {
         if (c.hasAttribute('inert')) return;
         c.setAttribute('inert', '');
