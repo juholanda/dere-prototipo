@@ -8,9 +8,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Detalhe do contribuinte</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788788562">
-  <script src="../design-system/ds-tailwind.js?v=1788788562"></script>
-  <script src="../design-system/ds-dialog.js?v=1788788562"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788792166">
+  <script src="../design-system/ds-tailwind.js?v=1788792166"></script>
+  <script src="../design-system/ds-dialog.js?v=1788792166"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -486,6 +486,10 @@
   var REJ_ORDER=['vigencia','certificado','certExpirado','cnpj'];
   var _rejKey=(function(){ var r=dparam('rej'); return REJEICOES[r]?r:'vigencia'; })();
   function curRej(){ return REJEICOES[_rejKey]||REJEICOES.vigencia; }
+  /* Ocorrências tipo Aviso ({ocorrencias} com {tipo}=[2]): não impeditivas, retornadas pela Receita mesmo em Sucesso ({cdRetorno}=[1]). Leiaute: codigo + descricao + localizacao. Conteúdo ilustrativo (o catálogo oficial de mensagens não enumera avisos). */
+  var AVISOS = [
+    {cod:'MS1132', desc:'A vigência foi informada sem data de término (em aberto). A versão foi aceita; confirme se não há um encerramento previsto para o período.', loc:'infoContrib/idePeriodo/fimValid'}
+  ];
   var EV={
     criada:      {t:'02/09/2026 · 10:47', title:'Versão criada',                 status:['Rascunho','status--neutral'],                 who:'Ricardo Alves', role:'Preparador'},
     enviada:     {t:'02/09/2026 · 11:15', title:'Enviada para revisão',          status:['Em revisão','status--warning'],             who:'Ricardo Alves', role:'Preparador'},
@@ -562,7 +566,7 @@
       el.innerHTML='<div class="dalert dalert--danger" role="status"><span class="dalert__ic">'+ALERT+'</span><div><p class="dalert__title">Ajustes solicitados por Ana Prado</p><p class="dalert__text">'+esc(_ajusteComment || (EV.ajustes.extras?EV.ajustes.extras[0][1]:''))+'</p></div></div>';
     } else if(sit==='rejeitado'){
       var _rj=curRej();
-      el.innerHTML='<div class="dalert dalert--danger" role="status"><span class="dalert__ic">'+ALERT+'</span><div class="dalert__body"><p class="dalert__title">Versão rejeitada pela Receita Federal · '+esc(_rj.titulo)+'</p><p class="dalert__text"><strong>'+esc(_rj.cod)+'</strong> · '+esc(_rj.desc)+'</p></div><button class="btn btn--secondary dalert__act" type="button" data-open-comprovante><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>Ver comprovante</button></div>';
+      el.innerHTML='<div class="dalert dalert--danger" role="status"><span class="dalert__ic">'+ALERT+'</span><div class="dalert__body"><p class="dalert__title">Versão rejeitada pela Receita Federal · '+esc(_rj.titulo)+'</p><p class="dalert__text"><strong>'+esc(_rj.cod)+'</strong> · '+esc(_rj.desc)+'<br><span style="color:var(--color-text-muted)">Localização: '+esc(_rj.loc)+'</span></p></div></div>';
     } else if(sit==='processando'){
       var _exTx = (curOp==='exclusao')
         ? 'A exclusão foi transmitida e está em processamento. O processamento é assíncrono; a vigência é encerrada quando a Receita concluir. Uma transmissão em andamento não pode ser cancelada.'
@@ -573,6 +577,11 @@
       var _hN='info-contribuinte.html?modo=nova&emp='+empId()+(dparam('scn')?('&scn='+dparam('scn')):'')+'&from=detalhe';
       var _PL='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5v14"/></svg>';
       el.innerHTML='<div class="dalert dalert--warning" role="status"><span class="dalert__ic">'+ALERT+'</span><div class="dalert__body"><p class="dalert__title">Vigência excluída na Receita Federal</p><p class="dalert__text">Motivo: <strong>'+esc(exclMotivo())+'</strong>. Não há uma versão vigente para este período. Por isso, as <strong>declarações mensais</strong> ficam bloqueadas até que uma nova vigência seja registrada.</p></div><a class="btn btn--secondary dalert__act" href="'+_hN+'">'+_PL+'Nova versão D-1001</a></div>';
+    } else if(sit==='advertencias'){
+      /* Sucesso com avisos ({cdRetorno}=[1] + {ocorrencias} tipo Aviso): a Receita nos devolve as ocorrências (codigo/descricao/localizacao). Banner expansível: resumo + "Ver advertências" abre a lista. O comprovante completo fica no botão do topo. */
+      var _n=AVISOS.length;
+      var _avItems=AVISOS.map(function(a){ return '<p class="dalert__text" style="margin-top:var(--space-1)"><strong>'+esc(a.cod)+'</strong> · '+esc(a.desc)+'<br><span style="color:var(--color-text-muted)">Localização: '+esc(a.loc)+'</span></p>'; }).join('');
+      el.innerHTML='<div class="dalert dalert--warning" role="status"><span class="dalert__ic">'+ALERT+'</span><div class="dalert__body"><p class="dalert__title">Processada com advertências</p><p class="dalert__text">A versão foi <strong>aceita</strong> e cumpre a obrigação. A Receita registrou '+_n+' observação'+(_n>1?'ões':'')+' não impeditiva'+(_n>1?'s':'')+'.</p><details class="dalert__more"><summary style="cursor:pointer;color:var(--color-primary);font-weight:600;font-size:var(--text-sm);margin-top:var(--space-1)">Ver advertência'+(_n>1?'s':'')+' ('+_n+')</summary><div style="margin-top:var(--space-2)">'+_avItems+'</div></details></div></div>';
     } else if(sit==='futura'){
       el.innerHTML='<div class="dalert dalert--info" role="status"><span class="dalert__ic">'+IC_INFO+'</span><div class="dalert__body"><p class="dalert__title">Vigência futura</p><p class="dalert__text">Esta versão foi <strong>aceita pela Receita</strong>, mas só passa a <strong>valer no início da vigência</strong>. Até lá, a versão vigente anterior continua valendo.</p></div></div>';
     } else { el.innerHTML=''; }
@@ -826,6 +835,8 @@
     /* conclusão da exclusão: ao chegar em "excluída", a vigência é efetivamente baixada (grava vigexcluida p/ lista/empresa) e sai de "em processamento" */
     if(sit==='excluida' && curOp==='exclusao'){ try{ localStorage.setItem('adere.d1001.vigexcluida.'+empId(), JSON.stringify({v:(dparam('v')||'3'), motivo:exclMotivo(), t:Date.now()})); localStorage.removeItem('adere.d1001.exclproc.'+empId()); }catch(e){} }
     var _acts, _decision='';
+    /* "Ver comprovante" vive SEMPRE no topo (mesmo lugar em todos os estados transmitidos); os banners não repetem esse botão */
+    var _verCompBtn='<button class="btn btn--secondary" type="button" data-open-comprovante><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>Ver comprovante</button>';
     if(curRole==='aprovador'){ if(sit==='revisao'){ _decision=approverActions(); } _acts=''; }
     /* exclusão da vigente aguardando aprovação: sem ações (não dá pra alterar/excluir de novo enquanto pende) */
     else if(curOp==='exclusao' && (sit==='sucesso'||sit==='advertencias')){ _acts=''; }
@@ -836,12 +847,18 @@
       if(!_rjh || _rjh.acaoTipo==='corrigir'){ _prim='<a class="btn btn--primary" href="info-contribuinte.html?modo=editar&v='+_vr+'&corr='+sit+'&emp='+empId()+(dparam('cenario')?('&cenario='+dparam('cenario')):'')+(dparam('scn')?('&scn='+dparam('scn')):'')+'&back='+encodeURIComponent(retURL())+'"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>Corrigir e reenviar</a>'; }
       else if(_rjh.acaoTipo==='certificado'){ _prim='<button class="btn btn--primary" type="button" data-go-cert><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>Resolver certificado</button>'; }
       else { _prim='<button class="btn btn--primary" type="button" data-go-cert><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4M10 10h4M10 14h4"/></svg>Verificar o CNPJ</button>'; }
-      _acts=_exBtn+_prim;
+      _acts=(sit==='rejeitado'?_verCompBtn:'')+_exBtn+_prim;
     }
     /* em processamento = já transmitida à Receita. Doc só prevê aguardar (não há cancelar/abortar/excluir). Sem ação: só o aviso de espera. */
     else if(sit==='processando'){ _acts='<button class="btn btn--secondary" type="button" data-open-comprovante><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>Ver comprovante</button><button class="btn btn--danger-outline" type="button" data-proc-block="excluir"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M10 11v6M14 11v6"/></svg>Excluir versão</button><button class="btn btn--primary" type="button" data-proc-block="alterar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>Alterar</button>'; }
     else if(sit==='encerrada' || sit==='excluida'){ _acts='<button class="btn btn--secondary" type="button" data-open-comprovante><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>Ver comprovante</button>'; }
     else if(sit==='revisao' && curRole==='preparador' && reviewStarted()){ _acts='<button class="btn btn--danger-outline" type="button" data-rev-block="excluir"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M10 11v6M14 11v6"/></svg>Excluir versão</button><button class="btn btn--primary" type="button" data-rev-block="alterar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>Alterar</button>'; }
+    else if(sit==='sucesso' || sit==='advertencias'){
+      /* versão vigente aceita (com ou sem advertências): mesmas ações e mesmo lugar. "Ver comprovante" no topo (não mais escondido em "Mais ações") */
+      _acts=_verCompBtn
+        +'<button class="btn btn--danger-outline" type="button" data-open-excluir><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M10 11v6M14 11v6"/></svg>Excluir a vigência</button>'
+        +'<button class="btn btn--primary" type="button" data-go-editar><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>Alterar</button>';
+    }
     else { _acts=s.topActions; }
     if($('pageActions')) $('pageActions').innerHTML=_acts;
     var _db=$('decisionbar');
@@ -1086,7 +1103,7 @@
       }
       var occ='';
       if(state==='rejeitado'){ var _rjo=curRej(); occ='<div class="dalert dalert--danger" role="status" style="margin-top:var(--space-2)"><span class="dalert__ic">'+ALERT+'</span><div class="dalert__body"><p class="dalert__title">Ocorrência · '+esc(_rjo.natureza)+'</p><p class="dalert__text"><strong>'+esc(_rjo.cod)+'</strong> · '+esc(_rjo.desc)+'<br><span style="color:var(--color-text-muted)">Localização: '+esc(_rjo.loc)+'</span></p></div></div>'; }
-      else if(sit==='advertencias'){ occ='<div class="dalert dalert--warning" role="status" style="margin-top:var(--space-2)"><span class="dalert__ic">'+ALERT+'</span><div class="dalert__body"><p class="dalert__title">Advertência (não impeditiva)</p><p class="dalert__text">A versão foi <strong>aceita</strong>, mas a Receita registrou observações não impeditivas. Confira os dados antes do próximo período.</p></div></div>'; }
+      else if(sit==='advertencias'){ var _cAv=AVISOS.map(function(a){ return '<p class="dalert__text" style="margin-top:var(--space-1)"><strong>'+esc(a.cod)+'</strong> · '+esc(a.desc)+'<br><span style="color:var(--color-text-muted)">Localização: '+esc(a.loc)+'</span></p>'; }).join(''); occ='<div class="dalert dalert--warning" role="status" style="margin-top:var(--space-2)"><span class="dalert__ic">'+ALERT+'</span><div class="dalert__body"><p class="dalert__title">Advertência'+(AVISOS.length>1?'s':'')+' (não impeditiva'+(AVISOS.length>1?'s':'')+') · '+AVISOS.length+' ocorrência'+(AVISOS.length>1?'s':'')+'</p><p class="dalert__text">A versão foi <strong>aceita</strong> e cumpre a obrigação. A Receita registrou:</p>'+_cAv+'</div></div>'; }
       R.innerHTML='<div class="receipt__state '+scls+'"><span class="receipt__state-ic">'+sic+'</span><div><p class="receipt__state-tt">'+esc(stt)+'</p><p class="receipt__state-tx">'+esc(stx)+'</p></div></div><div class="receipt__rows">'+rows+'</div>'+occ;
       var DL='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>';
       var f='<button class="btn btn--ghost btn--lg" type="button" data-close-comp>Fechar</button>';
@@ -1322,7 +1339,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788788562';
+  var MYV='1788792166';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
