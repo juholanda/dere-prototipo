@@ -8,8 +8,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>a-DeRE · Primeiro acesso</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="../design-system/ds.css?v=1788765536">
-<script src="../design-system/ds-tailwind.js?v=1788765536"></script>
+<link rel="stylesheet" href="../design-system/ds.css?v=1788766536">
+<script src="../design-system/ds-tailwind.js?v=1788766536"></script>
 <style>
   body{margin:0;font-family:var(--font-sans);color:var(--color-text)}
   [hidden]{display:none !important}
@@ -480,13 +480,14 @@
 
   <!-- ===== Confirmação: descartar alterações do drawer ===== -->
   <div class="modal-backdrop" id="discardBd" hidden style="z-index:60">
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="discardTitle" aria-describedby="discardText">
-      <div class="confirm">
-        <span class="confirm__icon confirm__icon--warning"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></span>
-        <div>
-          <h2 class="confirm__title" id="discardTitle" tabindex="-1">Descartar as alterações deste contribuinte?</h2>
-          <p class="confirm__text" id="discardText">As informações preenchidas não serão salvas.</p>
-        </div>
+    <div class="modal modal--md" role="dialog" aria-modal="true" aria-labelledby="discardTitle" aria-describedby="discardText">
+      <div class="modal__header modal__header--icon">
+        <span class="modal__ic modal__ic--warning"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></span>
+        <h3 class="modal__title" id="discardTitle" tabindex="-1">Descartar as alterações deste contribuinte?</h3>
+        <button class="icon-btn" type="button" id="discardX" aria-label="Fechar" style="flex:0 0 auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg></button>
+      </div>
+      <div class="modal__body">
+        <p id="discardText">As informações preenchidas não serão salvas.</p>
       </div>
       <div class="modal__footer">
         <button class="btn btn--ghost" type="button" id="discardKeep">Continuar editando</button>
@@ -495,7 +496,7 @@
     </div>
   </div>
 
-  <script src="../design-system/ds-dialog.js?v=1788765536"></script>
+  <script src="../design-system/ds-dialog.js?v=1788766536"></script>
   <script>
     var $=function(id){return document.getElementById(id)};
 
@@ -719,6 +720,7 @@
       dsDialog.open($('discardBd'), {focus: $('discardKeep')});
     }
     $('discardKeep').addEventListener('click',function(){ dsDialog.close(); _discardCb=null; });
+    $('discardX').addEventListener('click',function(){ dsDialog.close(); _discardCb=null; });
     $('discardConfirm').addEventListener('click',function(){ dsDialog.close(); var cb=_discardCb; _discardCb=null; if(cb) cb(); });
     $('discardBd').addEventListener('click',function(e){ if(e.target===this){ dsDialog.close(); _discardCb=null; } });
     function isCompanyDrawerDirty(){
@@ -845,7 +847,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788765536';
+  var MYV='1788766536';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
