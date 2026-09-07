@@ -8,9 +8,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Versões do plano · MAG Seguros</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788785003">
-  <script src="../design-system/ds-tailwind.js?v=1788785003"></script>
-  <script src="../design-system/ds-dialog.js?v=1788785003"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788785634">
+  <script src="../design-system/ds-tailwind.js?v=1788785634"></script>
+  <script src="../design-system/ds-dialog.js?v=1788785634"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -421,7 +421,7 @@
   }
   function renderEnc(enc){
     var box=$('secEnc');
-    if(!enc.length){ box.innerHTML=emptyBox('Nenhuma versão anterior. Quando uma versão deixa de vigorar, ela passa para cá.'); return; }
+    if(!enc.length){ box.innerHTML=emptyBox('Nenhuma versão anterior.', 'Quando uma versão deixa de vigorar, ela passa para cá.'); return; }
     var rows=enc.slice().sort(function(a,b){ return b.n-a.n; });
     box.innerHTML='<div class="verlist">'+rows.map(function(v){ return row(v,{}); }).join('')+'</div>'+
       '<div class="tablefoot"><span><b>'+enc.length+'</b> de <b>'+enc.length+'</b> '+(enc.length===1?'versão anterior':'versões anteriores')+'</span>'+
@@ -475,7 +475,7 @@
     $('vertabs').hidden=!has; $('vp-tab').hidden=!has; $('vp-tl').hidden=true; $('verempty').hidden=has;
     if(!has) return;
 
-    var _vigHtml = vig ? row(vig,{current:true}) : emptyBox('Nenhuma versão vigente. O primeiro plano processado com sucesso pela Receita aparece aqui.');
+    var _vigHtml = vig ? row(vig,{current:true}) : emptyBox('Nenhuma versão vigente.', 'O primeiro plano processado com sucesso pela Receita aparece aqui.');
     $('secVig').innerHTML = fut ? '<div class="verlist" style="gap:var(--space-4)">'+_vigHtml+row(fut,{})+'</div>' : _vigHtml;
 
     $('secProg').innerHTML = prog
@@ -606,7 +606,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788785003';
+  var MYV='1788785634';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

@@ -8,9 +8,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Detalhe do contribuinte</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788785003">
-  <script src="../design-system/ds-tailwind.js?v=1788785003"></script>
-  <script src="../design-system/ds-dialog.js?v=1788785003"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788785634">
+  <script src="../design-system/ds-tailwind.js?v=1788785634"></script>
+  <script src="../design-system/ds-dialog.js?v=1788785634"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -936,10 +936,10 @@
     }
     /* "Editar informações" aponta para a versão certa (corrige o v pela URL) e leva empresa+cenário */
     document.addEventListener('click',function(e){ var a=e.target.closest('a[href^="info-contribuinte.html?modo=editar"]'); if(!a) return; var h=a.getAttribute('href'); var v=dparam('v'); if(v) h=h.replace(/([?&])v=\d+/, '$1v='+v); if(h.indexOf('emp=')<0) h+='&emp='+emp+_scnQ; if(dparam('cenario') && h.indexOf('cenario=')<0) h+='&cenario='+dparam('cenario'); a.setAttribute('href', h); }, true);
+    /* entrada nova pelo flows (fresh=1): começa limpo, venha por cenário ou por deep-link direto (st/role/altop). Navegação interna não traz fresh, então persiste. */
+    if(dparam('fresh')==='1'){ clearDemoLS(); try{ var _pf=new URLSearchParams(location.search); _pf.delete('fresh'); history.replaceState(null,'','?'+_pf.toString()); }catch(e){} }
     var _cen=curCenario();
     if(_cen){
-      /* entrada nova pelo flows (fresh=1): começa limpo. Navegação interna não traz fresh, então persiste. */
-      if(dparam('fresh')==='1'){ clearDemoLS(); try{ var _pf=new URLSearchParams(location.search); _pf.delete('fresh'); history.replaceState(null,'','?'+_pf.toString()); }catch(e){} }
       /* o cenário PERSISTE: reflete o que foi feito (enviado/rascunho/aprovação); só o Resetar volta ao início */
       var _sent=false,_draft=false,_appr=null;
       try{ _sent=localStorage.getItem('adere.sent.d1001')===empId(); _draft=!!localStorage.getItem('adere.d1001.draft.'+empId()); _appr=localStorage.getItem('adere.d1001.approval.'+empId()); }catch(e){}
@@ -1322,7 +1322,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788785003';
+  var MYV='1788785634';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
