@@ -8,9 +8,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Versões · MAG Seguros</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788785634">
-  <script src="../design-system/ds-tailwind.js?v=1788785634"></script>
-  <script src="../design-system/ds-dialog.js?v=1788785634"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788786098">
+  <script src="../design-system/ds-tailwind.js?v=1788786098"></script>
+  <script src="../design-system/ds-dialog.js?v=1788786098"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -601,7 +601,7 @@
 
     /* vigente */
     /* a vigência futura mora DENTRO do bloco de vigente, logo abaixo da atual, marcada como "Vigência futura" (com respiro entre elas) */
-    var _vigHtml = vig ? row(vig,{current:true}) : (exc?emptyBox('Sem versão vigente.', 'A vigência foi excluída na Receita Federal; registre uma nova versão para o contribuinte voltar a ter declaração vigente.'):emptyBox('Nenhuma versão vigente.', 'A primeira versão processada com sucesso pela Receita aparece aqui.'));
+    var _vigHtml = vig ? row(vig,{current:true}) : (exc?emptyBox('Nenhuma versão vigente.', 'A vigência foi excluída na Receita Federal; registre uma nova versão para o contribuinte voltar a ter declaração vigente.'):emptyBox('Nenhuma versão vigente.', 'A primeira versão processada com sucesso pela Receita aparece aqui.'));
     $('secVig').innerHTML = fut ? '<div class="verlist" style="gap:var(--space-4)">'+_vigHtml+row(fut,{})+'</div>' : _vigHtml;
 
     /* em preparação (0 ou 1): a ação que o usuário precisa tomar é primária; só consultar é secundária */
@@ -779,7 +779,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788785634';
+  var MYV='1788786098';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

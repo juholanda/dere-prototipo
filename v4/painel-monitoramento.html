@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Painel de Monitoramento</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788785634">
-  <script src="../design-system/ds-tailwind.js?v=1788785634"></script>
-  <script src="../design-system/ds-dialog.js?v=1788785634"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788786098">
+  <script src="../design-system/ds-tailwind.js?v=1788786098"></script>
+  <script src="../design-system/ds-dialog.js?v=1788786098"></script>
   <style>
     /* ===== app-shell (igual às outras telas do v4) ===== */
     body{margin:0;background:var(--color-bg)}
@@ -617,7 +617,7 @@
   function renderCob(){
     var el=$('cobBody');
     if(!DATA[COMP]){
-      el.innerHTML='<div class="card"><div class="empty"><span class="empty__icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span><p class="empty__title">Sem dados para '+esc(fmtComp(COMP))+'</p><p class="empty__text">Esta competência ainda não tem posição registrada. Selecione outra competência no filtro.</p></div></div>';
+      el.innerHTML='<div class="card"><div class="empty"><span class="empty__icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span><p class="empty__title">Nenhum dado para '+esc(fmtComp(COMP))+'</p><p class="empty__text">Esta competência ainda não tem posição registrada. Selecione outra competência no filtro.</p></div></div>';
       return;
     }
     if(SCOPE){ renderDetalhe(el); announce('Cobertura de '+(CO[SCOPE]?CO[SCOPE].nome:'')+' em '+fmtComp(COMP)+'.'); } else { renderMatriz(el); announce('Cobertura de '+inScope().length+' contribuintes em '+fmtComp(COMP)+'.'); }
@@ -881,7 +881,7 @@
 </script>
 <script>
 (function(){
-  var MYV='1788785634';
+  var MYV='1788786098';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
