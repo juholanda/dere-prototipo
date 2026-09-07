@@ -8,9 +8,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Detalhe do contribuinte</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788775336">
-  <script src="../design-system/ds-tailwind.js?v=1788775336"></script>
-  <script src="../design-system/ds-dialog.js?v=1788775336"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788785003">
+  <script src="../design-system/ds-tailwind.js?v=1788785003"></script>
+  <script src="../design-system/ds-dialog.js?v=1788785003"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -662,8 +662,8 @@
       var _vesp=(function(s){var m=/^(\d{2})\/(\d{2})\/(\d{4})$/.exec(s||'');if(!m)return s||'';var d=new Date(+m[3],+m[2]-1,+m[1]);d.setDate(d.getDate()-1);var p=function(n){return(n<10?'0':'')+n;};return p(d.getDate())+'/'+p(d.getMonth()+1)+'/'+d.getFullYear();})(a.data||'');
       _x='O preparador definiu novo início em <b>'+esc(a.data||'')+'</b>. Ao aprovar, a Versão '+_src+' (vigente) é <b>encerrada em '+esc(_vesp)+'</b> (véspera do novo início, corte automático) e a Versão '+_cur+' passa a valer a partir de <b>'+esc(a.data||'')+'</b>.';
     } else if(a && a.op==='validade'){
-      _t='Alteração de validade aguardando sua aprovação';
-      _x='O preparador <b>corrigiu a data de início</b> da vigente para <b>'+esc(a.data||'')+'</b> (a data anterior foi digitada errada). É uma <b>Alteração de Validade</b>: reescreve a validade da versão, <b>sem criar novo período</b> nem encerrar a anterior.';
+      _t='Correção da data de início aguardando sua aprovação';
+      _x='O preparador <b>corrigiu a data de início</b> da vigente para <b>'+esc(a.data||'')+'</b> (a data anterior foi informada incorretamente). Isso reescreve o início da própria Versão '+_src+', <b>sem criar uma nova vigência</b> nem encerrar a anterior.';
     } else {
       _t='Correção da versão vigente aguardando sua aprovação';
       _x='O preparador manteve a mesma vigência'+(a&&a.data?(' (<b>'+esc(a.data)+'</b>)'):'')+' da Versão '+_src+'. Ao ser aprovada, a Versão '+_cur+' substituirá a versão vigente, mantendo o mesmo período de vigência.';
@@ -1322,7 +1322,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788775336';
+  var MYV='1788785003';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

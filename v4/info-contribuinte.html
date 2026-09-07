@@ -8,9 +8,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Informações do Contribuinte</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788775336">
-  <script src="../design-system/ds-tailwind.js?v=1788775336"></script>
-  <script src="../design-system/ds-dialog.js?v=1788775336"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788785003">
+  <script src="../design-system/ds-tailwind.js?v=1788785003"></script>
+  <script src="../design-system/ds-dialog.js?v=1788785003"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     /* ===== App shell (mesmo do painel) ===== */
@@ -795,11 +795,11 @@
       var ini=($('iniVig')||{}).value||'';
       if(ini && _vigBaseline && ini!==_vigBaseline){
         cq.className='dalert dalert--warning'; cq.hidden=false;
-        /* L2 · a mudança de data pode ser NOVA VIGÊNCIA (encerra a anterior, mantém histórico) ou ALTERAÇÃO DE VALIDADE (a data foi digitada errada: reescreve, sem novo período). O usuário escolhe. */
+        /* L2 · a mudança de data é uma alteração (tpOper=2): com o grupo novaValidade preenchido, reescreve o mesmo período (corrigir a data); sem ele, seria uma nova inclusão que abre um período novo (nova vigência). Aqui o usuário só responde a essa bifurcação. */
         var _vm=(cq.getAttribute('data-vmode')||'novavig');
-        cq.innerHTML=_IC_WARN+'<div class="dalert__body"><p class="dalert__title">Você mudou a data de início. O que deseja?</p><div class="vmode" role="radiogroup" aria-label="Tipo de mudança de data">'+
+        cq.innerHTML=_IC_WARN+'<div class="dalert__body"><p class="dalert__title">A data de início foi alterada. Como deseja prosseguir?</p><div class="vmode" role="radiogroup" aria-label="O que fazer com a data de início">'+
           '<label class="vmode__opt"><input type="radio" name="vmode" value="novavig"'+(_vm==='novavig'?' checked':'')+'><span class="vmode__b"><b>Nova vigência a partir de '+esc(ini)+'</b><span class="vmode__hint">A Versão '+_src+' (vigente) é <strong>encerrada em '+esc(_vespera(ini))+'</strong> (véspera) e a Versão '+_v+' passa a valer a partir de '+esc(ini)+'. Mantém o histórico.</span></span></label>'+
-          '<label class="vmode__opt"><input type="radio" name="vmode" value="validade"'+(_vm==='validade'?' checked':'')+'><span class="vmode__b"><b>Corrigir a data que foi digitada errada</b><span class="vmode__hint"><strong>Alteração de Validade</strong>: reescreve o início da Versão '+_src+' para '+esc(ini)+', <strong>sem criar novo período</strong> nem encerrar a anterior. Use quando a data original estava incorreta.</span></span></label>'+
+          '<label class="vmode__opt"><input type="radio" name="vmode" value="validade"'+(_vm==='validade'?' checked':'')+'><span class="vmode__b"><b>Corrigir a data informada</b><span class="vmode__hint">Corrige o início da Versão '+_src+' para '+esc(ini)+', <strong>sem criar uma nova vigência</strong> nem encerrar a anterior. Use esta opção quando a data original tiver sido informada incorretamente.</span></span></label>'+
           '</div></div>';
         cq.querySelectorAll('input[name="vmode"]').forEach(function(rb){ rb.addEventListener('change',function(){ cq.setAttribute('data-vmode',rb.value); }); });
       } else {
@@ -1048,7 +1048,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788775336';
+  var MYV='1788785003';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
