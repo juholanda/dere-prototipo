@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Painel de Monitoramento</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788800604">
-  <script src="../design-system/ds-tailwind.js?v=1788800604"></script>
-  <script src="../design-system/ds-dialog.js?v=1788800604"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788800904">
+  <script src="../design-system/ds-tailwind.js?v=1788800904"></script>
+  <script src="../design-system/ds-dialog.js?v=1788800904"></script>
   <style>
     /* ===== app-shell (igual às outras telas do v4) ===== */
     body{margin:0;background:var(--color-bg)}
@@ -187,8 +187,8 @@
     .micon--neutral{color:var(--color-text-muted)}
     .compnav{display:flex;align-items:stretch;gap:var(--space-1)}
     .compnav .cselect__value{display:inline-block;min-width:64px}
-    .compnav__arrow{appearance:none;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-base);width:34px;display:inline-flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;flex:0 0 auto}
-    .compnav__arrow:hover:not(:disabled){background:var(--color-surface-2);border-color:var(--color-border-strong)}
+    .compnav__arrow{appearance:none;background:var(--color-surface);border:1px solid var(--color-field-border);border-radius:var(--radius-base);width:34px;display:inline-flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;flex:0 0 auto;transition:border-color .12s,background-color .12s}
+    .compnav__arrow:hover:not(:disabled){background:var(--color-surface-2);border-color:var(--color-text-muted)}
     .compnav__arrow:disabled{color:var(--color-border-strong);opacity:.55;cursor:not-allowed}
     .compnav__arrow:focus-visible{outline:none;box-shadow:var(--ring)}
     .compnav__now{appearance:none;background:none;border:0;color:var(--color-primary);font:inherit;font-size:var(--text-sm);font-weight:600;cursor:pointer;padding:0 var(--space-2);display:inline-flex;align-items:center;border-radius:var(--radius-base)}
@@ -748,7 +748,7 @@
 
     // dependências
     var allDeps=(PRECED[ev]||[]).filter(function(d){ return r.ob[d] && r.ob[d].st!=='na'; });
-    var depsHtml=allDeps.length?('<div class="kv">'+allDeps.map(function(d){ return '<div class="kv__row"><span class="kv__k"><span class="mono">'+d+'</span> '+esc(EVENTS[d].nome)+'</span><span class="kv__v">'+pill(r.ob[d].st)+'</span></div>'; }).join('')+'</div>'):'<p class="drdesc" style="margin:0">Este evento não depende de outros.</p>';
+    var depsHtml=allDeps.length?('<div class="kv">'+allDeps.map(function(d){ var ds=r.ob[d].st; return '<div class="kv__row"><span class="kv__k"><span class="mono">'+d+'</span> '+esc(EVENTS[d].nome)+'</span><span class="kv__v">'+mcellHtml(ST[ds].dot,ST[ds].l)+'</span></div>'; }).join('')+'</div>'):'<p class="drdesc" style="margin:0">Este evento não depende de outros.</p>';
 
     // observação da nova versão rejeitada (D-1001 do Sicoob)
     var extraRej = o.rejNova ? '<div class="dalert dalert--danger" role="note" style="margin-top:var(--space-3)"><span class="dalert__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></span><div class="dalert__body"><p class="dalert__title">Nova versão rejeitada ('+esc(o.rejNova.codigo)+')</p><p class="dalert__text">'+esc(o.rejNova.motivo)+'</p></div></div>' : '';
@@ -910,7 +910,7 @@
 </script>
 <script>
 (function(){
-  var MYV='1788800604';
+  var MYV='1788800904';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
