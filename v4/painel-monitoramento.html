@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Painel de Monitoramento</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788795815">
-  <script src="../design-system/ds-tailwind.js?v=1788795815"></script>
-  <script src="../design-system/ds-dialog.js?v=1788795815"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788800604">
+  <script src="../design-system/ds-tailwind.js?v=1788800604"></script>
+  <script src="../design-system/ds-dialog.js?v=1788800604"></script>
   <style>
     /* ===== app-shell (igual às outras telas do v4) ===== */
     body{margin:0;background:var(--color-bg)}
@@ -32,8 +32,6 @@
     .fresh.is-stale{color:var(--color-warning-fg)}
     .fresh__ic{width:14px;height:14px;flex:0 0 auto;color:var(--color-text-muted)}
     .fresh.is-stale .fresh__ic{color:var(--color-warning-fg)}
-    .fresh__btn{appearance:none;background:none;border:0;padding:0;margin-left:var(--space-1);font:inherit;color:var(--color-primary);font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
-    .fresh__btn:focus-visible{outline:none;box-shadow:var(--ring);border-radius:var(--radius-sm)}
     .fresh.is-loading .fresh__ic{animation:ds-spin .8s linear infinite}
     @keyframes ds-spin{to{transform:rotate(360deg)}}
     @media(prefers-reduced-motion:reduce){.fresh.is-loading .fresh__ic{animation:none}}
@@ -87,7 +85,7 @@
     .viewtabs{margin-bottom:var(--space-6)}
 
     /* ===== matriz (único componente realmente novo; candidato a virar .matrix no DS) ===== */
-    .mtx-wrap{overflow:auto;max-height:calc(100vh - 360px);border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-surface)}
+    .mtx-wrap{overflow:visible;border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-surface)}
     table.mtx{width:100%;border-collapse:separate;border-spacing:0;min-width:900px;font-size:var(--text-sm)}
     .mtx thead th{position:sticky;top:0;z-index:2;background:var(--color-surface-2)}
     .mtx .grp th{font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.04em;color:var(--color-text-muted);font-weight:700;padding:var(--space-2) var(--space-3);text-align:center;border-bottom:1px solid var(--color-border)}
@@ -112,7 +110,7 @@
     .co-name{font-size:var(--text-base);font-weight:700;color:var(--color-heading);line-height:1.25}
     .co-cnpj{font-size:var(--text-sm);color:var(--color-text-muted);font-variant-numeric:tabular-nums;margin-top:2px}
     .co-sub{font-size:var(--text-sm);color:var(--color-text-muted);font-variant-numeric:tabular-nums;margin-top:2px;line-height:1.5}
-    .cellbtn{appearance:none;background:none;border:0;padding:var(--space-1);cursor:pointer;font:inherit;display:inline-flex;flex-direction:column;align-items:center;gap:var(--space-1);border-radius:var(--radius-base)}
+    .cellbtn{appearance:none;background:none;border:0;padding:var(--space-1);cursor:pointer;font:inherit;display:inline-flex;flex-direction:column;align-items:flex-start;gap:var(--space-1);border-radius:var(--radius-base);text-align:left}
     .cellbtn:hover{background:var(--color-surface-2)}
     .cellbtn:focus-visible{outline:none;box-shadow:var(--ring)}
     .cellna{font-size:var(--text-xs);color:var(--color-text-muted);font-weight:400}
@@ -124,10 +122,9 @@
     .oosmsg{font-size:var(--text-sm);color:var(--color-text-muted);text-align:left;padding:var(--space-3) var(--space-4)}
 
     /* fila: botão "abrir" no lado da taskrow */
-    .openbtn{appearance:none;background:none;border:0;color:var(--color-primary);font:inherit;font-size:var(--text-sm);font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:var(--space-1);padding:var(--space-1) var(--space-1)}
-    .openbtn:hover{text-decoration:underline}
-    .openbtn:focus-visible{outline:none;box-shadow:var(--ring);border-radius:var(--radius-sm)}
-    .openbtn svg{width:14px;height:14px}
+    .rowchev{color:var(--color-text-muted);display:inline-flex;transition:color .12s}
+    .rowchev svg{width:16px;height:16px}
+    .table tbody tr[data-open]:hover .rowchev{color:var(--color-primary)}
     .taskrow__mono svg{width:18px;height:18px}
     /* urgência: cor só no ÍCONE (como o .stat); o texto fica neutro e a descrição NÃO leva bolinha (a bolinha só ancora rótulo curto) */
     .taskrow__why::before{content:none}
@@ -159,15 +156,12 @@
     .drhead{display:flex;gap:var(--space-3);align-items:flex-start;min-width:0}
     .drhead__ic{flex:0 0 auto;width:var(--space-10);height:var(--space-10);border-radius:var(--radius-lg);background:var(--color-primary-subtle);color:var(--color-primary);display:grid;place-items:center}
     .drhead__ic svg{width:20px;height:20px}
-    .drtitlerow{display:flex;align-items:center;gap:var(--space-2);flex-wrap:wrap}
+    .drmeta{display:flex;align-items:center;gap:var(--space-2);flex-wrap:wrap;margin-bottom:var(--space-2)}
     .drdesc{font-size:var(--text-sm);color:var(--color-text-onmuted);line-height:1.5;margin:0 0 var(--space-3)}
     .drwait{color:var(--color-text-muted);font-weight:400}
     .drsec{margin-bottom:var(--space-6)}
     .drsec:last-child{margin-bottom:0}
     .drsec__t{font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.04em;color:var(--color-text-muted);margin:0 0 var(--space-3);font-weight:700}
-    .depitem{display:flex;align-items:center;gap:var(--space-2);font-size:var(--text-sm);padding:var(--space-1-5) 0}
-    .depitem .dcode{font-weight:600;font-variant-numeric:tabular-nums}
-    .depitem .dname{color:var(--color-text-muted)}
     .kv{display:flex;flex-direction:column;gap:0}
     .kv__row{display:flex;justify-content:space-between;gap:var(--space-4);font-size:var(--text-sm);padding:var(--space-2) 0;border-top:1px solid var(--color-divider)}
     .kv__row:first-child{border-top:0}
@@ -182,13 +176,25 @@
 
     /* matriz: célula = bolinha + rótulo curto (sem badge) + divisória entre grupos */
     .mcell{display:inline-flex;align-items:flex-start;gap:var(--space-1-5);font-size:var(--text-xs);color:var(--color-text);font-weight:500;text-align:left;line-height:1.35}
-    .mdot{width:8px;height:8px;border-radius:50%;flex:0 0 auto;margin-top:var(--space-1);background:var(--color-text-muted)}
-    .mdot--success{background:var(--color-success-fg)}
-    .mdot--azul{background:var(--color-azul-fg)}
-    .mdot--info{background:var(--color-info-fg)}
-    .mdot--danger{background:var(--color-danger-fg)}
-    .mdot--warning{background:var(--color-warning-fg)}
-    .mdot--neutral{background:var(--color-text-muted)}
+    .mcell__tx{display:inline-flex;flex-direction:column;gap:2px;min-width:0}
+    .micon{flex:0 0 auto;display:inline-flex;align-items:center;margin-top:1px;color:var(--color-text-muted)}
+    .micon svg{width:15px;height:15px}
+    .micon--success{color:var(--color-success-fg)}
+    .micon--azul{color:var(--color-azul-fg)}
+    .micon--info{color:var(--color-info-fg)}
+    .micon--danger{color:var(--color-danger-fg)}
+    .micon--warning{color:var(--color-warning-fg)}
+    .micon--neutral{color:var(--color-text-muted)}
+    .compnav{display:flex;align-items:stretch;gap:var(--space-1)}
+    .compnav .cselect__value{display:inline-block;min-width:64px}
+    .compnav__arrow{appearance:none;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-base);width:34px;display:inline-flex;align-items:center;justify-content:center;color:var(--color-text);cursor:pointer;flex:0 0 auto}
+    .compnav__arrow:hover:not(:disabled){background:var(--color-surface-2);border-color:var(--color-border-strong)}
+    .compnav__arrow:disabled{color:var(--color-border-strong);opacity:.55;cursor:not-allowed}
+    .compnav__arrow:focus-visible{outline:none;box-shadow:var(--ring)}
+    .compnav__now{appearance:none;background:none;border:0;color:var(--color-primary);font:inherit;font-size:var(--text-sm);font-weight:600;cursor:pointer;padding:0 var(--space-2);display:inline-flex;align-items:center;border-radius:var(--radius-base)}
+    .compnav__now:hover:not(:disabled){text-decoration:underline}
+    .compnav__now:disabled{color:var(--color-text-muted);cursor:default}
+    .compnav__now:focus-visible{outline:none;box-shadow:var(--ring)}
     .mtx .gsep{border-left:1px solid var(--color-border)}
   </style>
 </head>
@@ -260,7 +266,7 @@
         </div>
       </header>
 
-      <main id="conteudo" tabindex="-1" class="content skip-target">
+      <main id="conteudo" tabindex="-1" class="content skip-target scroll-thin">
         <div class="page-h">
           <div class="wrap">
             <div class="page-h__row">
@@ -274,9 +280,14 @@
               <div class="page-h__act">
                 <div class="filterf filterf--comp">
                   <span class="flbl" id="lblComp">Competência</span>
+                  <div class="compnav">
+                    <button class="compnav__arrow" type="button" id="compPrev" aria-label="Competência anterior"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
                   <div class="cselect mpwrap" id="wrapComp">
                     <button class="cselect__trigger" type="button" id="compTrig" aria-haspopup="true" aria-expanded="false" aria-labelledby="lblComp"><span class="cselect__value" id="compVal">jan/2027</span><span class="cselect__chev"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button>
                     <div class="mp" id="compMP" aria-label="Escolher competência" hidden></div>
+                  </div>
+                    <button class="compnav__arrow" type="button" id="compNext" aria-label="Competência seguinte"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+                    <button class="compnav__now" type="button" id="compNow">Atual</button>
                   </div>
                 </div>
               </div>
@@ -285,7 +296,7 @@
         </div>
 
         <div class="wrap">
-          <p class="fresh" id="freshWrap"><svg class="fresh__ic" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M8 16H3v5"/></svg><span id="freshTxt" role="status" aria-live="polite">Atualizado há 6 min · 09/02/2027 08h30</span><button type="button" id="btnRefresh" class="fresh__btn">Atualizar</button></p>
+          <p class="fresh" id="freshWrap"><svg class="fresh__ic" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M8 16H3v5"/></svg><span id="freshTxt" role="status" aria-live="polite">Atualizado há 6 min · 09/02/2027 08h30</span></p>
           <span id="liveMsg" class="sr-only" role="status" aria-live="polite"></span>
 
           <div class="kpis" id="kpis" aria-label="Indicadores da competência"></div>
@@ -324,13 +335,13 @@
 
   <!-- DRAWER (usa .drawer + .drawer-backdrop + dsDialog do DS) -->
   <div class="drawer-backdrop" id="drBackdrop" hidden></div>
-  <aside class="drawer drawer--sm" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drTitle" hidden>
+  <aside class="drawer drawer--md" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drTitle" hidden>
     <div class="drawer__header">
       <div class="drhead">
         <span class="drhead__ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg></span>
         <div>
-          <span class="status status--sm" id="drPill" style="margin-bottom:var(--space-2)"><span class="status__dot"></span><span id="drPillTxt">Situação</span></span>
-          <div class="drtitlerow"><h2 class="drawer__title" id="drTitle">—</h2><span class="tag" id="drCode">D-1001</span></div>
+          <div class="drmeta"><span class="status status--sm" id="drPill"><span class="status__dot"></span><span id="drPillTxt">Situação</span></span><span class="tag" id="drCode">D-1001</span></div>
+          <h2 class="drawer__title" id="drTitle">—</h2>
           <p class="co-cnpj" id="drCo" style="margin-top:var(--space-1)">—</p>
         </div>
       </div>
@@ -370,7 +381,7 @@
   /* situação → rótulo (nosso vocabulário, alinhado à lista) + pílula do DS */
   var ST={
     ok:{l:'Processada com sucesso',s:'Aceita',p:'status--success',dot:'success'},
-    adv:{l:'Processada com advertências',s:'Advertências',p:'status--azul',dot:'azul'},
+    adv:{l:'Processada com advertências',s:'Advertências',short:'Processada com adv.',p:'status--azul',dot:'azul'},
     processando:{l:'Em processamento',s:'Processando',p:'status--info',dot:'info'},
     rejeitado:{l:'Rejeitada',s:'Rejeitada',p:'status--danger',dot:'danger'},
     pendente:{l:'Em preparação',s:'Em preparação',p:'status--neutral',dot:'neutral'},
@@ -452,7 +463,7 @@
 
   /* ===== Estado ===== */
   var SCOPE='', COMP='2027-01', VIEW='pend', KFILTER='', REG='';
-  var MIN_AGO=6, FRESH_STALE=120, refreshT=null;   /* frescor: minutos desde a leitura (ilustrativo); stale acima de 2h */
+  var MIN_AGO=6, FRESH_STALE=120;   /* frescor: minutos desde a leitura (ilustrativo); stale acima de 2h */
   var CHEV='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>';
   var EXT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>';
 
@@ -536,10 +547,10 @@
     if(o.st==='vencido') return null;   /* a pílula já diz "Vencida"; não repetir na data */
     if(o.st==='processando'||o.st==='bloqueado') return null;
     if(o.dias==null) return null;
-    if(o.dias<=0) return {c:'late',t:'hoje'};
-    if(o.dias<=3) return {c:'late',t:'em '+o.dias+' dia'+(o.dias>1?'s':'')};
-    if(o.dias<=7) return {c:'soon',t:'em '+o.dias+' dias'};
-    return {c:'ok',t:'em '+o.dias+' dias'};
+    if(o.dias<=0) return {c:'late',t:'vence hoje'};
+    if(o.dias<=3) return {c:'late',t:'vence em '+o.dias+' dia'+(o.dias>1?'s':'')};
+    if(o.dias<=7) return {c:'soon',t:'vence em '+o.dias+' dias'};
+    return {c:'ok',t:'vence em '+o.dias+' dias'};
   }
   var ICmono={
     late:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg>',
@@ -623,7 +634,18 @@
     if(SCOPE){ renderDetalhe(el); announce('Cobertura de '+(CO[SCOPE]?CO[SCOPE].nome:'')+' em '+fmtComp(COMP)+'.'); } else { renderMatriz(el); announce('Cobertura de '+inScope().length+' contribuintes em '+fmtComp(COMP)+'.'); }
   }
 
-  function mcellHtml(dotCls,label){ return '<span class="mcell"><span class="mdot mdot--'+dotCls+'" aria-hidden="true"></span><span>'+esc(label)+'</span></span>'; }
+  /* ícone por estado (forma distingue além da cor): aceito=check, em curso=relógio, rejeitado/vencido=x, bloqueado=alerta, preparação=círculo */
+  /* ícones FILLED por estado (disco na cor semântica + marca vazada na cor da célula). Progresso = reticências (não relógio). */
+  var _S='var(--color-surface)';
+  var _mi={
+    check:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="m8.4 12.3 2.3 2.3 4.9-5.2" fill="none" stroke="'+_S+'" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    dots:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="currentColor"/><circle cx="8" cy="12" r="1.35" fill="'+_S+'"/><circle cx="12" cy="12" r="1.35" fill="'+_S+'"/><circle cx="16" cy="12" r="1.35" fill="'+_S+'"/></svg>',
+    x:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="m15 9-6 6M9 9l6 6" fill="none" stroke="'+_S+'" stroke-width="2.2" stroke-linecap="round"/></svg>',
+    alert:'<svg viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" fill="currentColor"/><path d="M12 10v3.6" fill="none" stroke="'+_S+'" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17" r="1.15" fill="'+_S+'"/></svg>',
+    pencil:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M14.4 7.6 16.4 9.6 10 16l-2.7.7.7-2.7z" fill="none" stroke="'+_S+'" stroke-width="1.5" stroke-linejoin="round"/></svg>'
+  };
+  var MICON={success:_mi.check, azul:_mi.check, info:_mi.dots, danger:_mi.x, warning:_mi.alert, neutral:_mi.pencil};
+  function mcellHtml(dotCls,label,sub){ return '<span class="mcell"><span class="micon micon--'+dotCls+'" aria-hidden="true">'+(MICON[dotCls]||MICON.neutral)+'</span><span class="mcell__tx"><span>'+esc(label)+'</span>'+(sub||'')+'</span></span>'; }
   function coCell(r,ev,gsep){
     var o=r.ob[ev], cls=gsep?' class="gsep"':'';
     if(!o||o.st==='na') return '<td'+cls+'><span class="cellna">Não se aplica</span></td>';
@@ -633,7 +655,7 @@
       return '<td'+cls+'><button class="cellbtn" type="button" data-open="'+r.c.emp+'|D-1199" aria-label="'+esc('Fechamento: '+dl+', '+r.c.nome)+'">'+mcellHtml(dc,dl)+'</button></td>';
     }
     var sub=o.rejNova?'<span class="cellsub">nova versão rejeitada</span>':'';
-    return '<td'+cls+'><button class="cellbtn" type="button" data-open="'+r.c.emp+'|'+ev+'" aria-label="'+esc(EVENTS[ev].nome+', '+r.c.nome+', '+ST[o.st].l)+'">'+mcellHtml(ST[o.st].dot,ST[o.st].l)+sub+'</button></td>';
+    return '<td'+cls+'><button class="cellbtn" type="button" data-open="'+r.c.emp+'|'+ev+'" aria-label="'+esc(EVENTS[ev].nome+', '+r.c.nome+', '+ST[o.st].l)+'">'+mcellHtml(ST[o.st].dot,ST[o.st].short||ST[o.st].l,sub)+'</button></td>';
   }
 
   function renderMatriz(el){
@@ -653,7 +675,7 @@
       return '<tr>'+corp+COLS.map(function(ev){ return coCell(r,ev,(ev==='D-1101'||ev==='D-1199')); }).join('')+'</tr>';
     }).join('');
     if(!rows.length){ body='<tr><td colspan="7"><div class="empty" style="padding:var(--space-8)"><p class="empty__title">Nenhum contribuinte nos filtros</p><p class="empty__text">Ajuste o regulador ou a busca.</p></div></td></tr>'; }
-    el.innerHTML='<div class="mtx-wrap"><table class="mtx">'+head+'<tbody>'+body+'</tbody></table></div>';
+    el.innerHTML='<div class="mtx-wrap scroll-thin"><table class="mtx">'+head+'<tbody>'+body+'</tbody></table></div>';
     bindOpen(el);
     Array.prototype.forEach.call(el.querySelectorAll('[data-scope]'),function(b){ b.addEventListener('click',function(){ setScope(b.getAttribute('data-scope')); }); });
   }
@@ -667,14 +689,15 @@
     var rowsHtml=COLS.map(function(ev){
       var o=r.ob[ev];
       var naEv=(!o||o.st==='na');
-      var stCell, compr=naEv?'':'não transmitido', prazo=naEv?'':(o.prazo||'sem prazo'), resp=naEv?'':(o.resp||'Não informado');
+      var stCell, compr=naEv?'':'não transmitido', prazo=naEv?'':(o.prazo||'—'), resp=naEv?'':(o.resp||'Não informado');
       if(naEv){ stCell='<span class="cellna">Não se aplica</span>'; }
       else if(ev==='D-1199'){ stCell=(o.st==='ok')?'<span class="status status--sm status--success"><span class="status__dot"></span>Concluída</span>':(g.ok?'<span class="status status--sm status--info"><span class="status__dot"></span>Liberada</span>':'<span class="status status--sm status--warning"><span class="status__dot"></span>Bloqueada</span>'); }
       else { stCell=pill(o.st)+(o.rejNova?' <span class="cellsub">nova versão rejeitada</span>':''); }
       if(!naEv && isAceita(o.st)) compr='<span class="mono" style="font-variant-numeric:tabular-nums">'+esc(recibo31(ev.replace('D-',''),COMP,o.seq))+'</span>';
       else if(!naEv && (o.st==='processando'||o.st==='rejeitado')) compr='<span class="mono" style="font-variant-numeric:tabular-nums;color:var(--color-text-muted)">'+esc(protocolo28(COMP,o.seq||1))+'</span>';
-      var open=naEv?'':'<button class="openbtn" type="button" data-open="'+r.c.emp+'|'+ev+'">Abrir'+CHEV+'</button>';
-      return '<tr><td><strong style="font-variant-numeric:tabular-nums">'+ev+'</strong><br><span style="font-size:var(--text-xs);color:var(--color-text-muted)">'+esc(EVENTS[ev].nome)+'</span></td><td>'+stCell+'</td><td>'+compr+'</td><td style="font-variant-numeric:tabular-nums">'+esc(prazo)+'</td><td>'+esc(resp)+'</td><td style="text-align:right">'+open+'</td></tr>';
+      var chev=naEv?'':'<span class="rowchev" aria-hidden="true">'+CHEV+'</span>';
+      var trOpen=naEv?'<tr>':'<tr data-open="'+r.c.emp+'|'+ev+'" role="button" tabindex="0" aria-label="'+esc('Abrir '+ev+' · '+EVENTS[ev].nome)+'">';
+      return trOpen+'<td><strong style="font-variant-numeric:tabular-nums">'+ev+'</strong><br><span style="font-size:var(--text-xs);color:var(--color-text-muted)">'+esc(EVENTS[ev].nome)+'</span></td><td>'+stCell+'</td><td>'+compr+'</td><td style="font-variant-numeric:tabular-nums">'+esc(prazo)+'</td><td>'+esc(resp)+'</td><td style="text-align:right">'+chev+'</td></tr>';
     }).join('');
     el.innerHTML=''+
       '<div class="card" style="padding:var(--space-6);margin-bottom:var(--space-6)"><div style="display:flex;justify-content:space-between;gap:var(--space-4);flex-wrap:wrap;align-items:flex-start">'+
@@ -696,7 +719,7 @@
     if(ev==='D-1199' && o.st!=='ok'){ gateInfo=gate(r); dispSt=gateInfo.ok?'liberado':'bloqueado'; }
     var dp=ST[o.st]||{l:(dispSt==='liberado'?'Liberado':'Bloqueado'),p:(dispSt==='liberado'?'status--info':'status--warning')};
     if(ev==='D-1199' && o.st!=='ok'){ dp={l:(gateInfo.ok?'Liberada para transmitir':'Bloqueada'),p:(gateInfo.ok?'status--info':'status--warning')}; }
-    var pl=$('drPill'); pl.className='status status--sm '+dp.p; pl.style.marginBottom='var(--space-2)'; pl.innerHTML='<span class="status__dot"></span>'+esc(dp.l);
+    var pl=$('drPill'); pl.className='status status--sm '+dp.p; pl.innerHTML='<span class="status__dot"></span>'+esc(dp.l);
     $('drCode').textContent=ev;
     $('drTitle').textContent=E.nome;
     $('drCo').textContent=r.c.nome+' · '+r.c.cnpj+' · '+fmtComp(COMP);
@@ -725,7 +748,7 @@
 
     // dependências
     var allDeps=(PRECED[ev]||[]).filter(function(d){ return r.ob[d] && r.ob[d].st!=='na'; });
-    var depsHtml=allDeps.length?allDeps.map(function(d){ return '<div class="depitem">'+pill(r.ob[d].st)+'<span class="dcode">'+d+'</span><span class="dname">'+esc(EVENTS[d].nome)+'</span></div>'; }).join(''):'<p class="depitem dname">Este evento não depende de outros.</p>';
+    var depsHtml=allDeps.length?('<div class="kv">'+allDeps.map(function(d){ return '<div class="kv__row"><span class="kv__k"><span class="mono">'+d+'</span> '+esc(EVENTS[d].nome)+'</span><span class="kv__v">'+pill(r.ob[d].st)+'</span></div>'; }).join('')+'</div>'):'<p class="drdesc" style="margin:0">Este evento não depende de outros.</p>';
 
     // observação da nova versão rejeitada (D-1001 do Sicoob)
     var extraRej = o.rejNova ? '<div class="dalert dalert--danger" role="note" style="margin-top:var(--space-3)"><span class="dalert__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></span><div class="dalert__body"><p class="dalert__title">Nova versão rejeitada ('+esc(o.rejNova.codigo)+')</p><p class="dalert__text">'+esc(o.rejNova.motivo)+'</p></div></div>' : '';
@@ -792,7 +815,6 @@
     if(state==='stale'){ f.textContent='Desatualizado há mais de '+Math.max(1,Math.round(MIN_AGO/60))+' h'; return; }
     f.textContent=(MIN_AGO<=0?'Atualizado agora':('Atualizado há '+MIN_AGO+' min'));
   }
-  function doRefresh(){ paintFresh('loading'); if(refreshT) clearTimeout(refreshT); refreshT=setTimeout(function(){ MIN_AGO=0; renderKpis(); render(); paintFresh('ok'); },600); }
 
   /* tabs por teclado (setas) */
   var tabs=[$('tabPend'),$('tabCob')];
@@ -821,7 +843,15 @@
     }
     function open(){ if(!pop.hidden) return; closeAllCS(); viewY=+COMP.split('-')[0]; draw(); pop.hidden=false; trig.setAttribute('aria-expanded','true'); }
     function close(){ pop.hidden=true; trig.setAttribute('aria-expanded','false'); }
-    function choose(comp, silent){ COMP=comp; valEl.textContent=fmtComp(comp); close(); if(!silent){ trig.focus(); KFILTER=''; MIN_AGO=0; paintFresh('ok'); renderKpis(); render(); } }
+    function choose(comp, silent, keepFocus){ COMP=comp; valEl.textContent=fmtComp(comp); close(); updNav(); if(!silent){ if(!keepFocus) trig.focus(); KFILTER=''; MIN_AGO=0; paintFresh('ok'); renderKpis(); render(); } }
+    /* setas ‹ › e "Atual": pulo rápido entre competências com dados (COMP_LIST = mais nova → mais antiga) */
+    var _prevB=$('compPrev'), _nextB=$('compNext'), _nowB=$('compNow'), _CUR=COMP_LIST[0];
+    function updNav(){ var i=COMP_LIST.indexOf(COMP); if(_prevB) _prevB.disabled=(i<0||i>=COMP_LIST.length-1); if(_nextB) _nextB.disabled=(i<=0); if(_nowB) _nowB.disabled=(COMP===_CUR); }
+    function _step(d){ var i=COMP_LIST.indexOf(COMP), j=i+d; if(i<0||j<0||j>=COMP_LIST.length) return; choose(COMP_LIST[j], false, true); }
+    if(_prevB) _prevB.addEventListener('click',function(e){ e.stopPropagation(); _step(1); });
+    if(_nextB) _nextB.addEventListener('click',function(e){ e.stopPropagation(); _step(-1); });
+    if(_nowB) _nowB.addEventListener('click',function(e){ e.stopPropagation(); if(COMP!==_CUR) choose(_CUR, false, true); });
+    updNav();
     trig.addEventListener('click',function(e){ e.stopPropagation(); pop.hidden?open():close(); });
     pop.addEventListener('click',function(e){ e.stopPropagation(); });
     var wrap=trig.closest('.mpwrap'); if(wrap) wrap.addEventListener('focusout',function(){ setTimeout(function(){ if(!pop.hidden && !wrap.contains(document.activeElement)) close(); },0); });
@@ -862,7 +892,6 @@
     csReg=buildCS(document.querySelector('[data-cs="reg"]'), regOpts, '', function(val){ REG=val; renderKpis(); render(); });
     compMP=buildMonthPicker();
   })();
-  $('btnRefresh').addEventListener('click',doRefresh);
   $('btnClear').addEventListener('click',function(){ SCOPE=''; REG=''; KFILTER=''; COMP='2027-01'; if(csEsc)csEsc.set(''); if(csReg)csReg.set(''); if(compMP)compMP.set('2027-01'); MIN_AGO=0; paintFresh('ok'); syncScopeFilters(); renderKpis(); render(); });
 
   paintFresh('ok');
@@ -881,7 +910,7 @@
 </script>
 <script>
 (function(){
-  var MYV='1788795815';
+  var MYV='1788800604';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
