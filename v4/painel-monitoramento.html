@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Painel de Monitoramento</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788800904">
-  <script src="../design-system/ds-tailwind.js?v=1788800904"></script>
-  <script src="../design-system/ds-dialog.js?v=1788800904"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788801055">
+  <script src="../design-system/ds-tailwind.js?v=1788801055"></script>
+  <script src="../design-system/ds-dialog.js?v=1788801055"></script>
   <style>
     /* ===== app-shell (igual às outras telas do v4) ===== */
     body{margin:0;background:var(--color-bg)}
@@ -65,7 +65,7 @@
 
     /* month picker (competência): navegação de ano + grade de meses (padrão de mercado) */
     .mpwrap{position:relative}
-    .mp{position:absolute;z-index:70;top:calc(100% + var(--space-1));left:0;width:100%;min-width:13.5rem;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);padding:var(--space-3)}
+    .mp{position:absolute;z-index:70;top:calc(100% + var(--space-1));right:0;left:auto;width:max-content;min-width:13.5rem;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);padding:var(--space-3)}
     .mp[hidden]{display:none}
     .mp__head{display:flex;align-items:center;gap:var(--space-1);margin-bottom:var(--space-2)}
     .mp__y{flex:1 1 auto;text-align:center;font-size:var(--text-sm);font-weight:700;color:var(--color-heading);font-variant-numeric:tabular-nums}
@@ -910,7 +910,7 @@
 </script>
 <script>
 (function(){
-  var MYV='1788800904';
+  var MYV='1788801055';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
