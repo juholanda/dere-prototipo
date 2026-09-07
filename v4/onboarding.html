@@ -8,8 +8,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>a-DeRE · Primeiro acesso</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="../design-system/ds.css?v=1788766536">
-<script src="../design-system/ds-tailwind.js?v=1788766536"></script>
+<link rel="stylesheet" href="../design-system/ds.css?v=1788767277">
+<script src="../design-system/ds-tailwind.js?v=1788767277"></script>
 <style>
   body{margin:0;font-family:var(--font-sans);color:var(--color-text)}
   [hidden]{display:none !important}
@@ -496,7 +496,7 @@
     </div>
   </div>
 
-  <script src="../design-system/ds-dialog.js?v=1788766536"></script>
+  <script src="../design-system/ds-dialog.js?v=1788767277"></script>
   <script>
     var $=function(id){return document.getElementById(id)};
 
@@ -843,11 +843,23 @@
     renderCompanies();
     renderCerts();
     setStepper(1);
+    /* deep-link do protótipo: abrir direto num passo (?passo=2 ou 3), sem transição */
+    (function(){
+      var m=/[?&]passo=([234])/.exec(location.search); if(!m) return;
+      var n=parseInt(m[1],10), map={1:'view1',2:'view2',3:'view3',4:'view4'};
+      var cur=document.querySelector('.view.is-active'), next=$(map[n]);
+      if(next && cur!==next){
+        if(cur){ cur.hidden=true; cur.classList.remove('is-active'); }
+        next.hidden=false; next.classList.add('is-active');
+        setStepper(n);
+        var live=$('stepLive'); if(live){ live.textContent='Passo '+n+' de 3: '+(STEP_LABELS[n]||''); }
+      }
+    })();
     requestAnimationFrame(function(){ requestAnimationFrame(function(){ document.body.classList.remove('preload'); }); });
   </script>
 <script>
 (function(){
-  var MYV='1788766536';
+  var MYV='1788767277';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
