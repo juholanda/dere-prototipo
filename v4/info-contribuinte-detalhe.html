@@ -8,9 +8,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Detalhe do contribuinte</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788792166">
-  <script src="../design-system/ds-tailwind.js?v=1788792166"></script>
-  <script src="../design-system/ds-dialog.js?v=1788792166"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788793093">
+  <script src="../design-system/ds-tailwind.js?v=1788793093"></script>
+  <script src="../design-system/ds-dialog.js?v=1788793093"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -1163,6 +1163,7 @@
         if(apCard) apCard.classList.remove('is-leaving');
         dsDialog.close();                                       /* esconde o scrim do aprovar */
         setScenario(isX?{role:'aprovador',st:'aprovado',sit:'processando',op:'exclusao'}:{role:'aprovador',st:'aprovado',sit:'processando'});
+        (function(){ var _ct=document.getElementById('conteudo'); if(_ct) _ct.scrollTop=0; })(); /* volta ao topo: o novo status/banner fica visível quando o comprovante fechar */
         openComprovante('processando');                         /* no mesmo tique o comprovante entra: fundo escuro contínuo */
         showToast(isX?'Exclusão transmitida à Receita Federal, em processamento.':'Versão aprovada e transmitida à Receita Federal.');
       }, 210);
@@ -1174,6 +1175,7 @@
       try{ localStorage.setItem('adere.d1001.approval.'+empId(),'ajuste'); localStorage.setItem('adere.d1001.ajustecomment.'+empId(), v); }catch(e){}
       showToast('Ajustes solicitados. A versão voltou para o preparador.');
       setScenario({role:'preparador',st:'ajuste'});
+      (function(){ var _ct=document.getElementById('conteudo'); if(_ct) _ct.scrollTop=0; })(); /* volta ao topo para mostrar o novo status */
     });
   });
 
@@ -1339,7 +1341,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788792166';
+  var MYV='1788793093';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
