@@ -8,9 +8,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Detalhe do contribuinte</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788773361">
-  <script src="../design-system/ds-tailwind.js?v=1788773361"></script>
-  <script src="../design-system/ds-dialog.js?v=1788773361"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788775336">
+  <script src="../design-system/ds-tailwind.js?v=1788775336"></script>
+  <script src="../design-system/ds-dialog.js?v=1788775336"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -905,7 +905,7 @@
     s2u:{nome:'Simple2u',          cnpj:'40.997.879/0001-02', logo:'../Logos/logo_simple-2u_j7QQ4s.png', natureza:'Sociedade Empresária Limitada', cnae:'64.63-8/00 · Outras sociedades de participação', regNum:'1', regNome:'Serviços Financeiros', regSec:'Nenhum', natTrib:'Tributação regular', tab:'Tabela 21', ativ:[]}
   };
   /* vigência REAL da vigente por empresa (o detalhe mostrava início/fim fixos, contradizendo a lista/empresa e o próprio banner de vencimento) */
-  var VIG={ seg:{ini:'01/01/2026',fim:''}, fin:{ini:'01/01/2026',fim:'31/12/2026'}, cap:{ini:'01/01/2026',fim:'30/09/2026'}, sic:{ini:'01/01/2026',fim:''}, s2u:{ini:'01/01/2026',fim:''} };
+  var VIG={ seg:{ini:'01/01/2026',fim:''}, fin:{ini:'01/01/2026',fim:'30/06/2027'}, cap:{ini:'01/01/2026',fim:'30/09/2026'}, sic:{ini:'01/01/2026',fim:''}, s2u:{ini:'01/01/2026',fim:''} };
   function dparam(k){ var m=new RegExp('[?&]'+k+'=([^&]+)').exec(location.search); return m?decodeURIComponent(m[1]):''; }
   function dco(){ return DCO[dparam('emp')||'seg']||DCO.seg; }
   (function(){
@@ -1322,7 +1322,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788773361';
+  var MYV='1788775336';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

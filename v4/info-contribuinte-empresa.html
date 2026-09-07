@@ -8,9 +8,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Versões · MAG Seguros</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788773361">
-  <script src="../design-system/ds-tailwind.js?v=1788773361"></script>
-  <script src="../design-system/ds-dialog.js?v=1788773361"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788775336">
+  <script src="../design-system/ds-tailwind.js?v=1788775336"></script>
+  <script src="../design-system/ds-dialog.js?v=1788775336"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -137,6 +137,7 @@
     .cd{font-size:var(--text-xs);margin-top:3px;font-variant-numeric:tabular-nums;color:var(--color-text-muted);display:flex;align-items:center;gap:var(--space-1)}
     .cd--warn{color:var(--color-warning-fg);font-weight:600}
     .cd--over{color:var(--color-danger-fg);font-weight:600}
+    .cd--future{color:var(--color-success-fg);font-weight:600}
     .cdtip{text-decoration:underline dotted;text-underline-offset:2px;cursor:help}
     .verlist{display:flex;flex-direction:column;gap:var(--space-3)}
     /* pílula de status na linha de versão: 12px (pedido do PO nesta tela) */
@@ -403,8 +404,8 @@
       {n:1, current:false, sit:'sucesso',      vigrole:'past', vig:'01/01/2025 a 31/05/2025', recibo:'RC-2025.0001', quando:'31/05/2025, 23:59', env:'04/01/2025, 10:30', proc:'05/01/2025, 09:00', resp:'Ricardo Alves'}
     ]},
     fin:{nome:'MAG Finanças', cnpj:'21.995.256/0001-56', logo:'../Logos/mag%20financas.jpeg', regime:'Serviços Financeiros', versions:[
-      {n:4, current:false, sit:'futura',       vigrole:'future', vig:'01/01/2027 · em aberto',  recibo:'RC-2026.0004', quando:'03/09/2026, 10:20', env:'02/09/2026, 09:00', proc:'03/09/2026, 10:20'},
-      {n:3, current:true,  sit:'sucesso',      vigrole:'now',  vig:'01/01/2026 a 31/12/2026', recibo:'RC-2026.0003', quando:'22/08/2026, 16:40', env:'21/08/2026, 10:20', proc:'22/08/2026, 16:40'},
+      {n:4, current:false, sit:'futura',       vigrole:'future', vig:'01/07/2027 · em aberto',  recibo:'RC-2026.0004', quando:'03/09/2026, 10:20', env:'02/09/2026, 09:00', proc:'03/09/2026, 10:20'},
+      {n:3, current:true,  sit:'sucesso',      vigrole:'now',  vig:'01/01/2026 a 30/06/2027', recibo:'RC-2026.0003', quando:'22/08/2026, 16:40', env:'21/08/2026, 10:20', proc:'22/08/2026, 16:40'},
       {n:2, current:false, sit:'sucesso',      vigrole:'past', vig:'01/07/2025 a 31/12/2025', recibo:'RC-2025.0002', quando:'31/12/2025, 23:59', env:'30/06/2025, 09:00', proc:'01/07/2025, 09:00', resp:'Ricardo Alves'},
       {n:1, current:false, sit:'sucesso',      vigrole:'past', vig:'01/01/2025 a 30/06/2025', recibo:'RC-2025.0001', quando:'30/06/2025, 23:59', env:'02/01/2025, 08:45', proc:'03/01/2025, 09:00', resp:'Ricardo Alves'}
     ]},
@@ -504,7 +505,10 @@
     return '<span class="tooltip tooltip--top vigwarn"><span class="vigwarn__ic" tabindex="0" role="img" aria-label="O prazo de vigência está perto do fim. Envie uma nova versão."><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg></span><span class="tooltip__bubble tooltip__bubble--stack">O prazo de vigência está perto do fim. Envie uma nova versão.</span></span>';
   }
   /* countdown embaixo da Vigência (igual à lista): "Termina em X dias" + tooltip quando perto do fim e sem sucessora */
-  function vigCd(v){ if(v.vigrole!=='now') return ''; var end=endOf(v.vig), ed=pdate(end); if(!ed) return ''; var d=Math.round((ed-new Date(2026,8,4))/86400000); var warn=nearEndVig(v); var cls=d<0?'cd--over':(d<=60?'cd--warn':'cd--ok'); var txt=d<0?'Vigência expirada':(d===0?'Termina hoje':('Termina em '+d+' dia'+(d===1?'':'s'))); var msg='Não há versão futura aprovada. Crie uma nova versão antes do fim desta vigência.'; if(warn){ return '<div class="cd '+cls+'"><span class="tooltip tooltip--top cdtip" tabindex="0" role="note" aria-label="'+esc(txt)+'. '+esc(msg)+'">'+esc(txt)+'<span class="tooltip__bubble tooltip__bubble--stack" role="tooltip">'+esc(msg)+'</span></span></div>'; } return '<div class="cd '+cls+'">'+esc(txt)+'</div>'; }
+  function vigCd(v){
+    /* vigência futura: countdown até o início ("Começa em X dias") */
+    if(v.vigrole==='future'){ var pf=parseVig(v.vig); if(!pf||!pf.from) return ''; var fd=Math.round((pf.from-new Date(2026,8,4))/86400000); if(fd<0) return ''; var ft=(fd===0?'Começa hoje':('Começa em '+fd+' dia'+(fd===1?'':'s'))); return '<div class="cd cd--future">'+esc(ft)+'</div>'; }
+    if(v.vigrole!=='now') return ''; var end=endOf(v.vig), ed=pdate(end); if(!ed) return ''; var d=Math.round((ed-new Date(2026,8,4))/86400000); var warn=nearEndVig(v); var cls=d<0?'cd--over':(d<=60?'cd--warn':'cd--ok'); var txt=d<0?'Vigência expirada':(d===0?'Termina hoje':('Termina em '+d+' dia'+(d===1?'':'s'))); var msg='Não há versão futura aprovada. Crie uma nova versão antes do fim desta vigência.'; if(warn){ return '<div class="cd '+cls+'"><span class="tooltip tooltip--top cdtip" tabindex="0" role="note" aria-label="'+esc(txt)+'. '+esc(msg)+'">'+esc(txt)+'<span class="tooltip__bubble tooltip__bubble--stack" role="tooltip">'+esc(msg)+'</span></span></div>'; } return '<div class="cd '+cls+'">'+esc(txt)+'</div>'; }
   function vigKv(v){ var period=(v.vig&&v.vig!=='—')?v.vig:'—'; return '<div class="kv"><p class="kv__k">Vigência</p><p class="kv__v" title="'+esc(period)+'">'+esc(period)+'</p>'+vigCd(v)+'</div>'; }
   function row(v, opts){
     opts=opts||{};
@@ -775,7 +779,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788773361';
+  var MYV='1788775336';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
