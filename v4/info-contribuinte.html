@@ -8,9 +8,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Informações do Contribuinte</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788769962">
-  <script src="../design-system/ds-tailwind.js?v=1788769962"></script>
-  <script src="../design-system/ds-dialog.js?v=1788769962"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788773361">
+  <script src="../design-system/ds-tailwind.js?v=1788773361"></script>
+  <script src="../design-system/ds-dialog.js?v=1788773361"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     /* ===== App shell (mesmo do painel) ===== */
@@ -684,6 +684,15 @@
     }
     function renderSelected(){
       var regs=selectedRegimes(), html='';
+      /* limpa o erro "Selecione ao menos uma atividade" assim que ele deixa de valer:
+         regime "Outros" (sem grupo setorial) ou já existe ao menos uma atividade selecionada */
+      (function(){
+        var _tot=Object.keys(sel).reduce(function(n,k){ return n+((sel[k]||[]).length); },0);
+        if(regs.length===0 || _tot>0){
+          var _e=document.getElementById('atvErr'); if(_e) _e.remove();
+          if(selectedEl){ selectedEl.removeAttribute('aria-invalid'); selectedEl.removeAttribute('aria-describedby'); }
+        }
+      })();
       /* regime "Outros" (sem nenhum regime setorial): não há grupo setorial a detalhar. Mostra nota em vez de seção vazia. */
       if(regs.length===0){
         var _nota='<p class="atvsel__empty" style="margin:0">O regime <strong>Outros</strong> não exige detalhamento de atividades por grupo setorial.</p>';
@@ -1039,7 +1048,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788769962';
+  var MYV='1788773361';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

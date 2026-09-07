@@ -8,9 +8,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Detalhe do contribuinte</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788769962">
-  <script src="../design-system/ds-tailwind.js?v=1788769962"></script>
-  <script src="../design-system/ds-dialog.js?v=1788769962"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788773361">
+  <script src="../design-system/ds-tailwind.js?v=1788773361"></script>
+  <script src="../design-system/ds-dialog.js?v=1788773361"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -636,7 +636,12 @@
   /* motivo da exclusão (motExcl escolhido pelo preparador): mostrado no banner do aprovador */
   function exclMotivo(){ var m=''; try{ m=localStorage.getItem('adere.d1001.exclmotivo.'+empId())||''; }catch(e){} return m||'Encerramento de atividade'; }
   /* operação derivada da alteração (gravada pelo formulário no envio): {op:'corrigir'|'novavig', data} */
-  function altOp(){ try{ var s=localStorage.getItem('adere.d1001.altop.'+empId()); return s?JSON.parse(s):null; }catch(e){ return null; } }
+  function altOp(){
+    try{ var s=localStorage.getItem('adere.d1001.altop.'+empId()); if(s) return JSON.parse(s); }catch(e){}
+    /* deep-link de demonstração: ?altop=novavig|validade|corrigir (&altdata=dd/mm/aaaa) para o docx levar a cada cenário */
+    var _u=dparam('altop'); if(['novavig','validade','corrigir'].indexOf(_u)>=0) return {op:_u, data:dparam('altdata')||''};
+    return null;
+  }
   function approverBanner(){
     var _cur=parseInt(dparam('v')||'1',10);
     /* Exclusão de vigência: banner próprio (natureza diferente das demais) */
@@ -1317,7 +1322,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788769962';
+  var MYV='1788773361';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
