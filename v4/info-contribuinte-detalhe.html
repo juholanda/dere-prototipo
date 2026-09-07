@@ -8,9 +8,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Detalhe do contribuinte</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788788158">
-  <script src="../design-system/ds-tailwind.js?v=1788788158"></script>
-  <script src="../design-system/ds-dialog.js?v=1788788158"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788788562">
+  <script src="../design-system/ds-tailwind.js?v=1788788562"></script>
+  <script src="../design-system/ds-dialog.js?v=1788788562"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -572,7 +572,7 @@
     } else if(sit==='excluida'){
       var _hN='info-contribuinte.html?modo=nova&emp='+empId()+(dparam('scn')?('&scn='+dparam('scn')):'')+'&from=detalhe';
       var _PL='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5v14"/></svg>';
-      el.innerHTML='<div class="dalert dalert--warning" role="status"><span class="dalert__ic">'+ALERT+'</span><div class="dalert__body"><p class="dalert__title">Vigência excluída na Receita Federal</p><p class="dalert__text">Motivo: <strong>'+esc(exclMotivo())+'</strong>. O período ficou como <strong>lacuna</strong> (sem D-1001 vigente): as <strong>declarações mensais</strong> que dependem deste cadastro ficam bloqueadas nesse intervalo. Registre uma nova versão que cubra o período.</p></div><a class="btn btn--secondary dalert__act" href="'+_hN+'">'+_PL+'Nova versão D-1001</a></div>';
+      el.innerHTML='<div class="dalert dalert--warning" role="status"><span class="dalert__ic">'+ALERT+'</span><div class="dalert__body"><p class="dalert__title">Vigência excluída na Receita Federal</p><p class="dalert__text">Motivo: <strong>'+esc(exclMotivo())+'</strong>. Não há uma versão vigente para este período. Por isso, as <strong>declarações mensais</strong> ficam bloqueadas até que uma nova vigência seja registrada.</p></div><a class="btn btn--secondary dalert__act" href="'+_hN+'">'+_PL+'Nova versão D-1001</a></div>';
     } else if(sit==='futura'){
       el.innerHTML='<div class="dalert dalert--info" role="status"><span class="dalert__ic">'+IC_INFO+'</span><div class="dalert__body"><p class="dalert__title">Vigência futura</p><p class="dalert__text">Esta versão foi <strong>aceita pela Receita</strong>, mas só passa a <strong>valer no início da vigência</strong>. Até lá, a versão vigente anterior continua valendo.</p></div></div>';
     } else { el.innerHTML=''; }
@@ -1322,7 +1322,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788788158';
+  var MYV='1788788562';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);

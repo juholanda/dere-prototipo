@@ -8,9 +8,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Versões · MAG Seguros</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788788158">
-  <script src="../design-system/ds-tailwind.js?v=1788788158"></script>
-  <script src="../design-system/ds-dialog.js?v=1788788158"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788788562">
+  <script src="../design-system/ds-tailwind.js?v=1788788562"></script>
+  <script src="../design-system/ds-dialog.js?v=1788788562"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -591,7 +591,7 @@
     } else if(prog && prog.sit==='rejeitado'){
       al='<div class="dalert dalert--danger" role="status"><span class="dalert__ic">'+I.x+'</span><div class="dalert__body"><p class="dalert__title">Versão '+prog.n+' rejeitada pela Receita</p><p class="dalert__text">A transmissão foi rejeitada. Consulte o motivo, corrija as informações e reenvie. A versão vigente continua valendo.</p></div><a class="btn btn--secondary dalert__act" href="'+hrefOf(prog)+'">Ver motivo'+I.chev+'</a></div>';
     } else if(exc){
-      al='<div class="dalert dalert--warning" role="status"><span class="dalert__ic">'+I.alert+'</span><div class="dalert__body"><p class="dalert__title">Vigência excluída na Receita Federal</p><p class="dalert__text">'+(exc.exclMotivo?('Motivo: <strong>'+esc(exc.exclMotivo)+'</strong>. '):'')+'O período ficou como <strong>lacuna</strong> (sem D-1001 vigente): as <strong>declarações mensais</strong> que dependem deste cadastro ficam bloqueadas nesse intervalo. Registre uma nova versão que cubra o período.</p></div><a class="btn btn--secondary dalert__act" href="'+hrefNova()+'">'+I.plus+'Nova versão D-1001</a></div>';
+      al='<div class="dalert dalert--warning" role="status"><span class="dalert__ic">'+I.alert+'</span><div class="dalert__body"><p class="dalert__title">Vigência excluída na Receita Federal</p><p class="dalert__text">'+(exc.exclMotivo?('Motivo: <strong>'+esc(exc.exclMotivo)+'</strong>. '):'')+'Não há uma versão vigente para este período. Por isso, as <strong>declarações mensais</strong> ficam bloqueadas até que uma nova vigência seja registrada.</p></div><a class="btn btn--secondary dalert__act" href="'+hrefNova()+'">'+I.plus+'Nova versão D-1001</a></div>';
     } else if(vig && vig.exclProc){
       al='<div class="dalert dalert--info" role="status"><span class="dalert__ic">'+I.info+'</span><div class="dalert__body"><p class="dalert__title">Exclusão em processamento na Receita Federal</p><p class="dalert__text">A exclusão da Versão '+vig.n+' foi transmitida e está em processamento. A vigência <strong>continua valendo</strong> até a Receita concluir; uma transmissão em andamento não pode ser cancelada.</p></div><a class="btn btn--secondary dalert__act" href="info-contribuinte-detalhe.html?emp='+EMP+'&v='+vig.n+'&st=aprovado&sit=processando&op=exclusao'+Q(false)+'">Acompanhar'+I.chev+'</a></div>';
     }
@@ -603,7 +603,7 @@
 
     /* vigente */
     /* a vigência futura mora DENTRO do bloco de vigente, logo abaixo da atual, marcada como "Vigência futura" (com respiro entre elas) */
-    var _vigHtml = vig ? row(vig,{current:true}) : (exc?emptyBox('Nenhuma versão vigente.', 'A vigência foi excluída na Receita Federal; registre uma nova versão para o contribuinte voltar a ter declaração vigente.'):emptyBox('Nenhuma versão vigente.', 'A primeira versão processada com sucesso pela Receita aparece aqui.'));
+    var _vigHtml = vig ? row(vig,{current:true}) : (exc?emptyBox('Nenhuma versão vigente.', 'A vigência foi excluída na Receita Federal (veja o aviso acima).'):emptyBox('Nenhuma versão vigente.', 'A primeira versão processada com sucesso pela Receita aparece aqui.'));
     $('secVig').innerHTML = fut ? '<div class="verlist" style="gap:var(--space-4)">'+_vigHtml+row(fut,{})+'</div>' : _vigHtml;
 
     /* em preparação (0 ou 1): a ação que o usuário precisa tomar é primária; só consultar é secundária */
@@ -781,7 +781,7 @@
   </script>
 <script>
 (function(){
-  var MYV='1788788158';
+  var MYV='1788788562';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
