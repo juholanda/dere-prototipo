@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Painel de Monitoramento</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788873661">
-  <script src="../design-system/ds-tailwind.js?v=1788873661"></script>
-  <script src="../design-system/ds-dialog.js?v=1788873661"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788874077">
+  <script src="../design-system/ds-tailwind.js?v=1788874077"></script>
+  <script src="../design-system/ds-dialog.js?v=1788874077"></script>
   <style>
     /* ===== app-shell (igual às outras telas do v4) ===== */
     body{margin:0;background:var(--color-bg)}
@@ -85,7 +85,7 @@
     .viewtabs{margin-bottom:var(--space-6)}
 
     /* ===== matriz (único componente realmente novo; candidato a virar .matrix no DS) ===== */
-    .mtx-wrap{overflow:auto;max-height:calc(100vh - 360px);border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-surface)}
+    .mtx-wrap{overflow:visible;border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-surface)}
     table.mtx{width:100%;border-collapse:separate;border-spacing:0;min-width:900px;font-size:var(--text-sm)}
     .mtx thead th{position:sticky;top:0;z-index:2;background:var(--color-surface-2)}
     .mtx .grp th{font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.04em;color:var(--color-text-muted);font-weight:700;padding:var(--space-2) var(--space-3);text-align:center;border-bottom:1px solid var(--color-border)}
@@ -165,7 +165,7 @@
     .drhead__ic{flex:0 0 auto;width:var(--space-10);height:var(--space-10);border-radius:var(--radius-lg);background:var(--color-primary-subtle);color:var(--color-primary);display:grid;place-items:center}
     .drhead__ic svg{width:20px;height:20px}
     .drmeta{display:flex;align-items:center;gap:var(--space-2);flex-wrap:wrap;margin-bottom:var(--space-2)}
-    .drdesc{font-size:var(--text-sm);color:var(--color-text-onmuted);line-height:1.5;margin:0 0 var(--space-3)}
+    .drdesc{font-size:var(--text-sm);color:var(--color-text);line-height:1.5;margin:0 0 var(--space-3)}
     .drwait{color:var(--color-text-muted);font-weight:400}
     .drsec{margin-bottom:var(--space-6)}
     .drsec:last-child{margin-bottom:0}
@@ -859,7 +859,7 @@
       : (o.st==='vencido') ? 'Transmitir agora'
       : (o.st==='pendente'||o.st==='bloqueado') ? (ev==='D-1011'?'Preencher o plano de contas':ev==='D-1001'?'Preencher as informações':'Transmitir o '+ev)
       : (o.st==='processando') ? 'Ver o andamento'
-      : 'Ver o comprovante';
+      : 'Ver o evento';
     if(href){ $('drFooter').innerHTML='<a class="btn btn--primary" href="'+href+'" target="_blank" rel="noopener" aria-label="'+esc(footLabel)+' (abre em nova aba)">'+esc(footLabel)+' '+EXT+'</a>'; }
     else if(needsAction){ $('drFooter').innerHTML='<button class="btn btn--primary" type="button" data-building>'+esc(footLabel)+'</button>'; }
     else { $('drFooter').innerHTML='<button class="btn btn--secondary" type="button" data-drclose>Fechar</button>'; }
@@ -1000,7 +1000,7 @@
 </script>
 <script>
 (function(){
-  var MYV='1788873661';
+  var MYV='1788874077';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
