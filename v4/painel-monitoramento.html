@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Painel de Monitoramento</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788885024">
-  <script src="../design-system/ds-tailwind.js?v=1788885024"></script>
-  <script src="../design-system/ds-dialog.js?v=1788885024"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788887581">
+  <script src="../design-system/ds-tailwind.js?v=1788887581"></script>
+  <script src="../design-system/ds-dialog.js?v=1788887581"></script>
   <style>
     /* ===== app-shell (igual às outras telas do v4) ===== */
     body{margin:0;background:var(--color-bg)}
@@ -426,7 +426,7 @@
     processando:{l:'Em processamento',s:'Processando',p:'status--info',dot:'info'},
     rejeitado:{l:'Rejeitada',s:'Rejeitada',p:'status--danger',dot:'danger'},
     pendente:{l:'Em preparação',s:'Em preparação',p:'status--neutral',dot:'neutral'},   /* guarda-chuva de Rascunho, Em revisão e Ajustes solicitados; o sub-estado por item entra quando houver esse dado */
-    bloqueado:{l:'Bloqueada',s:'Bloqueada',p:'status--warning',dot:'warning'},
+    bloqueado:{l:'Envio bloqueado',s:'Envio bloqueado',p:'status--warning',dot:'warning'},   /* a obrigação pode ser preparada; o que está bloqueado é o ENVIO (espera os pré-requisitos) */
     vencido:{l:'Vencida',s:'Vencida',p:'status--danger',dot:'danger'}
   };
   function isAceita(s){ return s==='ok'||s==='adv'; }
@@ -682,7 +682,7 @@
     var groups=[
       {k:'urg', t:'Requer ação', urg:true, mono:'late', test:function(i){ return i.o.st==='vencido'||i.o.st==='rejeitado'; }},
       {k:'pend',t:'Em preparação', mono:'pend', test:function(i){ return i.o.st==='pendente'; }},
-      {k:'blk', t:'Bloqueadas por dependência', mono:'blk', test:function(i){ return i.o.st==='bloqueado'; }},
+      {k:'blk', t:'Envio bloqueado por dependência', mono:'blk', test:function(i){ return i.o.st==='bloqueado'; }},
       {k:'proc',t:'Em processamento', mono:'proc', test:function(i){ return i.o.st==='processando'; }}
     ];
     el.innerHTML=groups.map(function(g){
@@ -738,7 +738,7 @@
     if(!o||o.st==='na') return '<td'+cls+'><span class="cellna">Não se aplica</span></td>';
     if(ev==='D-1199'){
       var g=gate(r), dc, dl;
-      if(o.st==='ok'){ dc='success'; dl='Concluída'; } else if(g.ok){ dc='info'; dl='Liberada'; } else { dc='warning'; dl='Bloqueada'; }
+      if(o.st==='ok'){ dc='success'; dl='Concluída'; } else if(g.ok){ dc='info'; dl='Liberada'; } else { dc='warning'; dl='Envio bloqueado'; }
       return '<td'+cls+'><button class="cellbtn" type="button" data-open="'+r.c.emp+'|D-1199" aria-label="'+esc('Fechamento: '+dl+', '+r.c.nome)+'">'+mcellHtml(dc,dl)+'</button></td>';
     }
     var st=effState(r,ev);
@@ -787,7 +787,7 @@
       var naEv=(!o||o.st==='na');
       var stCell, compr=naEv?'':'não transmitido', prazo=naEv?'':(EVENTS[ev].per==='Eventual'?'não se aplica':(o.prazo||'não se aplica')), resp=naEv?'':(o.resp||'Não informado');
       if(naEv){ stCell='<span class="cellna">Não se aplica</span>'; }
-      else if(ev==='D-1199'){ stCell=(o.st==='ok')?'<span class="status status--sm status--success"><span class="status__dot"></span>Concluída</span>':(g.ok?'<span class="status status--sm status--info"><span class="status__dot"></span>Liberada</span>':'<span class="status status--sm status--warning"><span class="status__dot"></span>Bloqueada</span>'); }
+      else if(ev==='D-1199'){ stCell=(o.st==='ok')?'<span class="status status--sm status--success"><span class="status__dot"></span>Concluída</span>':(g.ok?'<span class="status status--sm status--info"><span class="status__dot"></span>Liberada</span>':'<span class="status status--sm status--warning"><span class="status__dot"></span>Envio bloqueado</span>'); }
       else { stCell=pill(o.st)+(o.rejNova?' <span class="cellsub">nova versão rejeitada</span>':''); }
       if(!naEv && isAceita(o.st)) compr='<span class="mono" style="font-variant-numeric:tabular-nums">'+esc(recibo31(ev.replace('D-',''),COMP,o.seq))+'</span>';
       else if(!naEv && (o.st==='processando'||o.st==='rejeitado')) compr='<span class="mono" style="font-variant-numeric:tabular-nums;color:var(--color-text-muted)">'+esc(protocolo28(COMP,o.seq||1))+'</span>';
@@ -798,7 +798,7 @@
     el.innerHTML=''+
       '<div class="card" style="padding:var(--space-6);margin-bottom:var(--space-6)"><div style="display:flex;justify-content:space-between;gap:var(--space-4);flex-wrap:wrap;align-items:flex-start">'+
         '<div class="cohead">'+logoHtml(r.c)+'<div class="cohead__b"><div class="co-name" style="font-size:var(--text-lg)">'+esc(r.c.nome)+'</div><div class="co-sub">'+esc(r.c.cnpj)+' · '+esc(r.c.reg)+' · '+esc(r.c.papel)+'</div></div></div>'+
-        '<div>'+(g.fim?'<span class="status status--success"><span class="status__dot"></span>Fechamento concluído</span>':(g.ok?'<span class="status status--info"><span class="status__dot"></span>Pronta para transmitir</span>':'<span class="status status--warning"><span class="status__dot"></span>Fechamento bloqueado</span>'))+'</div>'+
+        '<div>'+(g.fim?'<span class="status status--success"><span class="status__dot"></span>Fechamento concluído</span>':(g.ok?'<span class="status status--info"><span class="status__dot"></span>Pronta para transmitir</span>':'<span class="status status--warning"><span class="status__dot"></span>Envio bloqueado</span>'))+'</div>'+
       '</div></div>'+
       '<div class="card"><table class="table"><thead><tr><th scope="col">Evento</th><th scope="col">Situação</th><th scope="col">Comprovante</th><th scope="col">Prazo</th><th scope="col">Responsável</th><th scope="col"><span class="sr-only">Ações</span></th></tr></thead><tbody>'+rowsHtml+'</tbody></table></div>';
     bindOpen(el);
@@ -824,8 +824,8 @@
     // estado exibido (D-1199 usa a trava)
     var dispSt=o.st, gateInfo=null;
     if(ev==='D-1199' && o.st!=='ok'){ gateInfo=gate(r); dispSt=gateInfo.ok?'liberado':'bloqueado'; }
-    var dp=ST[o.st]||{l:(dispSt==='liberado'?'Liberado':'Bloqueado'),p:(dispSt==='liberado'?'status--info':'status--warning')};
-    if(ev==='D-1199' && o.st!=='ok'){ dp={l:(gateInfo.ok?'Liberada para transmitir':'Bloqueada'),p:(gateInfo.ok?'status--info':'status--warning')}; }
+    var dp=ST[o.st]||{l:(dispSt==='liberado'?'Liberado':'Envio bloqueado'),p:(dispSt==='liberado'?'status--info':'status--warning')};
+    if(ev==='D-1199' && o.st!=='ok'){ dp={l:(gateInfo.ok?'Liberada para transmitir':'Envio bloqueado'),p:(gateInfo.ok?'status--info':'status--warning')}; }
     // drawer = detalhe: o pill mostra sempre o estado PRECISO (Processada com sucesso/advertências, Rejeitada, etc.), padrão único; o panorama "Concluída" fica só na matriz
     var pillL=dp.l, pillP=dp.p;
     var pl=$('drPill'); pl.className='status status--sm '+pillP; pl.innerHTML='<span class="status__dot"></span>'+esc(pillL);
@@ -1051,7 +1051,7 @@
 </script>
 <script>
 (function(){
-  var MYV='1788885024';
+  var MYV='1788887581';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
