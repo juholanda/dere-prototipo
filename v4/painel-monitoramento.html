@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Painel de Monitoramento</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788820706">
-  <script src="../design-system/ds-tailwind.js?v=1788820706"></script>
-  <script src="../design-system/ds-dialog.js?v=1788820706"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788826111">
+  <script src="../design-system/ds-tailwind.js?v=1788826111"></script>
+  <script src="../design-system/ds-dialog.js?v=1788826111"></script>
   <style>
     /* ===== app-shell (igual às outras telas do v4) ===== */
     body{margin:0;background:var(--color-bg)}
@@ -114,7 +114,7 @@
     .co-cnpj{font-size:var(--text-sm);color:var(--color-text-muted);font-variant-numeric:tabular-nums;margin-top:2px}
     .co-sub{font-size:var(--text-sm);color:var(--color-text-muted);font-variant-numeric:tabular-nums;margin-top:2px;line-height:1.5}
     .cellbtn{appearance:none;background:none;border:0;padding:var(--space-1);cursor:pointer;font:inherit;display:inline-flex;flex-direction:column;align-items:flex-start;gap:var(--space-1);border-radius:var(--radius-base);text-align:left}
-    .cellbtn:hover{background:var(--color-surface-2)}
+    .cellbtn:hover{background:color-mix(in srgb,var(--color-primary) 14%,var(--color-surface))}
     .cellbtn:focus-visible{outline:none;box-shadow:var(--ring)}
     .cellna{font-size:var(--text-xs);color:var(--color-text-muted);font-weight:400}
     .cellsub{font-size:var(--text-xs);color:var(--color-warning-fg);font-weight:600}
@@ -954,7 +954,7 @@
 </script>
 <script>
 (function(){
-  var MYV='1788820706';
+  var MYV='1788826111';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
