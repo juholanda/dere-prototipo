@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Painel de Monitoramento</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788838691">
-  <script src="../design-system/ds-tailwind.js?v=1788838691"></script>
-  <script src="../design-system/ds-dialog.js?v=1788838691"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788839526">
+  <script src="../design-system/ds-tailwind.js?v=1788839526"></script>
+  <script src="../design-system/ds-dialog.js?v=1788839526"></script>
   <style>
     /* ===== app-shell (igual às outras telas do v4) ===== */
     body{margin:0;background:var(--color-bg)}
@@ -474,7 +474,7 @@
             'D-1106':ob('pendente',{prazo:'15/02/2027',dias:6,resp:'Tesouraria'}),
             'D-2101':ob('na'),
             'D-1199':ob('bloqueado',{prazo:'25/02/2027',dias:16,resp:'Controladoria'}) },
-      sic:{ 'D-1001':ob('ok',{seq:95,resp:'Fiscal',rejNova:{codigo:'MS1097',motivo:'A nova versão (v4) foi rejeitada por sobreposição de vigência (as datas se sobrepõem a um período existente). A versão vigente (v3) permanece aceita e não é derrubada.'}}),
+      sic:{ 'D-1001':ob('ok',{seq:95,resp:'Fiscal',rejNova:{codigo:'MS1097',motivo:'A nova versão (v4) foi rejeitada por sobreposição de vigência. A versão vigente (v3) permanece aceita.'}}),
             'D-1011':ob('ok',{seq:103,resp:'Fiscal'}),
             'D-1101':ob('pendente',{prazo:'15/02/2027',dias:6,resp:'Contabilidade'}),
             'D-1106':ob('na'), 'D-2101':ob('na'),
@@ -579,7 +579,7 @@
   /* ===== próxima ação + prazo ===== */
   function proxAcao(ev,o,r){
     switch(o.st){
-      case 'vencido': return {a:'Transmitir o '+ev+' imediatamente.', w:'Prazo de '+(o.prazo||'')+' vencido. '+(o.obs||'')};
+      case 'vencido': return {a:'Transmitir o '+ev+'.', w:'O prazo de '+(o.prazo||'')+' foi excedido e a obrigação ainda não foi transmitida.'};
       case 'rejeitado': return {a:'Corrigir e retransmitir o '+ev+'.', w:o.motivo||o.erro||'Retorno diferente de processamento aceito.'};
       case 'processando': return {a:'Aguardar o retorno da Receita.', w:'Transmitido. O protocolo não é prova; aguardando o '+EVENTS[ev].ret+'.'};
       case 'pendente': return {a:'Transmitir o '+ev+'.', w:o.obs||EVENTS[ev].desc};
@@ -652,12 +652,12 @@
         var na=proxAcao(it.ev,it.o,it.r), rel=relPrazo(it.o);
         var tone=(g.k==='urg')?' taskrow--danger':(g.k==='blk'?' taskrow--warning':'');
         var evline=it.ev+' '+EVENTS[it.ev].nome+(it.o.rejNova?' (nova versão)':'');
-        var due='';
-        if(it.o.prazo && EVENTS[it.ev].per!=='Eventual'){ due='<span class="due">'+esc(it.o.prazo)+(rel?'<span class="rel rel--'+rel.c+'">'+esc(rel.t)+'</span>':'')+'</span>'; }
+        var dueInner='';
+        if(it.o.prazo && EVENTS[it.ev].per!=='Eventual'){ dueInner=esc(it.o.prazo)+(rel?'<span class="rel rel--'+rel.c+'">'+esc(rel.t)+'</span>':''); }
         return '<div class="taskrow taskrow--click'+tone+'" role="button" tabindex="0" data-open="'+it.r.c.emp+'|'+it.ev+'" aria-label="Abrir '+esc(it.r.c.nome+', '+it.ev)+'">'+
-          '<span class="taskrow__mono" aria-hidden="true">'+ICmono[g.mono]+'</span>'+
+          logoHtml(it.r.c)+
           '<div class="taskrow__b"><p class="taskrow__t">'+esc(it.r.c.nome)+' · '+esc(evline)+'</p><p class="taskrow__why">'+esc(na.a)+' '+esc(na.w)+'</p></div>'+
-          '<div class="taskrow__side">'+(g.k==='urg'?pill(it.o.st):'')+due+'</div>'+
+          '<div class="taskrow__side">'+(g.k==='urg'?pill(it.o.st):'')+'<span class="due">'+dueInner+'</span></div>'+
           '<span class="taskrow__chev" aria-hidden="true">'+CHEV+'</span>'+
         '</div>';
       }).join('');
@@ -964,7 +964,7 @@
 </script>
 <script>
 (function(){
-  var MYV='1788838691';
+  var MYV='1788839526';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
