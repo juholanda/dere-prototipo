@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Painel de Monitoramento</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788839526">
-  <script src="../design-system/ds-tailwind.js?v=1788839526"></script>
-  <script src="../design-system/ds-dialog.js?v=1788839526"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788845488">
+  <script src="../design-system/ds-tailwind.js?v=1788845488"></script>
+  <script src="../design-system/ds-dialog.js?v=1788845488"></script>
   <style>
     /* ===== app-shell (igual às outras telas do v4) ===== */
     body{margin:0;background:var(--color-bg)}
@@ -339,8 +339,8 @@
     </div>
   </div>
 
-  <!-- DRAWER (usa .drawer + .drawer-backdrop + dsDialog do DS) -->
-  <div class="drawer-backdrop" id="drBackdrop" hidden></div>
+  <!-- DRAWER (usa .drawer + .drawer-backdrop + dsDialog do DS). O drawer fica DENTRO do backdrop para não ser marcado inert pelo dsDialog (que preserva só o backdrop e seus filhos). -->
+  <div class="drawer-backdrop" id="drBackdrop" hidden>
   <aside class="drawer drawer--md" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drTitle" hidden>
     <div class="drawer__header">
       <div class="drhead">
@@ -356,6 +356,7 @@
     <div class="drawer__body" id="drBody"></div>
     <div class="drawer__footer" id="drFooter"></div>
   </aside>
+  </div>
 
 <script>
 (function(){
@@ -843,7 +844,7 @@
   }
   function kv(k,v){ return '<div class="kv__row"><span class="kv__k">'+esc(k)+'</span><span class="kv__v">'+v+'</span></div>'; }
   $('drClose').addEventListener('click',function(){ dsDialog.close(); });
-  $('drBackdrop').addEventListener('click',function(){ dsDialog.close(); });
+  $('drBackdrop').addEventListener('click',function(e){ if(e.target===this) dsDialog.close(); });
 
   /* ===== controladores ===== */
   function render(){ if(VIEW==='pend') renderPend(); else renderCob(); }
@@ -964,7 +965,7 @@
 </script>
 <script>
 (function(){
-  var MYV='1788839526';
+  var MYV='1788845488';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
