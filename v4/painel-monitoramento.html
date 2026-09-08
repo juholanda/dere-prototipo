@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Painel de Monitoramento</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788827015">
-  <script src="../design-system/ds-tailwind.js?v=1788827015"></script>
-  <script src="../design-system/ds-dialog.js?v=1788827015"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788830164">
+  <script src="../design-system/ds-tailwind.js?v=1788830164"></script>
+  <script src="../design-system/ds-dialog.js?v=1788830164"></script>
   <style>
     /* ===== app-shell (igual às outras telas do v4) ===== */
     body{margin:0;background:var(--color-bg)}
@@ -140,12 +140,12 @@
     .taskrow__chev{flex:0 0 auto;color:var(--color-text-muted);display:grid;place-items:center}
     .taskrow__chev svg{width:18px;height:18px}
     .rel--late{color:var(--color-danger-fg)} .rel--soon{color:var(--color-warning-fg)} .rel--ok{color:var(--color-text-muted)}
-    .grouph{display:flex;align-items:center;gap:var(--space-2);margin:var(--space-6) 0 var(--space-2);font-size:var(--text-xs);font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--color-text-muted)}
-    .grouph:first-child{margin-top:0}
+    .grouph{display:flex;align-items:center;gap:var(--space-2);padding:var(--space-4) var(--space-6) var(--space-3);font-size:var(--text-xs);font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--color-text-muted)}
     .grouph.is-urg{color:var(--color-danger-fg)}
     .grouph .cnt{background:var(--color-surface-2);color:var(--color-text-muted);font-size:var(--text-xs);padding:0 var(--space-2);border-radius:var(--radius-pill);font-weight:700}
     .grouph.is-urg .cnt{background:var(--color-danger-bg);color:var(--color-danger-fg)}
-    .tasklist.card{margin-bottom:0}
+    .tasklist.card{margin-bottom:var(--space-4)}
+    .tasklist.card:last-child{margin-bottom:0}
 
     /* chip de filtro ativo (do KPI) */
     .activef{display:inline-flex;align-items:center;gap:var(--space-2);font-size:var(--text-sm);color:var(--color-text-onmuted);margin-bottom:var(--space-4)}
@@ -169,6 +169,8 @@
     .kv__v{text-align:right;color:var(--color-heading);font-weight:500}
 
     /* cabeçalho: ícone + pulso "ao vivo" sutil */
+    .page-h__lead{display:flex;align-items:flex-start;gap:var(--space-3)}
+    .page-h__txt{min-width:0}
     .ph-ic{flex:0 0 auto;width:var(--space-10);height:var(--space-10);border-radius:var(--radius-lg);background:var(--color-primary-subtle);color:var(--color-primary);display:grid;place-items:center;animation:ph-in .4s ease}
     .ph-ic svg{width:22px;height:22px}
     @keyframes ph-in{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
@@ -272,11 +274,13 @@
           <div class="wrap">
             <div class="page-h__row">
               <div class="page-h__main">
-                <div class="page-h__title">
+                <div class="page-h__lead">
                   <span class="ph-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></span>
-                  <h1>Painel de Monitoramento</h1>
+                  <div class="page-h__txt">
+                    <div class="page-h__title"><h1>Painel de Monitoramento</h1></div>
+                    <p class="page-h__desc">Acompanhe a situação das obrigações declaratórias, os prazos e o processamento na Receita Federal.</p>
+                  </div>
                 </div>
-                <p class="page-h__desc">Acompanhe a situação das obrigações declaratórias, os prazos e o processamento na Receita Federal.</p>
               </div>
               <div class="page-h__act">
                 <div class="filterf filterf--comp">
@@ -553,7 +557,7 @@
     // Requer ação (filtra)
     html+=kpiBtn('acao','Requer ação',acao,ICa,acao?'danger':'', acao?(plural(rej,'rejeitada','rejeitadas')+', '+plural(venc,'vencida','vencidas')):'nada rejeitado ou vencido', acao>0);
     // A transmitir (filtra) — só pendentes prontas (bloqueadas ficam na fila, não são acionáveis agora)
-    html+=kpiBtn('pend','A transmitir',pend,ICp,'', pend?'prontas para transmitir':'nada a transmitir', false);
+    html+=kpiBtn('pend','A transmitir',pend,ICp,'', pend?'ainda não enviadas à Receita':'nada a transmitir', false);
     // Em processamento (filtra) — mesmo rótulo do status na tabela
     html+=kpiBtn('processando','Em processamento',proc,ICw,'', proc?'na Receita Federal':'nada em processamento', false);
     $('kpis').innerHTML=html;
@@ -596,7 +600,7 @@
     late:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg>',
     pend:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg>',
     blk:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',
-    proc:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>'
+    proc:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="8" cy="12" r="1.35" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.35" fill="currentColor" stroke="none"/><circle cx="16" cy="12" r="1.35" fill="currentColor" stroke="none"/></svg>'
   };
 
   /* ===== fila de pendências (.tasklist) ===== */
@@ -653,11 +657,11 @@
         return '<div class="taskrow taskrow--click'+tone+'" role="button" tabindex="0" data-open="'+it.r.c.emp+'|'+it.ev+'" aria-label="Abrir '+esc(it.r.c.nome+', '+it.ev)+'">'+
           '<span class="taskrow__mono" aria-hidden="true">'+ICmono[g.mono]+'</span>'+
           '<div class="taskrow__b"><p class="taskrow__t">'+esc(it.r.c.nome)+' · '+esc(evline)+'</p><p class="taskrow__why">'+esc(na.a)+' '+esc(na.w)+'</p></div>'+
-          '<div class="taskrow__side">'+pill(it.o.st)+due+'</div>'+
+          '<div class="taskrow__side">'+(g.k==='urg'?pill(it.o.st):'')+due+'</div>'+
           '<span class="taskrow__chev" aria-hidden="true">'+CHEV+'</span>'+
         '</div>';
       }).join('');
-      return '<p class="grouph'+(g.urg?' is-urg':'')+'">'+esc(g.t)+'<span class="cnt">'+gi.length+'</span></p><div class="tasklist card">'+rows+'</div>';
+      return '<div class="tasklist card"><p class="grouph'+(g.urg?' is-urg':'')+'">'+esc(g.t)+'<span class="cnt">'+gi.length+'</span></p>'+rows+'</div>';
     }).join('');
     bindOpen(el);
     var acaoN=items.filter(function(i){ return i.o.st==='vencido'||i.o.st==='rejeitado'; }).length;
@@ -681,10 +685,10 @@
     check:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="m8.4 12.3 2.3 2.3 4.9-5.2" fill="none" stroke="'+_S+'" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     dots:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="currentColor"/><circle cx="8" cy="12" r="1.35" fill="'+_S+'"/><circle cx="12" cy="12" r="1.35" fill="'+_S+'"/><circle cx="16" cy="12" r="1.35" fill="'+_S+'"/></svg>',
     x:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="m15 9-6 6M9 9l6 6" fill="none" stroke="'+_S+'" stroke-width="2.2" stroke-linecap="round"/></svg>',
-    alert:'<svg viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" fill="currentColor"/><path d="M12 10v3.6" fill="none" stroke="'+_S+'" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17" r="1.15" fill="'+_S+'"/></svg>',
+    lock:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="currentColor"/><rect x="8" y="11.2" width="8" height="6" rx="1.2" fill="'+_S+'"/><path d="M9.6 11.2V9.5a2.4 2.4 0 0 1 4.8 0v1.7" fill="none" stroke="'+_S+'" stroke-width="1.5"/></svg>',
     pencil:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M14.4 7.6 16.4 9.6 10 16l-2.7.7.7-2.7z" fill="none" stroke="'+_S+'" stroke-width="1.5" stroke-linejoin="round"/></svg>'
   };
-  var MICON={success:_mi.check, azul:_mi.check, info:_mi.dots, danger:_mi.x, warning:_mi.alert, neutral:_mi.pencil};
+  var MICON={success:_mi.check, azul:_mi.check, info:_mi.dots, danger:_mi.x, warning:_mi.lock, neutral:_mi.pencil};
   function mcellHtml(dotCls,label,sub){ return '<span class="mcell"><span class="micon micon--'+dotCls+'" aria-hidden="true">'+(MICON[dotCls]||MICON.neutral)+'</span><span class="mcell__tx"><span>'+esc(label)+'</span>'+(sub||'')+'</span></span>'; }
   function coCell(r,ev,gsep){
     var o=r.ob[ev], cls=gsep?' class="gsep"':'';
@@ -808,6 +812,7 @@
 
     $('drBody').innerHTML=
       '<div class="drsec"><p class="drsec__t">Situação</p>'+rec+extraRej+'</div>'+
+      nextHtml+
       '<div class="drsec"><p class="drsec__t">Detalhes do evento</p><div class="kv">'+
         kv('Periodicidade oficial', E.per)+
         kv('Evento de retorno', '<span class="mono">'+E.ret+'</span>')+
@@ -815,8 +820,7 @@
         kv('Responsável', esc(o.resp||'—'))+
         (o.obs?kv('Observação', esc(o.obs)):'')+
       '</div></div>'+
-      '<div class="drsec"><p class="drsec__t">Dependências</p>'+depsHtml+'</div>'+
-      nextHtml;
+      '<div class="drsec"><p class="drsec__t">Dependências</p>'+depsHtml+'</div>';
 
     // rodapé: ir para a tela do evento (onde vive o comprovante completo), ou nota quando não existe
     var t=E.tela, href=null, footLabel='Ir para o evento';
@@ -954,7 +958,7 @@
 </script>
 <script>
 (function(){
-  var MYV='1788827015';
+  var MYV='1788830164';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
