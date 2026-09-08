@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Painel de Monitoramento</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788826111">
-  <script src="../design-system/ds-tailwind.js?v=1788826111"></script>
-  <script src="../design-system/ds-dialog.js?v=1788826111"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788827015">
+  <script src="../design-system/ds-tailwind.js?v=1788827015"></script>
+  <script src="../design-system/ds-dialog.js?v=1788827015"></script>
   <style>
     /* ===== app-shell (igual às outras telas do v4) ===== */
     body{margin:0;background:var(--color-bg)}
@@ -94,10 +94,10 @@
     .mtx .ev th{padding:var(--space-2) var(--space-3);text-align:left;border-bottom:1px solid var(--color-border);vertical-align:middle;font-weight:600;position:sticky;top:33px;min-width:110px}
     .mtx .ev th .c{display:block;font-weight:700;color:var(--color-heading);font-variant-numeric:tabular-nums;white-space:nowrap}
     .mtx .ev th .n{display:block;font-size:var(--text-xs);color:var(--color-text-muted);font-weight:500;white-space:nowrap}
-    .mtx th.co{position:sticky;left:0;z-index:3;background:var(--color-surface-2);text-align:left;min-width:230px;padding:var(--space-3) var(--space-4);vertical-align:middle;border-right:1px solid var(--color-border)}
+    .mtx th.co{position:sticky;left:0;z-index:3;background:var(--color-surface-2);text-align:left;min-width:230px;padding:var(--space-3) var(--space-4);vertical-align:top;border-right:1px solid var(--color-border)}
     .mtx thead th.co{vertical-align:middle}   /* "Contribuinte declarante" centralizado na linha dos eventos; grupos ficam acima */
     .mtx tbody th.co{z-index:1;background:var(--color-surface);font-weight:400;border-bottom:1px solid var(--color-border)}
-    .mtx tbody td{padding:var(--space-3);text-align:left;border-bottom:1px solid var(--color-border);vertical-align:middle}
+    .mtx tbody td{padding:var(--space-3);text-align:left;border-bottom:1px solid var(--color-border);vertical-align:top}
     .mtx tbody tr:hover td,.mtx tbody tr:hover th.co{background:color-mix(in srgb,var(--color-primary) 5%,var(--color-surface))}
     .cohead{display:flex;gap:var(--space-3);align-items:flex-start}
     .cohead__b{min-width:0}
@@ -414,40 +414,40 @@
   function ob(st, extra){ return Object.assign({st:st}, extra||{}); }
   /* ===== Obrigações por competência (só o que muda no tempo) ===== */
   var DATA={
-    /* ===== INÍCIO do ciclo: fev/2027 recém-aberta. Cadastrais herdadas (ok); periódicas em preparação (prazo 15/03); fechamento aguardando. Nada vencido/rejeitado. ===== */
+    /* ===== CENÁRIO "NADA": fev/2027 recém-aberta, nada transmitido ainda. Nem informação do contribuinte (D-1001) nem plano de contas (D-1011); tudo o resto bloqueado pela dependência. Conformidade 0%. ===== */
     '2027-02':{
-      seg:{ 'D-1001':ob('ok',{seq:107,resp:'Fiscal'}),
-            'D-1011':ob('ok',{seq:124,resp:'Fiscal'}),
-            'D-1101':ob('pendente',{prazo:'15/03/2027',dias:34,resp:'Contabilidade',obs:'Balancete de fevereiro em preparação.'}),
-            'D-1106':ob('pendente',{prazo:'15/03/2027',dias:34,resp:'Tesouraria'}),
+      seg:{ 'D-1001':ob('pendente',{resp:'Fiscal',obs:'Informações do contribuinte ainda não transmitidas nesta competência.'}),
+            'D-1011':ob('pendente',{resp:'Fiscal',obs:'Plano de contas ainda não transmitido.'}),
+            'D-1101':ob('bloqueado',{prazo:'15/03/2027',dias:34,resp:'Contabilidade'}),
+            'D-1106':ob('bloqueado',{prazo:'15/03/2027',dias:34,resp:'Tesouraria'}),
             'D-2101':ob('na'),
             'D-1199':ob('bloqueado',{prazo:'25/03/2027',dias:44,resp:'Controladoria'}) },
-      fin:{ 'D-1001':ob('ok',{seq:104,resp:'Compliance'}),
-            'D-1011':ob('ok',{seq:121,resp:'Compliance'}),
-            'D-1101':ob('pendente',{prazo:'15/03/2027',dias:34,resp:'Contabilidade'}),
+      fin:{ 'D-1001':ob('pendente',{resp:'Compliance'}),
+            'D-1011':ob('pendente',{resp:'Compliance'}),
+            'D-1101':ob('bloqueado',{prazo:'15/03/2027',dias:34,resp:'Contabilidade'}),
             'D-1106':ob('na'), 'D-2101':ob('na'),
             'D-1199':ob('bloqueado',{prazo:'25/03/2027',dias:44,resp:'Controladoria'}) },
-      cap:{ 'D-1001':ob('ok',{seq:110,resp:'Fiscal'}),
-            'D-1011':ob('ok',{seq:127,resp:'Fiscal'}),
-            'D-1101':ob('pendente',{prazo:'15/03/2027',dias:34,resp:'Contabilidade'}),
-            'D-1106':ob('pendente',{prazo:'15/03/2027',dias:34,resp:'Tesouraria'}),
+      cap:{ 'D-1001':ob('pendente',{resp:'Fiscal'}),
+            'D-1011':ob('pendente',{resp:'Fiscal'}),
+            'D-1101':ob('bloqueado',{prazo:'15/03/2027',dias:34,resp:'Contabilidade'}),
+            'D-1106':ob('bloqueado',{prazo:'15/03/2027',dias:34,resp:'Tesouraria'}),
             'D-2101':ob('na'),
             'D-1199':ob('bloqueado',{prazo:'25/03/2027',dias:44,resp:'Controladoria'}) },
-      sic:{ 'D-1001':ob('ok',{seq:95,resp:'Fiscal'}),
-            'D-1011':ob('ok',{seq:103,resp:'Fiscal'}),
-            'D-1101':ob('pendente',{prazo:'15/03/2027',dias:34,resp:'Contabilidade'}),
+      sic:{ 'D-1001':ob('pendente',{resp:'Fiscal'}),
+            'D-1011':ob('pendente',{resp:'Fiscal'}),
+            'D-1101':ob('bloqueado',{prazo:'15/03/2027',dias:34,resp:'Contabilidade'}),
             'D-1106':ob('na'), 'D-2101':ob('na'),
             'D-1199':ob('bloqueado',{prazo:'25/03/2027',dias:44,resp:'Controladoria'}) },
-      s2u:{ 'D-1001':ob('ok',{seq:145,resp:'Onboarding a-DeRE',obs:'Onboarding concluído; contribuinte habilitado nesta competência.'}),
-            'D-1011':ob('ok',{seq:150,resp:'Fiscal'}),
-            'D-1101':ob('pendente',{prazo:'15/03/2027',dias:34,resp:'Contabilidade'}),
-            'D-1106':ob('pendente',{prazo:'15/03/2027',dias:34,resp:'Tesouraria'}),
+      s2u:{ 'D-1001':ob('pendente',{resp:'Onboarding a-DeRE',obs:'Cadastro do contribuinte ainda não transmitido.'}),
+            'D-1011':ob('pendente',{resp:'Fiscal'}),
+            'D-1101':ob('bloqueado',{prazo:'15/03/2027',dias:34,resp:'Contabilidade'}),
+            'D-1106':ob('bloqueado',{prazo:'15/03/2027',dias:34,resp:'Tesouraria'}),
             'D-2101':ob('na'),
             'D-1199':ob('bloqueado',{prazo:'25/03/2027',dias:44,resp:'Controladoria'}) },
-      vit:{ 'D-1001':ob('ok',{seq:130,resp:'Fiscal'}),
-            'D-1011':ob('ok',{seq:140,resp:'Fiscal'}),
-            'D-1101':ob('pendente',{prazo:'15/03/2027',dias:34,resp:'Contabilidade'}),
-            'D-1106':ob('pendente',{prazo:'15/03/2027',dias:34,resp:'Tesouraria'}),
+      vit:{ 'D-1001':ob('pendente',{resp:'Fiscal'}),
+            'D-1011':ob('pendente',{resp:'Fiscal'}),
+            'D-1101':ob('bloqueado',{prazo:'15/03/2027',dias:34,resp:'Contabilidade'}),
+            'D-1106':ob('bloqueado',{prazo:'15/03/2027',dias:34,resp:'Tesouraria'}),
             'D-2101':ob('na'),
             'D-1199':ob('bloqueado',{prazo:'25/03/2027',dias:44,resp:'Controladoria'}) }
     },
@@ -954,7 +954,7 @@
 </script>
 <script>
 (function(){
-  var MYV='1788826111';
+  var MYV='1788827015';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
