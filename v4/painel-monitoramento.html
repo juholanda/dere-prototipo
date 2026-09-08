@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Painel de Monitoramento</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788830164">
-  <script src="../design-system/ds-tailwind.js?v=1788830164"></script>
-  <script src="../design-system/ds-dialog.js?v=1788830164"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788836870">
+  <script src="../design-system/ds-tailwind.js?v=1788836870"></script>
+  <script src="../design-system/ds-dialog.js?v=1788836870"></script>
   <style>
     /* ===== app-shell (igual às outras telas do v4) ===== */
     body{margin:0;background:var(--color-bg)}
@@ -474,7 +474,7 @@
             'D-1106':ob('pendente',{prazo:'15/02/2027',dias:6,resp:'Tesouraria'}),
             'D-2101':ob('na'),
             'D-1199':ob('bloqueado',{prazo:'25/02/2027',dias:16,resp:'Controladoria'}) },
-      sic:{ 'D-1001':ob('ok',{seq:95,resp:'Fiscal',rejNova:{codigo:'MS1097',prazo:'09/02/2027',dias:0,motivo:'A nova versão (v4) foi rejeitada por sobreposição de vigência (as datas se sobrepõem a um período existente). A versão vigente (v3) permanece aceita e não é derrubada.'}}),
+      sic:{ 'D-1001':ob('ok',{seq:95,resp:'Fiscal',rejNova:{codigo:'MS1097',motivo:'A nova versão (v4) foi rejeitada por sobreposição de vigência (as datas se sobrepõem a um período existente). A versão vigente (v3) permanece aceita e não é derrubada.'}}),
             'D-1011':ob('ok',{seq:103,resp:'Fiscal'}),
             'D-1101':ob('pendente',{prazo:'15/02/2027',dias:6,resp:'Contabilidade'}),
             'D-1106':ob('na'), 'D-2101':ob('na'),
@@ -653,7 +653,7 @@
         var tone=(g.k==='urg')?' taskrow--danger':(g.k==='blk'?' taskrow--warning':'');
         var evline=it.ev+' '+EVENTS[it.ev].nome+(it.o.rejNova?' (nova versão)':'');
         var due='';
-        if(it.o.prazo){ due='<span class="due">'+esc(it.o.prazo)+(rel?'<span class="rel rel--'+rel.c+'">'+esc(rel.t)+'</span>':'')+'</span>'; }
+        if(it.o.prazo && EVENTS[it.ev].per!=='Eventual'){ due='<span class="due">'+esc(it.o.prazo)+(rel?'<span class="rel rel--'+rel.c+'">'+esc(rel.t)+'</span>':'')+'</span>'; }
         return '<div class="taskrow taskrow--click'+tone+'" role="button" tabindex="0" data-open="'+it.r.c.emp+'|'+it.ev+'" aria-label="Abrir '+esc(it.r.c.nome+', '+it.ev)+'">'+
           '<span class="taskrow__mono" aria-hidden="true">'+ICmono[g.mono]+'</span>'+
           '<div class="taskrow__b"><p class="taskrow__t">'+esc(it.r.c.nome)+' · '+esc(evline)+'</p><p class="taskrow__why">'+esc(na.a)+' '+esc(na.w)+'</p></div>'+
@@ -737,7 +737,7 @@
     var rowsHtml=COLS.map(function(ev){
       var o=r.ob[ev];
       var naEv=(!o||o.st==='na');
-      var stCell, compr=naEv?'':'não transmitido', prazo=naEv?'':(o.prazo||'—'), resp=naEv?'':(o.resp||'Não informado');
+      var stCell, compr=naEv?'':'não transmitido', prazo=(naEv||EVENTS[ev].per==='Eventual')?'—':(o.prazo||'—'), resp=naEv?'':(o.resp||'Não informado');
       if(naEv){ stCell='<span class="cellna">Não se aplica</span>'; }
       else if(ev==='D-1199'){ stCell=(o.st==='ok')?'<span class="status status--sm status--success"><span class="status__dot"></span>Concluída</span>':(g.ok?'<span class="status status--sm status--info"><span class="status__dot"></span>Liberada</span>':'<span class="status status--sm status--warning"><span class="status__dot"></span>Bloqueada</span>'); }
       else { stCell=pill(o.st)+(o.rejNova?' <span class="cellsub">nova versão rejeitada</span>':''); }
@@ -816,7 +816,7 @@
       '<div class="drsec"><p class="drsec__t">Detalhes do evento</p><div class="kv">'+
         kv('Periodicidade oficial', E.per)+
         kv('Evento de retorno', '<span class="mono">'+E.ret+'</span>')+
-        kv('Prazo', esc((o.st==='na')?'não se aplica':(o.prazo||'não se aplica')))+
+        kv('Prazo', esc((o.st==='na'||E.per==='Eventual')?'não se aplica':(o.prazo||'não se aplica')))+
         kv('Responsável', esc(o.resp||'—'))+
         (o.obs?kv('Observação', esc(o.obs)):'')+
       '</div></div>'+
@@ -827,6 +827,12 @@
     if(t){
       if(ev==='D-1011') href='plano-contas-empresa.html?emp='+r.c.emp;
       else if(ev==='D-1001'){ var sq=(o.st==='rejeitado'||o.rejNova)?'&st=aprovado&sit=rejeitado&rej=vigencia':(o.st==='processando')?'&st=aprovado&sit=processando':(o.st==='pendente')?'&v=1&st=rascunho':'&v=3&st=aprovado&sit=sucesso'; href='info-contribuinte-detalhe.html?emp='+r.c.emp+sq; }
+      // rótulo do botão = a ação a fazer (leva à tela do evento), não um "ir para" genérico
+      if(o.rejNova||o.st==='rejeitado') footLabel='Corrigir e retransmitir';
+      else if(o.st==='vencido') footLabel='Transmitir agora';
+      else if(o.st==='pendente'||o.st==='bloqueado') footLabel=(ev==='D-1011'?'Preencher o plano de contas':ev==='D-1001'?'Preencher as informações':'Preencher e transmitir');
+      else if(o.st==='processando') footLabel='Ver o andamento';
+      else footLabel='Ver o comprovante';
     }
     if(href){ $('drFooter').innerHTML='<a class="btn btn--primary" href="'+href+'" target="_blank" rel="noopener" aria-label="'+esc(footLabel)+' (abre em nova aba)">'+esc(footLabel)+' '+EXT+'</a>'; }
     else if(needsAction){ $('drFooter').innerHTML='<p class="stat__foot" style="margin:0">A tela deste evento ainda não faz parte do protótipo. O painel acompanha a situação.</p>'; }
@@ -958,7 +964,7 @@
 </script>
 <script>
 (function(){
-  var MYV='1788830164';
+  var MYV='1788836870';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
