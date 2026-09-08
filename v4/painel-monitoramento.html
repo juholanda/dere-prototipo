@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Painel de Monitoramento</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788883159">
-  <script src="../design-system/ds-tailwind.js?v=1788883159"></script>
-  <script src="../design-system/ds-dialog.js?v=1788883159"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788883514">
+  <script src="../design-system/ds-tailwind.js?v=1788883514"></script>
+  <script src="../design-system/ds-dialog.js?v=1788883514"></script>
   <style>
     /* ===== app-shell (igual às outras telas do v4) ===== */
     body{margin:0;background:var(--color-bg)}
@@ -84,7 +84,8 @@
     .viewtabs{margin-bottom:var(--space-6)}
 
     /* ===== matriz (único componente realmente novo; candidato a virar .matrix no DS) ===== */
-    .mtx-wrap{overflow-x:auto;border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-surface)}
+    /* rola dentro da própria caixa: cabeçalho sticky no topo + 1ª coluna congelada + scroll horizontal, sem cortar conteúdo. Altura generosa (não a caixa curta de antes). */
+    .mtx-wrap{overflow:auto;max-height:calc(100vh - 140px);border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-surface)}
     table.mtx{width:100%;border-collapse:separate;border-spacing:0;min-width:900px;font-size:var(--text-sm)}
     .mtx thead th{position:sticky;top:0;z-index:2;background:var(--color-surface-2)}
     .mtx .grp th{font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.04em;color:var(--color-text-muted);font-weight:700;padding:var(--space-2) var(--space-3);text-align:center;border-bottom:1px solid var(--color-border)}
@@ -1049,7 +1050,7 @@
 </script>
 <script>
 (function(){
-  var MYV='1788883159';
+  var MYV='1788883514';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
