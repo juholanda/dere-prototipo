@@ -1017,11 +1017,13 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 /* Tabs / abas */
 .tabs{display:flex;gap:var(--space-1);border-bottom:1px solid var(--color-border)}
 .tab{appearance:none;display:inline-flex;align-items:center;gap:var(--space-2);background:transparent;border:0;padding:var(--space-2) var(--space-4) var(--space-4);font:600 var(--text-base)/1 var(--font-sans);
-  color:var(--color-text-muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .15s ease,border-color .15s ease}
+  color:var(--color-text);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .15s ease,border-color .15s ease}   /* aba inativa em --color-text (não muted): garante contraste AA 4.5:1 */
 .tab:hover{color:var(--color-heading)}
 /* Estado selecionado: a fonte da verdade é aria-selected (APG); .is-active mantém compat */
 .tab.is-active,.tab[aria-selected="true"]{color:var(--color-primary);border-bottom-color:var(--color-primary)}
 .tab:focus-visible{outline:none;box-shadow:var(--ring);border-radius:var(--radius-sm)}
+/* números tabulares para recibos, protocolos e códigos alinharem coluna a coluna */
+.mono{font-variant-numeric:tabular-nums}
 /* Painel da aba (role=tabpanel). tabindex=0 o torna alcançável por teclado. */
 .tabs__panel{padding-top:var(--space-4);font-size:var(--text-sm);color:var(--color-text-onmuted)}
 .tabs__panel:focus-visible{outline:none;box-shadow:var(--ring);border-radius:var(--radius-sm)}
