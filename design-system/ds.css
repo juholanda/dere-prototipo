@@ -55,7 +55,7 @@
   --color-border:      var(--slate-200);
   --color-border-strong:var(--slate-300);
   --color-scrim: color-mix(in srgb, var(--slate-900) 50%, transparent);
-  --color-field-border: color-mix(in srgb, var(--slate-400) 45%, var(--slate-500));
+  --color-field-border: var(--slate-300);   /* borda default dos campos/dropdowns: tom claro; o hover escurece (--color-text-muted) */
   --color-divider:     var(--color-border); /* tracinhos/divisores sobre branco — SEMPRE esta cor */
   --color-text:        var(--slate-800);
   --color-heading:     var(--slate-900);
@@ -236,8 +236,8 @@ a{color:var(--color-primary);text-decoration:none}
   width:var(--control-h);height:var(--control-h);padding:0;border:1px solid transparent;
   border-radius:var(--radius-base);background:transparent;color:var(--color-text-muted);cursor:pointer;
   transition:background-color .12s,color .12s,box-shadow .12s}
-.icon-btn:hover:not(:disabled){background:var(--color-border);color:var(--color-heading)}
-.icon-btn:active:not(:disabled){background:var(--color-border-strong)}
+.icon-btn:hover:not(:disabled){background:color-mix(in srgb,var(--color-primary) 14%,var(--color-surface));color:var(--color-primary)}
+.icon-btn:active:not(:disabled){background:color-mix(in srgb,var(--color-primary) 22%,var(--color-surface));color:var(--color-primary)}
 .icon-btn:focus-visible{outline:none;box-shadow:var(--ring)}
 .icon-btn:disabled{opacity:.5;cursor:not-allowed}
 /* Tamanho do ícone é definido pela classe (como os botões): sm/base/lg */
@@ -629,9 +629,6 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 .drawer__header{display:flex;align-items:center;justify-content:space-between;padding:var(--space-4) var(--space-8);border-bottom:1px solid var(--color-border)}
 /* título de drawer e de modal: MESMO tamanho (20px) e peso (700) — o !important vence o heading genérico h1–h6 */
 .drawer__header h2,.drawer__title{font-size:var(--text-2xl) !important;font-weight:700 !important;margin:0;color:var(--color-heading)}
-/* botão fechar do drawer: hover claramente visível (o hover neutro do .icon-btn some no branco). Usa o mesmo tom das linhas/células clicáveis. */
-.drawer__header .icon-btn:hover:not(:disabled){background:color-mix(in srgb,var(--color-primary) 14%,var(--color-surface));color:var(--color-primary)}
-.drawer__header .icon-btn:active:not(:disabled){background:color-mix(in srgb,var(--color-primary) 22%,var(--color-surface));color:var(--color-primary)}
 .drawer__body{padding:var(--space-8);overflow:auto;flex:1;scrollbar-width:thin;scrollbar-color:color-mix(in srgb, var(--color-border-strong) 70%, transparent) transparent}
 .drawer__body::-webkit-scrollbar{width:8px}
 .drawer__body::-webkit-scrollbar-thumb{background:color-mix(in srgb, var(--color-border-strong) 70%, transparent);border-radius:999px;border:2px solid transparent;background-clip:padding-box}
