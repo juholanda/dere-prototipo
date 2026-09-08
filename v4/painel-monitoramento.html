@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Painel de Monitoramento</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788865897">
-  <script src="../design-system/ds-tailwind.js?v=1788865897"></script>
-  <script src="../design-system/ds-dialog.js?v=1788865897"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788866662">
+  <script src="../design-system/ds-tailwind.js?v=1788866662"></script>
+  <script src="../design-system/ds-dialog.js?v=1788866662"></script>
   <style>
     /* ===== app-shell (igual às outras telas do v4) ===== */
     body{margin:0;background:var(--color-bg)}
@@ -153,6 +153,8 @@
     .activef .clear:focus-visible{outline:none;box-shadow:var(--ring);border-radius:var(--radius-sm)}
 
     /* drawer: seções internas */
+    /* modal "em construção" empilha SOBRE o drawer (z-index 51), então precisa vir acima */
+    #buildBackdrop{z-index:60}
     .drhead{display:flex;gap:var(--space-3);align-items:flex-start;min-width:0}
     .drhead__ic{flex:0 0 auto;width:var(--space-10);height:var(--space-10);border-radius:var(--radius-lg);background:var(--color-primary-subtle);color:var(--color-primary);display:grid;place-items:center}
     .drhead__ic svg{width:20px;height:20px}
@@ -356,6 +358,18 @@
     <div class="drawer__body" id="drBody"></div>
     <div class="drawer__footer" id="drFooter"></div>
   </aside>
+  </div>
+
+  <!-- MODAL "em construção": aberto pelas ações de eventos cuja tela ainda não existe no protótipo. Fica DENTRO do backdrop (senão o dsDialog o marca inert). -->
+  <div class="modal-backdrop" id="buildBackdrop" hidden>
+    <div class="modal modal--md" id="buildModal" role="dialog" aria-modal="true" aria-labelledby="buildTitle">
+      <div class="modal__header">
+        <h2 class="modal__title" id="buildTitle">Tela em construção</h2>
+        <button class="icon-btn modal__close" type="button" data-buildclose aria-label="Fechar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="modal__body"><p id="buildBody">—</p></div>
+      <div class="modal__footer"><button class="btn btn--primary" type="button" data-buildclose>Entendi</button></div>
+    </div>
   </div>
 
 <script>
@@ -823,28 +837,38 @@
       '</div></div>'+
       '<div class="drsec"><p class="drsec__t">Dependências</p>'+depsHtml+'</div>';
 
-    // rodapé: ir para a tela do evento (onde vive o comprovante completo), ou nota quando não existe
-    var t=E.tela, href=null, footLabel='Ir para o evento';
+    // rodapé: ação que leva a concluir a obrigação. Com tela do evento -> vai pra ela; sem tela (ainda) -> abre modal "em construção".
+    var t=E.tela, href=null;
     if(t){
       if(ev==='D-1011') href='plano-contas-empresa.html?emp='+r.c.emp;
       else if(ev==='D-1001'){ var sq=(o.st==='rejeitado'||o.rejNova)?'&st=aprovado&sit=rejeitado&rej=vigencia':(o.st==='processando')?'&st=aprovado&sit=processando':(o.st==='pendente')?'&v=1&st=rascunho':'&v=3&st=aprovado&sit=sucesso'; href='info-contribuinte-detalhe.html?emp='+r.c.emp+sq; }
-      // rótulo do botão = a ação a fazer (leva à tela do evento), não um "ir para" genérico
-      if(o.rejNova||o.st==='rejeitado') footLabel='Corrigir e retransmitir';
-      else if(o.st==='vencido') footLabel='Transmitir agora';
-      else if(o.st==='pendente'||o.st==='bloqueado') footLabel=(ev==='D-1011'?'Preencher o plano de contas':ev==='D-1001'?'Preencher as informações':'Preencher e transmitir');
-      else if(o.st==='processando') footLabel='Ver o andamento';
-      else footLabel='Ver o comprovante';
     }
+    // rótulo do botão = a ação a fazer (vale com ou sem tela)
+    var footLabel = (o.rejNova||o.st==='rejeitado') ? 'Corrigir e retransmitir'
+      : (o.st==='vencido') ? 'Transmitir agora'
+      : (o.st==='pendente'||o.st==='bloqueado') ? (ev==='D-1011'?'Preencher o plano de contas':ev==='D-1001'?'Preencher as informações':'Transmitir o '+ev)
+      : (o.st==='processando') ? 'Ver o andamento'
+      : 'Ver o comprovante';
     if(href){ $('drFooter').innerHTML='<a class="btn btn--primary" href="'+href+'" target="_blank" rel="noopener" aria-label="'+esc(footLabel)+' (abre em nova aba)">'+esc(footLabel)+' '+EXT+'</a>'; }
-    else if(needsAction){ $('drFooter').innerHTML='<p class="drdesc" style="margin:0">A tela deste evento ainda não faz parte do protótipo. O painel acompanha a situação.</p>'; }
+    else if(needsAction){ $('drFooter').innerHTML='<button class="btn btn--primary" type="button" data-building>'+esc(footLabel)+'</button>'; }
     else { $('drFooter').innerHTML='<button class="btn btn--secondary" type="button" data-drclose>Fechar</button>'; }
     var dc=$('drFooter').querySelector('[data-drclose]'); if(dc) dc.addEventListener('click',function(){ dsDialog.close(); });
+    var db=$('drFooter').querySelector('[data-building]'); if(db) db.addEventListener('click',function(){ openBuilding(ev); });
 
     dsDialog.open($('drBackdrop'), { dialog:$('drawer'), focus:$('drClose'), onOpen:function(){ $('drBackdrop').hidden=false; $('drawer').hidden=false; }, onClose:function(){ $('drawer').hidden=true; $('drBackdrop').hidden=true; } });
   }
   function kv(k,v){ return '<div class="kv__row"><span class="kv__k">'+esc(k)+'</span><span class="kv__v">'+v+'</span></div>'; }
   $('drClose').addEventListener('click',function(){ dsDialog.close(); });
   $('drBackdrop').addEventListener('click',function(e){ if(e.target===this) dsDialog.close(); });
+
+  /* modal "em construção" — empilha sobre o drawer (dsDialog cuida do inert/Esc/foco) */
+  function openBuilding(ev){
+    var E=EVENTS[ev];
+    $('buildBody').textContent='A tela para transmitir o '+ev+' ('+E.nome+') ainda será construída. Por enquanto, o Painel de Monitoramento acompanha a situação; a transmissão acontecerá nessa tela quando ela existir.';
+    dsDialog.open($('buildBackdrop'), { dialog:$('buildModal'), focus:$('buildModal').querySelector('[data-buildclose]'), onOpen:function(){ $('buildBackdrop').hidden=false; }, onClose:function(){ $('buildBackdrop').hidden=true; } });
+  }
+  Array.prototype.forEach.call($('buildModal').querySelectorAll('[data-buildclose]'),function(b){ b.addEventListener('click',function(){ dsDialog.close(); }); });
+  $('buildBackdrop').addEventListener('click',function(e){ if(e.target===this) dsDialog.close(); });
 
   /* ===== controladores ===== */
   function render(){ if(VIEW==='pend') renderPend(); else renderCob(); }
@@ -965,7 +989,7 @@
 </script>
 <script>
 (function(){
-  var MYV='1788865897';
+  var MYV='1788866662';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
