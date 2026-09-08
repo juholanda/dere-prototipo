@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Painel de Monitoramento</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788845488">
-  <script src="../design-system/ds-tailwind.js?v=1788845488"></script>
-  <script src="../design-system/ds-dialog.js?v=1788845488"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788848053">
+  <script src="../design-system/ds-tailwind.js?v=1788848053"></script>
+  <script src="../design-system/ds-dialog.js?v=1788848053"></script>
   <style>
     /* ===== app-shell (igual às outras telas do v4) ===== */
     body{margin:0;background:var(--color-bg)}
@@ -85,7 +85,7 @@
     .viewtabs{margin-bottom:var(--space-6)}
 
     /* ===== matriz (único componente realmente novo; candidato a virar .matrix no DS) ===== */
-    .mtx-wrap{overflow:visible;border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-surface)}
+    .mtx-wrap{overflow:auto;max-height:calc(100vh - 360px);border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-surface)}
     table.mtx{width:100%;border-collapse:separate;border-spacing:0;min-width:900px;font-size:var(--text-sm)}
     .mtx thead th{position:sticky;top:0;z-index:2;background:var(--color-surface-2)}
     .mtx .grp th{font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.04em;color:var(--color-text-muted);font-weight:700;padding:var(--space-2) var(--space-3);text-align:center;border-bottom:1px solid var(--color-border)}
@@ -738,7 +738,7 @@
     var rowsHtml=COLS.map(function(ev){
       var o=r.ob[ev];
       var naEv=(!o||o.st==='na');
-      var stCell, compr=naEv?'':'não transmitido', prazo=(naEv||EVENTS[ev].per==='Eventual')?'—':(o.prazo||'—'), resp=naEv?'':(o.resp||'Não informado');
+      var stCell, compr=naEv?'':'não transmitido', prazo=naEv?'':(EVENTS[ev].per==='Eventual'?'não se aplica':(o.prazo||'não se aplica')), resp=naEv?'':(o.resp||'Não informado');
       if(naEv){ stCell='<span class="cellna">Não se aplica</span>'; }
       else if(ev==='D-1199'){ stCell=(o.st==='ok')?'<span class="status status--sm status--success"><span class="status__dot"></span>Concluída</span>':(g.ok?'<span class="status status--sm status--info"><span class="status__dot"></span>Liberada</span>':'<span class="status status--sm status--warning"><span class="status__dot"></span>Bloqueada</span>'); }
       else { stCell=pill(o.st)+(o.rejNova?' <span class="cellsub">nova versão rejeitada</span>':''); }
@@ -818,7 +818,7 @@
         kv('Periodicidade oficial', E.per)+
         kv('Evento de retorno', '<span class="mono">'+E.ret+'</span>')+
         kv('Prazo', esc((o.st==='na'||E.per==='Eventual')?'não se aplica':(o.prazo||'não se aplica')))+
-        kv('Responsável', esc(o.resp||'—'))+
+        kv('Responsável', esc(o.resp||'Não informado'))+
         (o.obs?kv('Observação', esc(o.obs)):'')+
       '</div></div>'+
       '<div class="drsec"><p class="drsec__t">Dependências</p>'+depsHtml+'</div>';
@@ -836,7 +836,7 @@
       else footLabel='Ver o comprovante';
     }
     if(href){ $('drFooter').innerHTML='<a class="btn btn--primary" href="'+href+'" target="_blank" rel="noopener" aria-label="'+esc(footLabel)+' (abre em nova aba)">'+esc(footLabel)+' '+EXT+'</a>'; }
-    else if(needsAction){ $('drFooter').innerHTML='<p class="stat__foot" style="margin:0">A tela deste evento ainda não faz parte do protótipo. O painel acompanha a situação.</p>'; }
+    else if(needsAction){ $('drFooter').innerHTML='<p class="drdesc" style="margin:0">A tela deste evento ainda não faz parte do protótipo. O painel acompanha a situação.</p>'; }
     else { $('drFooter').innerHTML='<button class="btn btn--secondary" type="button" data-drclose>Fechar</button>'; }
     var dc=$('drFooter').querySelector('[data-drclose]'); if(dc) dc.addEventListener('click',function(){ dsDialog.close(); });
 
@@ -965,7 +965,7 @@
 </script>
 <script>
 (function(){
-  var MYV='1788845488';
+  var MYV='1788848053';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
