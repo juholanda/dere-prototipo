@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Painel de Monitoramento</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788871992">
-  <script src="../design-system/ds-tailwind.js?v=1788871992"></script>
-  <script src="../design-system/ds-dialog.js?v=1788871992"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788872312">
+  <script src="../design-system/ds-tailwind.js?v=1788872312"></script>
+  <script src="../design-system/ds-dialog.js?v=1788872312"></script>
   <style>
     /* ===== app-shell (igual às outras telas do v4) ===== */
     body{margin:0;background:var(--color-bg)}
@@ -144,6 +144,9 @@
     .grouph__ic{flex:0 0 auto;display:inline-flex;color:var(--color-text-muted)}
     .grouph__ic svg{width:15px;height:15px}
     .grouph.is-urg .grouph__ic{color:var(--color-danger-fg)}
+    .grouph--pend .grouph__ic{color:var(--color-primary)}
+    .grouph--blk .grouph__ic{color:var(--color-warning-fg)}
+    .grouph--proc .grouph__ic{color:var(--color-info-fg)}
     .grouph.is-urg{color:var(--color-danger-fg)}
     .grouph .cnt{background:var(--color-surface-2);color:var(--color-text-muted);font-size:var(--text-xs);padding:0 var(--space-2);border-radius:var(--radius-pill);font-weight:700}
     .grouph.is-urg .cnt{background:var(--color-danger-bg);color:var(--color-danger-fg)}
@@ -408,7 +411,7 @@
     adv:{l:'Processada com advertências',s:'Advertências',short:'Processada com adv.',p:'status--azul',dot:'azul'},
     processando:{l:'Em processamento',s:'Processando',p:'status--info',dot:'info'},
     rejeitado:{l:'Rejeitada',s:'Rejeitada',p:'status--danger',dot:'danger'},
-    pendente:{l:'Rascunho',s:'Rascunho',p:'status--neutral',dot:'neutral'},
+    pendente:{l:'Em preparação',s:'Em preparação',p:'status--neutral',dot:'neutral'},   /* guarda-chuva de Rascunho/Em revisão/Ajustes solicitados — o sub-estado real por item depende de definição do Cláudio (ver memória) */
     bloqueado:{l:'Bloqueada',s:'Bloqueada',p:'status--warning',dot:'warning'},
     vencido:{l:'Vencida',s:'Vencida',p:'status--danger',dot:'danger'}
   };
@@ -679,7 +682,7 @@
           '<span class="taskrow__chev" aria-hidden="true">'+CHEV+'</span>'+
         '</div>';
       }).join('');
-      return '<div class="tasklist card"><p class="grouph'+(g.urg?' is-urg':'')+'"><span class="grouph__ic" aria-hidden="true">'+ICmono[g.mono]+'</span>'+esc(g.t)+'<span class="cnt">'+gi.length+'</span></p>'+rows+'</div>';
+      return '<div class="tasklist card"><p class="grouph grouph--'+g.k+(g.urg?' is-urg':'')+'"><span class="grouph__ic" aria-hidden="true">'+ICmono[g.mono]+'</span>'+esc(g.t)+'<span class="cnt">'+gi.length+'</span></p>'+rows+'</div>';
     }).join('');
     bindOpen(el);
     var acaoN=items.filter(function(i){ return i.o.st==='vencido'||i.o.st==='rejeitado'; }).length;
@@ -992,7 +995,7 @@
 </script>
 <script>
 (function(){
-  var MYV='1788871992';
+  var MYV='1788872312';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
