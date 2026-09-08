@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Painel de Monitoramento</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788872312">
-  <script src="../design-system/ds-tailwind.js?v=1788872312"></script>
-  <script src="../design-system/ds-dialog.js?v=1788872312"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788873661">
+  <script src="../design-system/ds-tailwind.js?v=1788873661"></script>
+  <script src="../design-system/ds-dialog.js?v=1788873661"></script>
   <style>
     /* ===== app-shell (igual às outras telas do v4) ===== */
     body{margin:0;background:var(--color-bg)}
@@ -678,7 +678,7 @@
         return '<div class="taskrow taskrow--click'+tone+'" role="button" tabindex="0" data-open="'+it.r.c.emp+'|'+it.ev+'" aria-label="Abrir '+esc(it.r.c.nome+', '+it.ev)+'">'+
           logoHtml(it.r.c)+
           '<div class="taskrow__b"><p class="taskrow__t">'+esc(it.r.c.nome)+' · '+esc(evline)+'</p><p class="taskrow__why">'+esc(na.a)+' '+esc(na.w)+'</p></div>'+
-          '<div class="taskrow__side">'+(g.k==='urg'?pill(it.o.st):'')+'<span class="due">'+dueInner+'</span></div>'+
+          '<div class="taskrow__side"><span class="due">'+dueInner+'</span></div>'+
           '<span class="taskrow__chev" aria-hidden="true">'+CHEV+'</span>'+
         '</div>';
       }).join('');
@@ -720,7 +720,10 @@
       return '<td'+cls+'><button class="cellbtn" type="button" data-open="'+r.c.emp+'|D-1199" aria-label="'+esc('Fechamento: '+dl+', '+r.c.nome)+'">'+mcellHtml(dc,dl)+'</button></td>';
     }
     var sub=o.rejNova?'<span class="cellsub">nova versão rejeitada</span>':'';
-    return '<td'+cls+'><button class="cellbtn" type="button" data-open="'+r.c.emp+'|'+ev+'" aria-label="'+esc(EVENTS[ev].nome+', '+r.c.nome+', '+ST[o.st].l)+'">'+mcellHtml(ST[o.st].dot,ST[o.st].short||ST[o.st].l,sub)+'</button></td>';
+    // visão geral: aceita e aceita-com-advertências viram "Concluída" (uniforme); o detalhe (com/sem aviso, recibo, versão) fica no drawer
+    var isC=(o.st==='ok'||o.st==='adv');
+    var mdot=isC?'success':ST[o.st].dot, mlabel=isC?'Concluída':(ST[o.st].short||ST[o.st].l);
+    return '<td'+cls+'><button class="cellbtn" type="button" data-open="'+r.c.emp+'|'+ev+'" aria-label="'+esc(EVENTS[ev].nome+', '+r.c.nome+', '+mlabel)+'">'+mcellHtml(mdot,mlabel,sub)+'</button></td>';
   }
 
   function renderMatriz(el){
@@ -788,7 +791,9 @@
     if(ev==='D-1199' && o.st!=='ok'){ gateInfo=gate(r); dispSt=gateInfo.ok?'liberado':'bloqueado'; }
     var dp=ST[o.st]||{l:(dispSt==='liberado'?'Liberado':'Bloqueado'),p:(dispSt==='liberado'?'status--info':'status--warning')};
     if(ev==='D-1199' && o.st!=='ok'){ dp={l:(gateInfo.ok?'Liberada para transmitir':'Bloqueada'),p:(gateInfo.ok?'status--info':'status--warning')}; }
-    var pl=$('drPill'); pl.className='status status--sm '+dp.p; pl.innerHTML='<span class="status__dot"></span>'+esc(dp.l);
+    // header = visão geral: aceita/aceita-com-advertências -> "Concluída"; o detalhe (com/sem aviso, recibo) fica no corpo
+    var pillL=(o.st==='ok'||o.st==='adv')?'Concluída':dp.l, pillP=(o.st==='ok'||o.st==='adv')?'status--success':dp.p;
+    var pl=$('drPill'); pl.className='status status--sm '+pillP; pl.innerHTML='<span class="status__dot"></span>'+esc(pillL);
     $('drCode').textContent=ev;
     $('drTitle').textContent=E.nome;
     $('drCo').textContent=r.c.nome+' · '+r.c.cnpj+' · '+fmtComp(COMP);
@@ -995,7 +1000,7 @@
 </script>
 <script>
 (function(){
-  var MYV='1788872312';
+  var MYV='1788873661';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
