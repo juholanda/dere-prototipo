@@ -626,7 +626,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 @keyframes ds-drawer-in{from{transform:translateX(100%)}to{transform:translateX(0)}}
 @keyframes ds-fade-in{from{opacity:0}to{opacity:1}}
 @media (prefers-reduced-motion:reduce){.drawer,.drawer-backdrop{animation:none}}
-.drawer__header{display:flex;align-items:center;justify-content:space-between;padding:var(--space-4) var(--space-8);border-bottom:1px solid var(--color-border)}
+.drawer__header{display:flex;align-items:flex-start;justify-content:space-between;padding:var(--space-4) var(--space-8);border-bottom:1px solid var(--color-border)}
 /* título de drawer e de modal: MESMO tamanho (20px) e peso (700) — o !important vence o heading genérico h1–h6 */
 .drawer__header h2,.drawer__title{font-size:var(--text-2xl) !important;font-weight:700 !important;margin:0;color:var(--color-heading)}
 .drawer__body{padding:var(--space-8);overflow:auto;flex:1;scrollbar-width:thin;scrollbar-color:color-mix(in srgb, var(--color-border-strong) 70%, transparent) transparent}
