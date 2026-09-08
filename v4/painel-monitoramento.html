@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Painel de Monitoramento</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788884581">
-  <script src="../design-system/ds-tailwind.js?v=1788884581"></script>
-  <script src="../design-system/ds-dialog.js?v=1788884581"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788885024">
+  <script src="../design-system/ds-tailwind.js?v=1788885024"></script>
+  <script src="../design-system/ds-dialog.js?v=1788885024"></script>
   <style>
     /* ===== app-shell (igual às outras telas do v4) ===== */
     body{margin:0;background:var(--color-bg)}
@@ -704,7 +704,7 @@
           '<span class="taskrow__chev" aria-hidden="true">'+CHEV+'</span>'+
         '</div>';
       }).join('');
-      return '<div class="tasklist card tasklist--'+g.k+'"><h2 class="grouph grouph--'+g.k+(g.urg?' is-urg':'')+'"><span class="grouph__ic" aria-hidden="true">'+ICmono[g.mono]+'</span>'+esc(g.t)+'<span class="cnt">'+gi.length+'</span></h2>'+rows+'</div>';
+      return '<div class="tasklist card tasklist--'+g.k+'"><p class="grouph grouph--'+g.k+(g.urg?' is-urg':'')+'" role="heading" aria-level="2"><span class="grouph__ic" aria-hidden="true">'+ICmono[g.mono]+'</span>'+esc(g.t)+'<span class="cnt">'+gi.length+'</span></p>'+rows+'</div>';
     }).join('');
     bindFila(el);
     var acaoN=items.filter(function(i){ return i.o.st==='vencido'||i.o.st==='rejeitado'; }).length;
@@ -1051,7 +1051,7 @@
 </script>
 <script>
 (function(){
-  var MYV='1788884581';
+  var MYV='1788885024';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
