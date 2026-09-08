@@ -55,7 +55,7 @@
   --color-border:      var(--slate-200);
   --color-border-strong:var(--slate-300);
   --color-scrim: color-mix(in srgb, var(--slate-900) 50%, transparent);
-  --color-field-border: var(--slate-300);   /* borda default dos campos/dropdowns: tom claro; o hover escurece (--color-text-muted) */
+  --color-field-border: var(--slate-400);   /* borda default dos campos/dropdowns: slate-400 (~2.56:1), na escala; escolha consciente, um pouco abaixo do 3:1 do 1.4.11 (mitigado por rótulo, valor, chevron, hover e foco); o hover escurece (--color-text-muted) */
   --color-divider:     var(--color-border); /* tracinhos/divisores sobre branco — SEMPRE esta cor */
   --color-text:        var(--slate-800);
   --color-heading:     var(--slate-900);

@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Painel de Monitoramento</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788880705">
-  <script src="../design-system/ds-tailwind.js?v=1788880705"></script>
-  <script src="../design-system/ds-dialog.js?v=1788880705"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788883159">
+  <script src="../design-system/ds-tailwind.js?v=1788883159"></script>
+  <script src="../design-system/ds-dialog.js?v=1788883159"></script>
   <style>
     /* ===== app-shell (igual às outras telas do v4) ===== */
     body{margin:0;background:var(--color-bg)}
@@ -571,12 +571,14 @@
     return {ok:true,motivo:'Todas as obrigações aplicáveis estão aceitas. Pode transmitir o D-1199.'};
   }
   function depsPend(ev,r){ return (PRECED[ev]||[]).filter(function(d){ return r.ob[d] && r.ob[d].st!=='na' && !isAceita(r.ob[d].st); }); }
+  /* estado EFETIVO para classificar (fila/KPIs/matriz): (b) qualquer bloqueado com prazo vencido vira "vencido" (urgência ganha, nunca esconde prazo estourado); (a) o Fechamento pronto (dependências aceitas) mas ainda gravado bloqueado vira "pendente"/Em preparação. No-op quando nada dispara. */
+  function effState(r,ev){ var o=r.ob[ev]; if(!o) return 'na'; if(o.st==='bloqueado'){ if(o.dias!=null && o.dias<0) return 'vencido'; if(ev==='D-1199' && gate(r).ok) return 'pendente'; } return o.st; }
 
   /* ===== KPIs (contadores .stat) ===== */
   function renderKpis(){
     var rows=inScope().filter(function(r){ return r.c.escopo && r.ob; });
     var total=0,aceito=0,proc=0,pend=0,rej=0,venc=0;
-    rows.forEach(function(r){ obsAplic(r).forEach(function(x){ total++; var s=x.o.st; if(isAceita(s))aceito++; else if(s==='processando')proc++; else if(s==='rejeitado')rej++; else if(s==='vencido')venc++; else if(s==='pendente')pend++; if(x.o.rejNova)rej++; }); });
+    rows.forEach(function(r){ obsAplic(r).forEach(function(x){ total++; var s=effState(r,x.ev); if(isAceita(s))aceito++; else if(s==='processando')proc++; else if(s==='rejeitado')rej++; else if(s==='vencido')venc++; else if(s==='pendente')pend++; if(x.o.rejNova)rej++; }); });
     var conf=total?Math.round(aceito/total*100):0;
     var acao=rej+venc;
     var ICc='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>';
@@ -586,7 +588,7 @@
     var confFoot=total?(aceito+' de '+total+' obrigações aceitas'):'sem obrigações na competência';
     var html='';
     // Conformidade (display, não filtra)
-    html+='<div class="stat"><span class="stat__ic'+(conf===100&&total?' stat__ic--success':'')+'">'+ICc+'</span><span class="stat__label">Conformidade</span><span class="stat__value">'+(total?conf+'%':'—')+'</span><span class="stat__foot'+(conf===100&&total?' stat__foot--ok':'')+'">'+esc(confFoot)+'</span></div>';
+    html+='<div class="stat"><span class="stat__ic'+(conf===100&&total?' stat__ic--success':'')+'">'+ICc+'</span><span class="stat__label">Conformidade</span><span class="stat__value">'+(total?conf+'%':'n/d')+'</span><span class="stat__foot'+(conf===100&&total?' stat__foot--ok':'')+'">'+esc(confFoot)+'</span></div>';
     // Requer ação (filtra)
     html+=kpiBtn('acao','Requer ação',acao,ICa,acao?'danger':'', acao?(plural(rej,'rejeitada','rejeitadas')+', '+plural(venc,'vencida','vencidas')):'nada rejeitado ou vencido', acao>0);
     // A transmitir (filtra) — só pendentes prontas (bloqueadas ficam na fila, não são acionáveis agora)
@@ -641,7 +643,8 @@
     var items=[];
     inScope().filter(function(r){ return r.c.escopo && r.ob; }).forEach(function(r){
       obsAplic(r).forEach(function(x){
-        if(isAcionavel(x.o.st)) items.push({r:r,ev:x.ev,o:x.o});
+        var _st=effState(r,x.ev), _o=(_st!==x.o.st)?Object.assign({},x.o,{st:_st}):x.o;
+        if(isAcionavel(_o.st)) items.push({r:r,ev:x.ev,o:_o});
         if(x.o.rejNova) items.push({r:r,ev:x.ev,o:Object.assign({st:'rejeitado',rejNova:true,prazo:x.o.rejNova.prazo,dias:x.o.rejNova.dias,motivo:x.o.rejNova.motivo,codigo:x.o.rejNova.codigo},{}),naoBloqueia:true});
       });
     });
@@ -736,11 +739,12 @@
       if(o.st==='ok'){ dc='success'; dl='Concluída'; } else if(g.ok){ dc='info'; dl='Liberada'; } else { dc='warning'; dl='Bloqueada'; }
       return '<td'+cls+'><button class="cellbtn" type="button" data-open="'+r.c.emp+'|D-1199" aria-label="'+esc('Fechamento: '+dl+', '+r.c.nome)+'">'+mcellHtml(dc,dl)+'</button></td>';
     }
-    var sub=o.rejNova?'<span class="cellsub">nova versão rejeitada</span>':(o.st==='adv'?'<span class="cellsub">com advertência</span>':'');
-    // visão geral: aceita e aceita-com-advertências viram "Concluída" (uniforme); o detalhe preciso (com/sem aviso, recibo) fica no drawer. Advertência ganha sub-rótulo discreto para não passar batido.
-    var isC=(o.st==='ok'||o.st==='adv');
-    var mdot=isC?'success':ST[o.st].dot, mlabel=isC?'Concluída':(ST[o.st].short||ST[o.st].l);
-    var ariaExtra=(o.rejNova?', nova versão rejeitada':'')+(o.st==='adv'?', com advertência':'');
+    var st=effState(r,ev);
+    var sub=o.rejNova?'<span class="cellsub">nova versão rejeitada</span>':(st==='adv'?'<span class="cellsub">com advertência</span>':'');
+    // visão geral: aceita e aceita-com-advertências viram "Concluída" (uniforme); o detalhe preciso (com/sem aviso, recibo) fica no drawer. Advertência ganha sub-rótulo discreto. O estado efetivo cobre o bloqueado-vencido.
+    var isC=(st==='ok'||st==='adv');
+    var mdot=isC?'success':ST[st].dot, mlabel=isC?'Concluída':(ST[st].short||ST[st].l);
+    var ariaExtra=(o.rejNova?', nova versão rejeitada':'')+(st==='adv'?', com advertência':'');
     return '<td'+cls+'><button class="cellbtn" type="button" data-open="'+r.c.emp+'|'+ev+'" aria-label="'+esc(EVENTS[ev].nome+', '+r.c.nome+', '+mlabel+ariaExtra)+'">'+mcellHtml(mdot,mlabel,sub)+'</button></td>';
   }
 
@@ -1045,7 +1049,7 @@
 </script>
 <script>
 (function(){
-  var MYV='1788880705';
+  var MYV='1788883159';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
