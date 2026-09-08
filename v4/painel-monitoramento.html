@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Painel de Monitoramento</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788883514">
-  <script src="../design-system/ds-tailwind.js?v=1788883514"></script>
-  <script src="../design-system/ds-dialog.js?v=1788883514"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788884581">
+  <script src="../design-system/ds-tailwind.js?v=1788884581"></script>
+  <script src="../design-system/ds-dialog.js?v=1788884581"></script>
   <style>
     /* ===== app-shell (igual às outras telas do v4) ===== */
     body{margin:0;background:var(--color-bg)}
@@ -118,6 +118,7 @@
     .cellbtn:focus-visible{outline:none;box-shadow:var(--ring)}
     .cellna{font-size:var(--text-xs);color:var(--color-text-muted);font-weight:400}
     .cellsub{font-size:var(--text-xs);color:var(--color-warning-fg);font-weight:600}
+    .cellsub--quiet{color:var(--color-text-muted);font-weight:500}   /* advertência: marcador discreto em cinza (não amarelo) */
     .oosrow th.co .co-name{color:var(--color-text-muted)}
     .oosmsg{font-size:var(--text-sm);color:var(--color-text-muted);text-align:left;padding:var(--space-3) var(--space-4)}
 
@@ -424,7 +425,7 @@
     adv:{l:'Processada com advertências',s:'Advertências',short:'Processada com adv.',p:'status--azul',dot:'azul'},
     processando:{l:'Em processamento',s:'Processando',p:'status--info',dot:'info'},
     rejeitado:{l:'Rejeitada',s:'Rejeitada',p:'status--danger',dot:'danger'},
-    pendente:{l:'Em preparação',s:'Em preparação',p:'status--neutral',dot:'neutral'},   /* guarda-chuva de Rascunho/Em revisão/Ajustes solicitados — o sub-estado real por item depende de definição do Cláudio (ver memória) */
+    pendente:{l:'Em preparação',s:'Em preparação',p:'status--neutral',dot:'neutral'},   /* guarda-chuva de Rascunho, Em revisão e Ajustes solicitados; o sub-estado por item entra quando houver esse dado */
     bloqueado:{l:'Bloqueada',s:'Bloqueada',p:'status--warning',dot:'warning'},
     vencido:{l:'Vencida',s:'Vencida',p:'status--danger',dot:'danger'}
   };
@@ -741,7 +742,7 @@
       return '<td'+cls+'><button class="cellbtn" type="button" data-open="'+r.c.emp+'|D-1199" aria-label="'+esc('Fechamento: '+dl+', '+r.c.nome)+'">'+mcellHtml(dc,dl)+'</button></td>';
     }
     var st=effState(r,ev);
-    var sub=o.rejNova?'<span class="cellsub">nova versão rejeitada</span>':(st==='adv'?'<span class="cellsub">com advertência</span>':'');
+    var sub=o.rejNova?'<span class="cellsub">nova versão rejeitada</span>':(st==='adv'?'<span class="cellsub cellsub--quiet">com adv.</span>':'');
     // visão geral: aceita e aceita-com-advertências viram "Concluída" (uniforme); o detalhe preciso (com/sem aviso, recibo) fica no drawer. Advertência ganha sub-rótulo discreto. O estado efetivo cobre o bloqueado-vencido.
     var isC=(st==='ok'||st==='adv');
     var mdot=isC?'success':ST[st].dot, mlabel=isC?'Concluída':(ST[st].short||ST[st].l);
@@ -1050,7 +1051,7 @@
 </script>
 <script>
 (function(){
-  var MYV='1788883514';
+  var MYV='1788884581';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
