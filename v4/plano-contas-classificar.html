@@ -8,8 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Plano de Contas · Nova versão</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788974428">
-  <script src="../design-system/ds-tailwind.js?v=1788974428"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788974834">
+  <script src="../design-system/ds-tailwind.js?v=1788974834"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -91,12 +91,13 @@
     /* editor da linha (classificar / editar) */
     .tbedit-cell{background:var(--color-primary-subtle)!important;padding:0 var(--space-8)!important;border-bottom:1px solid var(--color-border-strong)}
     .tbeditor{box-sizing:border-box;padding:var(--space-8) 0}
-    /* início e fim juntos, lado a lado, no bloco da esquerda (sob o codTrib) */
+    /* editor em 2 colunas: esquerda = codTrib + descrição (empilhados); direita = vigência + ISSQN */
+    .tbedit-2col{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:var(--space-8)}
+    @media(max-width:840px){.tbedit-2col{grid-template-columns:1fr}}
+    .tbcol{display:flex;flex-direction:column;gap:var(--space-8)}
     .tbeditor .aigvig{display:flex;gap:var(--space-6);flex-wrap:wrap}
     .tbeditor .aigvig .aigfield{flex:0 1 200px;min-width:0}
     .tbeditor .aigvig .datefield{max-width:200px}
-    .tbeditor > .aigchecks{margin-top:var(--space-8)}   /* respiro entre as seções do editor */
-    .tbeditor > .aigvig{margin-top:var(--space-8)}
     .tbeditor .aigfield .hint{margin-top:var(--space-2)}
     .tbedit-grid{display:grid;grid-template-columns:minmax(260px,1fr) minmax(280px,1.2fr);gap:var(--space-6)}
     @media(max-width:840px){.tbedit-grid{grid-template-columns:1fr}}
@@ -129,6 +130,8 @@
     .tbcombo__panel{position:absolute;z-index:5;top:calc(100% + 4px);left:0;right:0;max-height:220px;overflow:auto;background:var(--color-surface);border:1px solid var(--color-border-strong);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);padding:var(--space-1)}
     .tbcombo__panel button{display:flex;gap:var(--space-2);width:100%;text-align:left;border:0;background:none;padding:var(--space-2) var(--space-3);border-radius:var(--radius-base);cursor:pointer;font-family:inherit;align-items:baseline}
     .tbcombo__panel button:hover{background:var(--color-primary-subtle)}
+    .tbcombo__panel button.is-selected{background:var(--color-primary-subtle);box-shadow:inset 2px 0 0 var(--color-primary)}
+    .tbcombo__panel button.is-selected .tbcombo__c{color:var(--color-primary)}
     .tbcombo__c{font-weight:600;color:var(--color-heading);font-variant-numeric:tabular-nums;flex:0 0 auto}
     .tbcombo__n{font-size:var(--text-sm);color:var(--color-text-muted)}
 
@@ -1088,7 +1091,8 @@
       var right = score!=null
         ? '<span class="aigalt__match">'+(sug?'<span class="aigalt__sug" aria-label="Sugerido pela IA">'+SPARK+'</span>':'')+'<span class="aigalt__pct">'+score+'%<span class="sr-only"> de compatibilidade</span></span></span>'
         : (sug?'<span class="aigalt__sug" aria-label="Sugerido pela IA">'+SPARK+'</span>':'');
-      return '<button type="button" data-pick="'+o.code+'" data-cod="'+esc(c.cod)+'" data-search="'+esc((o.code+' '+o.nome).toLowerCase())+'"><span class="tbcombo__c">'+o.code+'</span><span class="tbcombo__n">'+esc(o.nome)+'</span>'+right+'</button>';
+      var selected=(c.codTrib&&o.code===c.codTrib);
+      return '<button type="button" class="'+(selected?'is-selected':'')+'"'+(selected?' aria-current="true"':'')+' data-pick="'+o.code+'" data-cod="'+esc(c.cod)+'" data-search="'+esc((o.code+' '+o.nome).toLowerCase())+'"><span class="tbcombo__c">'+o.code+'</span><span class="tbcombo__n">'+esc(o.nome)+'</span>'+right+'</button>';
     };
     var opts='';
     if(sugCode && compat.length){
@@ -1111,30 +1115,34 @@
       '</div>';
     return '<tr class="tbedit"><td colspan="6" class="tbedit-cell"><div class="tbeditor">'+
       metaStrip+
-      '<div class="tbedit-grid">'+
-        '<div class="aigfield">'+
-          '<div class="aigfield__lbl"><label>Código de tributação (codTrib)</label>'+((c.origin==='sugerida'&&c.codTrib)?'<span class="status status--ia status--sm">'+SPARK+'Sugerida pela IA'+(c.conf?' · confiança '+(c.conf==='media'?'média':c.conf):'')+'</span>':(c.origin==='classificar'?'<span class="status status--warning status--sm"><span class="status__dot"></span>Sem sugestão da IA</span>':''))+'</div>'+
-          '<div class="tbcombo" data-combo="'+esc(c.cod)+'"><input class="input" type="text" placeholder="Buscar código ou conta na Tabela 11" value="'+esc(comboVal)+'" data-cod="'+esc(c.cod)+'" data-combo-input autocomplete="off"><span class="tbcombo__chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span><div class="tbcombo__panel" data-combo-panel hidden>'+opts+'</div></div>'+
-          '<p class="hint">Tabela 11 · 9 dígitos, obrigatório em conta analítica.</p>'+
-        '</div>'+
-        '<div class="aigfield">'+
-          '<div class="aigfield__lbl"><label for="tbdescf-'+esc(c.cod)+'">Descrição da conta (o "comentado" do PGCC)</label>'+
-            (c.descSug?(
-              '<span class="status status--ia status--sm" data-sugtag="'+esc(c.cod)+'"'+(c.desc!==c.descSug?' hidden':'')+'>'+SPARK+'Sugerida pela IA</span>'+
-              '<button type="button" class="linkact linkact--ia" data-resetdesc="'+esc(c.cod)+'"'+(c.desc===c.descSug?' hidden':'')+'>'+SPARK+'Restaurar sugestão da IA</button>'
-            ):'')+
+      '<div class="tbedit-2col">'+
+        '<div class="tbcol">'+
+          '<div class="aigfield">'+
+            '<div class="aigfield__lbl"><label>Código de tributação (codTrib)</label>'+((c.origin==='sugerida'&&c.codTrib)?'<span class="status status--ia status--sm">'+SPARK+'Sugerida pela IA'+(c.conf?' · confiança '+(c.conf==='media'?'média':c.conf):'')+'</span>':(c.origin==='classificar'?'<span class="status status--warning status--sm"><span class="status__dot"></span>Sem sugestão da IA</span>':''))+'</div>'+
+            '<div class="tbcombo" data-combo="'+esc(c.cod)+'"><input class="input" type="text" placeholder="Buscar código ou conta na Tabela 11" value="'+esc(comboVal)+'" data-cod="'+esc(c.cod)+'" data-combo-input autocomplete="off"><span class="tbcombo__chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span><div class="tbcombo__panel" data-combo-panel hidden>'+opts+'</div></div>'+
+            '<p class="hint">Tabela 11 · 9 dígitos, obrigatório em conta analítica.</p>'+
           '</div>'+
-          '<textarea class="input input--compact" id="tbdescf-'+esc(c.cod)+'" data-cod="'+esc(c.cod)+'" data-desc>'+esc(c.desc)+'</textarea>'+
+          '<div class="aigfield">'+
+            '<div class="aigfield__lbl"><label for="tbdescf-'+esc(c.cod)+'">Descrição da conta (o "comentado" do PGCC)</label>'+
+              (c.descSug?(
+                '<span class="status status--ia status--sm" data-sugtag="'+esc(c.cod)+'"'+(c.desc!==c.descSug?' hidden':'')+'>'+SPARK+'Sugerida pela IA</span>'+
+                '<button type="button" class="linkact linkact--ia" data-resetdesc="'+esc(c.cod)+'"'+(c.desc===c.descSug?' hidden':'')+'>'+SPARK+'Restaurar sugestão da IA</button>'
+              ):'')+
+            '</div>'+
+            '<textarea class="input input--compact" id="tbdescf-'+esc(c.cod)+'" data-cod="'+esc(c.cod)+'" data-desc>'+esc(c.desc)+'</textarea>'+
+          '</div>'+
         '</div>'+
-      '</div>'+
-      '<div class="aigchecks">'+
-        '<label class="check"><input type="checkbox" data-cod="'+esc(c.cod)+'" data-iss'+(c.iss?' checked':'')+'><span>Sujeita a ISSQN (indTribISS)</span></label>'+
-      '</div>'+
-      '<div class="aigvig">'+
-        '<div class="aigfield"><label>Início da vigência</label><div class="datefield" data-datefield><input class="input" type="text" value="'+esc(c.vigIni)+'" readonly placeholder="dd/mm/aaaa" autocomplete="off" data-cod="'+esc(c.cod)+'" data-vi aria-label="Início da vigência"><span class="datefield__ic">'+CAL+'</span><div class="dp" hidden></div></div></div>'+
-        '<div class="aigfield"><label>Fim da vigência</label>'+
-          '<div class="datefield" data-datefield><input class="input" type="text" value="'+esc(c.vigAberta?'':c.vigFim)+'"'+(c.vigAberta?' disabled':'')+' readonly placeholder="Em aberto" autocomplete="off" data-cod="'+esc(c.cod)+'" data-vf aria-label="Fim da vigência"><span class="datefield__ic">'+CAL+'</span><div class="dp" hidden></div></div>'+
-          '<label class="check aigvig__ab"><input type="checkbox" data-cod="'+esc(c.cod)+'" data-vigab'+(c.vigAberta?' checked':'')+'><span>Vigência em aberto</span></label>'+
+        '<div class="tbcol">'+
+          '<div class="aigvig">'+
+            '<div class="aigfield"><label>Início da vigência</label><div class="datefield" data-datefield><input class="input" type="text" value="'+esc(c.vigIni)+'" readonly placeholder="dd/mm/aaaa" autocomplete="off" data-cod="'+esc(c.cod)+'" data-vi aria-label="Início da vigência"><span class="datefield__ic">'+CAL+'</span><div class="dp" hidden></div></div></div>'+
+            '<div class="aigfield"><label>Fim da vigência</label>'+
+              '<div class="datefield" data-datefield><input class="input" type="text" value="'+esc(c.vigAberta?'':c.vigFim)+'"'+(c.vigAberta?' disabled':'')+' readonly placeholder="Em aberto" autocomplete="off" data-cod="'+esc(c.cod)+'" data-vf aria-label="Fim da vigência"><span class="datefield__ic">'+CAL+'</span><div class="dp" hidden></div></div>'+
+              '<label class="check aigvig__ab"><input type="checkbox" data-cod="'+esc(c.cod)+'" data-vigab'+(c.vigAberta?' checked':'')+'><span>Vigência em aberto</span></label>'+
+            '</div>'+
+          '</div>'+
+          '<div class="aigchecks">'+
+            '<label class="check"><input type="checkbox" data-cod="'+esc(c.cod)+'" data-iss'+(c.iss?' checked':'')+'><span>Sujeita a ISSQN (indTribISS)</span></label>'+
+          '</div>'+
         '</div>'+
       '</div>'+
       '<div class="tbedit-foot">'+
@@ -1321,7 +1329,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788974428';
+  var MYV='1788974834';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
