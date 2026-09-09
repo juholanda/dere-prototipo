@@ -8,8 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Plano de Contas · Nova versão</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788970052">
-  <script src="../design-system/ds-tailwind.js?v=1788970052"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788970588">
+  <script src="../design-system/ds-tailwind.js?v=1788970588"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -469,7 +469,7 @@
               <div class="tbsummary" id="tbSummary"></div>
               <div class="table-wrap">
                 <table class="table">
-                  <thead><tr><th scope="col">Conta</th><th scope="col">Grupo</th><th scope="col">codTrib</th><th scope="col">Origem</th><th scope="col"><span class="sr-only">Ação</span></th></tr></thead>
+                  <thead><tr><th scope="col">Conta</th><th scope="col">Grupo</th><th scope="col">Natureza</th><th scope="col">codTrib</th><th scope="col">Origem</th><th scope="col"><span class="sr-only">Ação</span></th></tr></thead>
                   <tbody id="tbRows"></tbody>
                 </table>
               </div>
@@ -592,7 +592,7 @@
   document.getElementById('btnSend').addEventListener('click',function(){ toast('Plano enviado para revisão do aprovador.','ok'); });
 
   /* ================= modelo único de contas (triagem e tabela compartilham) ================= */
-  var STEPS=['Lendo dados da planilha importada','Identificando contas analíticas','Gerando sugestões de classificação','Associando codTrib e conta referencial','Verificando correspondências no plano referencial','Calculando níveis de confiança'];
+  var STEPS=['Lendo dados da planilha importada','Identificando contas analíticas','Gerando sugestões de codTrib','Sugerindo a descrição (o "comentado")','Conferindo a conta referencial informada na planilha','Calculando níveis de confiança'];
   var CODTRIB_NAMES={'110010101':'Prêmios de seguros diretos','218010301':'Rendimentos de aplicações financeiras','110020101':'Prêmios de cosseguro cedidos','310010101':'Sinistros de seguros diretos','410010201':'Despesas de comercialização','110250001':'Não tributável · Exportação de serviços','110250002':'Não tributável / alíquota zero (geral)'};
   /* Tabela 11 (subconjunto ilustrativo; codTrib de 9 dígitos, regra oficial MS1115). grp:'notrib' = família 11025 (não tributáveis / alíquota zero) */
   var T11=[
@@ -1041,7 +1041,7 @@
         meta('Conta referencial (cCtaRef)', c.cCtaRef||'—')+
         meta('Desdobramento (cDbrMista)', c.cDbrMista||'000')+
       '</div>';
-    return '<tr class="tbedit"><td colspan="5" class="tbedit-cell"><div class="tbeditor">'+
+    return '<tr class="tbedit"><td colspan="6" class="tbedit-cell"><div class="tbeditor">'+
       metaStrip+
       '<div class="tbedit-grid">'+
         '<div class="tbedit-field"><label>Código de tributação (codTrib)</label>'+
@@ -1070,13 +1070,14 @@
   function renderTable(){
     if(!contas) return;
     var rows=contas.filter(tbMatch);
-    if(!rows.length){ document.getElementById('tbRows').innerHTML='<tr><td colspan="5" class="tbempty">Nenhuma conta neste filtro.</td></tr>'; renderTbSummary(); return; }
+    if(!rows.length){ document.getElementById('tbRows').innerHTML='<tr><td colspan="6" class="tbempty">Nenhuma conta neste filtro.</td></tr>'; renderTbSummary(); return; }
     document.getElementById('tbRows').innerHTML=rows.map(function(c){
       var actLabel=(openEdit===c.cod)?'Fechar':(c.origin==='classificar'?'Classificar':'Editar');
       var actCls=(c.origin==='classificar'&&openEdit!==c.cod)?'btn--primary':'btn--secondary';
       var row='<tr class="tbrow'+(openEdit===c.cod?' is-open':'')+'" data-cod="'+esc(c.cod)+'">'+
         '<td><div class="tb-cta"><span class="tb-cod">'+esc(c.cod)+'</span><span class="tb-nm">'+esc(c.nome)+'</span></div></td>'+
         '<td>'+esc(NAT_LABEL[c.codNat]||'—')+'</td>'+
+        '<td>'+esc(c.natCta?(NATCTA_LABEL[c.natCta]||c.natCta):'—')+'</td>'+
         '<td>'+ctCell(c)+'</td>'+
         '<td>'+originTag(c)+'</td>'+
         '<td class="col-act"><button type="button" class="btn '+actCls+' btn--sm" data-act="'+esc(c.cod)+'">'+actLabel+'</button></td>'+
@@ -1198,7 +1199,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788970052';
+  var MYV='1788970588';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
