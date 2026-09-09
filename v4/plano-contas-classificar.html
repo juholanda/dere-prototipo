@@ -8,8 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Plano de Contas · Nova versão</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788973320">
-  <script src="../design-system/ds-tailwind.js?v=1788973320"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788973580">
+  <script src="../design-system/ds-tailwind.js?v=1788973580"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -102,8 +102,8 @@
     .tbedit-metahd{font-size:var(--text-xs);color:var(--color-text);font-weight:600;margin:0 0 var(--space-2);display:flex;align-items:center;gap:var(--space-1-5)}
     .tbedit-metahd svg{width:14px;height:14px;flex:0 0 auto;color:var(--color-text-muted)}
     .tbedit-meta{display:flex;flex-wrap:wrap;gap:var(--space-1-5) var(--space-6);padding:var(--space-3) var(--space-4);background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-2xl);margin-bottom:var(--space-6)}
-    /* header da tabela fixo: o corpo rola dentro do wrapper e os títulos ficam à vista */
-    #tableCard .table-wrap{max-height:60vh;overflow:auto}
+    /* header da tabela sempre visível: a tabela cresce naturalmente (sem altura fixa) e o thead gruda no topo da rolagem da página (.cadscroll). O wrapper não pode ser container de scroll, senão prende o sticky. */
+    #tableCard .table-wrap{overflow:visible}
     #tableCard .table thead th{position:sticky;top:0;z-index:2}
     .th-btn{background:none;border:0;margin:0;padding:0;font:inherit;color:inherit;letter-spacing:inherit;text-transform:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:var(--space-1-5)}
     .th-btn:focus-visible{outline:none;box-shadow:var(--ring);border-radius:var(--radius-sm)}
@@ -1129,7 +1129,15 @@
     else return 0;
     if(va<vb) return -dir; if(va>vb) return dir; return 0;
   }
-  function setTbFilter(key){ TBFILTER=(TBFILTER===key)?'':key; openEdit=null; renderTable(); var b=document.querySelector('#tbSummary [data-kpi="'+key+'"]'); if(b) b.focus(); }
+  function setTbFilter(key){
+    TBFILTER=(TBFILTER===key)?'':key; openEdit=null;
+    var body=document.getElementById('tbRows');
+    function done(){ renderTable(); var b=document.querySelector('#tbSummary [data-kpi="'+key+'"]'); if(b) b.focus(); }
+    if(body && !REDUCE){
+      body.style.transition='opacity .16s ease'; body.style.opacity='0';
+      setTimeout(function(){ done(); body.style.opacity='1'; setTimeout(function(){ body.style.transition=''; },200); },150);
+    } else { done(); }
+  }
   /* fecha o editor colapsando com animação (altura + fade), depois re-renderiza */
   function closeEditorAnim(){ animClose(document.querySelector('#tbRows tr.tbedit .tbeditor'), function(){ openEdit=null; renderTable(); }); }
   function renderTable(){
@@ -1286,7 +1294,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788973320';
+  var MYV='1788973580';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
