@@ -8,8 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Plano de Contas · Nova versão</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788972516">
-  <script src="../design-system/ds-tailwind.js?v=1788972516"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788973320">
+  <script src="../design-system/ds-tailwind.js?v=1788973320"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -105,6 +105,8 @@
     /* header da tabela fixo: o corpo rola dentro do wrapper e os títulos ficam à vista */
     #tableCard .table-wrap{max-height:60vh;overflow:auto}
     #tableCard .table thead th{position:sticky;top:0;z-index:2}
+    .th-btn{background:none;border:0;margin:0;padding:0;font:inherit;color:inherit;letter-spacing:inherit;text-transform:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:var(--space-1-5)}
+    .th-btn:focus-visible{outline:none;box-shadow:var(--ring);border-radius:var(--radius-sm)}
     .tbedit-meta__i{display:inline-flex;align-items:baseline;gap:var(--space-1-5);font-size:var(--text-sm);white-space:nowrap}
     .tbedit-meta__k{color:var(--color-text-muted)}
     .tbedit-meta__v{color:var(--color-heading);font-weight:600}
@@ -477,7 +479,14 @@
               <div class="tbsummary" id="tbSummary"></div>
               <div class="table-wrap">
                 <table class="table">
-                  <thead><tr><th scope="col">Conta</th><th scope="col">Grupo (codNat)</th><th scope="col">Natureza (natCta)</th><th scope="col">codTrib</th><th scope="col">Origem</th><th scope="col"><span class="sr-only">Ação</span></th></tr></thead>
+                  <thead><tr>
+                    <th scope="col" class="sortable is-sorted" data-sort="cod" aria-sort="ascending"><button type="button" class="th-btn">Conta <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
+                    <th scope="col" class="sortable" data-sort="codnat" aria-sort="none"><button type="button" class="th-btn">Grupo (codNat) <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
+                    <th scope="col" class="sortable" data-sort="natcta" aria-sort="none"><button type="button" class="th-btn">Natureza (natCta) <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
+                    <th scope="col" class="sortable" data-sort="codtrib" aria-sort="none"><button type="button" class="th-btn">codTrib <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
+                    <th scope="col" class="sortable" data-sort="origem" aria-sort="none"><button type="button" class="th-btn">Origem <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
+                    <th scope="col"><span class="sr-only">Ação</span></th>
+                  </tr></thead>
                   <tbody id="tbRows"></tbody>
                 </table>
               </div>
@@ -630,7 +639,7 @@
     {cod:'2.3.1.01', nome:'Provisões técnicas · Constituição', indCta:'A', codNat:2, natCta:'C', cCtaSup:'2.3.1', cCtaRef:'23101', cDbrMista:'000', desc:'Constituição de provisões técnicas do período.', vigIni:'01/01/2026', vigFim:'', codTrib:null, origin:'classificar', reason:'sem-sugestao', conf:null, iss:false},
     {cod:'2.9.1.01', nome:'Conta mista · Tributos a recuperar e a recolher', indCta:'A', codNat:2, natCta:'V', cCtaSup:'2.9.1', cCtaRef:'29101', cDbrMista:'000', desc:'Conta com desdobramentos de naturezas distintas (a recuperar e a recolher).', vigIni:'01/01/2026', vigFim:'', codTrib:null, origin:'classificar', reason:'mista', conf:null, iss:false}
   ];
-  var contas=null, openG={}, openC={}, openAcc={}, altG={}, openEdit=null, manualOpen=true, TBFILTER='';
+  var contas=null, openG={}, openC={}, openAcc={}, altG={}, openEdit=null, manualOpen=true, TBFILTER='', TBSORT={key:'cod',dir:'asc'};
   function clone(x){ return JSON.parse(JSON.stringify(x)); }
   function findC(cod){ for(var i=0;i<contas.length;i++){ if(contas[i].cod===cod) return contas[i]; } return null; }
   /* rótulos do leiaute D-1011 */
@@ -1110,10 +1119,23 @@
     '</div></td></tr>';
   }
   function tbMatch(c){ if(!TBFILTER) return true; if(TBFILTER==='ok') return c.origin==='validada'; if(TBFILTER==='ia') return c.origin==='sugerida'; if(TBFILTER==='none') return c.origin==='classificar'; return true; }
+  function tbCmp(a,b){
+    var k=TBSORT.key, dir=(TBSORT.dir==='asc'?1:-1), va, vb;
+    if(k==='cod'){ va=a.cod; vb=b.cod; }
+    else if(k==='codnat'){ va=a.codNat; vb=b.codNat; }
+    else if(k==='natcta'){ va=a.natCta||''; vb=b.natCta||''; }
+    else if(k==='codtrib'){ va=a.codTrib||''; vb=b.codTrib||''; }
+    else if(k==='origem'){ var ord={validada:0,sugerida:1,classificar:2}; va=ord[a.origin]; vb=ord[b.origin]; }
+    else return 0;
+    if(va<vb) return -dir; if(va>vb) return dir; return 0;
+  }
   function setTbFilter(key){ TBFILTER=(TBFILTER===key)?'':key; openEdit=null; renderTable(); var b=document.querySelector('#tbSummary [data-kpi="'+key+'"]'); if(b) b.focus(); }
+  /* fecha o editor colapsando com animação (altura + fade), depois re-renderiza */
+  function closeEditorAnim(){ animClose(document.querySelector('#tbRows tr.tbedit .tbeditor'), function(){ openEdit=null; renderTable(); }); }
   function renderTable(){
     if(!contas) return;
     var rows=contas.filter(tbMatch);
+    if(TBSORT.key){ rows=rows.slice().sort(tbCmp); }
     if(!rows.length){ document.getElementById('tbRows').innerHTML='<tr><td colspan="6" class="tbempty">Nenhuma conta neste filtro.</td></tr>'; renderTbSummary(); return; }
     document.getElementById('tbRows').innerHTML=rows.map(function(c){
       var actLabel=(openEdit===c.cod)?'Fechar':(c.origin==='classificar'?'Classificar':'Editar');
@@ -1167,8 +1189,8 @@
     var body=document.getElementById('tbRows');
     body.addEventListener('click',function(ev){
       var b=ev.target.closest('button'); if(!b) return;
-      if(b.hasAttribute('data-act')){ var cod=b.getAttribute('data-act'); var opening=(openEdit!==cod); openEdit=opening?cod:null; renderTable(); if(opening){ animOpen(document.querySelector('#tbRows tr.tbedit .tbeditor')); } }
-      else if(b.hasAttribute('data-editclose')){ openEdit=null; renderTable(); }
+      if(b.hasAttribute('data-act')){ var cod=b.getAttribute('data-act'); if(openEdit===cod){ closeEditorAnim(); } else { openEdit=cod; renderTable(); animOpen(document.querySelector('#tbRows tr.tbedit .tbeditor')); } }
+      else if(b.hasAttribute('data-editclose')){ closeEditorAnim(); }
       else if(b.hasAttribute('data-editsave')){ saveConta(b.getAttribute('data-editsave')); }
       else if(b.hasAttribute('data-desdobrar')){ desdobrar(b.getAttribute('data-desdobrar')); }
       else if(b.hasAttribute('data-resetdesc')){ var c=findC(b.getAttribute('data-resetdesc')); if(c&&c.descSug!=null){ c.desc=c.descSug; renderTable(); toast('Descrição restaurada para a sugestão da IA.','info'); } }
@@ -1199,6 +1221,15 @@
       }
     });
     document.addEventListener('click',function(ev){ if(!ev.target.closest('.tbcombo')) body.querySelectorAll('[data-combo-panel]').forEach(function(p){p.hidden=true;}); });
+  })();
+  /* ordenação do header (padrão do DS: th.sortable + .th-sort + aria-sort) */
+  (function(){
+    var ths=document.querySelectorAll('#tableCard th.sortable');
+    function updateHeaders(){ ths.forEach(function(th){ var on=th.getAttribute('data-sort')===TBSORT.key; th.setAttribute('aria-sort', on?(TBSORT.dir==='asc'?'ascending':'descending'):'none'); th.classList.toggle('is-sorted', on); }); }
+    ths.forEach(function(th){
+      (th.querySelector('.th-btn')||th).addEventListener('click',function(){ var k=th.getAttribute('data-sort'); if(TBSORT.key===k){ TBSORT.dir=(TBSORT.dir==='asc'?'desc':'asc'); } else { TBSORT.key=k; TBSORT.dir='asc'; } openEdit=null; renderTable(); updateHeaders(); });
+    });
+    updateHeaders();
   })();
   function saveConta(cod){
     var c=findC(cod); if(!c) return;
@@ -1255,7 +1286,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788972516';
+  var MYV='1788973320';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
