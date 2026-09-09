@@ -8,8 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Plano de Contas · Nova versão</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788975586">
-  <script src="../design-system/ds-tailwind.js?v=1788975586"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788975792">
+  <script src="../design-system/ds-tailwind.js?v=1788975792"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -822,7 +822,7 @@
       '<div class="aigvig">'+
         '<div class="aigfield"><label>Início da vigência</label><div class="datefield" data-datefield><input class="input" type="text" value="'+esc(c.vigIni)+'" readonly placeholder="dd/mm/aaaa" autocomplete="off" data-cod="'+esc(c.cod)+'" data-vi aria-label="Início da vigência"><span class="datefield__ic">'+CAL+'</span><div class="dp" hidden></div></div></div>'+
         '<div class="aigfield"><label>Fim da vigência</label>'+
-          '<div class="datefield" data-datefield><input class="input" type="text" value="'+esc(c.vigAberta?'':c.vigFim)+'"'+(c.vigAberta?' disabled':'')+' readonly placeholder="Em aberto" autocomplete="off" data-cod="'+esc(c.cod)+'" data-vf aria-label="Fim da vigência"><span class="datefield__ic">'+CAL+'</span><div class="dp" hidden></div></div>'+
+          '<div class="datefield" data-datefield><input class="input" type="text" value="'+esc(c.vigAberta?'':c.vigFim)+'"'+(c.vigAberta?' disabled':'')+' readonly placeholder="'+(c.vigAberta?'Em aberto':'dd/mm/aaaa')+'" autocomplete="off" data-cod="'+esc(c.cod)+'" data-vf aria-label="Fim da vigência"><span class="datefield__ic">'+CAL+'</span><div class="dp" hidden></div></div>'+
           '<label class="check aigvig__ab"><input type="checkbox" data-cod="'+esc(c.cod)+'" data-vigab'+(c.vigAberta?' checked':'')+'><span>Vigência em aberto</span></label>'+
         '</div>'+
       '</div>'+
@@ -977,7 +977,12 @@
       else if(t.hasAttribute('data-vigab')){
         c.vigAberta=t.checked;
         var box=t.closest('.aigfield'), fim=box&&box.querySelector('[data-vf]');
-        if(fim){ if(t.checked){ fim.value=''; c.vigFim=''; } fim.disabled=t.checked; }
+        if(fim){
+          fim.disabled=t.checked;
+          fim.placeholder=t.checked?'Em aberto':'dd/mm/aaaa';
+          if(t.checked){ fim.value=''; c.vigFim=''; }
+          else { setTimeout(function(){ try{ fim.click(); }catch(e){} },0); }   /* desmarcou: abre o calendário pra escolher a data */
+        }
       }
       if(!document.getElementById('tableCard').hidden) renderTable();
     });
@@ -1145,7 +1150,7 @@
           '<div class="aigvig">'+
             '<div class="aigfield"><label>Início da vigência</label><div class="datefield" data-datefield><input class="input" type="text" value="'+esc(c.vigIni)+'" readonly placeholder="dd/mm/aaaa" autocomplete="off" data-cod="'+esc(c.cod)+'" data-vi aria-label="Início da vigência"><span class="datefield__ic">'+CAL+'</span><div class="dp" hidden></div></div></div>'+
             '<div class="aigfield"><label>Fim da vigência</label>'+
-              '<div class="datefield" data-datefield><input class="input" type="text" value="'+esc(c.vigAberta?'':c.vigFim)+'"'+(c.vigAberta?' disabled':'')+' readonly placeholder="Em aberto" autocomplete="off" data-cod="'+esc(c.cod)+'" data-vf aria-label="Fim da vigência"><span class="datefield__ic">'+CAL+'</span><div class="dp" hidden></div></div>'+
+              '<div class="datefield" data-datefield><input class="input" type="text" value="'+esc(c.vigAberta?'':c.vigFim)+'"'+(c.vigAberta?' disabled':'')+' readonly placeholder="'+(c.vigAberta?'Em aberto':'dd/mm/aaaa')+'" autocomplete="off" data-cod="'+esc(c.cod)+'" data-vf aria-label="Fim da vigência"><span class="datefield__ic">'+CAL+'</span><div class="dp" hidden></div></div>'+
               '<label class="check aigvig__ab"><input type="checkbox" data-cod="'+esc(c.cod)+'" data-vigab'+(c.vigAberta?' checked':'')+'><span>Vigência em aberto</span></label>'+
             '</div>'+
           '</div>'+
@@ -1271,7 +1276,12 @@
       else if(t.hasAttribute('data-vigab')){
         c.vigAberta=t.checked;
         var box=t.closest('.aigfield'), fim=box&&box.querySelector('[data-vf]');
-        if(fim){ if(t.checked){ fim.value=''; c.vigFim=''; } fim.disabled=t.checked; }
+        if(fim){
+          fim.disabled=t.checked;
+          fim.placeholder=t.checked?'Em aberto':'dd/mm/aaaa';
+          if(t.checked){ fim.value=''; c.vigFim=''; }
+          else { setTimeout(function(){ try{ fim.click(); }catch(e){} },0); }   /* desmarcou: abre o calendário pra escolher a data */
+        }
       }
     });
     document.addEventListener('click',function(ev){ if(!ev.target.closest('.tbcombo')) body.querySelectorAll('[data-combo-panel]').forEach(function(p){p.hidden=true;}); });
@@ -1347,7 +1357,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788975586';
+  var MYV='1788975792';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
