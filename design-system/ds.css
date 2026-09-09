@@ -409,6 +409,12 @@ textarea.input--compact{min-height:64px}   /* editores inline (linha de conta, t
 .status--sm{padding:1px var(--space-2);font-size:var(--text-xs);gap:var(--space-1)}
 .status--sm .status__dot{width:6px;height:6px}
 .status--micro{padding:2px var(--space-2);font-size:var(--text-2xs);font-weight:700;text-transform:uppercase;letter-spacing:.04em;gap:var(--space-1)}   /* etiqueta compacta (badge de confiança, motivo, etc.) */
+/* micro em 9px caixa-alta: escurece o fg 1 passo p/ folga de contraste AA (o -fg/700 ficava no limite 4.5:1) */
+.status--micro.status--success{color:var(--green-800)}
+.status--micro.status--warning{color:var(--amber-800)}
+.status--micro.status--info{color:var(--sky-800)}
+/* forced-colors (Windows alto contraste): pílulas dependem de background → contorno pra não sumir */
+@media (forced-colors: active){ .status{border:1px solid currentColor} }
 .status--micro .status__dot{width:5px;height:5px}
 .status--lg{padding:var(--space-1-5) var(--space-3);font-size:var(--text-base)}
 .status--lg .status__dot{width:8px;height:8px}

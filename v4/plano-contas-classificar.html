@@ -8,8 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Plano de Contas · Nova versão</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788962697">
-  <script src="../design-system/ds-tailwind.js?v=1788962697"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788966974">
+  <script src="../design-system/ds-tailwind.js?v=1788966974"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -85,7 +85,6 @@
     .ct-code{font-weight:600;color:var(--color-heading);font-variant-numeric:tabular-nums}
     .status--ia{background:var(--color-primary-subtle);color:var(--color-primary)}
     .status--ia svg{width:13px;height:13px;flex:0 0 auto}
-    .status--neutral{background:var(--color-surface-2);color:var(--color-text-onmuted)}
     .muted{color:var(--color-text-muted)}
     .col-act{text-align:right;width:1%;white-space:nowrap}
     .table tbody tr.is-open td{background:var(--color-primary-subtle)}
@@ -163,7 +162,7 @@
     .aiprog__sub{font-size:var(--text-xs);color:var(--color-text-muted);margin-top:var(--space-2);font-variant-numeric:tabular-nums}
     .aiprog__leg{display:flex;gap:var(--space-4);margin-top:var(--space-4);font-size:var(--text-xs);color:var(--color-text-muted)}
     .aiprog__leg span{display:inline-flex;align-items:center;gap:var(--space-1-5)}
-    .legdot{width:9px;height:9px;border-radius:3px;flex:0 0 auto}
+    .legdot{width:9px;height:9px;border-radius:var(--radius-sm);flex:0 0 auto}
     .legdot--ok{background:var(--color-success-fg)}
     .legdot--ia{background:var(--color-primary)}
     .aistats{display:flex;flex-direction:column;gap:var(--space-2);margin-top:var(--space-2)}
@@ -172,6 +171,8 @@
     .aistat__ic svg{width:20px;height:20px}
     .aistat__lbl{flex:1;min-width:0;font-size:var(--text-sm);color:var(--color-text)}
     .aistat__v{font-size:var(--text-lg);font-weight:700;color:var(--color-heading);font-variant-numeric:tabular-nums}
+    /* KPIs: tom de acento CLARO (primitivas 400/500/600) — exceção consciente decidida com a PO;
+       os semânticos --color-*-fg (700) ficaram escuros demais. Não trocar por semântico. */
     .aistat--total{border-left-color:var(--slate-400)}
     .aistat--ok{border-left-color:var(--green-600)}.aistat--ok .aistat__ic{color:var(--green-600)}
     .aistat--ia{border-left-color:var(--blue-500)}.aistat--ia .aistat__ic{color:var(--blue-500)}
@@ -224,6 +225,8 @@
     .aigconta{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);overflow:hidden}
     .aigconta__row{display:flex;align-items:center;gap:var(--space-3);width:100%;text-align:left;background:none;border:0;padding:var(--space-3) var(--space-4);cursor:pointer;font-family:inherit;font-size:inherit}
     .aigconta__row:hover{background:var(--color-surface-2)}
+    /* A4: anel interno (o --ring por box-shadow era cortado pelo overflow:hidden do .aigconta) */
+    .aigconta__row:focus-visible{box-shadow:none;outline:2px solid var(--color-primary);outline-offset:-3px}
     .aigconta__cod{font-variant-numeric:tabular-nums;font-weight:700;color:var(--color-heading);flex:0 0 auto}
     .aigconta__nm{color:var(--color-text);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
     .aigconta__chev{color:var(--color-text-muted);display:grid;flex:0 0 auto;transition:transform .15s}
@@ -237,6 +240,7 @@
     .linkact--ia svg{width:13px;height:13px;flex:0 0 auto}
     .aigvig{display:flex;gap:var(--space-4);flex-wrap:wrap}
     .aigvig .aigfield{flex:1;min-width:150px}
+    .aigvig .aigvig__ab{margin-top:var(--space-3);margin-bottom:0;display:inline-flex;font-size:var(--text-sm);font-weight:400;color:var(--color-text)}
     .aigchecks{display:flex;flex-direction:column;gap:var(--space-3)}
     .aimanual{margin-top:var(--space-8);padding-top:var(--space-6);border-top:1px solid var(--color-border)}
     .aimanual__h{font-size:var(--text-base);font-weight:700;color:var(--color-heading);margin:0 0 var(--space-1)}
@@ -245,7 +249,6 @@
     .aigconta--static .aigconta__row{cursor:default}
     .aigconta--static .aigconta__row:hover{background:none}
     .aigalt{margin-top:var(--space-4);padding-top:var(--space-4);border-top:1px solid var(--color-divider);display:flex;flex-direction:column;gap:var(--space-3);transition:height .24s ease,margin .24s ease,padding .24s ease,opacity .24s ease}
-    .aigalt.is-closing{opacity:0;border-color:transparent}
     @media(prefers-reduced-motion:reduce){.aigalt{transition:opacity .12s ease}}
     .aigalt__lbl{font-size:var(--text-xs);font-weight:600;color:var(--color-heading)}
     .aigalt__list{max-height:260px;overflow:auto;border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-1)}
@@ -267,6 +270,12 @@
     .aiaccepted__h{font-size:var(--text-base);font-weight:700;color:var(--color-heading);margin:0 0 var(--space-3)}
     .aihd{display:flex;align-items:center;gap:var(--space-3);margin:0 0 var(--space-3)}
     .aihd h3{margin:0}
+    .aimanual__toggle{margin-left:auto}
+    .aimanual__toggle svg{transition:transform .15s}
+    .aimanual__toggle.is-open svg{transform:rotate(180deg)}
+    @media(prefers-reduced-motion:reduce){.aimanual__toggle svg{transition:none}}
+    /* forced-colors: barras de progresso dependem de bg → contorno + Highlight pra não sumir */
+    @media (forced-colors: active){ .aiprog__bar,.aiprocbar{border:1px solid CanvasText} .aiprog__seg,.aiprocbar>i{background:Highlight} }
     .aiacc{display:flex;flex-direction:column;background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-3) var(--space-4);margin-bottom:var(--space-2)}
     .aiacc__row{display:flex;align-items:center;gap:var(--space-3)}
     .aiacc__list{list-style:none;margin:var(--space-3) 0 0;padding:var(--space-3) 0 0;border-top:1px solid var(--color-border);display:flex;flex-direction:column;gap:var(--space-2)}
@@ -373,6 +382,8 @@
           </div>
 
           <div class="wrap">
+            <!-- Banner-gate CONDICIONAL: só aparece quando o D-1001 do contribuinte AINDA NÃO foi aprovado/processado.
+                 Uma vez aprovado, a transmissão já está liberada e este banner some (regra decidida com a PO; refletir na v2). -->
             <div class="dalert dalert--info" role="note" style="margin-bottom:var(--space-6);align-items:center">
               <span class="dalert__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span>
               <div class="dalert__body">
@@ -483,7 +494,7 @@
         </div>
         <div class="aiprog">
           <div class="aiprog__top"><span class="aiprog__lbl">Progresso da classificação</span><span class="aiprog__pct" id="aiPct">0%</span></div>
-          <div class="aiprog__bar"><span class="aiprog__seg aiprog__seg--ok" id="aiSegOk" style="width:0%"></span><span class="aiprog__seg aiprog__seg--ia" id="aiSegIa" style="width:0%"></span></div>
+          <div class="aiprog__bar" id="aiProgBar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Progresso da classificação"><span class="aiprog__seg aiprog__seg--ok" id="aiSegOk" style="width:0%"></span><span class="aiprog__seg aiprog__seg--ia" id="aiSegIa" style="width:0%"></span></div>
           <p class="aiprog__sub" id="aiProgSub">0 de 10 contas validadas · 0% concluído</p>
           <div class="aiprog__leg"><span><span class="legdot legdot--ok"></span>Validadas</span><span><span class="legdot legdot--ia"></span>Sugeridas pela IA</span></div>
         </div>
@@ -506,19 +517,19 @@
             <div class="aisteps" id="aiSteps"></div>
             <div class="aiproc">
               <div class="aiproc__top"><span><b id="aiProcN">0</b> de <b>10</b> contas processadas</span></div>
-              <div class="aiprocbar"><i id="aiProcBar"></i></div>
+              <div class="aiprocbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Progresso do processamento"><i id="aiProcBar"></i></div>
             </div>
           </div></div>
         </div>
         <div class="aimain__scroll" id="aiTriage" hidden>
-          <h2>Triagem · decisão por grupo</h2>
+          <h2 id="aiTriageTitle">Triagem · decisão por grupo</h2>
           <p class="aimain__lead">Aceite ou troque o codTrib de cada grupo: vale para todas as contas dele de uma vez.</p>
           <div id="aiGroups"></div>
-          <div id="aiManual"></div>
           <div class="aiaccepted" id="aiAcceptedWrap" hidden>
             <div class="aihd"><span class="card__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></svg></span><h3 class="aiaccepted__h" id="aiAcceptedH">Grupos aceitos (0)</h3></div>
             <div id="aiAccepted"></div>
           </div>
+          <div id="aiManual"></div>
         </div>
 
         <footer class="aifoot aifoot--end" id="aiFootLoading">
@@ -603,7 +614,7 @@
     {cod:'2.3.1.01', nome:'Provisões técnicas · Constituição', nat:'Passivo', desc:'Constituição de provisões técnicas do período.', vigIni:'01/01/2026', vigFim:'', codTrib:null, origin:'classificar', reason:'sem-sugestao', conf:null, iss:false, notax:false},
     {cod:'2.9.1.01', nome:'Conta mista · Tributos a recuperar e a recolher', nat:'Variável', desc:'Conta com desdobramentos de naturezas distintas (a recuperar e a recolher).', vigIni:'01/01/2026', vigFim:'', codTrib:null, origin:'classificar', reason:'mista', conf:null, iss:false, notax:false}
   ];
-  var contas=null, openG={}, openC={}, openAcc={}, altG={}, openEdit=null;
+  var contas=null, openG={}, openC={}, openAcc={}, altG={}, openEdit=null, manualOpen=true;
   function clone(x){ return JSON.parse(JSON.stringify(x)); }
   function findC(cod){ for(var i=0;i<contas.length;i++){ if(contas[i].cod===cod) return contas[i]; } return null; }
   function stats(){
@@ -639,13 +650,14 @@
     document.getElementById('stLeft').textContent=o.left;
     var pOk=o.total?Math.round(o.ok/o.total*100):0, pIa=o.total?Math.round(o.ia/o.total*100):0;
     document.getElementById('aiPct').textContent=pOk+'%';
+    document.getElementById('aiProgBar').setAttribute('aria-valuenow',pOk);
     document.getElementById('aiSegOk').style.width=pOk+'%';
     document.getElementById('aiSegIa').style.width=pIa+'%';
     document.getElementById('aiProgSub').textContent=o.ok+' de '+o.total+' contas validadas · '+pOk+'% concluído';
   }
 
   function openPopup(){
-    contas=clone(SEED_CONTAS); contas.forEach(function(c){ c.descSug=c.desc; }); openG={}; openC={}; openAcc={}; altG={}; openEdit=null;
+    contas=clone(SEED_CONTAS); contas.forEach(function(c){ c.descSug=c.desc; }); openG={}; openC={}; openAcc={}; altG={}; openEdit=null; manualOpen=true;
     if(closeTimer){clearTimeout(closeTimer);closeTimer=null;} document.getElementById('aiPopup').classList.remove('is-closing');
     document.getElementById('aiPopup').hidden=false;
     document.getElementById('aiSide').hidden=true;
@@ -661,6 +673,8 @@
     document.getElementById('aiLead').textContent='A inteligência artificial está analisando seu plano de contas.';
     document.getElementById('aiLive').textContent='';
     lastTrigger=document.getElementById('btnImport');
+    pop.setAttribute('aria-labelledby','aiTitle');
+    setBgInert(true);
     document.getElementById('aiClose').focus();
     /* estado inicial (pequeno) → expande e começa o processamento */
     loadTimer=setTimeout(function(){
@@ -669,7 +683,26 @@
       runLoading();
     }, (/[?&]slow=/.test(location.search)?2600:900));
   }
-  function closePopup(){ var pop=document.getElementById('aiPopup'); if(loadTimer){clearTimeout(loadTimer);loadTimer=null;} if(barTimer){clearInterval(barTimer);barTimer=null;}
+  /* a11y (A1): inertiza o fundo enquanto o modal está aberto (foco e leitor de tela presos ao diálogo) */
+  function setBgInert(on){
+    [].forEach.call(document.body.children, function(el){
+      if(el.id==='aiPopup'||el.id==='toasts') return;
+      if(on) el.setAttribute('inert',''); else el.removeAttribute('inert');
+    });
+  }
+  /* a11y (A1): trap de Tab dentro do modal */
+  function trapTab(e){
+    if(e.key!=='Tab') return;
+    var pop=document.getElementById('aiPopup'); if(pop.hidden) return;
+    var f=[].filter.call(pop.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),textarea:not([disabled]),select:not([disabled]),[tabindex]:not([tabindex="-1"])'), function(el){ return el.offsetParent!==null; });
+    if(!f.length) return;
+    var first=f[0], last=f[f.length-1];
+    if(e.shiftKey && document.activeElement===first){ e.preventDefault(); last.focus(); }
+    else if(!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); }
+  }
+  /* a11y (A2): devolve o foco a um alvo estável após re-render (senão cai no body) */
+  function refocus(sel){ var el=(sel&&document.querySelector(sel))||document.getElementById('aiConfirm')||document.getElementById('aiClose'); if(el){ try{el.focus();}catch(e){} } }
+  function closePopup(){ var pop=document.getElementById('aiPopup'); setBgInert(false); if(loadTimer){clearTimeout(loadTimer);loadTimer=null;} if(barTimer){clearInterval(barTimer);barTimer=null;}
     function finish(){ pop.hidden=true; pop.classList.remove('is-loading','is-expanded','is-closing'); if(lastTrigger){ try{lastTrigger.focus();}catch(e){} lastTrigger=null; } }
     if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches){ finish(); return; }
     pop.classList.add('is-closing'); closeTimer=setTimeout(finish,190);
@@ -684,19 +717,20 @@
     barTimer=setInterval(function(){
       var p=Math.min(1,(Date.now()-start)/total);
       bar.style.width=(p*100).toFixed(1)+'%';
+      bar.parentNode.setAttribute('aria-valuenow',Math.round(p*100));
       pn.textContent=Math.min(10,Math.floor(p*10));
     },70);
     /* cada etapa fica visível (~1,2s) com seu spinner antes de concluir */
     var live=document.getElementById('aiLive');
     function nextStep(){
-      if(i>=STEPS.length){ if(barTimer){clearInterval(barTimer);barTimer=null;} bar.style.width='100%'; pn.textContent='10'; renderSteps(STEPS.length); if(live) live.textContent='Processamento concluído.'; if(HOLD_LOAD) return; loadTimer=setTimeout(showTriage,700); return; }
+      if(i>=STEPS.length){ if(barTimer){clearInterval(barTimer);barTimer=null;} bar.style.width='100%'; bar.parentNode.setAttribute('aria-valuenow',100); pn.textContent='10'; renderSteps(STEPS.length); if(live) live.textContent='Processamento concluído.'; if(HOLD_LOAD) return; loadTimer=setTimeout(showTriage,700); return; }
       if(live) live.textContent='Etapa '+(i+1)+' de '+STEPS.length+': '+STEPS[i];
       renderSteps(i); i++; loadTimer=setTimeout(nextStep,stepDur);
     }
     nextStep();
   }
-  function showTriage(){ document.getElementById('aiPopup').classList.remove('is-loading','is-expanded'); document.getElementById('aiSide').hidden=false; document.getElementById('aiLoading').hidden=true; document.getElementById('aiTriage').hidden=false; document.getElementById('aiFootLoading').hidden=true; document.getElementById('aiFootTriage').hidden=false; renderTriage(); }
-  function reopenTriage(){ if(!contas){ openPopup(); return; } if(closeTimer){clearTimeout(closeTimer);closeTimer=null;} document.getElementById('aiPopup').hidden=false; document.getElementById('aiPopup').classList.remove('is-loading','is-expanded','is-closing'); document.getElementById('aiSide').hidden=false; document.getElementById('aiLoading').hidden=true; document.getElementById('aiTriage').hidden=false; document.getElementById('aiFootLoading').hidden=true; document.getElementById('aiFootTriage').hidden=false; renderTriage(); }
+  function showTriage(){ var pop=document.getElementById('aiPopup'); pop.classList.remove('is-loading','is-expanded'); pop.setAttribute('aria-labelledby','aiTriageTitle'); document.getElementById('aiSide').hidden=false; document.getElementById('aiLoading').hidden=true; document.getElementById('aiTriage').hidden=false; document.getElementById('aiFootLoading').hidden=true; document.getElementById('aiFootTriage').hidden=false; renderTriage(); }
+  function reopenTriage(){ if(!contas){ openPopup(); return; } if(closeTimer){clearTimeout(closeTimer);closeTimer=null;} var pop=document.getElementById('aiPopup'); pop.hidden=false; pop.classList.remove('is-loading','is-expanded','is-closing'); pop.setAttribute('aria-labelledby','aiTriageTitle'); document.getElementById('aiSide').hidden=false; document.getElementById('aiLoading').hidden=true; document.getElementById('aiTriage').hidden=false; document.getElementById('aiFootLoading').hidden=true; document.getElementById('aiFootTriage').hidden=false; lastTrigger=document.getElementById('btnReTriage'); setBgInert(true); renderTriage(); document.getElementById('aiClose').focus(); }
 
   function confLabel(c){ return c==='alta'?'Confiança alta':'Confiança média'; }
   function nlabel(n){ return n+(n===1?' conta':' contas'); }
@@ -706,17 +740,18 @@
     return '<span class="status status--micro status--warning">Sem sugestão</span>';
   }
   /* linha de conta expansível (código + nome) → edita descrição, checkboxes e vigência */
-  function contaLineHtml(c, withReason){
+  function contaLineHtml(c){
     var open=!!openC[c.cod];
+    if(c.vigAberta==null) c.vigAberta=!c.vigFim; /* vigência em aberto por padrão quando não há fim */
     var edit=open?('<div class="aigconta__edit">'+
       '<div class="aigfield">'+
-        '<div class="aigfield__lbl"><label>Descrição da conta (o "comentado" do PGCC)</label>'+
+        '<div class="aigfield__lbl"><label for="descf-'+esc(c.cod)+'">Descrição da conta (o "comentado" do PGCC)</label>'+
           (c.descSug?(
             '<span class="status status--ia status--sm" data-sugtag="'+esc(c.cod)+'"'+(c.desc!==c.descSug?' hidden':'')+'>'+SPARK+'Sugerida pela IA</span>'+
             '<button type="button" class="linkact linkact--ia" data-resetdesc="'+esc(c.cod)+'"'+(c.desc===c.descSug?' hidden':'')+'>'+SPARK+'Restaurar sugestão da IA</button>'
           ):'')+
         '</div>'+
-        '<textarea class="input input--compact" data-cod="'+esc(c.cod)+'" data-desc>'+esc(c.desc)+'</textarea>'+
+        '<textarea class="input input--compact" id="descf-'+esc(c.cod)+'" data-cod="'+esc(c.cod)+'" data-desc>'+esc(c.desc)+'</textarea>'+
       '</div>'+
       '<div class="aigchecks">'+
         '<label class="check"><input type="checkbox" data-cod="'+esc(c.cod)+'" data-notax'+(c.notax?' checked':'')+'><span>Conta não tributável (sem codTrib)</span></label>'+
@@ -724,20 +759,22 @@
       '</div>'+
       '<div class="aigvig">'+
         '<div class="aigfield"><label>Início da vigência</label><div class="datefield" data-datefield><input class="input" type="text" value="'+esc(c.vigIni)+'" readonly placeholder="dd/mm/aaaa" autocomplete="off" data-cod="'+esc(c.cod)+'" data-vi aria-label="Início da vigência"><span class="datefield__ic">'+CAL+'</span><div class="dp" hidden></div></div></div>'+
-        '<div class="aigfield"><label>Fim da vigência</label><div class="datefield" data-datefield><input class="input" type="text" value="'+esc(c.vigFim)+'" readonly placeholder="Em aberto" autocomplete="off" data-cod="'+esc(c.cod)+'" data-vf aria-label="Fim da vigência"><span class="datefield__ic">'+CAL+'</span><div class="dp" hidden></div></div></div>'+
+        '<div class="aigfield"><label>Fim da vigência</label>'+
+          '<div class="datefield" data-datefield><input class="input" type="text" value="'+esc(c.vigAberta?'':c.vigFim)+'"'+(c.vigAberta?' disabled':'')+' readonly placeholder="Em aberto" autocomplete="off" data-cod="'+esc(c.cod)+'" data-vf aria-label="Fim da vigência"><span class="datefield__ic">'+CAL+'</span><div class="dp" hidden></div></div>'+
+          '<label class="check aigvig__ab"><input type="checkbox" data-cod="'+esc(c.cod)+'" data-vigab'+(c.vigAberta?' checked':'')+'><span>Vigência em aberto</span></label>'+
+        '</div>'+
       '</div>'+
-      (withReason?'':'<div class="aigconta__editfoot"><button type="button" class="linkact linkact--rm" data-rm="'+esc(c.cod)+'">Remover conta</button></div>')+
+      '<div class="aigconta__editfoot"><button type="button" class="linkact linkact--rm" data-rm="'+esc(c.cod)+'">Remover conta</button></div>'+
     '</div>'):'';
     return '<div class="aigconta'+(open?' is-open':'')+'">'+
       '<button type="button" class="aigconta__row" data-cexp="'+esc(c.cod)+'" aria-expanded="'+(open?'true':'false')+'">'+
-        (withReason?reasonTag(c):'')+
         '<span class="aigconta__cod">'+esc(c.cod)+'</span>'+
         '<span class="aigconta__nm">'+esc(c.nome)+'</span>'+
         '<span class="aigconta__chev"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span>'+
       '</button>'+edit+
     '</div>';
   }
-  function contaDetail(g){ return '<div class="aigcontas">'+g.contas.map(function(c){ return contaLineHtml(c,false); }).join('')+'</div>'; }
+  function contaDetail(g){ return '<div class="aigcontas">'+g.contas.map(function(c){ return contaLineHtml(c); }).join('')+'</div>'; }
   /* linha manual: apenas lista (código + nome + motivo). A classificação/desdobramento é na tabela. */
   function manualRowHtml(c){
     return '<div class="aigconta aigconta--static"><div class="aigconta__row">'+
@@ -750,12 +787,11 @@
   function altOpt(o,g,sug,score){
     var right='';
     if(score!=null){
-      var tone=score>=85?'ok':(score>=70?'mid':'low');
-      right='<span class="aigalt__match">'+(sug?'<span class="aigalt__sug" title="Sugerido pela IA" aria-label="Sugerido pela IA">'+SPARK+'</span>':'')+'<span class="aigalt__pct aigalt__pct--'+tone+'" title="Compatibilidade estimada">'+score+'%</span></span>';
+      right='<span class="aigalt__match">'+(sug?'<span class="aigalt__sug" aria-label="Sugerido pela IA">'+SPARK+'</span>':'')+'<span class="aigalt__pct">'+score+'%<span class="sr-only"> de compatibilidade</span></span></span>';
     } else if(sug){
-      right='<span class="aigalt__sug" title="Sugerido pela IA" aria-label="Sugerido pela IA">'+SPARK+'</span>';
+      right='<span class="aigalt__sug" aria-label="Sugerido pela IA">'+SPARK+'</span>';
     }
-    return '<button type="button" class="aigalt__opt" data-altpick="'+esc(o.code)+'" data-g="'+esc(g.code)+'" data-search="'+esc((o.code+' '+o.nome).toLowerCase())+'">'+
+    return '<button type="button" role="option" class="aigalt__opt" data-altpick="'+esc(o.code)+'" data-g="'+esc(g.code)+'" data-search="'+esc((o.code+' '+o.nome).toLowerCase())+'">'+
       '<span class="tbcombo__c">'+esc(o.code)+'</span><span class="tbcombo__n">'+esc(o.nome)+'</span>'+right+
     '</button>';
   }
@@ -766,24 +802,37 @@
     compat.sort(function(a,b){ return (b.code===g.code?1:0)-(a.code===g.code?1:0); });   /* sugerido pela IA primeiro */
     var SCORES=[96,84,72,63];
     var rest=T11.filter(function(o){ return compat.indexOf(o)<0; });
+    var lid='aiAltList-'+esc(g.code), llid='aiAltLbl-'+esc(g.code);
     return '<div class="aigalt">'+
-      '<span class="aigalt__lbl">Escolha o codTrib para este grupo</span>'+
-      '<input class="input" type="text" placeholder="Buscar código ou parte do nome" data-altinput="'+esc(g.code)+'" autocomplete="off">'+
-      '<div class="aigalt__list" data-altpanel="'+esc(g.code)+'">'+
-        '<span class="aigalt__subhd" data-altsub>Mais compatíveis</span>'+
-        compat.map(function(o,i){ return altOpt(o,g,o.code===g.code,SCORES[i]!=null?SCORES[i]:60); }).join('')+
-        '<span class="aigalt__subhd" data-altsub>Todos os códigos</span>'+
-        rest.map(function(o){ return altOpt(o,g,false); }).join('')+
+      '<span class="aigalt__lbl" id="'+llid+'">Escolha o codTrib para este grupo</span>'+
+      '<input class="input" type="text" placeholder="Buscar código ou parte do nome" data-altinput="'+esc(g.code)+'" autocomplete="off" role="combobox" aria-expanded="true" aria-controls="'+lid+'" aria-autocomplete="list" aria-labelledby="'+llid+'">'+
+      '<div class="aigalt__list" id="'+lid+'" data-altpanel="'+esc(g.code)+'" role="listbox" aria-label="Códigos de tributação">'+
+        '<div role="group" aria-label="Mais compatíveis"><span class="aigalt__subhd" data-altsub aria-hidden="true">Mais compatíveis</span>'+
+        compat.map(function(o,i){ return altOpt(o,g,o.code===g.code,SCORES[i]!=null?SCORES[i]:60); }).join('')+'</div>'+
+        '<div role="group" aria-label="Todos os códigos"><span class="aigalt__subhd" data-altsub aria-hidden="true">Todos os códigos</span>'+
+        rest.map(function(o){ return altOpt(o,g,false); }).join('')+'</div>'+
       '</div>'+
+      '<span class="sr-only" data-altcount="'+esc(g.code)+'" role="status" aria-live="polite"></span>'+
       '<div class="aigalt__foot"><button type="button" class="linkact" data-altcancel="'+esc(g.code)+'">Cancelar</button></div>'+
     '</div>';
   }
   function renderManual(){
     var man=contas.filter(function(c){return c.origin==='classificar';});
-    document.getElementById('aiManual').innerHTML = man.length ?
-      ('<div class="aimanual"><div class="aihd"><span class="card__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></span><h3 class="aimanual__h">Para classificar manualmente ('+man.length+')</h3></div>'+
-       '<p class="aimanual__lead">A IA não agrupou estas contas: sem correspondência no referencial, conta mista a desdobrar, ou removida de um grupo. Classifique cada uma na tabela.</p>'+
-       man.map(function(c){ return manualRowHtml(c); }).join('')+'</div>') : '';
+    if(!man.length){ document.getElementById('aiManual').innerHTML=''; return; }
+    var PENCIL='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>';
+    var CHEV='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
+    document.getElementById('aiManual').innerHTML=
+      '<div class="aimanual">'+
+        '<div class="aihd">'+
+          '<span class="card__ic">'+PENCIL+'</span>'+
+          '<h3 class="aimanual__h">Para classificar manualmente ('+man.length+')</h3>'+
+          '<button type="button" class="icon-btn icon-btn--sm aimanual__toggle'+(manualOpen?' is-open':'')+'" data-manualtoggle aria-expanded="'+manualOpen+'" aria-controls="aiManualBody" aria-label="'+(manualOpen?'Recolher lista para classificar manualmente':'Expandir lista para classificar manualmente')+'">'+CHEV+'</button>'+
+        '</div>'+
+        '<div class="aimanual__body" id="aiManualBody"'+(manualOpen?'':' hidden')+'>'+
+          '<p class="aimanual__lead">A IA não agrupou estas contas: sem correspondência no referencial, conta mista a desdobrar, ou removida de um grupo. Classifique cada uma na tabela.</p>'+
+          man.map(function(c){ return manualRowHtml(c); }).join('')+
+        '</div>'+
+      '</div>';
   }
   function renderTriage(){
     var gv=groupsView();
@@ -797,8 +846,8 @@
           '<span class="aigroup__n">'+nlabel(g.contas.length)+'</span>'+
         '</div>'+
         '<div class="aigroup__acts">'+
-          '<button type="button" class="linkact" data-see="'+g.code+'">'+(open?'Ocultar contas':'Mostrar contas')+'</button>'+
-          '<button type="button" class="linkact" data-alt="'+g.code+'">Aceitar com outro código</button>'+
+          '<button type="button" class="linkact" data-see="'+g.code+'" aria-expanded="'+(open?'true':'false')+'">'+(open?'Ocultar contas':'Mostrar contas')+'</button>'+
+          '<button type="button" class="linkact" data-alt="'+g.code+'" aria-haspopup="true" aria-expanded="'+(altG[g.code]?'true':'false')+'">Aceitar com outro código</button>'+
           '<button type="button" class="linkact linkact--rm" data-reject="'+g.code+'">Recusar</button>'+
           '<button type="button" class="btn btn--primary btn--sm" data-acc="'+g.code+'">Aceitar grupo</button>'+
         '</div>'+
@@ -818,7 +867,7 @@
           '<span class="status status--micro status--success">Aceito</span>'+
           '<span class="aiacc__code">'+esc(g.code)+'</span>'+
           '<span class="aiacc__nm">'+esc(g.nome)+' ('+nlabel(g.contas.length)+')</span>'+
-          '<button type="button" class="linkact" data-accsee="'+g.code+'">'+(ao?'Ocultar contas':'Mostrar contas')+'</button>'+
+          '<button type="button" class="linkact" data-accsee="'+g.code+'" aria-expanded="'+(ao?'true':'false')+'">'+(ao?'Ocultar contas':'Mostrar contas')+'</button>'+
           '<button type="button" class="linkact" data-undo="'+g.code+'">Desfazer</button>'+
         '</div>'+
         (ao?('<ul class="aiacc__list">'+g.contas.map(function(c){ return '<li><span class="aiacc__lcod">'+esc(c.cod)+'</span><span class="aiacc__lnm">'+esc(c.nome)+'</span></li>'; }).join('')+'</ul>'):'')+
@@ -835,8 +884,8 @@
     var gEl=document.getElementById('aiTriage');
     gEl.addEventListener('click',function(ev){
       var b=ev.target.closest('button'); if(!b||!gEl.contains(b)) return;
-      if(b.hasAttribute('data-see')){ var k=b.getAttribute('data-see'); var gc=b.closest('.aigroup'); if(openG[k]){ openG[k]=false; animClose(gc&&gc.querySelector('.aigcontas'), renderTriage); } else { openG[k]=true; renderTriage(); animOpen(document.querySelector('.aigroup[data-g="'+k+'"] .aigcontas')); } }
-      else if(b.hasAttribute('data-cexp')){ var kc=b.getAttribute('data-cexp'); if(openC[kc]){ var cc=b.closest('.aigconta'); openC[kc]=false; animClose(cc&&cc.querySelector('.aigconta__edit'), renderTriage); } else { openC[kc]=true; renderTriage(); var cq=document.querySelector('[data-cexp="'+kc+'"]'); animOpen(cq&&cq.closest('.aigconta').querySelector('.aigconta__edit')); } }
+      if(b.hasAttribute('data-see')){ var k=b.getAttribute('data-see'); var gc=b.closest('.aigroup'); var kSel='.aigroup[data-g="'+k+'"] [data-see]'; if(openG[k]){ openG[k]=false; animClose(gc&&gc.querySelector('.aigcontas'), function(){ renderTriage(); refocus(kSel); }); } else { openG[k]=true; renderTriage(); animOpen(document.querySelector('.aigroup[data-g="'+k+'"] .aigcontas')); refocus(kSel); } }
+      else if(b.hasAttribute('data-cexp')){ var kc=b.getAttribute('data-cexp'); var cSel='[data-cexp="'+kc+'"]'; if(openC[kc]){ var cc=b.closest('.aigconta'); openC[kc]=false; animClose(cc&&cc.querySelector('.aigconta__edit'), function(){ renderTriage(); refocus(cSel); }); } else { openC[kc]=true; renderTriage(); var cq=document.querySelector(cSel); animOpen(cq&&cq.closest('.aigconta').querySelector('.aigconta__edit')); refocus(cSel); } }
       else if(b.hasAttribute('data-acc')){ acceptGroup(b.getAttribute('data-acc')); }
       else if(b.hasAttribute('data-reject')){ rejectGroup(b.getAttribute('data-reject')); }
       else if(b.hasAttribute('data-alt')){ var ka=b.getAttribute('data-alt'); if(altG[ka]){ closeAltPicker(ka); } else { altG[ka]=true; renderTriage(); animOpen(document.querySelector('.aigroup[data-g="'+ka+'"] .aigalt')); var inp=document.querySelector('[data-altinput="'+ka+'"]'); if(inp) inp.focus(); } }
@@ -844,10 +893,11 @@
       else if(b.hasAttribute('data-altpick')){ acceptGroup(b.getAttribute('data-g'), b.getAttribute('data-altpick')); }
       else if(b.hasAttribute('data-rm')){ removeConta(b.getAttribute('data-rm')); }
       else if(b.hasAttribute('data-resetdesc')){ resetDesc(b.getAttribute('data-resetdesc')); }
+      else if(b.hasAttribute('data-manualtoggle')){ if(manualOpen){ manualOpen=false; animClose(document.getElementById('aiManualBody'), function(){ renderManual(); refocus('[data-manualtoggle]'); }); } else { manualOpen=true; renderManual(); animOpen(document.getElementById('aiManualBody')); refocus('[data-manualtoggle]'); } }
     });
     gEl.addEventListener('input',function(ev){
       var t=ev.target;
-      if(t.hasAttribute('data-altinput')){ var k=t.getAttribute('data-altinput'), q=t.value.toLowerCase().trim(); var pan=document.querySelector('[data-altpanel="'+k+'"]'); if(pan){ pan.querySelectorAll('.aigalt__opt').forEach(function(op){ op.hidden = q && op.getAttribute('data-search').indexOf(q)<0; }); pan.querySelectorAll('[data-altsub]').forEach(function(s){ s.hidden = !!q; }); } return; }
+      if(t.hasAttribute('data-altinput')){ var k=t.getAttribute('data-altinput'), q=t.value.toLowerCase().trim(); var pan=document.querySelector('[data-altpanel="'+k+'"]'); if(pan){ var vis=0; pan.querySelectorAll('.aigalt__opt').forEach(function(op){ var hide=q && op.getAttribute('data-search').indexOf(q)<0; op.hidden=hide; if(!hide) vis++; }); pan.querySelectorAll('[data-altsub]').forEach(function(s){ s.hidden = !!q; }); var cnt=document.querySelector('[data-altcount="'+k+'"]'); if(cnt) cnt.textContent = q ? (vis===1?'1 resultado':vis+' resultados') : ''; } return; }
       var cod=t.getAttribute('data-cod'); if(!cod) return; var c=findC(cod); if(!c) return;
       if(t.hasAttribute('data-desc')){
         c.desc=t.value;
@@ -861,7 +911,13 @@
     });
     gEl.addEventListener('change',function(ev){
       var t=ev.target, cod=t.getAttribute('data-cod'); if(!cod) return; var c=findC(cod); if(!c) return;
-      if(t.hasAttribute('data-notax')) c.notax=t.checked; else if(t.hasAttribute('data-iss')) c.iss=t.checked;
+      if(t.hasAttribute('data-notax')) c.notax=t.checked;
+      else if(t.hasAttribute('data-iss')) c.iss=t.checked;
+      else if(t.hasAttribute('data-vigab')){
+        c.vigAberta=t.checked;
+        var box=t.closest('.aigfield'), fim=box&&box.querySelector('[data-vf]');
+        if(fim){ if(t.checked){ fim.value=''; c.vigFim=''; } fim.disabled=t.checked; }
+      }
       if(!document.getElementById('tableCard').hidden) renderTable();
     });
   })();
@@ -884,7 +940,7 @@
   }
   function closeAltPicker(code){
     var card=document.querySelector('#aiGroups .aigroup[data-g="'+code+'"]');
-    animClose(card?card.querySelector('.aigalt'):null, function(){ delete altG[code]; renderTriage(); });
+    animClose(card?card.querySelector('.aigalt'):null, function(){ delete altG[code]; renderTriage(); refocus('.aigroup[data-g="'+code+'"] [data-alt]'); });
   }
   /* saída animada do card do grupo (aceitar/recusar): colapsa altura + desvanece */
   function leaveGroupCard(code, commit){
@@ -897,14 +953,14 @@
     } else { commit(); }
   }
   function acceptGroup(code, newCode){
-    leaveGroupCard(code, function(){ contas.forEach(function(c){ if(c.origin==='sugerida'&&c.codTrib===code){ if(newCode) c.codTrib=newCode; c.origin='validada'; } }); delete openG[code]; delete altG[code]; renderTriage(); if(newCode) toast('Grupo aceito com o código '+newCode+'.','ok'); });
+    leaveGroupCard(code, function(){ contas.forEach(function(c){ if(c.origin==='sugerida'&&c.codTrib===code){ if(newCode) c.codTrib=newCode; c.origin='validada'; } }); delete openG[code]; delete altG[code]; renderTriage(); refocus('#aiGroups [data-acc]'); if(newCode) toast('Grupo aceito com o código '+newCode+'.','ok'); });
   }
   function rejectGroup(code){
-    leaveGroupCard(code, function(){ contas.forEach(function(c){ if(c.origin==='sugerida'&&c.codTrib===code){ c.origin='classificar'; c.codTrib=null; c.conf=null; c.reason='removida'; } }); delete openG[code]; delete altG[code]; renderTriage(); toast('Sugestão recusada. As contas foram para classificação manual.','info'); });
+    leaveGroupCard(code, function(){ contas.forEach(function(c){ if(c.origin==='sugerida'&&c.codTrib===code){ c.origin='classificar'; c.codTrib=null; c.conf=null; c.reason='removida'; } }); delete openG[code]; delete altG[code]; renderTriage(); refocus('#aiGroups [data-acc]'); toast('Sugestão recusada. As contas foram para classificação manual.','info'); });
   }
-  function undoGroup(code){ contas.forEach(function(c){ if(c.origin==='validada'&&c.codTrib===code) c.origin='sugerida'; }); renderTriage(); }
-  function removeConta(cod){ var c=findC(cod); if(!c) return; c.origin='classificar'; c.codTrib=null; c.conf=null; c.reason='removida'; renderTriage(); }
-  function resetDesc(cod){ var c=findC(cod); if(!c||c.descSug==null||c.descSug==='') return; c.desc=c.descSug; renderTriage(); toast('Descrição restaurada para a sugestão da IA.','info'); }
+  function undoGroup(code){ contas.forEach(function(c){ if(c.origin==='validada'&&c.codTrib===code) c.origin='sugerida'; }); renderTriage(); refocus('.aigroup[data-g="'+code+'"] [data-acc]'); }
+  function removeConta(cod){ var c=findC(cod); if(!c) return; c.origin='classificar'; c.codTrib=null; c.conf=null; c.reason='removida'; renderTriage(); refocus('[data-manualtoggle]'); }
+  function resetDesc(cod){ var c=findC(cod); if(!c||c.descSug==null||c.descSug==='') return; c.desc=c.descSug; renderTriage(); refocus('[data-desc][data-cod="'+cod+'"]'); toast('Descrição restaurada para a sugestão da IA.','info'); }
 
   /* Datepicker do DS (.dp) — mesmo componente do form D-1001; auto-suficiente (atualiza o modelo direto). */
   function initDatefields(root){
@@ -917,30 +973,37 @@
     function parse(s){ var m=/^(\d{2})\/(\d{2})\/(\d{4})$/.exec((s||'').trim()); if(!m) return null; var d=new Date(+m[3],+m[2]-1,+m[1]); return isNaN(d.getTime())?null:d; }
     (root||document).querySelectorAll('[data-datefield]').forEach(function(field){
       if(field.__dpInit) return; field.__dpInit=true;
-      var input=field.querySelector('.input'), pop=field.querySelector('.dp'), view, sel, onDoc=null;
+      var input=field.querySelector('.input'), pop=field.querySelector('.dp'), view, sel, focusD, onDoc=null, onScroll=null;
+      input.setAttribute('aria-haspopup','dialog'); input.setAttribute('aria-expanded','false');
+      pop.setAttribute('role','dialog'); pop.setAttribute('aria-label','Escolher data');
+      function same(a,b){ return !!a&&!!b&&a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate(); }
+      function dayLabel(d){ return d.getDate()+' de '+MESES[d.getMonth()]+' de '+d.getFullYear(); }
       function commit(d){ input.value=fmt(d); var c=findC(input.getAttribute('data-cod')); if(c){ if(input.hasAttribute('data-vi')) c.vigIni=input.value; else if(input.hasAttribute('data-vf')) c.vigFim=input.value; } if(!document.getElementById('tableCard').hidden) renderTable(); }
       function render(){
         var y=view.getFullYear(), mo=view.getMonth(), start=new Date(y,mo,1).getDay();
-        var h='<div class="dp__head"><button type="button" class="dp__nav" data-prev aria-label="Mês anterior">'+CHL+'</button><span class="dp__title">'+MESES[mo]+' '+y+'</span><button type="button" class="dp__nav" data-next aria-label="Próximo mês">'+CHR+'</button></div><div class="dp__grid">';
-        WD.forEach(function(w){ h+='<span class="dp__wd">'+w+'</span>'; });
+        var h='<div class="dp__head"><button type="button" class="dp__nav" data-prev aria-label="Mês anterior">'+CHL+'</button><span class="dp__title" aria-live="polite">'+MESES[mo]+' '+y+'</span><button type="button" class="dp__nav" data-next aria-label="Próximo mês">'+CHR+'</button></div><div class="dp__grid" role="grid">';
+        WD.forEach(function(w){ h+='<span class="dp__wd" aria-hidden="true">'+w+'</span>'; });
         var cur=new Date(y,mo,1-start);
         for(var i=0;i<42;i++){
-          var out=cur.getMonth()!==mo, isSel=sel&&cur.getFullYear()===sel.getFullYear()&&cur.getMonth()===sel.getMonth()&&cur.getDate()===sel.getDate();
-          h+='<button type="button" class="dp__day'+(out?' dp__day--out':'')+(isSel?' dp__day--sel':'')+'" data-d="'+cur.getFullYear()+','+cur.getMonth()+','+cur.getDate()+'">'+cur.getDate()+'</button>';
+          var out=cur.getMonth()!==mo, isSel=same(cur,sel), isFoc=same(cur,focusD);
+          h+='<button type="button" role="gridcell" class="dp__day'+(out?' dp__day--out':'')+(isSel?' dp__day--sel':'')+'" data-d="'+cur.getFullYear()+','+cur.getMonth()+','+cur.getDate()+'" aria-label="'+dayLabel(cur)+'" aria-selected="'+(isSel?'true':'false')+'" tabindex="'+(isFoc?'0':'-1')+'">'+cur.getDate()+'</button>';
           cur.setDate(cur.getDate()+1);
         }
         pop.innerHTML=h+'</div>';
-        pop.querySelector('[data-prev]').addEventListener('click',function(e){e.stopPropagation();view=new Date(y,mo-1,1);render();});
-        pop.querySelector('[data-next]').addEventListener('click',function(e){e.stopPropagation();view=new Date(y,mo+1,1);render();});
+        pop.querySelector('[data-prev]').addEventListener('click',function(e){e.stopPropagation();stepMonth(-1);});
+        pop.querySelector('[data-next]').addEventListener('click',function(e){e.stopPropagation();stepMonth(1);});
         pop.querySelectorAll('.dp__day').forEach(function(b){ b.addEventListener('click',function(e){ e.stopPropagation(); var p=b.getAttribute('data-d').split(','); commit(new Date(+p[0],+p[1],+p[2])); close(); }); });
       }
-      var onScroll=null;
+      function focusDay(){ var el=pop.querySelector('.dp__day[tabindex="0"]'); if(el) el.focus(); }
+      function setFocus(d){ focusD=d; if(d.getMonth()!==view.getMonth()||d.getFullYear()!==view.getFullYear()) view=new Date(d.getFullYear(),d.getMonth(),1); render(); focusDay(); }
+      function stepMonth(delta){ var nd=new Date(view.getFullYear(),view.getMonth()+delta,1); var dim=new Date(nd.getFullYear(),nd.getMonth()+1,0).getDate(); focusD=new Date(nd.getFullYear(),nd.getMonth(),Math.min(focusD?focusD.getDate():1,dim)); view=nd; render(); focusDay(); }
       /* .dp escapa do overflow dos containers (card da conta + scroll do popup) via position:fixed, com flip pra cima */
       function place(){ var r=input.getBoundingClientRect(), popH=pop.offsetHeight||300, popW=pop.offsetWidth||280; var top=(window.innerHeight-r.bottom < popH+8 && r.top > popH+8) ? (r.top-popH-4) : (r.bottom+4); var left=Math.max(8, Math.min(r.left, window.innerWidth-popW-8)); pop.style.position='fixed'; pop.style.top=top+'px'; pop.style.left=left+'px'; pop.style.right='auto'; }
-      function open(){ if(input.disabled) return; sel=parse(input.value); view=sel?new Date(sel.getFullYear(),sel.getMonth(),1):new Date(2026,0,1); render(); pop.hidden=false; place(); onDoc=function(e){ if(!field.contains(e.target)) close(); }; onScroll=function(){ place(); }; setTimeout(function(){document.addEventListener('click',onDoc,true); window.addEventListener('scroll',onScroll,true); window.addEventListener('resize',onScroll);},0); }
-      function close(){ pop.hidden=true; pop.style.position=''; pop.style.top=''; pop.style.left=''; pop.style.right=''; if(onDoc){document.removeEventListener('click',onDoc,true);onDoc=null;} if(onScroll){window.removeEventListener('scroll',onScroll,true);window.removeEventListener('resize',onScroll);onScroll=null;} }
+      function open(){ if(input.disabled) return; sel=parse(input.value); view=sel?new Date(sel.getFullYear(),sel.getMonth(),1):new Date(2026,0,1); focusD=sel?new Date(sel):new Date(view); render(); pop.hidden=false; input.setAttribute('aria-expanded','true'); place(); focusDay(); onDoc=function(e){ if(!field.contains(e.target)) close(); }; onScroll=function(){ place(); }; setTimeout(function(){document.addEventListener('click',onDoc,true); window.addEventListener('scroll',onScroll,true); window.addEventListener('resize',onScroll);},0); }
+      function close(){ var wasInside=pop.contains(document.activeElement); pop.hidden=true; input.setAttribute('aria-expanded','false'); pop.style.position=''; pop.style.top=''; pop.style.left=''; pop.style.right=''; if(onDoc){document.removeEventListener('click',onDoc,true);onDoc=null;} if(onScroll){window.removeEventListener('scroll',onScroll,true);window.removeEventListener('resize',onScroll);onScroll=null;} if(wasInside){ try{input.focus();}catch(e){} } }
       input.addEventListener('click',function(e){ e.stopPropagation(); if(pop.hidden) open(); else close(); });
-      input.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){e.preventDefault(); pop.hidden?open():close();} else if(e.key==='Escape') close(); });
+      input.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '||e.key==='ArrowDown'){ e.preventDefault(); if(pop.hidden) open(); else focusDay(); } else if(e.key==='Escape'){ if(!pop.hidden) close(); } });
+      pop.addEventListener('keydown',function(e){ if(pop.hidden) return; var d=new Date(focusD); var ok=true; switch(e.key){ case 'ArrowLeft': d.setDate(d.getDate()-1); break; case 'ArrowRight': d.setDate(d.getDate()+1); break; case 'ArrowUp': d.setDate(d.getDate()-7); break; case 'ArrowDown': d.setDate(d.getDate()+7); break; case 'Home': d.setDate(d.getDate()-d.getDay()); break; case 'End': d.setDate(d.getDate()+(6-d.getDay())); break; case 'PageUp': d.setMonth(d.getMonth()-1); break; case 'PageDown': d.setMonth(d.getMonth()+1); break; case 'Escape': close(); return; default: ok=false; } if(ok){ e.preventDefault(); setFocus(d); } });
     });
   }
 
@@ -1067,6 +1130,7 @@
   document.getElementById('btnReTriage').addEventListener('click',reopenTriage);
   document.getElementById('aiCancel').addEventListener('click',closePopup);
   document.getElementById('aiClose').addEventListener('click',closePopup);
+  document.getElementById('aiPopup').addEventListener('keydown',trapTab);
   document.addEventListener('keydown',function(e){ if(e.key==='Escape' && !document.getElementById('aiPopup').hidden) closePopup(); });
   document.getElementById('aiDiscard').addEventListener('click',function(){ closePopup(); toast('Sugestões da IA descartadas.','info'); });
   document.getElementById('aiConfirm').addEventListener('click',function(){ closePopup(); showTable(); toast('Classificação aplicada ao plano.','ok'); });
@@ -1095,7 +1159,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788962697';
+  var MYV='1788966974';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
