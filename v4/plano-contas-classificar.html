@@ -8,8 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Plano de Contas · Nova versão</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788971912">
-  <script src="../design-system/ds-tailwind.js?v=1788971912"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788972516">
+  <script src="../design-system/ds-tailwind.js?v=1788972516"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -89,8 +89,8 @@
     .col-act{text-align:right;width:1%;white-space:nowrap}
     .table tbody tr.is-open td{background:var(--color-primary-subtle)}
     /* editor da linha (classificar / editar) */
-    .tbedit-cell{background:var(--color-surface-2)!important;padding:var(--space-6) var(--space-8)!important}
-    .tbeditor{max-width:940px}
+    .tbedit-cell{background:var(--color-surface-2)!important;padding:0 var(--space-8)!important}
+    .tbeditor{max-width:940px;box-sizing:border-box;padding:var(--space-8) 0}
     .tbedit-grid{display:grid;grid-template-columns:minmax(260px,1fr) minmax(280px,1.2fr);gap:var(--space-6)}
     @media(max-width:840px){.tbedit-grid{grid-template-columns:1fr}}
     .tbedit-field label{display:block;font-size:var(--text-sm);font-weight:600;color:var(--color-heading);margin-bottom:var(--space-2)}
@@ -113,6 +113,9 @@
     .tbfield__lbl label{margin-bottom:0}
     .tbedit-foot{display:flex;align-items:center;gap:var(--space-3);margin-top:var(--space-6);flex-wrap:wrap}
     .tbcombo{position:relative}
+    .tbcombo__chev{position:absolute;right:var(--space-3);top:50%;transform:translateY(-50%);color:var(--color-text-muted);pointer-events:none;display:flex}
+    .tbcombo__chev svg{width:16px;height:16px}
+    .tbcombo .input{padding-right:2rem;cursor:pointer}
     .tbcombo.is-off{opacity:.5;pointer-events:none}
     .tbcombo__panel{position:absolute;z-index:5;top:calc(100% + 4px);left:0;right:0;max-height:220px;overflow:auto;background:var(--color-surface);border:1px solid var(--color-border-strong);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);padding:var(--space-1)}
     .tbcombo__panel button{display:flex;gap:var(--space-2);width:100%;text-align:left;border:0;background:none;padding:var(--space-2) var(--space-3);border-radius:var(--radius-base);cursor:pointer;font-family:inherit;align-items:baseline}
@@ -1030,6 +1033,7 @@
   }
   function ctCell(c){ return c.codTrib?('<span class="ct-code">'+esc(c.codTrib)+'</span>'):'<span class="muted">—</span>'; }
   function editorHtml(c){
+    if(c.vigAberta==null) c.vigAberta=!c.vigFim;
     var comboVal=c.codTrib?(c.codTrib+' — '+t11name(c.codTrib)):'';
     /* mesmo padrão da triagem: sugerido pela IA + % de compatibilidade, "Mais compatíveis" e "Todos os códigos" */
     var sugCode=c.codTrib;
@@ -1072,19 +1076,30 @@
     return '<tr class="tbedit"><td colspan="6" class="tbedit-cell"><div class="tbeditor">'+
       metaStrip+
       '<div class="tbedit-grid">'+
-        '<div class="tbedit-field">'+
-          '<div class="tbfield__lbl"><label>Código de tributação (codTrib)</label>'+((c.origin==='sugerida'&&c.codTrib)?'<span class="status status--ia status--sm">'+SPARK+'Sugerida pela IA</span>':'')+'</div>'+
-          '<div class="tbcombo" data-combo="'+esc(c.cod)+'"><input class="input" type="text" placeholder="Buscar código ou conta na Tabela 11" value="'+esc(comboVal)+'" data-cod="'+esc(c.cod)+'" data-combo-input autocomplete="off"><div class="tbcombo__panel" data-combo-panel hidden>'+opts+'</div></div>'+
-          '<p class="hint">Tabela 11 · 9 dígitos. Obrigatório em conta analítica; para não tributável, use um código de alíquota zero.</p>'+
+        '<div class="aigfield">'+
+          '<div class="aigfield__lbl"><label>Código de tributação (codTrib)</label>'+((c.origin==='sugerida'&&c.codTrib)?'<span class="status status--ia status--sm">'+SPARK+'Sugerida pela IA</span>':'')+'</div>'+
+          '<div class="tbcombo" data-combo="'+esc(c.cod)+'"><input class="input" type="text" placeholder="Buscar código ou conta na Tabela 11" value="'+esc(comboVal)+'" data-cod="'+esc(c.cod)+'" data-combo-input autocomplete="off"><span class="tbcombo__chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span><div class="tbcombo__panel" data-combo-panel hidden>'+opts+'</div></div>'+
+          '<p class="hint">Tabela 11 · 9 dígitos, obrigatório em conta analítica.</p>'+
         '</div>'+
-        '<div class="tbedit-field"><label>Descrição da conta (o "comentado" do PGCC)</label><textarea class="input input--compact" data-cod="'+esc(c.cod)+'" data-desc>'+esc(c.desc)+'</textarea></div>'+
+        '<div class="aigfield">'+
+          '<div class="aigfield__lbl"><label for="tbdescf-'+esc(c.cod)+'">Descrição da conta (o "comentado" do PGCC)</label>'+
+            (c.descSug?(
+              '<span class="status status--ia status--sm" data-sugtag="'+esc(c.cod)+'"'+(c.desc!==c.descSug?' hidden':'')+'>'+SPARK+'Sugerida pela IA</span>'+
+              '<button type="button" class="linkact linkact--ia" data-resetdesc="'+esc(c.cod)+'"'+(c.desc===c.descSug?' hidden':'')+'>'+SPARK+'Restaurar sugestão da IA</button>'
+            ):'')+
+          '</div>'+
+          '<textarea class="input input--compact" id="tbdescf-'+esc(c.cod)+'" data-cod="'+esc(c.cod)+'" data-desc>'+esc(c.desc)+'</textarea>'+
+        '</div>'+
       '</div>'+
-      '<div class="tbedit-checks">'+
+      '<div class="aigchecks">'+
         '<label class="check"><input type="checkbox" data-cod="'+esc(c.cod)+'" data-iss'+(c.iss?' checked':'')+'><span>Sujeita a ISSQN (indTribISS)</span></label>'+
       '</div>'+
-      '<div class="tbedit-vig">'+
-        '<div class="tbedit-field"><label>Início da vigência</label><input class="input" type="text" value="'+esc(c.vigIni)+'" placeholder="dd/mm/aaaa" data-cod="'+esc(c.cod)+'" data-vi></div>'+
-        '<div class="tbedit-field"><label>Fim da vigência</label><input class="input" type="text" value="'+esc(c.vigFim)+'" placeholder="Em aberto" data-cod="'+esc(c.cod)+'" data-vf></div>'+
+      '<div class="aigvig">'+
+        '<div class="aigfield"><label>Início da vigência</label><div class="datefield" data-datefield><input class="input" type="text" value="'+esc(c.vigIni)+'" readonly placeholder="dd/mm/aaaa" autocomplete="off" data-cod="'+esc(c.cod)+'" data-vi aria-label="Início da vigência"><span class="datefield__ic">'+CAL+'</span><div class="dp" hidden></div></div></div>'+
+        '<div class="aigfield"><label>Fim da vigência</label>'+
+          '<div class="datefield" data-datefield><input class="input" type="text" value="'+esc(c.vigAberta?'':c.vigFim)+'"'+(c.vigAberta?' disabled':'')+' readonly placeholder="Em aberto" autocomplete="off" data-cod="'+esc(c.cod)+'" data-vf aria-label="Fim da vigência"><span class="datefield__ic">'+CAL+'</span><div class="dp" hidden></div></div>'+
+          '<label class="check aigvig__ab"><input type="checkbox" data-cod="'+esc(c.cod)+'" data-vigab'+(c.vigAberta?' checked':'')+'><span>Vigência em aberto</span></label>'+
+        '</div>'+
       '</div>'+
       '<div class="tbedit-foot">'+
         (c.reason==='mista'?'<button type="button" class="linkact" data-desdobrar="'+esc(c.cod)+'">Desdobrar conta mista</button>':'')+
@@ -1113,6 +1128,7 @@
       '</tr>';
       return row + (openEdit===c.cod?editorHtml(c):'');
     }).join('');
+    initDatefields(document.getElementById('tbRows'));   /* calendário do DS no editor (mesmo da triagem) */
     renderTbSummary();
   }
   function renderTbSummary(){
@@ -1151,10 +1167,11 @@
     var body=document.getElementById('tbRows');
     body.addEventListener('click',function(ev){
       var b=ev.target.closest('button'); if(!b) return;
-      if(b.hasAttribute('data-act')){ var cod=b.getAttribute('data-act'); openEdit=(openEdit===cod)?null:cod; renderTable(); }
+      if(b.hasAttribute('data-act')){ var cod=b.getAttribute('data-act'); var opening=(openEdit!==cod); openEdit=opening?cod:null; renderTable(); if(opening){ animOpen(document.querySelector('#tbRows tr.tbedit .tbeditor')); } }
       else if(b.hasAttribute('data-editclose')){ openEdit=null; renderTable(); }
       else if(b.hasAttribute('data-editsave')){ saveConta(b.getAttribute('data-editsave')); }
       else if(b.hasAttribute('data-desdobrar')){ desdobrar(b.getAttribute('data-desdobrar')); }
+      else if(b.hasAttribute('data-resetdesc')){ var c=findC(b.getAttribute('data-resetdesc')); if(c&&c.descSug!=null){ c.desc=c.descSug; renderTable(); toast('Descrição restaurada para a sugestão da IA.','info'); } }
       else if(b.hasAttribute('data-pick')){ var c=findC(b.getAttribute('data-cod')); if(c){ c.codTrib=b.getAttribute('data-pick'); var inp=body.querySelector('[data-combo-input][data-cod="'+c.cod+'"]'); if(inp) inp.value=c.codTrib+' — '+t11name(c.codTrib); var pan=b.closest('[data-combo-panel]'); if(pan) pan.hidden=true; } }
       else if(b.hasAttribute('data-combo-input')){ /* handled below */ }
     });
@@ -1163,13 +1180,23 @@
     body.addEventListener('input',function(ev){
       var t=ev.target, cod=t.getAttribute('data-cod'); if(!cod) return; var c=findC(cod); if(!c) return;
       if(t.hasAttribute('data-combo-input')){ var q=t.value.toLowerCase(); var pan=t.parentNode.querySelector('[data-combo-panel]'); if(pan){ pan.hidden=false; pan.querySelectorAll('button').forEach(function(op){ op.hidden = q && op.getAttribute('data-search').indexOf(q)<0; }); pan.querySelectorAll('[data-combo-sub]').forEach(function(s){ s.hidden=!!q; }); } return; }
-      if(t.hasAttribute('data-desc')) c.desc=t.value;
+      if(t.hasAttribute('data-desc')){
+        c.desc=t.value;
+        var edited=c.descSug!=null&&c.descSug!==''&&c.desc!==c.descSug;
+        var box=t.closest('.aigfield');
+        if(box){ var tag=box.querySelector('[data-sugtag]'), rb=box.querySelector('[data-resetdesc]'); if(tag) tag.hidden=edited; if(rb) rb.hidden=!edited; }
+      }
       else if(t.hasAttribute('data-vi')) c.vigIni=t.value;
       else if(t.hasAttribute('data-vf')) c.vigFim=t.value;
     });
     body.addEventListener('change',function(ev){
       var t=ev.target, cod=t.getAttribute('data-cod'); if(!cod) return; var c=findC(cod); if(!c) return;
       if(t.hasAttribute('data-iss')){ c.iss=t.checked; }
+      else if(t.hasAttribute('data-vigab')){
+        c.vigAberta=t.checked;
+        var box=t.closest('.aigfield'), fim=box&&box.querySelector('[data-vf]');
+        if(fim){ if(t.checked){ fim.value=''; c.vigFim=''; } fim.disabled=t.checked; }
+      }
     });
     document.addEventListener('click',function(ev){ if(!ev.target.closest('.tbcombo')) body.querySelectorAll('[data-combo-panel]').forEach(function(p){p.hidden=true;}); });
   })();
@@ -1228,7 +1255,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788971912';
+  var MYV='1788972516';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
