@@ -263,7 +263,8 @@ a{color:var(--color-primary);text-decoration:none}
   background:var(--color-surface);color:var(--color-heading);
   border:1px solid var(--color-field-border);border-radius:var(--radius-base);
   font-family:var(--font-sans);font-size:var(--text-sm);transition:border-color .12s,box-shadow .12s}   /* campo = 14px (--text-sm), conforme a doc dos tokens; o --lg fixa 16px abaixo */
-textarea.input{height:auto;padding:var(--space-2) var(--space-3);min-height:84px}
+textarea.input{height:auto;padding:var(--space-2) var(--space-3);min-height:84px;line-height:1.5;resize:vertical}
+textarea.input--compact{min-height:64px}   /* editores inline (linha de conta, tabela); o padrão 84px é p/ formulários */
 .input--lg,.select--lg{height:var(--control-h-lg);font-size:var(--text-base)}
 .input::placeholder{color:var(--color-text-muted)}
 .input:hover:not(:disabled):not(:focus),.select:hover:not(:disabled):not(:focus),textarea.input:hover:not(:disabled):not(:focus){border-color:var(--color-text-muted)}
@@ -407,6 +408,8 @@ textarea.input{height:auto;padding:var(--space-2) var(--space-3);min-height:84px
 /* Tamanhos do badge: pequeno / médio (padrão) / grande */
 .status--sm{padding:1px var(--space-2);font-size:var(--text-xs);gap:var(--space-1)}
 .status--sm .status__dot{width:6px;height:6px}
+.status--micro{padding:2px var(--space-2);font-size:var(--text-2xs);font-weight:700;text-transform:uppercase;letter-spacing:.04em;gap:var(--space-1)}   /* etiqueta compacta (badge de confiança, motivo, etc.) */
+.status--micro .status__dot{width:5px;height:5px}
 .status--lg{padding:var(--space-1-5) var(--space-3);font-size:var(--text-base)}
 .status--lg .status__dot{width:8px;height:8px}
 /* optag: etiqueta da operação da versão (Nova versão / Alteração da vigente / Exclusão da vigente); acompanha o status, mesma bolinha */
