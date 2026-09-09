@@ -8,8 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Plano de Contas · Nova versão</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788977654">
-  <script src="../design-system/ds-tailwind.js?v=1788977654"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788977973">
+  <script src="../design-system/ds-tailwind.js?v=1788977973"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -781,7 +781,7 @@
     else if(!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); }
   }
   /* a11y (A2): devolve o foco a um alvo estável após re-render (senão cai no body) */
-  function refocus(sel){ var el=(sel&&document.querySelector(sel))||document.getElementById('aiConfirm')||document.getElementById('aiClose'); if(el){ try{el.focus();}catch(e){} } }
+  function refocus(sel){ var el=(sel&&document.querySelector(sel))||document.getElementById('aiConfirm')||document.getElementById('aiClose'); if(el){ try{el.focus({preventScroll:true});}catch(e){ try{el.focus();}catch(e2){} } } }
   function closePopup(){ var pop=document.getElementById('aiPopup'); setBgInert(false); if(loadTimer){clearTimeout(loadTimer);loadTimer=null;} if(barTimer){clearInterval(barTimer);barTimer=null;}
     function finish(){ pop.hidden=true; pop.classList.remove('is-loading','is-expanded','is-closing'); if(lastTrigger){ try{lastTrigger.focus();}catch(e){} lastTrigger=null; } }
     if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches){ finish(); return; }
@@ -1045,7 +1045,28 @@
     leaveGroupCard(code, function(){ contas.forEach(function(c){ if(c.origin==='sugerida'&&c.codTrib===code){ c.origin='classificar'; c.codTrib=null; c.conf=null; c.reason='removida'; } }); delete openG[code]; delete altG[code]; renderTriage(); refocus('#aiGroups [data-acc]'); toast('Sugestão recusada. As contas foram para classificação manual.','info'); });
   }
   function undoGroup(code){ contas.forEach(function(c){ if(c.origin==='validada'&&c.codTrib===code) c.origin='sugerida'; }); renderTriage(); refocus('.aigroup[data-g="'+code+'"] [data-acc]'); }
-  function removeConta(cod){ var c=findC(cod); if(!c) return; c.origin='classificar'; c.codTrib=null; c.conf=null; c.reason='removida'; renderTriage(); refocus('[data-manualtoggle]'); }
+  /* remoção cirúrgica: colapsa só o card da conta, remove o nó e atualiza lista manual + KPIs — sem re-render do painel (mantém o grupo aberto e a posição) */
+  function removeConta(cod){
+    var c=findC(cod); if(!c) return;
+    var grpCode=c.codTrib;
+    var btn=document.querySelector('#aiGroups [data-cexp="'+cod+'"]');
+    var card=btn?btn.closest('.aigconta'):null;
+    function commit(){
+      c.origin='classificar'; c.codTrib=null; c.conf=null; c.reason='removida'; delete openC[cod];
+      if(card) card.remove();
+      var grp=grpCode?document.querySelector('#aiGroups .aigroup[data-g="'+grpCode+'"]'):null;
+      var remaining=contas.filter(function(x){return x.origin==='sugerida'&&x.codTrib===grpCode;}).length;
+      if(grp){ if(remaining===0){ grp.remove(); } else { var n=grp.querySelector('.aigroup__n'); if(n) n.textContent=nlabel(remaining); } }
+      renderManual(); setStats();
+      refocus(grp&&remaining>0 ? '.aigroup[data-g="'+grpCode+'"] [data-see]' : '#aiClose');
+      toast('Conta movida para a classificação manual.','info');
+    }
+    if(card && !REDUCE){
+      card.style.height=card.offsetHeight+'px'; card.style.overflow='hidden'; card.getBoundingClientRect();
+      requestAnimationFrame(function(){ card.style.transition='height .28s ease,opacity .28s ease,margin .28s ease,padding .28s ease'; card.style.height='0'; card.style.opacity='0'; card.style.marginBottom='0'; card.style.paddingTop='0'; card.style.paddingBottom='0'; });
+      setTimeout(commit,300);
+    } else commit();
+  }
   function resetDesc(cod){ var c=findC(cod); if(!c||c.descSug==null||c.descSug==='') return; c.desc=c.descSug; renderTriage(); refocus('[data-desc][data-cod="'+cod+'"]'); toast('Descrição restaurada para a sugestão da IA.','info'); }
 
   /* Datepicker do DS (.dp) — mesmo componente do form D-1001; auto-suficiente (atualiza o modelo direto). */
@@ -1381,7 +1402,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788977654';
+  var MYV='1788977973';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
