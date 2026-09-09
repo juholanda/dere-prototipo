@@ -8,8 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Plano de Contas · Nova versão</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788976078">
-  <script src="../design-system/ds-tailwind.js?v=1788976078"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788976482">
+  <script src="../design-system/ds-tailwind.js?v=1788976482"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -1139,7 +1139,7 @@
             '<p class="hint">Tabela 11 · 9 dígitos.</p>'+
           '</div>'+
           '<div class="aigfield">'+
-            '<div class="aigfield__lbl"><label for="tbdescf-'+esc(c.cod)+'">Descrição da conta (o "comentado" do PGCC)</label>'+
+            '<div class="aigfield__lbl"><label for="tbdescf-'+esc(c.cod)+'">Descrição da conta (o "comentado" do PGCC)'+(c.indCta!=='S'?' <span class="field__req" aria-label="obrigatório">*</span>':'')+'</label>'+
               (c.descSug?(
                 '<span class="status status--ia status--sm" data-sugtag="'+esc(c.cod)+'"'+(c.desc!==c.descSug?' hidden':'')+'>'+SPARK+'Sugerida pela IA</span>'+
                 '<button type="button" class="linkact linkact--ia" data-resetdesc="'+esc(c.cod)+'"'+(c.desc===c.descSug?' hidden':'')+'>'+SPARK+'Restaurar sugestão da IA</button>'
@@ -1358,7 +1358,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788976078';
+  var MYV='1788976482';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
