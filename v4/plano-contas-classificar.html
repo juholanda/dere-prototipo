@@ -8,8 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Plano de Contas · Nova versão</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788973939">
-  <script src="../design-system/ds-tailwind.js?v=1788973939"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788974298">
+  <script src="../design-system/ds-tailwind.js?v=1788974298"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -90,8 +90,14 @@
     .table tbody tr.is-open td{background:var(--color-primary-subtle)}
     /* editor da linha (classificar / editar) */
     .tbedit-cell{background:var(--color-primary-subtle)!important;padding:0 var(--space-8)!important;border-bottom:1px solid var(--color-border-strong)}
-    .tbeditor{max-width:940px;box-sizing:border-box;padding:var(--space-8) 0}
-    .tbeditor .aigvig .aigfield{flex:0 1 220px}   /* vigência compacta e alinhada à esquerda (não estica) */
+    .tbeditor{box-sizing:border-box;padding:var(--space-8) 0}
+    /* vigência alinhada às MESMAS 2 colunas do grid (início sob codTrib, fim sob descrição) */
+    .tbeditor .aigvig{display:grid;grid-template-columns:minmax(260px,1fr) minmax(280px,1.2fr);gap:var(--space-6)}
+    .tbeditor .aigvig .aigfield{min-width:0}
+    .tbeditor .aigvig .datefield{max-width:220px}
+    .tbeditor > .aigchecks{margin-top:var(--space-8)}   /* respiro entre as seções do editor */
+    .tbeditor > .aigvig{margin-top:var(--space-8)}
+    .tbeditor .aigfield .hint{margin-top:var(--space-2)}
     .tbedit-grid{display:grid;grid-template-columns:minmax(260px,1fr) minmax(280px,1.2fr);gap:var(--space-6)}
     @media(max-width:840px){.tbedit-grid{grid-template-columns:1fr}}
     .tbedit-field label{display:block;font-size:var(--text-sm);font-weight:600;color:var(--color-heading);margin-bottom:var(--space-2)}
@@ -1315,7 +1321,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788973939';
+  var MYV='1788974298';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
