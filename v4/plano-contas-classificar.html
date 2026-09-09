@@ -8,8 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Plano de Contas · Nova versão</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788973580">
-  <script src="../design-system/ds-tailwind.js?v=1788973580"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788973939">
+  <script src="../design-system/ds-tailwind.js?v=1788973939"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -89,8 +89,9 @@
     .col-act{text-align:right;width:1%;white-space:nowrap}
     .table tbody tr.is-open td{background:var(--color-primary-subtle)}
     /* editor da linha (classificar / editar) */
-    .tbedit-cell{background:var(--color-surface-2)!important;padding:0 var(--space-8)!important}
+    .tbedit-cell{background:var(--color-primary-subtle)!important;padding:0 var(--space-8)!important;border-bottom:1px solid var(--color-border-strong)}
     .tbeditor{max-width:940px;box-sizing:border-box;padding:var(--space-8) 0}
+    .tbeditor .aigvig .aigfield{flex:0 1 220px}   /* vigência compacta e alinhada à esquerda (não estica) */
     .tbedit-grid{display:grid;grid-template-columns:minmax(260px,1fr) minmax(280px,1.2fr);gap:var(--space-6)}
     @media(max-width:840px){.tbedit-grid{grid-template-columns:1fr}}
     .tbedit-field label{display:block;font-size:var(--text-sm);font-weight:600;color:var(--color-heading);margin-bottom:var(--space-2)}
@@ -101,7 +102,7 @@
     .tbedit-vig .input{max-width:200px}
     .tbedit-metahd{font-size:var(--text-xs);color:var(--color-text);font-weight:600;margin:0 0 var(--space-2);display:flex;align-items:center;gap:var(--space-1-5)}
     .tbedit-metahd svg{width:14px;height:14px;flex:0 0 auto;color:var(--color-text-muted)}
-    .tbedit-meta{display:flex;flex-wrap:wrap;gap:var(--space-1-5) var(--space-6);padding:var(--space-3) var(--space-4);background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-2xl);margin-bottom:var(--space-6)}
+    .tbedit-meta{display:flex;flex-wrap:wrap;gap:var(--space-1-5) var(--space-6);padding:var(--space-3) var(--space-4);background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-2xl);margin-bottom:var(--space-6)}
     /* header da tabela sempre visível: a tabela cresce naturalmente (sem altura fixa) e o thead gruda no topo da rolagem da página (.cadscroll). O wrapper não pode ser container de scroll, senão prende o sticky. */
     #tableCard .table-wrap{overflow:visible}
     #tableCard .table thead th{position:sticky;top:0;z-index:2}
@@ -639,6 +640,26 @@
     {cod:'2.3.1.01', nome:'Provisões técnicas · Constituição', indCta:'A', codNat:2, natCta:'C', cCtaSup:'2.3.1', cCtaRef:'23101', cDbrMista:'000', desc:'Constituição de provisões técnicas do período.', vigIni:'01/01/2026', vigFim:'', codTrib:null, origin:'classificar', reason:'sem-sugestao', conf:null, iss:false},
     {cod:'2.9.1.01', nome:'Conta mista · Tributos a recuperar e a recolher', indCta:'A', codNat:2, natCta:'V', cCtaSup:'2.9.1', cCtaRef:'29101', cDbrMista:'000', desc:'Conta com desdobramentos de naturezas distintas (a recuperar e a recolher).', vigIni:'01/01/2026', vigFim:'', codTrib:null, origin:'classificar', reason:'mista', conf:null, iss:false}
   ];
+  /* MOCK: mais contas só para visualizar a tabela com volume (dados de exemplo, não oficiais) */
+  (function(){
+    var groups=[
+      {p:'3.3', nm:'Receita de prestação de serviços', codNat:4, natCta:'C', ct:'120030101'},
+      {p:'3.4', nm:'Outras receitas operacionais', codNat:4, natCta:'C', ct:'110010101'},
+      {p:'4.3', nm:'Despesas administrativas', codNat:5, natCta:'D', ct:'320010101'},
+      {p:'4.4', nm:'Despesas com pessoal', codNat:5, natCta:'D', ct:'320010101'},
+      {p:'4.5', nm:'Outras despesas operacionais', codNat:5, natCta:'D', ct:'510090101'},
+      {p:'2.1', nm:'Obrigações fiscais a recolher', codNat:2, natCta:'C', ct:null},
+      {p:'1.2', nm:'Créditos a receber', codNat:1, natCta:'D', ct:null}
+    ];
+    var pat=['validada','sugerida','sugerida','sugerida','classificar','sugerida'], k=0;
+    groups.forEach(function(g){
+      for(var i=1;i<=6;i++){
+        var o=pat[k%pat.length]; k++;
+        var hasCt=!!g.ct && o!=='classificar';
+        SEED_CONTAS.push({cod:g.p+'.'+('0'+i).slice(-2)+'.01', nome:g.nm+' · linha '+i, indCta:'A', codNat:g.codNat, natCta:g.natCta, cCtaSup:g.p+'.'+('0'+i).slice(-2), cCtaRef:g.p.replace('.','')+('0'+i).slice(-2), cDbrMista:'000', desc:g.nm+' referente à linha '+i+'.', vigIni:'01/01/2026', vigFim:'', codTrib:hasCt?g.ct:null, origin:hasCt?o:'classificar', reason:(!hasCt?'sem-sugestao':undefined), conf:(o==='sugerida'&&hasCt?'alta':null), iss:false});
+      }
+    });
+  })();
   var contas=null, openG={}, openC={}, openAcc={}, altG={}, openEdit=null, manualOpen=true, TBFILTER='', TBSORT={key:'cod',dir:'asc'};
   function clone(x){ return JSON.parse(JSON.stringify(x)); }
   function findC(cod){ for(var i=0;i<contas.length;i++){ if(contas[i].cod===cod) return contas[i]; } return null; }
@@ -1086,7 +1107,7 @@
       metaStrip+
       '<div class="tbedit-grid">'+
         '<div class="aigfield">'+
-          '<div class="aigfield__lbl"><label>Código de tributação (codTrib)</label>'+((c.origin==='sugerida'&&c.codTrib)?'<span class="status status--ia status--sm">'+SPARK+'Sugerida pela IA</span>':'')+'</div>'+
+          '<div class="aigfield__lbl"><label>Código de tributação (codTrib)</label>'+((c.origin==='sugerida'&&c.codTrib)?'<span class="status status--ia status--sm">'+SPARK+'Sugerida pela IA'+(c.conf?' · confiança '+(c.conf==='media'?'média':c.conf):'')+'</span>':(c.origin==='classificar'?'<span class="status status--warning status--sm"><span class="status__dot"></span>Sem sugestão da IA</span>':''))+'</div>'+
           '<div class="tbcombo" data-combo="'+esc(c.cod)+'"><input class="input" type="text" placeholder="Buscar código ou conta na Tabela 11" value="'+esc(comboVal)+'" data-cod="'+esc(c.cod)+'" data-combo-input autocomplete="off"><span class="tbcombo__chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span><div class="tbcombo__panel" data-combo-panel hidden>'+opts+'</div></div>'+
           '<p class="hint">Tabela 11 · 9 dígitos, obrigatório em conta analítica.</p>'+
         '</div>'+
@@ -1294,7 +1315,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788973580';
+  var MYV='1788973939';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
