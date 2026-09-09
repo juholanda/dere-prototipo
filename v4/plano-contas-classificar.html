@@ -8,8 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Plano de Contas · Nova versão</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788975792">
-  <script src="../design-system/ds-tailwind.js?v=1788975792"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788976078">
+  <script src="../design-system/ds-tailwind.js?v=1788976078"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -113,7 +113,7 @@
     .tbedit-vig .input{max-width:200px}
     .tbedit-metahd{font-size:var(--text-xs);color:var(--color-text);font-weight:600;margin:0 0 var(--space-2);display:flex;align-items:center;gap:var(--space-1-5)}
     .tbedit-metahd svg{width:14px;height:14px;flex:0 0 auto;color:var(--color-text-muted)}
-    .tbedit-meta{display:flex;flex-wrap:wrap;gap:var(--space-1-5) var(--space-6);padding:var(--space-3) var(--space-4);background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-2xl);margin-bottom:var(--space-10)}
+    .tbedit-meta{display:flex;flex-wrap:wrap;gap:var(--space-1-5) var(--space-6);padding:0;background:transparent;border:0;margin-bottom:var(--space-10)}
     /* header da tabela sempre visível: a tabela cresce naturalmente (sem altura fixa) e o thead gruda no topo da rolagem da página (.cadscroll). O wrapper não pode ser container de scroll, senão prende o sticky. */
     #tableCard .table-wrap{overflow:visible}
     #tableCard .table thead th{position:sticky;top:0;z-index:2}
@@ -989,20 +989,22 @@
   })();
   /* animações genéricas de abrir/fechar (colapso de altura + fade), respeitando reduced-motion */
   var REDUCE=window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches;
-  function animOpen(el){
+  function animOpen(el, dur){
     if(!el || REDUCE) return;
-    var h=el.scrollHeight;
+    dur=dur||240;
+    var h=el.scrollHeight, s=(dur/1000);
     el.style.height='0'; el.style.opacity='0'; el.style.overflow='hidden';
     el.getBoundingClientRect();
-    requestAnimationFrame(function(){ el.style.transition='height .24s ease,opacity .24s ease'; el.style.height=h+'px'; el.style.opacity='1'; });
-    setTimeout(function(){ el.style.height=''; el.style.opacity=''; el.style.overflow=''; el.style.transition=''; },260);
+    requestAnimationFrame(function(){ el.style.transition='height '+s+'s ease,opacity '+s+'s ease'; el.style.height=h+'px'; el.style.opacity='1'; });
+    setTimeout(function(){ el.style.height=''; el.style.opacity=''; el.style.overflow=''; el.style.transition=''; },dur+30);
   }
-  function animClose(el,done){
+  function animClose(el,done,dur){
     if(!el || REDUCE){ done(); return; }
+    dur=dur||240; var s=(dur/1000);
     el.style.height=el.offsetHeight+'px'; el.style.overflow='hidden';
     el.getBoundingClientRect();
-    requestAnimationFrame(function(){ el.style.transition='height .24s ease,opacity .24s ease,margin .24s ease,padding .24s ease'; el.style.height='0'; el.style.opacity='0'; el.style.marginTop='0'; el.style.paddingTop='0'; });
-    setTimeout(done,260);
+    requestAnimationFrame(function(){ el.style.transition='height '+s+'s ease,opacity '+s+'s ease,margin '+s+'s ease,padding '+s+'s ease'; el.style.height='0'; el.style.opacity='0'; el.style.marginTop='0'; el.style.paddingTop='0'; });
+    setTimeout(done,dur+20);
   }
   function closeAltPicker(code){
     var card=document.querySelector('#aiGroups .aigroup[data-g="'+code+'"]');
@@ -1161,10 +1163,9 @@
         '</div>'+
       '</div>'+
       '<div class="tbedit-foot">'+
-        (c.reason==='mista'?'<button type="button" class="linkact" data-desdobrar="'+esc(c.cod)+'">Desdobrar conta mista</button>':'')+
-        '<span style="margin-left:auto"></span>'+
-        '<button type="button" class="btn btn--ghost btn--sm" data-editclose>Fechar</button>'+
-        '<button type="button" class="btn btn--primary btn--sm" data-editsave="'+esc(c.cod)+'">Salvar classificação</button>'+
+        '<button type="button" class="btn btn--primary btn--sm" data-editsave="'+esc(c.cod)+'">Confirmar classificação</button>'+
+        '<button type="button" class="btn btn--ghost btn--sm" data-editclose>Cancelar alterações</button>'+
+        (c.reason==='mista'?'<span style="margin-left:auto"></span><button type="button" class="linkact" data-desdobrar="'+esc(c.cod)+'">Desdobrar conta mista</button>':'')+
       '</div>'+
     '</div></td></tr>';
   }
@@ -1189,7 +1190,7 @@
     } else { done(); }
   }
   /* fecha o editor colapsando com animação (altura + fade), depois re-renderiza */
-  function closeEditorAnim(){ animClose(document.querySelector('#tbRows tr.tbedit .tbeditor'), function(){ openEdit=null; renderTable(); }); }
+  function closeEditorAnim(){ animClose(document.querySelector('#tbRows tr.tbedit .tbeditor'), function(){ openEdit=null; renderTable(); }, 380); }
   function renderTable(){
     if(!contas) return;
     var rows=contas.filter(tbMatch);
@@ -1247,7 +1248,7 @@
     var body=document.getElementById('tbRows');
     body.addEventListener('click',function(ev){
       var b=ev.target.closest('button'); if(!b) return;
-      if(b.hasAttribute('data-act')){ var cod=b.getAttribute('data-act'); if(openEdit===cod){ closeEditorAnim(); } else { openEdit=cod; renderTable(); animOpen(document.querySelector('#tbRows tr.tbedit .tbeditor')); } }
+      if(b.hasAttribute('data-act')){ var cod=b.getAttribute('data-act'); if(openEdit===cod){ closeEditorAnim(); } else { openEdit=cod; renderTable(); animOpen(document.querySelector('#tbRows tr.tbedit .tbeditor'), 420); } }
       else if(b.hasAttribute('data-editclose')){ closeEditorAnim(); }
       else if(b.hasAttribute('data-editsave')){ saveConta(b.getAttribute('data-editsave')); }
       else if(b.hasAttribute('data-desdobrar')){ desdobrar(b.getAttribute('data-desdobrar')); }
@@ -1357,7 +1358,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788975792';
+  var MYV='1788976078';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
