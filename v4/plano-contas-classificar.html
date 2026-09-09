@@ -8,8 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Plano de Contas · Nova versão</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788977177">
-  <script src="../design-system/ds-tailwind.js?v=1788977177"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788977429">
+  <script src="../design-system/ds-tailwind.js?v=1788977429"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -690,15 +690,13 @@
     function m(k,v){ return '<div class="tbedit-meta__i"><span class="tbedit-meta__k">'+k+'</span><span class="tbedit-meta__v">'+esc(''+v)+'</span></div>'; }
     return '<p class="tbedit-metahd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Estrutura contábil da conta · somente leitura</p>'+
       '<div class="tbedit-meta">'+
-        m('Código interno (cCtaInterna)', cctaInternaOf(c))+
-        m('Desdobramento (cDbrMista)', c.cDbrMista||'000')+
-        m('Conta completa (cCta · gerado)', c.cod)+
-        m('Tipo (indCta)', c.indCta==='S'?'Sintética (S)':'Analítica (A)')+
-        m('Grupo (codNat)', c.codNat+' · '+(NAT_LABEL[c.codNat]||'—'))+
-        m('Natureza (natCta)', (c.natCta||'—')+' · '+(NATCTA_LABEL[c.natCta]||''))+
-        m('Nível (nivelCta)', nivelOf(c.cod))+
-        m('Conta superior (cCtaSup)', c.cCtaSup||'—')+
-        m('Referencial (cCtaRef)', c.cCtaRef||'—')+
+        m('Tipo', c.indCta==='S'?'Sintética (S)':'Analítica (A)')+
+        m('Grupo', c.codNat+' · '+(NAT_LABEL[c.codNat]||'—'))+
+        m('Natureza', (c.natCta||'—')+' · '+(NATCTA_LABEL[c.natCta]||''))+
+        m('Nível', nivelOf(c.cod))+
+        m('Conta superior', c.cCtaSup||'—')+
+        m('Referencial', c.cCtaRef||'—')+
+        m('Desdobramento', c.cDbrMista||'000')+
       '</div>';
   }
   function stats(){
@@ -1385,7 +1383,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788977177';
+  var MYV='1788977429';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
