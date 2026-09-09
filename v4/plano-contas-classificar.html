@@ -8,8 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Plano de Contas · Nova versão</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788969867">
-  <script src="../design-system/ds-tailwind.js?v=1788969867"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788970052">
+  <script src="../design-system/ds-tailwind.js?v=1788970052"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -469,7 +469,7 @@
               <div class="tbsummary" id="tbSummary"></div>
               <div class="table-wrap">
                 <table class="table">
-                  <thead><tr><th scope="col">Conta</th><th scope="col">Natureza</th><th scope="col">codTrib</th><th scope="col">Origem</th><th scope="col"><span class="sr-only">Ação</span></th></tr></thead>
+                  <thead><tr><th scope="col">Conta</th><th scope="col">Grupo</th><th scope="col">codTrib</th><th scope="col">Origem</th><th scope="col"><span class="sr-only">Ação</span></th></tr></thead>
                   <tbody id="tbRows"></tbody>
                 </table>
               </div>
@@ -1198,7 +1198,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788969867';
+  var MYV='1788970052';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
