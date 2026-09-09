@@ -8,8 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Plano de Contas · Nova versão</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788976975">
-  <script src="../design-system/ds-tailwind.js?v=1788976975"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788977177">
+  <script src="../design-system/ds-tailwind.js?v=1788977177"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -685,6 +685,22 @@
   function nivelOf(cod){ return (''+cod).split('.').length; }        /* nivelCta derivado da hierarquia do código */
   /* leiaute: cCta = cCtaInterna + cDbrMista (CCTA_CONCATENACAO). No mock, cod = cCta (código completo, único); cCtaInterna deriva tirando o desdobramento. */
   function cctaInternaOf(c){ return (c.cDbrMista && c.cDbrMista!=='000') ? (''+c.cod).replace(/\.\d{3}$/,'') : c.cod; }
+  /* resumo read-only da estrutura contábil da conta (compartilhado: editor da tabela e triagem) */
+  function structStrip(c){
+    function m(k,v){ return '<div class="tbedit-meta__i"><span class="tbedit-meta__k">'+k+'</span><span class="tbedit-meta__v">'+esc(''+v)+'</span></div>'; }
+    return '<p class="tbedit-metahd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Estrutura contábil da conta · somente leitura</p>'+
+      '<div class="tbedit-meta">'+
+        m('Código interno (cCtaInterna)', cctaInternaOf(c))+
+        m('Desdobramento (cDbrMista)', c.cDbrMista||'000')+
+        m('Conta completa (cCta · gerado)', c.cod)+
+        m('Tipo (indCta)', c.indCta==='S'?'Sintética (S)':'Analítica (A)')+
+        m('Grupo (codNat)', c.codNat+' · '+(NAT_LABEL[c.codNat]||'—'))+
+        m('Natureza (natCta)', (c.natCta||'—')+' · '+(NATCTA_LABEL[c.natCta]||''))+
+        m('Nível (nivelCta)', nivelOf(c.cod))+
+        m('Conta superior (cCtaSup)', c.cCtaSup||'—')+
+        m('Referencial (cCtaRef)', c.cCtaRef||'—')+
+      '</div>';
+  }
   function stats(){
     var ok=0,ia=0,none=0;
     contas.forEach(function(c){ if(c.origin==='validada')ok++; else if(c.origin==='sugerida')ia++; else none++; });
@@ -812,6 +828,7 @@
     var open=!!openC[c.cod];
     if(c.vigAberta==null) c.vigAberta=!c.vigFim; /* vigência em aberto por padrão quando não há fim */
     var edit=open?('<div class="aigconta__edit">'+
+      structStrip(c)+
       '<div class="aigfield">'+
         '<div class="aigfield__lbl"><label for="descf-'+esc(c.cod)+'">Descrição da conta (o "comentado" do PGCC)</label>'+
           (c.descSug?(
@@ -1123,19 +1140,7 @@
       ? ('<span class="status status--ia status--sm" data-ctsug'+(c.codTrib!==c.codTribSug?' hidden':'')+'>'+SPARK+'Sugerida pela IA'+(c.conf?' · confiança '+(c.conf==='media'?'média':c.conf):'')+'</span>'
          +'<button type="button" class="linkact linkact--ia" data-resetcodtrib="'+esc(c.cod)+'"'+(c.codTrib===c.codTribSug?' hidden':'')+'>'+SPARK+'Restaurar sugestão da IA</button>')
       : (c.origin==='classificar' ? '<span class="status status--warning status--sm"><span class="status__dot"></span>Sem sugestão da IA</span>' : '');
-    var meta=function(k,v){ return '<div class="tbedit-meta__i"><span class="tbedit-meta__k">'+k+'</span><span class="tbedit-meta__v">'+esc(''+v)+'</span></div>'; };
-    var metaStrip='<p class="tbedit-metahd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Estrutura contábil da conta · somente leitura</p>'+
-      '<div class="tbedit-meta">'+
-        meta('Código interno (cCtaInterna)', cctaInternaOf(c))+
-        meta('Desdobramento (cDbrMista)', c.cDbrMista||'000')+
-        meta('Conta completa (cCta · gerado)', c.cod)+
-        meta('Tipo (indCta)', c.indCta==='S'?'Sintética (S)':'Analítica (A)')+
-        meta('Grupo (codNat)', c.codNat+' · '+(NAT_LABEL[c.codNat]||'—'))+
-        meta('Natureza (natCta)', (c.natCta||'—')+' · '+(NATCTA_LABEL[c.natCta]||''))+
-        meta('Nível (nivelCta)', nivelOf(c.cod))+
-        meta('Conta superior (cCtaSup)', c.cCtaSup||'—')+
-        meta('Referencial (cCtaRef)', c.cCtaRef||'—')+
-      '</div>';
+    var metaStrip=structStrip(c);
     return '<tr class="tbedit"><td colspan="6" class="tbedit-cell"><div class="tbeditor">'+
       metaStrip+
       '<div class="tbedit-2col">'+
@@ -1197,7 +1202,21 @@
     } else { done(); }
   }
   /* fecha o editor colapsando com animação (altura + fade), depois re-renderiza */
-  function closeEditorAnim(){ animClose(document.querySelector('#tbRows tr.tbedit .tbeditor'), function(){ openEdit=null; renderTable(); }, 380); }
+  /* fechar sem re-render da tabela toda (evita flicker/salto): colapsa o editor, remove só a linha dele e desmarca a conta aberta */
+  function closeEditorAnim(){
+    var edRow=document.querySelector('#tbRows tr.tbedit'), ed=edRow&&edRow.querySelector('.tbeditor');
+    var openRow=document.querySelector('#tbRows tr.tbrow.is-open');
+    animClose(ed, function(){
+      openEdit=null;
+      if(edRow) edRow.remove();
+      if(openRow){
+        openRow.classList.remove('is-open');
+        var c=findC(openRow.getAttribute('data-cod')), btn=openRow.querySelector('button[data-act]');
+        if(btn&&c){ btn.textContent=(c.origin==='classificar')?'Classificar':'Editar'; btn.className='btn '+((c.origin==='classificar')?'btn--primary':'btn--secondary')+' btn--sm'; }
+      }
+      renderTbSummary();
+    }, 380);
+  }
   function renderTable(){
     if(!contas) return;
     var rows=contas.filter(tbMatch);
@@ -1366,7 +1385,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788976975';
+  var MYV='1788977177';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
