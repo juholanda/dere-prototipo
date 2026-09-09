@@ -991,6 +991,13 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 .stat__delta--down{color:var(--color-danger-fg)}
 .stat__foot{font-size:var(--text-xs);color:var(--color-text-muted)}
 .stat__value--date{font-size:var(--text-xl);letter-spacing:-.01em}
+.stat__ic--warning{background:var(--color-warning-bg);color:var(--color-warning)}
+.stat__ic--info{background:var(--color-info-bg);color:var(--color-info)}
+/* KPI clicável = filtro (o .stat vira <button>). Usado no painel de monitoramento e na tabela do plano de contas. */
+.statbtn{cursor:pointer;text-align:left;font:inherit;color:inherit;width:100%}
+.statbtn:hover{border-color:var(--color-border-strong)}
+.statbtn:focus-visible{outline:none;box-shadow:var(--ring)}
+.statbtn.is-active{border-color:var(--color-primary);box-shadow:inset 0 0 0 1px var(--color-primary)}
 
 /* Fila de tarefas priorizada — "o que falta + porquê + ação", uma empresa por linha.
    Ordene por urgência; o modificador de severidade tinge o "porquê" (texto + bolinha). */

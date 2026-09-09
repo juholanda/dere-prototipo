@@ -8,8 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Plano de Contas · Nova versão</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788967099">
-  <script src="../design-system/ds-tailwind.js?v=1788967099"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788967767">
+  <script src="../design-system/ds-tailwind.js?v=1788967767"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -111,12 +111,11 @@
     /* resumo acima da tabela: contadores + progresso */
     .tbsummary{padding:var(--space-6) var(--space-8);border-bottom:1px solid var(--color-border);display:flex;flex-direction:column;gap:var(--space-6)}
     .tbstats{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-4)}
+    .tbempty{padding:var(--space-8);text-align:center;color:var(--color-text-muted);font-size:var(--text-sm)}
     @media(max-width:900px){.tbstats{grid-template-columns:repeat(2,1fr)}}
     @media(max-width:560px){.tbstats{grid-template-columns:1fr}}
     .tbsummary .stat__ic svg{width:16px;height:16px}
-    .tbsummary .stat__ic--success{background:var(--color-success-bg);color:var(--color-success-fg)}
-    .tbsummary .stat__ic--info{background:var(--color-primary-subtle);color:var(--color-primary)}
-    .tbsummary .stat__ic--warning{background:var(--color-warning-bg);color:var(--color-warning-fg)}
+    /* tons de ícone (--success/--warning/--info) e o KPI-filtro (.statbtn) vêm do ds.css */
     .tbprog__top{display:flex;justify-content:space-between;align-items:baseline;gap:var(--space-3);margin-bottom:var(--space-2);flex-wrap:wrap}
     .tbprog__lbl{font-size:var(--text-sm);font-weight:600;color:var(--color-heading)}
     .tbprog__pct{font-size:var(--text-sm);color:var(--color-text-muted);font-variant-numeric:tabular-nums}
@@ -614,7 +613,7 @@
     {cod:'2.3.1.01', nome:'Provisões técnicas · Constituição', nat:'Passivo', desc:'Constituição de provisões técnicas do período.', vigIni:'01/01/2026', vigFim:'', codTrib:null, origin:'classificar', reason:'sem-sugestao', conf:null, iss:false, notax:false},
     {cod:'2.9.1.01', nome:'Conta mista · Tributos a recuperar e a recolher', nat:'Variável', desc:'Conta com desdobramentos de naturezas distintas (a recuperar e a recolher).', vigIni:'01/01/2026', vigFim:'', codTrib:null, origin:'classificar', reason:'mista', conf:null, iss:false, notax:false}
   ];
-  var contas=null, openG={}, openC={}, openAcc={}, altG={}, openEdit=null, manualOpen=true;
+  var contas=null, openG={}, openC={}, openAcc={}, altG={}, openEdit=null, manualOpen=true, TBFILTER='';
   function clone(x){ return JSON.parse(JSON.stringify(x)); }
   function findC(cod){ for(var i=0;i<contas.length;i++){ if(contas[i].cod===cod) return contas[i]; } return null; }
   function stats(){
@@ -657,7 +656,7 @@
   }
 
   function openPopup(){
-    contas=clone(SEED_CONTAS); contas.forEach(function(c){ c.descSug=c.desc; }); openG={}; openC={}; openAcc={}; altG={}; openEdit=null; manualOpen=true;
+    contas=clone(SEED_CONTAS); contas.forEach(function(c){ c.descSug=c.desc; }); openG={}; openC={}; openAcc={}; altG={}; openEdit=null; manualOpen=true; TBFILTER='';
     if(closeTimer){clearTimeout(closeTimer);closeTimer=null;} document.getElementById('aiPopup').classList.remove('is-closing');
     document.getElementById('aiPopup').hidden=false;
     document.getElementById('aiSide').hidden=true;
@@ -1041,9 +1040,13 @@
       '</div>'+
     '</div></td></tr>';
   }
+  function tbMatch(c){ if(!TBFILTER) return true; if(TBFILTER==='ok') return c.origin==='validada'; if(TBFILTER==='ia') return c.origin==='sugerida'; if(TBFILTER==='none') return c.origin==='classificar'; return true; }
+  function setTbFilter(key){ TBFILTER=(TBFILTER===key)?'':key; openEdit=null; renderTable(); var b=document.querySelector('#tbSummary [data-kpi="'+key+'"]'); if(b) b.focus(); }
   function renderTable(){
     if(!contas) return;
-    document.getElementById('tbRows').innerHTML=contas.map(function(c){
+    var rows=contas.filter(tbMatch);
+    if(!rows.length){ document.getElementById('tbRows').innerHTML='<tr><td colspan="5" class="tbempty">Nenhuma conta neste filtro.</td></tr>'; renderTbSummary(); return; }
+    document.getElementById('tbRows').innerHTML=rows.map(function(c){
       var actLabel=(openEdit===c.cod)?'Fechar':(c.origin==='classificar'?'Classificar':'Editar');
       var actCls=(c.origin==='classificar'&&openEdit!==c.cod)?'btn--primary':'btn--secondary';
       var row='<tr class="tbrow'+(openEdit===c.cod?' is-open':'')+'" data-cod="'+esc(c.cod)+'">'+
@@ -1062,16 +1065,23 @@
     var pOk=o.total?Math.round(o.ok/o.total*100):0, pIa=o.total?Math.round(o.ia/o.total*100):0;
     function sv(inner){ return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+inner+'</svg>'; }
     var tiles=[
-      {cls:'', ic:sv('<path d="M3 6h18M7 12h14M7 18h14M3 12h.01M3 18h.01"/>'), lbl:'Contas analíticas', v:o.total, foot:'no plano'},
-      {cls:'stat__ic--success', ic:sv('<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>'), lbl:'Contas validadas', v:o.ok, foot:'confirmadas por você'},
-      {cls:'stat__ic--info', ic:SPARK, lbl:'Sugeridas pela IA', v:o.ia, foot:'aguardando aceite'},
-      {cls:'stat__ic--warning', ic:sv('<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/>'), lbl:'A classificar', v:o.none, foot:'sem codTrib ainda'}
+      {key:null, cls:'', ic:sv('<path d="M3 6h18M7 12h14M7 18h14M3 12h.01M3 18h.01"/>'), lbl:'Contas analíticas', v:o.total, foot:'no plano'},
+      {key:'ok', cls:'stat__ic--success', ic:sv('<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>'), lbl:'Contas validadas', v:o.ok, foot:'confirmadas por você'},
+      {key:'ia', cls:'', ic:SPARK, lbl:'Sugeridas pela IA', v:o.ia, foot:'aguardando aceite'},
+      {key:'none', cls:'stat__ic--warning', ic:sv('<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/>'), lbl:'A classificar', v:o.none, foot:'sem codTrib ainda'}
     ];
-    var kpis='<div class="tbstats">'+tiles.map(function(t){ return '<div class="stat"><span class="stat__ic '+t.cls+'">'+t.ic+'</span><span class="stat__label">'+t.lbl+'</span><span class="stat__value">'+t.v+'</span><span class="stat__foot">'+t.foot+'</span></div>'; }).join('')+'</div>';
+    /* card do total = leitura (denominador); os outros 3 filtram a tabela por situação (.statbtn do ds) */
+    var kpis='<div class="tbstats">'+tiles.map(function(t){
+      var body='<span class="stat__ic '+t.cls+'">'+t.ic+'</span><span class="stat__label">'+t.lbl+'</span><span class="stat__value">'+t.v+'</span><span class="stat__foot">'+t.foot+'</span>';
+      if(!t.key) return '<div class="stat">'+body+'</div>';
+      var on=(TBFILTER===t.key);
+      return '<button type="button" class="stat statbtn'+(on?' is-active':'')+'" data-kpi="'+t.key+'" aria-pressed="'+on+'">'+body+'</button>';
+    }).join('')+'</div>';
     var prog='<div class="tbprog"><div class="tbprog__top"><span class="tbprog__lbl">Progresso da classificação</span><span class="tbprog__pct">'+o.ok+' de '+o.total+' validadas · '+pOk+'% concluído</span></div>'+
       '<div class="tbprog__bar"><span class="tbprog__seg tbprog__seg--ok" style="width:'+pOk+'%"></span><span class="tbprog__seg tbprog__seg--ia" style="width:'+pIa+'%"></span></div>'+
       '<div class="tbprog__leg"><span><span class="legdot legdot--ok"></span>Validadas</span><span><span class="legdot legdot--ia"></span>Sugeridas pela IA</span><span><span class="legdot" style="background:color-mix(in srgb,var(--color-heading) 16%,transparent)"></span>A classificar</span></div></div>';
     document.getElementById('tbSummary').innerHTML=kpis+prog;
+    Array.prototype.forEach.call(document.getElementById('tbSummary').querySelectorAll('[data-kpi]'),function(b){ b.addEventListener('click',function(){ setTbFilter(b.getAttribute('data-kpi')); }); });
   }
   function showTable(){
     document.getElementById('acCard').hidden=true;
@@ -1159,7 +1169,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788967099';
+  var MYV='1788967767';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
