@@ -8,8 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Plano de Contas · Nova versão</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788977973">
-  <script src="../design-system/ds-tailwind.js?v=1788977973"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788978306">
+  <script src="../design-system/ds-tailwind.js?v=1788978306"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -117,7 +117,7 @@
     /* header da tabela sempre visível: a tabela cresce naturalmente (sem altura fixa) e o thead gruda no topo da rolagem da página (.cadscroll). O wrapper não pode ser container de scroll, senão prende o sticky. */
     #tableCard .table-wrap{overflow:visible}
     #tableCard .table thead th{position:sticky;top:0;z-index:2}
-    .th-btn{background:none;border:0;margin:0;padding:0;font:inherit;color:inherit;letter-spacing:inherit;text-transform:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:var(--space-1-5)}
+    .th-btn{background:none;border:0;margin:0;padding:0;font:inherit;color:inherit;letter-spacing:inherit;text-transform:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:var(--space-1-5);white-space:nowrap}
     .th-btn:focus-visible{outline:none;box-shadow:var(--ring);border-radius:var(--radius-sm)}
     .tbedit-meta__i{display:inline-flex;align-items:baseline;gap:var(--space-1-5);font-size:var(--text-sm);white-space:nowrap}
     .tbedit-meta__k{color:var(--color-text-muted)}
@@ -501,7 +501,7 @@
                     <th scope="col" class="sortable" data-sort="codnat" aria-sort="none"><button type="button" class="th-btn">Grupo (codNat) <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
                     <th scope="col" class="sortable" data-sort="natcta" aria-sort="none"><button type="button" class="th-btn">Natureza (natCta) <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
                     <th scope="col" class="sortable" data-sort="codtrib" aria-sort="none"><button type="button" class="th-btn">codTrib <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
-                    <th scope="col" class="sortable" data-sort="origem" aria-sort="none"><button type="button" class="th-btn">Origem <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
+                    <th scope="col" class="sortable" data-sort="origem" aria-sort="none"><button type="button" class="th-btn">Estado <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
                     <th scope="col"><span class="sr-only">Ação</span></th>
                   </tr></thead>
                   <tbody id="tbRows"></tbody>
@@ -688,7 +688,7 @@
   /* resumo read-only da estrutura contábil da conta (compartilhado: editor da tabela e triagem) */
   function structStrip(c){
     function m(k,v){ return '<div class="tbedit-meta__i"><span class="tbedit-meta__k">'+k+'</span><span class="tbedit-meta__v">'+esc(''+v)+'</span></div>'; }
-    return '<p class="tbedit-metahd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Estrutura contábil da conta · somente leitura</p>'+
+    return '<p class="tbedit-metahd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Estrutura contábil da conta</p>'+
       '<div class="tbedit-meta">'+
         m('Tipo', c.indCta==='S'?'Sintética (S)':'Analítica (A)')+
         m('Grupo', c.codNat+' · '+(NAT_LABEL[c.codNat]||'—'))+
@@ -826,7 +826,7 @@
     var edit=open?('<div class="aigconta__edit">'+
       structStrip(c)+
       '<div class="aigfield">'+
-        '<div class="aigfield__lbl"><label for="descf-'+esc(c.cod)+'">Descrição da conta (o "comentado" do PGCC)</label>'+
+        '<div class="aigfield__lbl"><label for="descf-'+esc(c.cod)+'">Descrição comentada da conta</label>'+
           (c.descSug?(
             '<span class="status status--ia status--sm" data-sugtag="'+esc(c.cod)+'"'+(c.desc!==c.descSug?' hidden':'')+'>'+SPARK+'Sugerida pela IA</span>'+
             '<button type="button" class="linkact linkact--ia" data-resetdesc="'+esc(c.cod)+'"'+(c.desc===c.descSug?' hidden':'')+'>'+SPARK+'Restaurar sugestão da IA</button>'
@@ -1168,7 +1168,7 @@
             '<p class="hint">Tabela 11 · 9 dígitos.</p>'+
           '</div>'+
           '<div class="aigfield">'+
-            '<div class="aigfield__lbl"><label for="tbdescf-'+esc(c.cod)+'">Descrição da conta (o "comentado" do PGCC)'+(c.indCta!=='S'?' <span class="field__req" aria-label="obrigatório">*</span>':'')+'</label>'+
+            '<div class="aigfield__lbl"><label for="tbdescf-'+esc(c.cod)+'">Descrição comentada da conta'+(c.indCta!=='S'?' <span class="field__req" aria-label="obrigatório">*</span>':'')+'</label>'+
               (c.descSug?(
                 '<span class="status status--ia status--sm" data-sugtag="'+esc(c.cod)+'"'+(c.desc!==c.descSug?' hidden':'')+'>'+SPARK+'Sugerida pela IA</span>'+
                 '<button type="button" class="linkact linkact--ia" data-resetdesc="'+esc(c.cod)+'"'+(c.desc===c.descSug?' hidden':'')+'>'+SPARK+'Restaurar sugestão da IA</button>'
@@ -1402,7 +1402,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788977973';
+  var MYV='1788978306';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
