@@ -8,8 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Plano de Contas · Nova versão</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788970937">
-  <script src="../design-system/ds-tailwind.js?v=1788970937"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788971035">
+  <script src="../design-system/ds-tailwind.js?v=1788971035"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -592,7 +592,7 @@
   document.getElementById('btnSend').addEventListener('click',function(){ toast('Plano enviado para revisão do aprovador.','ok'); });
 
   /* ================= modelo único de contas (triagem e tabela compartilham) ================= */
-  var STEPS=['Lendo dados da planilha importada','Identificando contas analíticas','Gerando sugestões de codTrib','Sugerindo a descrição (o "comentado")','Conferindo a conta referencial informada na planilha','Calculando níveis de confiança'];
+  var STEPS=['Lendo dados da planilha importada','Identificando contas analíticas','Gerando sugestões de codTrib','Sugerindo a descrição (o "comentado")','Calculando níveis de confiança'];
   var CODTRIB_NAMES={'110010101':'Prêmios de seguros diretos','218010301':'Rendimentos de aplicações financeiras','110020101':'Prêmios de cosseguro cedidos','310010101':'Sinistros de seguros diretos','410010201':'Despesas de comercialização','110250001':'Não tributável · Exportação de serviços','110250002':'Não tributável / alíquota zero (geral)'};
   /* Tabela 11 (subconjunto ilustrativo; codTrib de 9 dígitos, regra oficial MS1115). grp:'notrib' = família 11025 (não tributáveis / alíquota zero) */
   var T11=[
@@ -1199,7 +1199,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788970937';
+  var MYV='1788971035';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
