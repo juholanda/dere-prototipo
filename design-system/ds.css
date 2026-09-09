@@ -979,7 +979,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 
 /* Counters / stat cards (KPIs) */
 .stat{display:flex;flex-direction:column;gap:var(--space-1);padding:var(--space-6);background:var(--color-surface);
-  border:1px solid var(--color-border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);position:relative}
+  border:1px solid var(--color-border);border-radius:var(--radius-2xl);box-shadow:var(--shadow-sm);position:relative}
 .stat__ic{position:absolute;top:var(--space-6);right:var(--space-6);width:var(--space-8);height:var(--space-8);
   border-radius:var(--radius-base);display:grid;place-items:center;background:var(--color-primary-subtle);color:var(--color-primary)}
 .stat__ic--danger{background:var(--color-danger-bg);color:var(--color-danger)}

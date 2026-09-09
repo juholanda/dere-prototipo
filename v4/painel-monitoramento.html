@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Painel de Monitoramento</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788967767">
-  <script src="../design-system/ds-tailwind.js?v=1788967767"></script>
-  <script src="../design-system/ds-dialog.js?v=1788967767"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788968349">
+  <script src="../design-system/ds-tailwind.js?v=1788968349"></script>
+  <script src="../design-system/ds-dialog.js?v=1788968349"></script>
   <style>
     /* ===== app-shell (igual às outras telas do v4) ===== */
     body{margin:0;background:var(--color-bg)}
@@ -42,7 +42,7 @@
     @container (max-width:420px){.kpis{grid-template-columns:1fr}}
     /* .statbtn (KPI clicável) agora vem do ds.css */
     .kpis .stat__ic svg{width:16px;height:16px}
-    .kpis .stat{border-radius:var(--radius-2xl)}   /* 12px, igual aos cards da tela */
+    /* .stat já é 12px (--radius-2xl) no ds.css */
     .stat__foot--warn{color:var(--color-warning-fg);font-weight:600}
     .stat__foot--ok{color:var(--color-success-fg);font-weight:600}
 
@@ -1048,7 +1048,7 @@
 </script>
 <script>
 (function(){
-  var MYV='1788967767';
+  var MYV='1788968349';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
