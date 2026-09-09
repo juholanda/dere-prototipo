@@ -8,8 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Plano de Contas · Nova versão</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788971035">
-  <script src="../design-system/ds-tailwind.js?v=1788971035"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788971211">
+  <script src="../design-system/ds-tailwind.js?v=1788971211"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -1031,7 +1031,7 @@
     var _notrib=T11.filter(function(o){return o.grp==='notrib';}).map(comboBtn).join('');
     var opts=_trib+(_notrib?'<div class="tbcombo__grp" data-combo-sub>Não tributável / alíquota zero</div>'+_notrib:'');
     var meta=function(k,v){ return '<div class="tbedit-meta__i"><span class="tbedit-meta__k">'+k+'</span><span class="tbedit-meta__v">'+esc(''+v)+'</span></div>'; };
-    var metaStrip='<p class="tbedit-metahd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Estrutura contábil · vem da planilha importada</p>'+
+    var metaStrip='<p class="tbedit-metahd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Estrutura contábil da conta · vem do plano de contas (não se edita aqui)</p>'+
       '<div class="tbedit-meta">'+
         meta('Tipo (indCta)', c.indCta==='S'?'Sintética (S)':'Analítica (A)')+
         meta('Grupo (codNat)', c.codNat+' · '+(NAT_LABEL[c.codNat]||'—'))+
@@ -1199,7 +1199,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788971035';
+  var MYV='1788971211';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
