@@ -8,8 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Plano de Contas · Nova versão</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788976482">
-  <script src="../design-system/ds-tailwind.js?v=1788976482"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788976975">
+  <script src="../design-system/ds-tailwind.js?v=1788976975"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -129,7 +129,10 @@
     .tbcombo{position:relative}
     .tbcombo__chev{position:absolute;right:var(--space-3);top:50%;transform:translateY(-50%);color:var(--color-text-muted);pointer-events:none;display:flex}
     .tbcombo__chev svg{width:16px;height:16px}
-    .tbcombo .input{padding-right:2rem;cursor:pointer}
+    .tbcombo .input{padding-right:3.4rem;cursor:pointer}
+    .tbcombo__clear{position:absolute;right:calc(var(--space-3) + 20px);top:50%;transform:translateY(-50%);display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border:0;background:none;color:var(--color-text-muted);cursor:pointer;border-radius:var(--radius-pill)}
+    .tbcombo__clear:hover{background:var(--color-surface-2);color:var(--color-text)}
+    .tbcombo__clear svg{width:14px;height:14px}
     .tbcombo.is-off{opacity:.5;pointer-events:none}
     .tbcombo__panel{position:absolute;z-index:5;top:calc(100% + 4px);left:0;right:0;max-height:220px;overflow:auto;background:var(--color-surface);border:1px solid var(--color-border-strong);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);padding:var(--space-1)}
     .tbcombo__panel button{display:flex;gap:var(--space-2);width:100%;text-align:left;border:0;background:none;padding:var(--space-2) var(--space-3);border-radius:var(--radius-base);cursor:pointer;font-family:inherit;align-items:baseline}
@@ -680,6 +683,8 @@
   var NAT_LABEL={1:'Ativo',2:'Passivo',3:'Patrimônio líquido',4:'Receita',5:'Despesa'};
   var NATCTA_LABEL={C:'Credora',D:'Devedora',V:'Variável'};
   function nivelOf(cod){ return (''+cod).split('.').length; }        /* nivelCta derivado da hierarquia do código */
+  /* leiaute: cCta = cCtaInterna + cDbrMista (CCTA_CONCATENACAO). No mock, cod = cCta (código completo, único); cCtaInterna deriva tirando o desdobramento. */
+  function cctaInternaOf(c){ return (c.cDbrMista && c.cDbrMista!=='000') ? (''+c.cod).replace(/\.\d{3}$/,'') : c.cod; }
   function stats(){
     var ok=0,ia=0,none=0;
     contas.forEach(function(c){ if(c.origin==='validada')ok++; else if(c.origin==='sugerida')ia++; else none++; });
@@ -1121,13 +1126,15 @@
     var meta=function(k,v){ return '<div class="tbedit-meta__i"><span class="tbedit-meta__k">'+k+'</span><span class="tbedit-meta__v">'+esc(''+v)+'</span></div>'; };
     var metaStrip='<p class="tbedit-metahd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Estrutura contábil da conta · somente leitura</p>'+
       '<div class="tbedit-meta">'+
-        meta('Tipo', c.indCta==='S'?'Sintética (S)':'Analítica (A)')+
-        meta('Grupo', c.codNat+' · '+(NAT_LABEL[c.codNat]||'—'))+
-        meta('Natureza', (c.natCta||'—')+' · '+(NATCTA_LABEL[c.natCta]||''))+
-        meta('Nível', nivelOf(c.cod))+
-        meta('Conta superior', c.cCtaSup||'—')+
-        meta('Referencial', c.cCtaRef||'—')+
-        meta('Desdobramento', c.cDbrMista||'000')+
+        meta('Código interno (cCtaInterna)', cctaInternaOf(c))+
+        meta('Desdobramento (cDbrMista)', c.cDbrMista||'000')+
+        meta('Conta completa (cCta · gerado)', c.cod)+
+        meta('Tipo (indCta)', c.indCta==='S'?'Sintética (S)':'Analítica (A)')+
+        meta('Grupo (codNat)', c.codNat+' · '+(NAT_LABEL[c.codNat]||'—'))+
+        meta('Natureza (natCta)', (c.natCta||'—')+' · '+(NATCTA_LABEL[c.natCta]||''))+
+        meta('Nível (nivelCta)', nivelOf(c.cod))+
+        meta('Conta superior (cCtaSup)', c.cCtaSup||'—')+
+        meta('Referencial (cCtaRef)', c.cCtaRef||'—')+
       '</div>';
     return '<tr class="tbedit"><td colspan="6" class="tbedit-cell"><div class="tbeditor">'+
       metaStrip+
@@ -1135,7 +1142,7 @@
         '<div class="tbcol">'+
           '<div class="aigfield">'+
             '<div class="aigfield__lbl"><label>Código de tributação (codTrib)'+(c.indCta!=='S'?' <span class="field__req" aria-label="obrigatório">*</span>':'')+'</label>'+ctLbl+'</div>'+
-            '<div class="tbcombo" data-combo="'+esc(c.cod)+'"><input class="input" type="text" placeholder="Buscar código ou conta na Tabela 11" value="'+esc(comboVal)+'" data-cod="'+esc(c.cod)+'" data-combo-input autocomplete="off"><span class="tbcombo__chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span><div class="tbcombo__panel" data-combo-panel hidden>'+opts+'</div></div>'+
+            '<div class="tbcombo" data-combo="'+esc(c.cod)+'"><input class="input" type="text" placeholder="Buscar código ou conta na Tabela 11" value="'+esc(comboVal)+'" data-cod="'+esc(c.cod)+'" data-combo-input autocomplete="off"><button type="button" class="tbcombo__clear" data-combo-clear aria-label="Limpar busca"'+(comboVal?'':' hidden')+'><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button><span class="tbcombo__chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span><div class="tbcombo__panel" data-combo-panel hidden>'+opts+'</div></div>'+
             '<p class="hint">Tabela 11 · 9 dígitos.</p>'+
           '</div>'+
           '<div class="aigfield">'+
@@ -1255,13 +1262,14 @@
       else if(b.hasAttribute('data-resetdesc')){ var c=findC(b.getAttribute('data-resetdesc')); if(c&&c.descSug!=null){ c.desc=c.descSug; renderTable(); toast('Descrição restaurada para a sugestão da IA.','info'); } }
       else if(b.hasAttribute('data-resetcodtrib')){ var c=findC(b.getAttribute('data-resetcodtrib')); if(c&&c.codTribSug){ c.codTrib=c.codTribSug; renderTable(); toast('codTrib restaurado para a sugestão da IA.','info'); } }
       else if(b.hasAttribute('data-pick')){ var c=findC(b.getAttribute('data-cod')); if(c){ c.codTrib=b.getAttribute('data-pick'); renderTable(); } }
+      else if(b.hasAttribute('data-combo-clear')){ var inp=b.parentNode.querySelector('[data-combo-input]'); if(inp){ inp.value=''; inp.dispatchEvent(new Event('input',{bubbles:true})); inp.focus(); } }
       else if(b.hasAttribute('data-combo-input')){ /* handled below */ }
     });
     /* abrir/fechar painel do combo + filtrar */
     body.addEventListener('focusin',function(ev){ var inp=ev.target.closest('[data-combo-input]'); if(!inp) return; var pan=inp.parentNode.querySelector('[data-combo-panel]'); if(pan) pan.hidden=false; });
     body.addEventListener('input',function(ev){
       var t=ev.target, cod=t.getAttribute('data-cod'); if(!cod) return; var c=findC(cod); if(!c) return;
-      if(t.hasAttribute('data-combo-input')){ var q=t.value.toLowerCase(); var pan=t.parentNode.querySelector('[data-combo-panel]'); if(pan){ pan.hidden=false; pan.querySelectorAll('button').forEach(function(op){ op.hidden = q && op.getAttribute('data-search').indexOf(q)<0; }); pan.querySelectorAll('[data-combo-sub]').forEach(function(s){ s.hidden=!!q; }); } return; }
+      if(t.hasAttribute('data-combo-input')){ var q=t.value.toLowerCase(); var pan=t.parentNode.querySelector('[data-combo-panel]'); if(pan){ pan.hidden=false; pan.querySelectorAll('button').forEach(function(op){ op.hidden = q && op.getAttribute('data-search').indexOf(q)<0; }); pan.querySelectorAll('[data-combo-sub]').forEach(function(s){ s.hidden=!!q; }); } var clr=t.parentNode.querySelector('[data-combo-clear]'); if(clr) clr.hidden=!t.value; return; }
       if(t.hasAttribute('data-desc')){
         c.desc=t.value;
         var edited=c.descSug!=null&&c.descSug!==''&&c.desc!==c.descSug;
@@ -1285,7 +1293,7 @@
         }
       }
     });
-    document.addEventListener('click',function(ev){ if(!ev.target.closest('.tbcombo')) body.querySelectorAll('[data-combo-panel]').forEach(function(p){p.hidden=true;}); });
+    document.addEventListener('click',function(ev){ if(!ev.target.closest('.tbcombo')){ body.querySelectorAll('[data-combo-panel]').forEach(function(p){p.hidden=true;}); body.querySelectorAll('[data-combo-input]').forEach(function(inp){ var c=findC(inp.getAttribute('data-cod')); if(c){ inp.value=c.codTrib?(c.codTrib+' — '+t11name(c.codTrib)):''; var clr=inp.parentNode.querySelector('[data-combo-clear]'); if(clr) clr.hidden=!inp.value; } }); } });
   })();
   /* ordenação do header (padrão do DS: th.sortable + .th-sort + aria-sort) */
   (function(){
@@ -1358,7 +1366,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788976482';
+  var MYV='1788976975';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
