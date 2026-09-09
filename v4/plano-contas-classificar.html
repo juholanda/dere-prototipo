@@ -8,8 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Plano de Contas · Nova versão</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788968349">
-  <script src="../design-system/ds-tailwind.js?v=1788968349"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=1788968961">
+  <script src="../design-system/ds-tailwind.js?v=1788968961"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -99,6 +99,9 @@
     .tbedit-vig{display:flex;gap:var(--space-6);flex-wrap:wrap;margin-top:var(--space-6)}
     .tbedit-vig .tbedit-field{flex:1;min-width:160px}
     .tbedit-vig .input{max-width:200px}
+    .tbedit-struct{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-4);margin-top:var(--space-6)}
+    @media(max-width:840px){.tbedit-struct{grid-template-columns:repeat(2,1fr)}}
+    .tbcombo__grp{padding:var(--space-2) var(--space-3) var(--space-1);font-size:var(--text-xs);font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--color-text-muted)}
     .tbedit-foot{display:flex;align-items:center;gap:var(--space-3);margin-top:var(--space-6);flex-wrap:wrap}
     .tbcombo{position:relative}
     .tbcombo.is-off{opacity:.5;pointer-events:none}
@@ -586,8 +589,8 @@
 
   /* ================= modelo único de contas (triagem e tabela compartilham) ================= */
   var STEPS=['Lendo dados da planilha importada','Identificando contas analíticas','Gerando sugestões de classificação','Associando codTrib e conta referencial','Verificando correspondências no plano referencial','Calculando níveis de confiança'];
-  var CODTRIB_NAMES={'110010101':'Prêmios de seguros diretos','218010301':'Rendimentos de aplicações financeiras','110020101':'Prêmios de cosseguro cedidos','310010101':'Sinistros de seguros diretos','410010201':'Despesas de comercialização'};
-  /* Tabela 11 (subconjunto ilustrativo; codTrib de 9 dígitos, regra oficial MS1115) */
+  var CODTRIB_NAMES={'110010101':'Prêmios de seguros diretos','218010301':'Rendimentos de aplicações financeiras','110020101':'Prêmios de cosseguro cedidos','310010101':'Sinistros de seguros diretos','410010201':'Despesas de comercialização','110250001':'Não tributável · Exportação de serviços','110250002':'Não tributável / alíquota zero (geral)'};
+  /* Tabela 11 (subconjunto ilustrativo; codTrib de 9 dígitos, regra oficial MS1115). grp:'notrib' = família 11025 (não tributáveis / alíquota zero) */
   var T11=[
     {code:'110010101', nome:'Prêmios de seguros diretos'},
     {code:'110020101', nome:'Prêmios de cosseguro cedidos'},
@@ -597,25 +600,31 @@
     {code:'310010101', nome:'Sinistros de seguros diretos'},
     {code:'320010101', nome:'Despesas administrativas · Pessoal'},
     {code:'410010201', nome:'Despesas de comercialização'},
-    {code:'510090101', nome:'Outras despesas administrativas'}
+    {code:'510090101', nome:'Outras despesas administrativas'},
+    {code:'110250001', nome:'Exportação de serviços', grp:'notrib'},
+    {code:'110250002', nome:'Alíquota zero / não tributável (geral)', grp:'notrib'}
   ];
   function t11name(code){ if(!code) return ''; if(CODTRIB_NAMES[code]) return CODTRIB_NAMES[code]; var f=T11.filter(function(x){return x.code===code;})[0]; return f?f.nome:''; }
 
   var SEED_CONTAS=[
-    {cod:'3.1.1.01', nome:'Prêmios de seguros diretos · Vida', nat:'Receita', desc:'Prêmios de apólices de seguro de vida emitidas diretamente.', vigIni:'01/01/2026', vigFim:'', codTrib:'110010101', origin:'validada', conf:'alta', iss:false, notax:false},
-    {cod:'3.1.1.02', nome:'Prêmios de seguros diretos · Automóvel', nat:'Receita', desc:'Prêmios de apólices de seguro de automóvel emitidas diretamente.', vigIni:'01/01/2026', vigFim:'', codTrib:'110010101', origin:'validada', conf:'alta', iss:false, notax:false},
-    {cod:'3.2.1.01', nome:'Rendimentos de aplicações · Renda fixa', nat:'Receita', desc:'Juros e correção de títulos de renda fixa da carteira.', vigIni:'01/01/2026', vigFim:'', codTrib:'218010301', origin:'sugerida', conf:'alta', iss:false, notax:false},
-    {cod:'3.2.1.02', nome:'Rendimentos de aplicações · Renda variável', nat:'Receita', desc:'Ganhos com ações e fundos de renda variável.', vigIni:'01/01/2026', vigFim:'', codTrib:'218010301', origin:'sugerida', conf:'alta', iss:false, notax:false},
-    {cod:'3.1.2.01', nome:'Prêmios de cosseguro cedidos', nat:'Receita', desc:'Parcela de prêmios repassada em cosseguro cedido.', vigIni:'01/01/2026', vigFim:'', codTrib:'110020101', origin:'sugerida', conf:'alta', iss:false, notax:false},
-    {cod:'4.1.1.01', nome:'Sinistros de seguros diretos', nat:'Despesa', desc:'Indenizações pagas em sinistros de apólices diretas.', vigIni:'01/01/2026', vigFim:'', codTrib:'310010101', origin:'sugerida', conf:'alta', iss:false, notax:false},
-    {cod:'4.2.1.01', nome:'Despesas de comercialização · Corretagem', nat:'Despesa', desc:'Comissões de corretagem sobre prêmios emitidos.', vigIni:'01/01/2026', vigFim:'', codTrib:'410010201', origin:'sugerida', conf:'media', iss:false, notax:false},
-    {cod:'4.2.1.02', nome:'Despesas de comercialização · Agenciamento', nat:'Despesa', desc:'Despesas de agenciamento de vendas.', vigIni:'01/01/2026', vigFim:'', codTrib:'410010201', origin:'sugerida', conf:'media', iss:false, notax:false},
-    {cod:'2.3.1.01', nome:'Provisões técnicas · Constituição', nat:'Passivo', desc:'Constituição de provisões técnicas do período.', vigIni:'01/01/2026', vigFim:'', codTrib:null, origin:'classificar', reason:'sem-sugestao', conf:null, iss:false, notax:false},
-    {cod:'2.9.1.01', nome:'Conta mista · Tributos a recuperar e a recolher', nat:'Variável', desc:'Conta com desdobramentos de naturezas distintas (a recuperar e a recolher).', vigIni:'01/01/2026', vigFim:'', codTrib:null, origin:'classificar', reason:'mista', conf:null, iss:false, notax:false}
+    {cod:'3.1.1.01', nome:'Prêmios de seguros diretos · Vida', indCta:'A', codNat:4, natCta:'C', cCtaSup:'3.1.1', cCtaRef:'31111', cDbrMista:'000', desc:'Prêmios de apólices de seguro de vida emitidas diretamente.', vigIni:'01/01/2026', vigFim:'', codTrib:'110010101', origin:'validada', conf:'alta', iss:false},
+    {cod:'3.1.1.02', nome:'Prêmios de seguros diretos · Automóvel', indCta:'A', codNat:4, natCta:'C', cCtaSup:'3.1.1', cCtaRef:'31111', cDbrMista:'000', desc:'Prêmios de apólices de seguro de automóvel emitidas diretamente.', vigIni:'01/01/2026', vigFim:'', codTrib:'110010101', origin:'validada', conf:'alta', iss:false},
+    {cod:'3.2.1.01', nome:'Rendimentos de aplicações · Renda fixa', indCta:'A', codNat:4, natCta:'C', cCtaSup:'3.2.1', cCtaRef:'32101', cDbrMista:'000', desc:'Juros e correção de títulos de renda fixa da carteira.', vigIni:'01/01/2026', vigFim:'', codTrib:'218010301', origin:'sugerida', conf:'alta', iss:false},
+    {cod:'3.2.1.02', nome:'Rendimentos de aplicações · Renda variável', indCta:'A', codNat:4, natCta:'C', cCtaSup:'3.2.1', cCtaRef:'32101', cDbrMista:'000', desc:'Ganhos com ações e fundos de renda variável.', vigIni:'01/01/2026', vigFim:'', codTrib:'218010301', origin:'sugerida', conf:'alta', iss:false},
+    {cod:'3.1.2.01', nome:'Prêmios de cosseguro cedidos', indCta:'A', codNat:4, natCta:'D', cCtaSup:'3.1.2', cCtaRef:'31201', cDbrMista:'000', desc:'Parcela de prêmios repassada em cosseguro cedido.', vigIni:'01/01/2026', vigFim:'', codTrib:'110020101', origin:'sugerida', conf:'alta', iss:false},
+    {cod:'4.1.1.01', nome:'Sinistros de seguros diretos', indCta:'A', codNat:5, natCta:'D', cCtaSup:'4.1.1', cCtaRef:'41101', cDbrMista:'000', desc:'Indenizações pagas em sinistros de apólices diretas.', vigIni:'01/01/2026', vigFim:'', codTrib:'310010101', origin:'sugerida', conf:'alta', iss:false},
+    {cod:'4.2.1.01', nome:'Despesas de comercialização · Corretagem', indCta:'A', codNat:5, natCta:'D', cCtaSup:'4.2.1', cCtaRef:'42101', cDbrMista:'000', desc:'Comissões de corretagem sobre prêmios emitidos.', vigIni:'01/01/2026', vigFim:'', codTrib:'410010201', origin:'sugerida', conf:'media', iss:false},
+    {cod:'4.2.1.02', nome:'Despesas de comercialização · Agenciamento', indCta:'A', codNat:5, natCta:'D', cCtaSup:'4.2.1', cCtaRef:'42101', cDbrMista:'000', desc:'Despesas de agenciamento de vendas.', vigIni:'01/01/2026', vigFim:'', codTrib:'410010201', origin:'sugerida', conf:'media', iss:false},
+    {cod:'2.3.1.01', nome:'Provisões técnicas · Constituição', indCta:'A', codNat:2, natCta:'C', cCtaSup:'2.3.1', cCtaRef:'23101', cDbrMista:'000', desc:'Constituição de provisões técnicas do período.', vigIni:'01/01/2026', vigFim:'', codTrib:null, origin:'classificar', reason:'sem-sugestao', conf:null, iss:false},
+    {cod:'2.9.1.01', nome:'Conta mista · Tributos a recuperar e a recolher', indCta:'A', codNat:2, natCta:'V', cCtaSup:'2.9.1', cCtaRef:'29101', cDbrMista:'000', desc:'Conta com desdobramentos de naturezas distintas (a recuperar e a recolher).', vigIni:'01/01/2026', vigFim:'', codTrib:null, origin:'classificar', reason:'mista', conf:null, iss:false}
   ];
   var contas=null, openG={}, openC={}, openAcc={}, altG={}, openEdit=null, manualOpen=true, TBFILTER='';
   function clone(x){ return JSON.parse(JSON.stringify(x)); }
   function findC(cod){ for(var i=0;i<contas.length;i++){ if(contas[i].cod===cod) return contas[i]; } return null; }
+  /* rótulos do leiaute D-1011 */
+  var NAT_LABEL={1:'Ativo',2:'Passivo',3:'Patrimônio líquido',4:'Receita',5:'Despesa'};
+  var NATCTA_LABEL={C:'Credora',D:'Devedora',V:'Variável'};
+  function nivelOf(cod){ return (''+cod).split('.').length; }        /* nivelCta derivado da hierarquia do código */
   function stats(){
     var ok=0,ia=0,none=0;
     contas.forEach(function(c){ if(c.origin==='validada')ok++; else if(c.origin==='sugerida')ia++; else none++; });
@@ -753,7 +762,6 @@
         '<textarea class="input input--compact" id="descf-'+esc(c.cod)+'" data-cod="'+esc(c.cod)+'" data-desc>'+esc(c.desc)+'</textarea>'+
       '</div>'+
       '<div class="aigchecks">'+
-        '<label class="check"><input type="checkbox" data-cod="'+esc(c.cod)+'" data-notax'+(c.notax?' checked':'')+'><span>Conta não tributável (sem codTrib)</span></label>'+
         '<label class="check"><input type="checkbox" data-cod="'+esc(c.cod)+'" data-iss'+(c.iss?' checked':'')+'><span>Sujeita a ISSQN (indTribISS)</span></label>'+
       '</div>'+
       '<div class="aigvig">'+
@@ -910,8 +918,7 @@
     });
     gEl.addEventListener('change',function(ev){
       var t=ev.target, cod=t.getAttribute('data-cod'); if(!cod) return; var c=findC(cod); if(!c) return;
-      if(t.hasAttribute('data-notax')) c.notax=t.checked;
-      else if(t.hasAttribute('data-iss')) c.iss=t.checked;
+      if(t.hasAttribute('data-iss')) c.iss=t.checked;
       else if(t.hasAttribute('data-vigab')){
         c.vigAberta=t.checked;
         var box=t.closest('.aigfield'), fim=box&&box.querySelector('[data-vf]');
@@ -1008,24 +1015,36 @@
 
   /* ================= tabela editável linha a linha ================= */
   function originTag(c){
-    if(c.origin==='validada'){ return c.notax?'<span class="status status--neutral"><span class="status__dot"></span>Não tributável</span>':'<span class="status status--success"><span class="status__dot"></span>Validada</span>'; }
+    if(c.origin==='validada'){ return '<span class="status status--success"><span class="status__dot"></span>Validada</span>'; }
     if(c.origin==='sugerida'){ return '<span class="status status--ia">'+SPARK+'Sugerida pela IA</span>'; }
     return '<span class="status status--warning"><span class="status__dot"></span>A classificar</span>';
   }
-  function ctCell(c){ if(c.notax) return '<span class="muted">Não tributável</span>'; return c.codTrib?('<span class="ct-code">'+esc(c.codTrib)+'</span>'):'<span class="muted">—</span>'; }
+  function ctCell(c){ return c.codTrib?('<span class="ct-code">'+esc(c.codTrib)+'</span>'):'<span class="muted">—</span>'; }
   function editorHtml(c){
     var comboVal=c.codTrib?(c.codTrib+' — '+t11name(c.codTrib)):'';
-    var opts=T11.map(function(o){ return '<button type="button" data-pick="'+o.code+'" data-cod="'+esc(c.cod)+'" data-search="'+esc((o.code+' '+o.nome).toLowerCase())+'"><span class="tbcombo__c">'+o.code+'</span><span class="tbcombo__n">'+esc(o.nome)+'</span></button>'; }).join('');
+    var comboBtn=function(o){ return '<button type="button" data-pick="'+o.code+'" data-cod="'+esc(c.cod)+'" data-search="'+esc((o.code+' '+o.nome).toLowerCase())+'"><span class="tbcombo__c">'+o.code+'</span><span class="tbcombo__n">'+esc(o.nome)+'</span></button>'; };
+    var _trib=T11.filter(function(o){return o.grp!=='notrib';}).map(comboBtn).join('');
+    var _notrib=T11.filter(function(o){return o.grp==='notrib';}).map(comboBtn).join('');
+    var opts=_trib+(_notrib?'<div class="tbcombo__grp" data-combo-sub>Não tributável / alíquota zero</div>'+_notrib:'');
+    var selOpts=function(map,val){ return Object.keys(map).map(function(k){ return '<option value="'+k+'"'+((''+val)===(''+k)?' selected':'')+'>'+esc(k+' — '+map[k])+'</option>'; }).join(''); };
     return '<tr class="tbedit"><td colspan="5" class="tbedit-cell"><div class="tbeditor">'+
       '<div class="tbedit-grid">'+
         '<div class="tbedit-field"><label>Código de tributação (codTrib)</label>'+
-          '<div class="tbcombo'+(c.notax?' is-off':'')+'" data-combo="'+esc(c.cod)+'"><input class="input" type="text" placeholder="Buscar código ou conta na Tabela 11" value="'+esc(comboVal)+'" data-cod="'+esc(c.cod)+'" data-combo-input autocomplete="off"><div class="tbcombo__panel" data-combo-panel hidden>'+opts+'</div></div>'+
-          '<p class="hint">Tabela 11 · 9 dígitos. Só para contas analíticas.</p>'+
+          '<div class="tbcombo" data-combo="'+esc(c.cod)+'"><input class="input" type="text" placeholder="Buscar código ou conta na Tabela 11" value="'+esc(comboVal)+'" data-cod="'+esc(c.cod)+'" data-combo-input autocomplete="off"><div class="tbcombo__panel" data-combo-panel hidden>'+opts+'</div></div>'+
+          '<p class="hint">Tabela 11 · 9 dígitos. Obrigatório em conta analítica; para não tributável, use um código de alíquota zero.</p>'+
         '</div>'+
         '<div class="tbedit-field"><label>Descrição da conta (o "comentado" do PGCC)</label><textarea class="input input--compact" data-cod="'+esc(c.cod)+'" data-desc>'+esc(c.desc)+'</textarea></div>'+
       '</div>'+
+      '<div class="tbedit-struct">'+
+        '<div class="tbedit-field"><label>Tipo (indCta)</label><input class="input" type="text" value="'+(c.indCta==='S'?'Sintética (S)':'Analítica (A)')+'" readonly></div>'+
+        '<div class="tbedit-field"><label>Grupo (codNat)</label><select class="select" data-cod="'+esc(c.cod)+'" data-codnat>'+selOpts(NAT_LABEL,c.codNat)+'</select></div>'+
+        '<div class="tbedit-field"><label>Natureza (natCta)</label><select class="select" data-cod="'+esc(c.cod)+'" data-natcta>'+selOpts(NATCTA_LABEL,c.natCta)+'</select></div>'+
+        '<div class="tbedit-field"><label>Nível (nivelCta)</label><input class="input" type="text" value="'+nivelOf(c.cod)+'" readonly></div>'+
+        '<div class="tbedit-field"><label>Conta superior (cCtaSup)</label><input class="input" type="text" value="'+esc(c.cCtaSup||'')+'" placeholder="Ex.: 3.1.1" data-cod="'+esc(c.cod)+'" data-ccsup></div>'+
+        '<div class="tbedit-field"><label>Conta referencial (cCtaRef)</label><input class="input" type="text" value="'+esc(c.cCtaRef||'')+'" placeholder="Plano ref. (SUSEP)" data-cod="'+esc(c.cod)+'" data-ccref></div>'+
+        '<div class="tbedit-field"><label>Desdobramento (cDbrMista)</label><input class="input" type="text" value="'+esc(c.cDbrMista||'000')+'" placeholder="000" data-cod="'+esc(c.cod)+'" data-cdbr></div>'+
+      '</div>'+
       '<div class="tbedit-checks">'+
-        '<label class="check"><input type="checkbox" data-cod="'+esc(c.cod)+'" data-notax'+(c.notax?' checked':'')+'><span>Conta não tributável (sem codTrib)</span></label>'+
         '<label class="check"><input type="checkbox" data-cod="'+esc(c.cod)+'" data-iss'+(c.iss?' checked':'')+'><span>Sujeita a ISSQN (indTribISS)</span></label>'+
       '</div>'+
       '<div class="tbedit-vig">'+
@@ -1051,7 +1070,7 @@
       var actCls=(c.origin==='classificar'&&openEdit!==c.cod)?'btn--primary':'btn--secondary';
       var row='<tr class="tbrow'+(openEdit===c.cod?' is-open':'')+'" data-cod="'+esc(c.cod)+'">'+
         '<td><div class="tb-cta"><span class="tb-cod">'+esc(c.cod)+'</span><span class="tb-nm">'+esc(c.nome)+'</span></div></td>'+
-        '<td>'+esc(c.nat)+'</td>'+
+        '<td>'+esc(NAT_LABEL[c.codNat]||'—')+(c.natCta?' <span class="muted">· '+esc(NATCTA_LABEL[c.natCta]||c.natCta)+'</span>':'')+'</td>'+
         '<td>'+ctCell(c)+'</td>'+
         '<td>'+originTag(c)+'</td>'+
         '<td class="col-act"><button type="button" class="btn '+actCls+' btn--sm" data-act="'+esc(c.cod)+'">'+actLabel+'</button></td>'+
@@ -1100,39 +1119,47 @@
       else if(b.hasAttribute('data-editclose')){ openEdit=null; renderTable(); }
       else if(b.hasAttribute('data-editsave')){ saveConta(b.getAttribute('data-editsave')); }
       else if(b.hasAttribute('data-desdobrar')){ desdobrar(b.getAttribute('data-desdobrar')); }
-      else if(b.hasAttribute('data-pick')){ var c=findC(b.getAttribute('data-cod')); if(c){ c.codTrib=b.getAttribute('data-pick'); c.notax=false; var inp=body.querySelector('[data-combo-input][data-cod="'+c.cod+'"]'); if(inp) inp.value=c.codTrib+' — '+t11name(c.codTrib); var pan=b.closest('[data-combo-panel]'); if(pan) pan.hidden=true; } }
+      else if(b.hasAttribute('data-pick')){ var c=findC(b.getAttribute('data-cod')); if(c){ c.codTrib=b.getAttribute('data-pick'); var inp=body.querySelector('[data-combo-input][data-cod="'+c.cod+'"]'); if(inp) inp.value=c.codTrib+' — '+t11name(c.codTrib); var pan=b.closest('[data-combo-panel]'); if(pan) pan.hidden=true; } }
       else if(b.hasAttribute('data-combo-input')){ /* handled below */ }
     });
     /* abrir/fechar painel do combo + filtrar */
     body.addEventListener('focusin',function(ev){ var inp=ev.target.closest('[data-combo-input]'); if(!inp) return; var pan=inp.parentNode.querySelector('[data-combo-panel]'); if(pan) pan.hidden=false; });
     body.addEventListener('input',function(ev){
       var t=ev.target, cod=t.getAttribute('data-cod'); if(!cod) return; var c=findC(cod); if(!c) return;
-      if(t.hasAttribute('data-combo-input')){ var q=t.value.toLowerCase(); var pan=t.parentNode.querySelector('[data-combo-panel]'); if(pan){ pan.hidden=false; pan.querySelectorAll('button').forEach(function(op){ op.hidden = q && op.getAttribute('data-search').indexOf(q)<0; }); } return; }
-      if(t.hasAttribute('data-desc')) c.desc=t.value; else if(t.hasAttribute('data-vi')) c.vigIni=t.value; else if(t.hasAttribute('data-vf')) c.vigFim=t.value;
+      if(t.hasAttribute('data-combo-input')){ var q=t.value.toLowerCase(); var pan=t.parentNode.querySelector('[data-combo-panel]'); if(pan){ pan.hidden=false; pan.querySelectorAll('button').forEach(function(op){ op.hidden = q && op.getAttribute('data-search').indexOf(q)<0; }); pan.querySelectorAll('[data-combo-sub]').forEach(function(s){ s.hidden=!!q; }); } return; }
+      if(t.hasAttribute('data-desc')) c.desc=t.value;
+      else if(t.hasAttribute('data-vi')) c.vigIni=t.value;
+      else if(t.hasAttribute('data-vf')) c.vigFim=t.value;
+      else if(t.hasAttribute('data-ccsup')) c.cCtaSup=t.value.trim();
+      else if(t.hasAttribute('data-ccref')) c.cCtaRef=t.value.trim();
+      else if(t.hasAttribute('data-cdbr')) c.cDbrMista=t.value.trim();
     });
     body.addEventListener('change',function(ev){
       var t=ev.target, cod=t.getAttribute('data-cod'); if(!cod) return; var c=findC(cod); if(!c) return;
-      if(t.hasAttribute('data-notax')){ c.notax=t.checked; if(c.notax) c.codTrib=null; renderTable(); }
-      else if(t.hasAttribute('data-iss')){ c.iss=t.checked; }
+      if(t.hasAttribute('data-iss')){ c.iss=t.checked; }
+      else if(t.hasAttribute('data-codnat')){ c.codNat=parseInt(t.value,10); renderTable(); }
+      else if(t.hasAttribute('data-natcta')){ c.natCta=t.value; renderTable(); }
     });
     document.addEventListener('click',function(ev){ if(!ev.target.closest('.tbcombo')) body.querySelectorAll('[data-combo-panel]').forEach(function(p){p.hidden=true;}); });
   })();
   function saveConta(cod){
     var c=findC(cod); if(!c) return;
-    if(c.notax){ c.codTrib=null; c.origin='validada'; }
-    else if(c.codTrib){ c.origin='validada'; }
+    /* analítica exige codTrib (MS1103): sem código não valida; para não tributável usa-se um codTrib de alíquota zero */
+    if(c.codTrib){ c.origin='validada'; }
     else { c.origin='classificar'; }
     openEdit=null; renderTable();
-    toast(c.origin==='validada'?'Conta classificada.':'Descrição e vigência salvas.','ok');
+    toast(c.origin==='validada'?'Conta classificada.':'Descrição e vigência salvas. Falta o codTrib para validar.','ok');
   }
   function desdobrar(cod){
     var c=findC(cod); if(!c) return;
     var i=contas.indexOf(c);
     var seq=1; contas.forEach(function(x){ if(x.cod.indexOf(c.cod+'.')===0) seq++; });
-    var child={cod:c.cod+'.'+('00'+seq).slice(-3), nome:c.nome+' · desdobramento '+seq, nat:c.nat, desc:'', descSug:'', vigIni:c.vigIni, vigFim:c.vigFim, codTrib:null, origin:'classificar', conf:null, iss:false, notax:false};
+    var child={cod:c.cod+'.'+('00'+seq).slice(-3), nome:c.nome+' · desdobramento '+seq, indCta:'A', codNat:c.codNat, natCta:c.natCta, cCtaSup:c.cod, cCtaRef:c.cCtaRef, cDbrMista:('00'+seq).slice(-3), desc:'', descSug:'', vigIni:c.vigIni, vigFim:c.vigFim, codTrib:null, origin:'classificar', conf:null, iss:false};
+    /* a conta mista vira sintética (cCta sintética não leva codTrib — MS1109) */
+    c.indCta='S'; c.codTrib=null; if(c.origin==='validada') c.origin='classificar';
     contas.splice(i+1,0,child);
     openEdit=child.cod; renderTable();
-    toast('Desdobramento criado. Classifique a nova conta.','ok');
+    toast('Desdobramento criado. A conta mãe virou sintética; classifique a nova conta.','ok');
   }
 
   document.getElementById('btnImport').addEventListener('click',openPopup);
@@ -1170,7 +1197,7 @@
   </div>
 <script>
 (function(){
-  var MYV='1788968349';
+  var MYV='1788968961';
   var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
   var dirty=false;
   document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
