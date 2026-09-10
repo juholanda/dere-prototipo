@@ -8,9 +8,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Versões do plano · MAG Seguros</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788978341">
-  <script src="../design-system/ds-tailwind.js?v=1788978341"></script>
-  <script src="../design-system/ds-dialog.js?v=1788978341"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=63">
+  <script src="../design-system/ds-tailwind.js"></script>
+  <script src="../design-system/ds-dialog.js"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -34,11 +34,14 @@
     .card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-2xl);box-shadow:var(--shadow-sm);overflow:hidden;margin-bottom:var(--space-6)}
 
     .cocard{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:var(--space-6) var(--space-10);padding:var(--space-6)}
-    .cometa{display:grid;grid-template-columns:repeat(3,max-content);justify-content:end;gap:var(--space-6) var(--space-10);align-items:start}
+    .cometa{display:grid;grid-template-columns:repeat(4,max-content);justify-content:end;gap:var(--space-6) var(--space-8);align-items:start}
     @media(max-width:1180px){
       .cocard{grid-template-columns:1fr}
-      .cometa{grid-template-columns:repeat(3,minmax(0,1fr));justify-content:stretch;border-left:0;padding-left:0;border-top:1px solid var(--color-divider);padding-top:var(--space-6)}
+      .cometa{grid-template-columns:repeat(2,minmax(0,1fr));justify-content:stretch;border-left:0;padding-left:0;border-top:1px solid var(--color-divider);padding-top:var(--space-6)}
+      .cometa .kv__k{white-space:normal}
+      .cometa .kv__v{white-space:normal;overflow:visible;text-overflow:clip}
     }
+    @media(max-width:560px){ .cometa{grid-template-columns:1fr} }
     .cocard__id{display:flex;align-items:center;gap:var(--space-3);min-width:0}
     .cocard__logo{width:var(--space-12);height:var(--space-12);border-radius:var(--radius-lg);overflow:hidden;background:var(--color-surface);border:1px solid var(--color-border);flex:0 0 auto;display:grid;place-items:center}
     .cocard__logo img{width:100%;height:100%;object-fit:cover;display:block}
@@ -156,7 +159,7 @@
     .demobar{position:fixed;bottom:var(--space-4);left:50%;transform:translateX(-50%);z-index:200;display:flex;align-items:center;gap:var(--space-1);background:var(--slate-900);border:1px solid rgba(255,255,255,.14);border-radius:var(--radius-pill);padding:2px var(--space-1-5);box-shadow:var(--shadow-md);font-size:var(--text-xs);opacity:.92;flex-wrap:wrap;justify-content:center;max-width:calc(100vw - var(--space-8));row-gap:var(--space-1)}
     .demobar:hover{opacity:1}
     .demobar__toggle{display:inline-flex;align-items:center;gap:var(--space-1);background:none;border:0;color:rgba(255,255,255,.72);font-family:inherit;font-size:var(--text-2xs);font-weight:700;text-transform:uppercase;letter-spacing:.08em;cursor:pointer;padding:var(--space-1) var(--space-1-5);border-radius:var(--radius-pill)}
-    .demobar__toggle:hover{color:#fff;background:rgba(255,255,255,.08)}
+    .demobar__toggle:hover{color:var(--color-on-navy);background:color-mix(in srgb,var(--color-on-navy) 8%,transparent)}
     .demobar__toggle svg{width:14px;height:14px;opacity:.8}
     .demobar__body{display:flex;align-items:center;gap:var(--space-1);flex-wrap:wrap;justify-content:center;row-gap:var(--space-1)}
     .demobar.is-collapsed{padding:2px}
@@ -205,7 +208,6 @@
     else{e.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg> Senha incorreta. Tente novamente.';i.select();}
     return false;}
 </script>
-
   <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
   <div class="shell">
     <nav class="sidenav sidenav--navy" data-sidenav aria-label="Navegação principal"><script>try{if(localStorage.getItem('adere.nav.collapsed')==='1'){var _n=document.querySelector('[data-sidenav]');if(_n)_n.classList.add('is-collapsed');}}catch(e){}</script>
@@ -229,7 +231,7 @@
     <div class="col">
       <header class="topbar">
         <nav class="bc" aria-label="Trilha de navegação">
-          <a href="plano-contas-lista.html" id="bcLista">Plano de contas</a>
+          <a href="plano-contas-lista.html" id="bcLista">Plano Geral de Contas Comentado</a>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
           <span id="bcNome">MAG Seguros</span>
         </nav>
@@ -270,6 +272,7 @@
                 <div class="kv"><p class="kv__k">Plano de Contas Referencial</p><p class="kv__v" id="coRef">SUSEP</p></div>
                 <div class="kv"><p class="kv__k">Versão vigente</p><p class="kv__v" id="coVig">—</p></div>
                 <div class="kv"><p class="kv__k">Última atualização</p><p class="kv__v" id="coAt">—</p></div>
+                <div class="kv"><p class="kv__k">Versão vigente (D-1001)</p><p class="kv__v"><a class="linkact linkact--icon" id="coD1001" href="info-contribuinte-empresa.html?emp=seg" target="_blank" rel="noopener">Versão 3<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a></p></div>
               </div>
             </div>
           </section>
@@ -289,7 +292,7 @@
                 <div id="secVig"></div>
               </section>
               <section class="versec" aria-labelledby="h-prog">
-                <div class="versec__h"><h2 id="h-prog">Em andamento</h2></div>
+                <div class="versec__h"><h2 id="h-prog">Em preparação</h2></div>
                 <p class="versec__hint">Versão em processo de preenchimento, revisão ou processamento pela Receita Federal.</p>
                 <div id="secProg"></div>
               </section>
@@ -318,9 +321,9 @@
 
   <div class="scrim" id="blockModal" hidden>
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="blockTitle" aria-describedby="blockDesc">
-      <div class="modal__header modal__header--icon"><span class="modal__ic modal__ic--warning" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span><h2 class="modal__title" id="blockTitle">Já existe uma versão em andamento</h2><button class="icon-btn" type="button" data-block-close aria-label="Fechar" style="flex:0 0 auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg></button></div>
+      <div class="modal__header modal__header--icon"><span class="modal__ic modal__ic--warning" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span><h2 class="modal__title" id="blockTitle">Já existe uma versão em preparação</h2><button class="icon-btn" type="button" data-block-close aria-label="Fechar" style="flex:0 0 auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg></button></div>
       <div class="modal__body" id="blockDesc"><p id="blockText" style="margin:0"></p></div>
-      <div class="modal__footer"><button class="btn btn--ghost" type="button" data-block-close>Fechar</button><a class="btn btn--primary" id="blockGo" href="#">Ver a versão em andamento</a></div>
+      <div class="modal__footer"><button class="btn btn--ghost" type="button" data-block-close>Fechar</button><a class="btn btn--primary" id="blockGo" href="#">Ver a versão em preparação</a></div>
     </div>
   </div>
 
@@ -342,7 +345,7 @@
     plus:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5v14"/></svg>'
   };
 
-  /* Versões do plano de contas (D-1011) por empresa. Regra do produto: no máximo UMA versão em andamento por vez. */
+  /* Versões do plano de contas (D-1011) por empresa. Regra do produto: no máximo UMA versão em preparação por vez. */
   var COMPANIES={
     cap:{nome:'MAG Capitalização', cnpj:'52.780.551/0001-19', logo:'../Logos/mag%20capitalizacoes.jpeg', ref:'SUSEP', versions:[
       {n:1, current:true, sit:'sucesso', vigrole:'now', vig:'01/01/2026 · em aberto', recibo:'RC-2026.0001', quando:'02/09/2026, 09:40', proc:'02/09/2026, 09:40'}
@@ -384,11 +387,32 @@
 
   $('bcNome').textContent=CO.nome;
   document.querySelectorAll('.bc a, .sidenav a[href^="plano-contas-lista.html"]').forEach(function(a){ a.setAttribute('href','plano-contas-lista.html'+Q(true)); });
+  (function(){ var _ea=document.getElementById('emptyAct'); if(_ea) _ea.href='plano-contas-classificar.html?modo=nova&emp='+EMP+Q(false)+'&from=empresa'; })();
+  /* Excluir rascunho: remove o draft persistido → some (mesmo modelo do D-1001) */
+  document.addEventListener('click',function(ev){ var b=ev.target.closest?ev.target.closest('[data-excl-draft]'):null; if(!b) return; try{ localStorage.removeItem('adere.d1011.draft.'+EMP); }catch(e){} location.href='plano-contas-empresa.html?emp='+EMP+Q(false); });
+  /* Resetar (demo): limpa toda a persistência do plano de contas e recarrega no estado inicial */
+  document.addEventListener('click',function(ev){ var b=ev.target.closest?ev.target.closest('[data-demo-reset]'):null; if(!b) return; try{ Object.keys(localStorage).forEach(function(k){ if(k.indexOf('adere.d1011.')===0||k.indexOf('adere.pgcc.')===0||k.indexOf('adere.sent.d1011')===0) localStorage.removeItem(k); }); }catch(e){} location.href='plano-contas-empresa.html?emp='+EMP+Q(false); });
   $('pageSub').innerHTML='Acompanhe e gerencie as versões do <strong>plano de contas</strong> de <strong>'+esc(CO.nome)+'</strong>.';
 
   /* cenário: primeiro acesso = empresa sem plano ainda (vazia); populado = histórico da empresa */
   var VERSIONS = (SCN==='new') ? []
     : CO.versions.slice().sort(function(a,b){ if(a.current!==b.current) return a.current?-1:1; return b.n-a.n; });
+
+  /* ===== PERSISTÊNCIA (modelo do D-1001): reflete as ações do usuário (rascunho salvo, enviado, ajustes solicitados). Sobrevive a qualquer navegação; só some no reset. ===== */
+  try{ if(param('fresh')==='1'){ Object.keys(localStorage).forEach(function(k){ if(k==='adere.sent.d1011'||k==='adere.sent.d1011.t'||(k.indexOf('adere.d1011.')===0 && k.slice(-(EMP.length+1))==='.'+EMP)) localStorage.removeItem(k); }); var _pf=new URLSearchParams(location.search); _pf.delete('fresh'); history.replaceState(null,'','?'+_pf.toString()); } }catch(e){}
+  var _draft=null,_d1Sent=false,_dec=null,_excP=null,_vigExc=null;
+  try{ _d1Sent=localStorage.getItem('adere.sent.d1011')===EMP; _draft=JSON.parse(localStorage.getItem('adere.d1011.draft.'+EMP)||'null'); _dec=JSON.parse(localStorage.getItem('adere.d1011.decision.'+EMP)||'null'); _excP=JSON.parse(localStorage.getItem('adere.d1011.exclproc.'+EMP)||'null'); _vigExc=JSON.parse(localStorage.getItem('adere.d1011.vigexcluida.'+EMP)||'null'); }catch(e){}
+  function _fmtDT(ts){ if(!ts) return 'hoje'; try{ var d=new Date(+ts); function z(n){return('0'+n).slice(-2);} return z(d.getDate())+'/'+z(d.getMonth()+1)+'/'+d.getFullYear()+', '+z(d.getHours())+':'+z(d.getMinutes()); }catch(e){ return 'hoje'; } }
+  (function(){
+    var progSits=['rascunho','revisao','ajustes','processando','rejeitado'];
+    var injSit = (_dec&&_dec.st==='ajuste')?'ajustes' : (_d1Sent?'revisao' : (_draft?'rascunho':null));
+    if(!injSit) return;
+    var pv=VERSIONS.filter(function(v){ return progSits.indexOf(v.sit)>=0; })[0];
+    if(pv){ pv.sit=injSit; if(injSit==='rascunho') pv.quando=_fmtDT(_draft&&_draft.t); }
+    else { var maxN=VERSIONS.reduce(function(m,v){return Math.max(m,v.n);},0); VERSIONS.unshift({n:maxN+1, current:false, sit:injSit, vigrole:null, vig:'—', recibo:'—', quando:(injSit==='rascunho'?_fmtDT(_draft&&_draft.t):'hoje, 15:40'), resp:'Ricardo Alves'}); }
+  })();
+  /* vigência excluída (aprovada+transmitida): a vigente sai da foto → lacuna */
+  if(_vigExc){ VERSIONS=VERSIONS.filter(function(v){ return v.vigrole!=='now'; }); }
 
   function endOf(vig){ var m=(vig||'').match(/\d{2}\/\d{2}\/\d{4}/g)||[]; return m[1]||'—'; }
   function stOf(v){ return (v.sit==='revisao')?'revisao':(v.sit==='ajustes')?'ajuste':'aprovado'; }
@@ -424,8 +448,7 @@
     if(!enc.length){ box.innerHTML=emptyBox('Nenhuma versão anterior.', 'Quando uma versão deixa de vigorar, ela passa para cá.'); return; }
     var rows=enc.slice().sort(function(a,b){ return b.n-a.n; });
     box.innerHTML='<div class="verlist">'+rows.map(function(v){ return row(v,{}); }).join('')+'</div>'+
-      '<div class="tablefoot"><span><b>'+enc.length+'</b> de <b>'+enc.length+'</b> '+(enc.length===1?'versão anterior':'versões anteriores')+'</span>'+
-      '<span class="tpager"><button class="icon-btn icon-btn--sm" type="button" aria-label="Página anterior" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><span>Página 1 de 1</span><button class="icon-btn icon-btn--sm" type="button" aria-label="Próxima página" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button></span></div>';
+      '<div class="tablefoot"><span><b>'+enc.length+'</b> de <b>'+enc.length+'</b> '+(enc.length===1?'versão anterior':'versões anteriores')+'</span></div>';
   }
   function bindRows(){
     document.querySelectorAll('[data-href]').forEach(function(el){
@@ -443,23 +466,24 @@
     $('coNome').textContent=CO.nome;
     $('coCnpj').textContent='CNPJ '+CO.cnpj;
     $('coLogo').innerHTML=CO.logo?'<img src="'+CO.logo+'" alt="Logo '+esc(CO.nome)+'">':'<span class="co-code">'+code(CO.nome)+'</span>';
+    var _d1=$('coD1001'); if(_d1) _d1.href='info-contribuinte-empresa.html?emp='+EMP;
     $('coRef').textContent=(SCN==='new')?'—':(CO.ref||'—');
     $('coVig').textContent=vig?('Versão '+vig.n):'—';
     var _q=(prog||vig||VERSIONS[0]||{}).quando||'—'; $('coAt').textContent=_q.replace(/,\s+/,' ');
 
-    /* ação principal: só cabe UMA versão em andamento; com uma aberta, a modal explica */
+    /* ação principal: só cabe UMA versão em preparação; com uma aberta, a modal explica */
     var slot=$('headerActSlot');
     if(!has){ slot.innerHTML=''; }
     else if(prog){
-      slot.innerHTML='<button class="btn btn--primary btn--lg" type="button" id="headerAct">'+I.plus+'Nova versão do plano</button>';
-      var pill=(SIT[prog.sit]||{}).label||'em andamento';
+      slot.innerHTML='<button class="btn btn--primary btn--lg" type="button" id="headerAct">'+I.plus+'Nova versão D-1011</button>';
+      var pill=(SIT[prog.sit]||{}).label||'em preparação';
       $('headerAct').addEventListener('click',function(){
-        $('blockText').textContent='A Versão '+prog.n+' está “'+pill+'” e ainda não foi concluída. Só pode haver uma versão em andamento por vez. Conclua ou cancele essa versão antes de registrar uma nova.';
-        var go=$('blockGo'); go.textContent='Ir para a versão em andamento'; go.setAttribute('href',goOf(prog));
+        $('blockText').textContent='A Versão '+prog.n+' está “'+pill+'” e ainda não foi concluída. Só pode haver uma versão em preparação por vez. Conclua ou cancele essa versão antes de registrar uma nova.';
+        var go=$('blockGo'); go.textContent='Ir para a versão em preparação'; go.setAttribute('href',goOf(prog));
         dsDialog.open($('blockModal'));
       });
     } else {
-      slot.innerHTML='<a class="btn btn--primary btn--lg" id="headerAct" href="'+hrefNova()+'">'+I.plus+'Nova versão do plano</a>';
+      slot.innerHTML='<a class="btn btn--primary btn--lg" id="headerAct" href="'+hrefNova()+'">'+I.plus+'Nova versão D-1011</a>';
     }
     $('emptyAct').setAttribute('href',hrefNova());
 
@@ -470,6 +494,8 @@
     } else if(prog && prog.sit==='rejeitado'){
       al='<div class="dalert dalert--danger" role="status"><span class="dalert__ic">'+I.x+'</span><div class="dalert__body"><p class="dalert__title">Versão '+prog.n+' rejeitada pela Receita</p><p class="dalert__text">A transmissão foi rejeitada. Consulte o motivo, corrija a classificação e reenvie. A versão vigente continua valendo.</p></div><a class="btn btn--secondary dalert__act" href="'+hrefOf(prog)+'">Ver motivo'+I.chev+'</a></div>';
     }
+    if(_vigExc){ al='<div class="dalert dalert--danger" role="status"><span class="dalert__ic">'+I.alert+'</span><div class="dalert__body"><p class="dalert__title">Sem versão vigente (vigência excluída)</p><p class="dalert__text">A vigência do plano foi excluída na Receita. O período está sem PGCC vigente (lacuna), o que bloqueia os eventos mensais. Registre uma nova versão para cobrir o período.</p></div><a class="btn btn--secondary dalert__act" href="'+hrefNova()+'">Nova versão'+I.chev+'</a></div>'; }
+    else if(_excP){ al='<div class="dalert dalert--warning" role="status"><span class="dalert__ic">'+I.alert+'</span><div class="dalert__body"><p class="dalert__title">Exclusão da vigência em revisão</p><p class="dalert__text">Você solicitou a exclusão do plano vigente (tpOper Exclusão). O pedido está com o aprovador; após aprovado e transmitido, a vigência é encerrada na Receita.</p></div><a class="btn btn--secondary dalert__act" href="'+hrefOf(vig||{n:1,vigrole:'now',sit:'aprovado'})+'">Ver detalhe'+I.chev+'</a></div>'+al; }
     $('alertSlot').innerHTML=al;
 
     $('vertabs').hidden=!has; $('vp-tab').hidden=!has; $('vp-tl').hidden=true; $('verempty').hidden=has;
@@ -479,8 +505,8 @@
     $('secVig').innerHTML = fut ? '<div class="verlist" style="gap:var(--space-4)">'+_vigHtml+row(fut,{})+'</div>' : _vigHtml;
 
     $('secProg').innerHTML = prog
-      ? row(prog,{cta:(prog.sit==='ajustes')?'Ver ajustes':(prog.sit==='rascunho')?'Continuar':(prog.sit==='rejeitado')?'Ver motivo':null, href:goOf(prog), primary:(prog.sit==='rascunho'||prog.sit==='ajustes')})
-      : emptyBox('Nenhuma versão em andamento.', 'Você pode registrar uma nova versão do plano quando necessário.');
+      ? row(prog,{cta:(prog.sit==='ajustes')?'Ver ajustes':(prog.sit==='rascunho')?'Continuar':(prog.sit==='rejeitado')?'Ver motivo':null, href:goOf(prog), primary:(prog.sit==='rascunho'||prog.sit==='ajustes')}) + (prog.sit==='rascunho'?'<div style="margin-top:var(--space-3);text-align:right"><button type="button" class="btn btn--danger-outline btn--sm" data-excl-draft>Excluir rascunho</button></div>':'')
+      : emptyBox('Nenhuma versão em preparação.', 'Você pode registrar uma nova versão do plano quando necessário.');
 
     $('secEncSection').hidden = !enc.length;
     if(enc.length) renderEnc(enc);
@@ -591,6 +617,8 @@
     <span class="demobar__body">
       <button type="button" data-scn="pop">Populado</button>
       <button type="button" data-scn="new">Primeiro acesso</button>
+      <span class="demobar__sep"></span>
+      <button type="button" data-demo-reset>Resetar</button>
     </span>
   </div>
   <script>(function(){ var bar=document.querySelector('.demobar'); if(!bar) return; var tog=bar.querySelector('[data-demo-toggle]'); if(!tog) return; function set(open){ bar.classList.toggle('is-collapsed', !open); tog.setAttribute('aria-expanded', String(open)); tog.setAttribute('aria-label', open?'Recolher ferramenta de demonstração':'Abrir ferramenta de demonstração de cenários'); try{ localStorage.setItem('adere.demo.open', open?'1':'0'); }catch(e){} } var open=false; try{ open=localStorage.getItem('adere.demo.open')==='1'; }catch(e){} set(open); tog.addEventListener('click',function(){ set(bar.classList.contains('is-collapsed')); }); })();</script>
@@ -604,24 +632,6 @@
       });
     })();
   </script>
-<script>
-(function(){
-  var MYV='1788978341';
-  var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
-  var dirty=false;
-  document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
-  try{ if(/[?&]_cb=/.test(location.search)){ var u=new URLSearchParams(location.search); u.delete('_cb'); history.replaceState(null,'',location.pathname+(u.toString()?('?'+u.toString()):'')+location.hash); } }catch(e){}
-  function goFresh(v){ var s=location.search?'&':'?'; location.replace(location.pathname+location.search+s+'_cb='+encodeURIComponent(v)+location.hash); }
-  function check(force){
-    fetch(base+'?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null;}).then(function(d){
-      if(!d||!d.v||d.v===MYV) return;
-      if(force){ var k='dere_cb_'+d.v; if(!sessionStorage.getItem(k)){ sessionStorage.setItem(k,'1'); goFresh(d.v); } }
-      else if(!dirty){ goFresh(d.v); }
-    }).catch(function(){});
-  }
-  check(true);
-  document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='visible') check(false); });
-})();
-</script>
+  <!-- dark mode fora de escopo (igual ao D-1001): página forçada em data-theme="light" no <html> -->
 </body>
 </html>

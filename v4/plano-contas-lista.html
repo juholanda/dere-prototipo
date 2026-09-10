@@ -8,8 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Plano Geral de Contas Comentado</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788978341">
-  <script src="../design-system/ds-tailwind.js?v=1788978341"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=63">
+  <script src="../design-system/ds-tailwind.js"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -40,8 +40,8 @@
     /* larguras estáveis: colunas não pulam ao trocar de cenário */
     .table--fixed{table-layout:fixed;min-width:1140px}
     /* só as células de texto truncam; a coluna de ação nunca clipa o botão */
-    .table--fixed td:not(.col-act):not(.col-ver){overflow:hidden;text-overflow:ellipsis}
-    .table--fixed td.col-ver{overflow:visible}
+    .table--fixed td:not(.col-act):not(.col-ver):not(.col-vig){overflow:hidden;text-overflow:ellipsis}
+    .table--fixed td.col-ver,.table--fixed td.col-vig{overflow:visible}
     .table td{padding-top:var(--space-4);padding-bottom:var(--space-4)}
     .celltitle{font-size:var(--text-base);font-weight:600;color:var(--color-heading);white-space:nowrap}
     .cellcnpj{font-size:var(--text-sm);color:var(--color-text-muted);font-variant-numeric:tabular-nums;margin-top:2px;white-space:nowrap}
@@ -55,6 +55,8 @@
     .stagedot--processando{background:var(--color-processing)}
     .stagedot--rejeitado{background:var(--color-danger)}
     .stagedot--futura{background:var(--color-success-fg)}
+    .stagedot--sucesso{background:var(--color-success-fg)}
+    .stagedot--adv{background:var(--color-azul)}
     .evemp{display:flex;align-items:center;gap:var(--space-3)}
     .evemp > div{min-width:0}
     .muted{color:var(--color-text-muted)}
@@ -87,6 +89,12 @@
     /* Situação com a Receita: ícone + texto (não pílula) */
     .sitcell{display:inline-flex;align-items:center;gap:var(--space-2);min-height:22px;line-height:22px;font-size:var(--text-base);font-weight:600;white-space:nowrap}
     .vercell-top{display:inline-flex;align-items:center;min-height:22px;line-height:22px}
+    .vernum{font-weight:600;color:var(--color-heading)}
+    .vigperiod{font-size:var(--text-base);color:var(--color-text);white-space:nowrap;font-variant-numeric:tabular-nums}
+    .cd{font-size:var(--text-xs);margin-top:3px;font-variant-numeric:tabular-nums;color:var(--color-text-muted);display:flex;align-items:center;gap:var(--space-1)}
+    .cd--warn{color:var(--color-warning-fg);font-weight:600}
+    .cd--over{color:var(--color-danger-fg);font-weight:600}
+    .cd--future{color:var(--color-success-fg);font-weight:600}
     .sitcell svg{width:18px;height:18px;flex:0 0 auto}
     /* texto e ícone na cor do estado (verde / laranja / vermelho / cinza) */
     .sitcell--success{color:var(--color-success-fg)}
@@ -103,7 +111,7 @@
     .demobar{position:fixed;bottom:var(--space-4);left:50%;transform:translateX(-50%);z-index:200;display:flex;align-items:center;gap:var(--space-1);background:var(--slate-900);border:1px solid rgba(255,255,255,.14);border-radius:var(--radius-pill);padding:2px var(--space-1-5);box-shadow:var(--shadow-md);font-size:var(--text-xs);opacity:.92;flex-wrap:wrap;justify-content:center;max-width:calc(100vw - var(--space-8));row-gap:var(--space-1)}
     .demobar:hover{opacity:1}
     .demobar__toggle{display:inline-flex;align-items:center;gap:var(--space-1);background:none;border:0;color:rgba(255,255,255,.72);font-family:inherit;font-size:var(--text-2xs);font-weight:700;text-transform:uppercase;letter-spacing:.08em;cursor:pointer;padding:var(--space-1) var(--space-1-5);border-radius:var(--radius-pill)}
-    .demobar__toggle:hover{color:#fff;background:rgba(255,255,255,.08)}
+    .demobar__toggle:hover{color:var(--color-on-navy);background:color-mix(in srgb,var(--color-on-navy) 8%,transparent)}
     .demobar__toggle svg{width:14px;height:14px;opacity:.8}
     .demobar__body{display:flex;align-items:center;gap:var(--space-1);flex-wrap:wrap;justify-content:center;row-gap:var(--space-1)}
     .demobar.is-collapsed{padding:2px}
@@ -152,7 +160,6 @@
     else{e.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg> Senha incorreta. Tente novamente.';i.select();}
     return false;}
 </script>
-
   <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
   <div class="shell">
     <nav class="sidenav sidenav--navy" data-sidenav aria-label="Navegação principal"><script>try{if(localStorage.getItem('adere.nav.collapsed')==='1'){var _n=document.querySelector('[data-sidenav]');if(_n)_n.classList.add('is-collapsed');}}catch(e){}</script>
@@ -180,7 +187,10 @@
         </nav>
         <div class="flex items-center gap-1" style="margin-left:auto">
           <span class="tooltip"><button class="icon-btn" type="button" aria-label="Buscar"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></button><span class="tooltip__bubble" role="tooltip">Buscar</span></span>
-          <span class="tooltip"><button class="icon-btn" aria-label="Notificações, 3 pendências" style="position:relative"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="badge badge--danger" style="position:absolute;top:3px;right:3px">3</span></button><span class="tooltip__bubble" role="tooltip">Notificações</span></span>
+          <div class="menu" data-menu>
+            <span class="tooltip"><button class="icon-btn" type="button" id="notifBtn" aria-haspopup="true" aria-expanded="false" aria-label="Notificações" style="position:relative"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="badge badge--danger icon-btn__badge" id="notifBadge" hidden>0</span></button><span class="tooltip__bubble" role="tooltip">Notificações</span></span>
+            <div class="menu__panel notifpanel" hidden role="region" aria-label="Notificações"><div class="notifpanel__head">Notificações</div><div class="notifpanel__list" id="notifList"></div></div>
+          </div>
         </div>
         <span aria-hidden="true" style="width:1px;height:22px;background:var(--color-divider);flex:0 0 auto"></span>
         <div class="menu" data-menu>
@@ -218,9 +228,9 @@
                   <tr>
                     <th scope="col" class="sortable is-sorted" data-sort="emp" aria-sort="ascending"><button type="button" class="th-btn">Contribuinte <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
                     <th scope="col" class="sortable" data-sort="ref" aria-sort="none"><button type="button" class="th-btn">Plano referencial <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
-                    <th scope="col" class="sortable" data-sort="sit" aria-sort="none"><button type="button" class="th-btn">Situação na Receita <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
                     <th scope="col" class="sortable" data-sort="ver" aria-sort="none"><button type="button" class="th-btn">Versão vigente <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
-                    <th scope="col" class="sortable" data-sort="at" aria-sort="none"><button type="button" class="th-btn">Última atualização <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
+                    <th scope="col" class="sortable" data-sort="vig" aria-sort="none"><button type="button" class="th-btn">Vigência <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
+                    <th scope="col">Em preparação</th>
                     <th scope="col"><span class="sr-only">Ações</span></th>
                   </tr>
                 </thead>
@@ -262,9 +272,9 @@
      - contas = nº de contas classificadas (infoConta), como subinformação do referencial. */
   var PLANOS=[
     /* plano vigente aceito na Receita, sem nada em curso */
-    {id:'cap', nome:'MAG Capitalização', cnpj:'52.780.551/0001-19', ref:'SUSEP', contas:986,  vigente:{ver:1, since:'01/01/2026', until:null}, sit:'sucesso', flight:null,                  at:'02/09/2026 09:40', ts:200},
+    {id:'cap', nome:'MAG Capitalização', cnpj:'52.780.551/0001-19', ref:'SUSEP', contas:986,  vigente:{ver:1, since:'01/01/2026', until:'30/09/2026'}, sit:'sucesso', flight:null,                  at:'02/09/2026 09:40', ts:200},
     /* plano vigente aceito na Receita */
-    {id:'fin', nome:'MAG Finanças',      cnpj:'21.995.256/0001-56', ref:'COSIF', contas:642,  vigente:{ver:1, since:'01/01/2026', until:null}, sit:'sucesso', flight:null,                  at:'03/09/2026 09:40', ts:940},
+    {id:'fin', nome:'MAG Finanças',      cnpj:'21.995.256/0001-56', ref:'COSIF', contas:642,  vigente:{ver:1, since:'01/01/2026', until:'31/12/2026'}, sit:'sucesso', flight:null,                  at:'03/09/2026 09:40', ts:940},
     /* plano vigente + nova versão (v3) em revisão interna */
     {id:'seg', nome:'MAG Seguros',       cnpj:'33.608.308/0001-73', ref:'SUSEP', contas:1284, vigente:{ver:2, since:'01/01/2026', until:null}, sit:'sucesso', flight:{ver:3, st:'revisao'},   at:'03/09/2026 10:12', ts:1012},
     /* plano vigente + nova versão (v2) rejeitada pela Receita (a rejeição não derruba a vigente) */
@@ -275,7 +285,10 @@
   /* cenário PRIMEIRO ACESSO (só via overlay de demonstração): nenhum plano começado ainda */
   var PLANOS_NEW=PLANOS.map(function(e){ return {id:e.id, nome:e.nome, cnpj:e.cnpj, ref:null, contas:0, vigente:null, sit:'naoiniciado', flight:null, at:null, ts:0}; });
   var scenario=((/[?&]scn=(new|pop)/.exec(location.search)||[])[1])||'new';
-  function cur(){ return scenario==='new'?PLANOS_NEW:PLANOS; }
+  /* PERSISTÊNCIA (modelo do D-1001): a lista reflete as ações do usuário (rascunho/enviado/ajustes) em qualquer empresa, em qualquer caminho de navegação. Só some no reset. */
+  try{ if(/[?&]fresh=1/.test(location.search)){ Object.keys(localStorage).forEach(function(k){ if(k==='adere.sent.d1011'||k==='adere.sent.d1011.t'||k.indexOf('adere.d1011.')===0) localStorage.removeItem(k); }); var _pf=new URLSearchParams(location.search); _pf.delete('fresh'); history.replaceState(null,'','?'+_pf.toString()); } }catch(e){}
+  function applyPersistence(list){ return list.map(function(e){ var draft=null,sent=false,dec=null,vigExc=null; try{ sent=localStorage.getItem('adere.sent.d1011')===e.id; draft=JSON.parse(localStorage.getItem('adere.d1011.draft.'+e.id)||'null'); dec=JSON.parse(localStorage.getItem('adere.d1011.decision.'+e.id)||'null'); vigExc=JSON.parse(localStorage.getItem('adere.d1011.vigexcluida.'+e.id)||'null'); }catch(_){} if(vigExc){ var cx=JSON.parse(JSON.stringify(e)); cx.vigente=null; cx.sit='naoiniciado'; cx.flight=null; return cx; } var st=(dec&&dec.st==='ajuste')?'ajustes':(sent?'revisao':(draft?'rascunho':null)); if(!st) return e; var c=JSON.parse(JSON.stringify(e)); c.flight={ver:(c.vigente?c.vigente.ver:0)+1, st:st}; if(c.sit==='naoiniciado') c.sit=st; return c; }); }
+  function cur(){ return applyPersistence(scenario==='new'?PLANOS_NEW:PLANOS); }
 
   /* ícones da Situação na Receita (mesmos do D-1001) */
   var RIC={
@@ -290,7 +303,7 @@
   }
   /* plano em processo (tentativa), além do vigente: sublinha na coluna Versão com bolinha da etapa. */
   function flightInfo(e){
-    var L={rascunho:'em rascunho', revisao:'em revisão', processando:'em processamento', rejeitado:'rejeitada'};
+    var L={rascunho:'em rascunho', revisao:'em revisão', ajustes:'com ajustes', processando:'em processamento', rejeitado:'rejeitada'};
     if(e.flight){ var _l=(e.flight.st==='futura')?('a partir de '+(e.flight.desde||'')):(L[e.flight.st]||e.flight.st); return {n:e.flight.ver, label:_l, dot:e.flight.st}; }
     if(e.sit==='rascunho') return {n:e.vigente?e.vigente.ver+1:1, label:L.rascunho, dot:'rascunho'};
     if(e.sit==='revisao')  return {n:e.vigente?e.vigente.ver+1:1, label:L.revisao,  dot:'revisao'};
@@ -304,11 +317,18 @@
   var SITRANK={nenhuma:0, avisos:1, vigente:2};
   function sitRank(e){ var k=receitaSit(e).key; return SITRANK[k]!=null?SITRANK[k]:9; }
 
+  /* colunas Vigência (countdown) + Em preparação — mesmo padrão do D-1001 */
+  var PREPLBL={rascunho:'Rascunho', revisao:'Em revisão', ajustes:'Em ajustes', processando:'Em processamento', rejeitado:'Rejeitada', futura:'Vigência futura'};
+  function verBlock(num,label,dot){ return '<div class="vercell-top"><span class="vernum">Versão '+num+'</span></div><div class="cellsub cellsub--stage"><span class="stagedot stagedot--'+dot+'" aria-hidden="true"></span>'+esc(label)+'</div>'; }
+  function daysLeft(d){ if(!d) return null; var m=/^(\d{2})\/(\d{2})\/(\d{4})$/.exec(d); if(!m) return null; var end=new Date(+m[3],+m[2]-1,+m[1]); var today=new Date(2026,8,4); return Math.round((end-today)/86400000); }
+  function countdownHtml(until){ var n=daysLeft(until); if(n==null) return '<div class="cd">Vigência em aberto</div>'; var cls=n<0?'cd--over':(n<=60?'cd--warn':''); var txt=n<0?'Vigência expirada':(n===0?'Termina hoje':('Termina em '+n+' dia'+(n===1?'':'s'))); return '<div class="cd '+cls+'">'+txt+'</div>'; }
+  function vigenciaCell(e){ if(!e.vigente) return '<span class="muted">—</span>'; return '<div class="vigperiod">Desde '+esc(e.vigente.since||'01/01/2026')+'</div>'+countdownHtml(e.vigente.until); }
   var listSort={key:'emp', dir:'asc'};
   function sortVal(e){
     switch(listSort.key){
       case 'ref':    return (e.ref||'zzz').toLowerCase();
       case 'ver':    return e.vigente?e.vigente.ver:-1;
+      case 'vig':    return e.vigente?1:0;
       case 'sit':    return sitRank(e);
       case 'at':     return e.ts||0;
       default:       return e.nome.toLowerCase();
@@ -322,18 +342,20 @@
     document.getElementById('rows').innerHTML=rows.map(function(e){
       var naoiniciado=(e.sit==='naoiniciado');
       var isRascunho=(e.sit==='rascunho');
-      /* rascunho/não iniciado: preencher a classificação; senão: abre a lista de versões da empresa. */
-      var href=(naoiniciado||isRascunho)?('plano-contas-classificar.html?emp='+e.id+'&modo=nova&scn='+scenario):('plano-contas-empresa.html?emp='+e.id+'&scn='+scenario);
+      /* não iniciado: form vazio do plano (primeiro plano, com importar); rascunho: continua a edição; senão: lista de versões da empresa. */
+      var href=naoiniciado?('plano-contas-classificar.html?emp='+e.id+'&modo=nova&tipo=primeiro&scn='+scenario)
+        :isRascunho?('plano-contas-classificar.html?emp='+e.id+'&modo=editar&scn='+scenario)
+        :('plano-contas-empresa.html?emp='+e.id+'&scn='+scenario);
       /* Plano referencial (herdado do D-1001) + nº de contas classificadas como subinformação */
       var ref=e.ref?('<span class="refname">'+esc(e.ref)+'</span>'):'<span class="muted">—</span>';
       var refSub=(e.contas>0)?'<div class="cellsub">'+nf(e.contas)+' contas</div>':'';
       var fl=flightInfo(e);
-      /* sublinha = SÓ o plano em processo, com bolinha da etapa. Sem nada em curso, sem sublinha. */
-      var verSub=fl ? '<div class="cellsub cellsub--stage"><span class="stagedot stagedot--'+fl.dot+'" aria-hidden="true"></span>Versão '+fl.n+' '+esc(fl.label)+'</div>' : '';
-      var versao=(e.vigente
-        ? '<span class="vercell-top"><span style="font-weight:600;color:var(--color-heading)">Versão '+e.vigente.ver+'</span></span>'
-        : (fl ? '<span class="vercell-top"><span class="muted">—</span></span>' : '<span class="muted">—</span>')) + verSub;
-      var at=e.at?esc(e.at):'<span class="muted">—</span>';
+      /* Versão vigente = nº + status do processamento embaixo (mesmo padrão do D-1001 e da coluna Em preparação). Sem vigente: "—". */
+      var versao=e.vigente
+        ? verBlock(e.vigente.ver, (e.sit==='avisos'?'Processada com adv.':'Processada com sucesso'), (e.sit==='avisos'?'adv':'sucesso'))
+        : '<span class="muted">—</span>';
+      var vigCell=vigenciaCell(e);
+      var prepCell=fl ? verBlock(fl.n, (PREPLBL[fl.dot]||fl.label), fl.dot) : '<span class="muted">—</span>';
       var btn=naoiniciado
         ? '<a class="btn btn--primary rowbtn" href="'+href+'">Preencher</a>'
         : isRascunho
@@ -342,9 +364,9 @@
       return '<tr data-href="'+href+'">'+
         '<td><div class="evemp">'+logoHtml(e)+'<div><div class="celltitle">'+esc(e.nome)+'</div><div class="cellcnpj">'+esc(e.cnpj)+'</div></div></div></td>'+
         '<td>'+ref+refSub+'</td>'+
-        '<td>'+situacaoCell(e)+'</td>'+
         '<td class="col-ver">'+versao+'</td>'+
-        '<td>'+at+'</td>'+
+        '<td class="col-vig">'+vigCell+'</td>'+
+        '<td>'+prepCell+'</td>'+
         '<td class="col-act">'+btn+'</td>'+
       '</tr>';
     }).join('');
@@ -358,6 +380,28 @@
 
   function renderAll(){ renderRows(); }
   renderAll();
+
+  /* Notificações do sino (contexto da lista): empresas com versão rejeitada ou com ajustes = pendência acionável do usuário */
+  (function(){
+    var _NAL='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg>';
+    function renderNotifs(){
+      var list=document.getElementById('notifList'), badge=document.getElementById('notifBadge'), btn=document.getElementById('notifBtn'); if(!list) return;
+      var items=[];
+      (cur()||[]).forEach(function(e){
+        if(!e.flight) return; var v=e.flight.ver, base='plano-contas-detalhe.html?emp='+e.id+'&v='+v;
+        if(e.flight.st==='rejeitado'){ items.push({tone:'danger',title:'Rejeitada pela Receita',text:'<b>'+esc(e.nome)+'</b> · Versão '+v+' rejeitada. Corrija e reenvie.',href:base+'&st=rejeitado'}); }
+        else if(e.flight.st==='ajustes'){ items.push({tone:'danger',title:'Ajustes solicitados',text:'<b>'+esc(e.nome)+'</b> · Versão '+v+' devolvida com ajustes.',href:base+'&st=ajuste'}); }
+      });
+      if(!items.length){ list.innerHTML='<p class="notifpanel__empty">Nenhuma notificação nova.</p>'; }
+      else { list.innerHTML=items.map(function(n){ return '<a class="notifitem notifitem--unread" href="'+n.href+'"><span class="notifitem__ic notifitem__ic--'+n.tone+'">'+_NAL+'</span><span class="notifitem__body"><span class="notifitem__title">'+esc(n.title)+'</span><span class="notifitem__text">'+n.text+'</span></span></a>'; }).join(''); }
+      if(badge){ if(items.length){ badge.textContent=String(items.length); badge.hidden=false; } else { badge.hidden=true; } }
+      if(btn){ btn.setAttribute('aria-label', items.length?('Notificações, '+items.length+' não lida'+(items.length>1?'s':'')):'Notificações'); }
+    }
+    renderNotifs();
+  })();
+
+  /* Resetar (demo): limpa a persistência do plano de contas e recarrega no estado inicial */
+  document.addEventListener('click',function(ev){ var b=ev.target.closest?ev.target.closest('[data-demo-reset]'):null; if(!b) return; try{ Object.keys(localStorage).forEach(function(k){ if(k.indexOf('adere.d1011.')===0||k.indexOf('adere.pgcc.')===0||k.indexOf('adere.sent.d1011')===0) localStorage.removeItem(k); }); }catch(e){} window.location.href='plano-contas-lista.html'+(scenario?('?scn='+scenario):''); });
 
   /* Cenário (só demonstração): Populado x Primeiro acesso — overlay flutuante, fora da interface */
   document.addEventListener('DOMContentLoaded',function(){
@@ -381,7 +425,7 @@
   /* sidenav collapse */
   document.querySelectorAll('[data-sidenav-toggle]').forEach(function(btn){ var nav=btn.closest('[data-sidenav]'); try{ if(localStorage.getItem('adere.nav.collapsed')==='1'){ nav.classList.add('is-collapsed'); btn.setAttribute('aria-expanded','false'); btn.setAttribute('aria-label','Expandir menu'); btn.setAttribute('data-tip','Expandir menu'); } }catch(e){} btn.addEventListener('click',function(){ var c=nav.classList.toggle('is-collapsed'); btn.setAttribute('aria-expanded',String(!c)); btn.setAttribute('aria-label', c?'Expandir menu':'Colapsar menu'); btn.setAttribute('data-tip', c?'Expandir menu':'Colapsar menu'); try{ localStorage.setItem('adere.nav.collapsed', c?'1':'0'); }catch(e){} }); });
   /* user menu */
-  document.querySelectorAll('[data-menu]').forEach(function(m){ var b=m.querySelector('.avatar'), p=m.querySelector('.menu__panel'); if(!b||!p) return; b.addEventListener('click',function(){ var open=p.hasAttribute('hidden'); if(open){p.removeAttribute('hidden');b.setAttribute('aria-expanded','true');}else{p.setAttribute('hidden','');b.setAttribute('aria-expanded','false');} }); document.addEventListener('click',function(ev){ if(!m.contains(ev.target)){p.setAttribute('hidden','');b.setAttribute('aria-expanded','false');} }); });
+  document.querySelectorAll('[data-menu]').forEach(function(m){ var b=m.querySelector('button'), p=m.querySelector('.menu__panel'); if(!b||!p) return; b.addEventListener('click',function(){ var open=p.hasAttribute('hidden'); if(open){p.removeAttribute('hidden');b.setAttribute('aria-expanded','true');}else{p.setAttribute('hidden','');b.setAttribute('aria-expanded','false');} }); document.addEventListener('click',function(ev){ if(!m.contains(ev.target)){p.setAttribute('hidden','');b.setAttribute('aria-expanded','false');} }); });
   </script>
 
   <!-- Ferramenta de DEMONSTRAÇÃO (não faz parte do produto): alterna o cenário da lista -->
@@ -392,27 +436,11 @@
     <span class="demobar__body">
       <button type="button" data-scn="pop">Populado</button>
       <button type="button" data-scn="new" class="on">Primeiro acesso</button>
+      <span class="demobar__sep"></span>
+      <button type="button" data-demo-reset>Resetar</button>
     </span>
   </div>
   <script>(function(){ var bar=document.getElementById('demobar'); if(!bar) return; var tog=bar.querySelector('[data-demo-toggle]'); if(!tog) return; function set(open){ bar.classList.toggle('is-collapsed', !open); tog.setAttribute('aria-expanded', String(open)); tog.setAttribute('aria-label', open?'Recolher ferramenta de demonstração':'Abrir ferramenta de demonstração de cenários'); try{ localStorage.setItem('adere.demo.open', open?'1':'0'); }catch(e){} } var open=false; try{ open=localStorage.getItem('adere.demo.open')==='1'; }catch(e){} set(open); tog.addEventListener('click',function(){ set(bar.classList.contains('is-collapsed')); }); })();</script>
-<script>
-(function(){
-  var MYV='1788978341';
-  var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
-  var dirty=false;
-  document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
-  try{ if(/[?&]_cb=/.test(location.search)){ var u=new URLSearchParams(location.search); u.delete('_cb'); history.replaceState(null,'',location.pathname+(u.toString()?('?'+u.toString()):'')+location.hash); } }catch(e){}
-  function goFresh(v){ var s=location.search?'&':'?'; location.replace(location.pathname+location.search+s+'_cb='+encodeURIComponent(v)+location.hash); }
-  function check(force){
-    fetch(base+'?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null;}).then(function(d){
-      if(!d||!d.v||d.v===MYV) return;
-      if(force){ var k='dere_cb_'+d.v; if(!sessionStorage.getItem(k)){ sessionStorage.setItem(k,'1'); goFresh(d.v); } }
-      else if(!dirty){ goFresh(d.v); }
-    }).catch(function(){});
-  }
-  check(true);
-  document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='visible') check(false); });
-})();
-</script>
+  <!-- dark mode fora de escopo (igual ao D-1001): página forçada em data-theme="light" no <html> -->
 </body>
 </html>

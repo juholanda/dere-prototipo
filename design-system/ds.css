@@ -115,9 +115,9 @@
    Vale para o toggle por classe (.dark, usado nos mockups) e por atributo
    (data-theme, usado no catálogo hospedado). ---- */
 .dark, :root[data-theme="dark"] {
-  --color-bg:          var(--slate-950);
-  --color-surface:     var(--slate-900);
-  --color-surface-2:   var(--slate-800);
+  --color-bg:          #08090c;   /* canvas: preto quase neutro (menos azul que o slate-950, mais fundo) */
+  --color-surface:     #14161b;   /* cards/menu: cinza-escuro com leve tom cool (menos azul que o slate-900) */
+  --color-surface-2:   #1f222a;   /* superfície elevada */
   --color-border:      var(--slate-700);
   --color-border-strong:var(--slate-600);
   --color-text:        var(--slate-100);
@@ -255,6 +255,19 @@ a{color:var(--color-primary);text-decoration:none}
 .icon-btn[data-tooltip]::after{content:attr(data-tooltip);position:absolute;top:calc(100% + 6px);left:50%;transform:translateX(-50%);white-space:nowrap;background:var(--color-heading);color:var(--color-surface);font-size:var(--text-xs);font-weight:500;line-height:1.2;padding:4px 8px;border-radius:var(--radius-sm);opacity:0;visibility:hidden;transition:opacity .12s ease;pointer-events:none;z-index:20}
 .icon-btn[data-tooltip]:hover::after,.icon-btn[data-tooltip]:focus-visible::after{opacity:1;visibility:visible}
 
+/* Link de ação: texto clicável no tom primário (âncora ou button), sem virar botão cheio.
+   Use quando a ação é secundária e cabe como link no meio do conteúdo (ex.: "Ver o evento", "Desfazer"). */
+.linkact{background:none;border:0;padding:0;font-family:inherit;font-size:var(--text-sm);font-weight:600;color:var(--color-primary);cursor:pointer;text-decoration:none}
+.linkact:hover{text-decoration:underline}
+.linkact:focus-visible{outline:none;box-shadow:var(--ring);border-radius:var(--radius-sm)}
+.linkact--rm{color:var(--color-danger)}
+/* Com ícone (seta externa, etc.): inline-flex mantém texto e ícone na MESMA linha
+   (o preflight do Tailwind força svg{display:block}, que sozinho quebraria o ícone pra baixo). */
+.linkact--icon{display:inline-flex;align-items:center;gap:var(--space-1)}
+.linkact--icon svg{width:14px;height:14px;flex:0 0 auto}
+.linkact--ia{display:inline-flex;align-items:center;gap:var(--space-1)}
+.linkact--ia svg{width:13px;height:13px;flex:0 0 auto}
+
 /* Campo (label + controle + ajuda/erro) */
 .field{display:flex;flex-direction:column;gap:var(--space-1-5)}
 .field__label{font-size:var(--text-sm);font-weight:600;color:var(--color-heading)}
@@ -296,7 +309,14 @@ textarea.input--compact{min-height:64px}   /* editores inline (linha de conta, t
 .check{display:inline-flex;align-items:center;gap:var(--space-2);cursor:pointer;font-size:var(--text-sm)}
 .check:has(input:disabled){cursor:not-allowed;color:var(--color-text-muted)}
 .check input{width:18px;height:18px;accent-color:var(--color-primary);cursor:pointer}
-.check input[type=radio]{border-radius:50%}
+/* Radio custom (igual ao checkbox): círculo com ponto, sem o realce quadrado nativo no hover */
+.check input[type=radio]{appearance:none;-webkit-appearance:none;border:1px solid var(--color-field-border);border-radius:50%;background:var(--color-surface);display:inline-grid;place-content:center;transition:background .12s,border-color .12s}
+.check input[type=radio]::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--color-primary);transform:scale(0);transition:transform .12s}
+.check input[type=radio]:checked{border-color:var(--color-primary)}
+.check input[type=radio]:checked::before{transform:scale(1)}
+.check input[type=radio]:hover:not(:checked):not(:disabled){border-color:var(--color-text-muted)}
+.check input[type=radio]:focus-visible{outline:none;box-shadow:var(--ring)}
+@media (prefers-reduced-motion:reduce){.check input[type=radio]::before{transition:none}}
 /* Checkbox: caixa mais arredondada + check do Lucide (menor) no lugar do desenho nativo do browser */
 .check input[type=checkbox]{appearance:none;-webkit-appearance:none;border:1px solid var(--color-field-border);border-radius:var(--radius-base);background:var(--color-surface);display:inline-grid;place-content:center;transition:background .12s,border-color .12s}
 .check input[type=checkbox]::before{content:"";width:12px;height:12px;background:var(--color-primary-contrast);transform:scale(0);transition:transform .12s;-webkit-mask:var(--ds-check) center/contain no-repeat;mask:var(--ds-check) center/contain no-repeat}
@@ -479,6 +499,9 @@ textarea.input--compact{min-height:64px}   /* editores inline (linha de conta, t
 @media (prefers-reduced-motion:reduce){.th-sort{transition:none}}
 .table th.sortable:hover .th-sort{opacity:.8}
 .table th.sortable.is-sorted .th-sort{opacity:1}
+/* botão de ordenar dentro do <th> (rótulo clicável + seta), acessível por teclado */
+.th-btn{background:none;border:0;margin:0;padding:0;font:inherit;color:inherit;letter-spacing:inherit;text-transform:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:var(--space-1-5);white-space:nowrap}
+.th-btn:focus-visible{outline:none;box-shadow:var(--ring);border-radius:var(--radius-sm)}
 /* Coluna de seleção (checkbox) e de ações (direita) */
 .table .col--check{width:1%;white-space:nowrap}
 .table .col--check input{width:18px;height:18px;accent-color:var(--color-primary);cursor:pointer;vertical-align:middle}
@@ -570,6 +593,20 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 .sidenav__group{font-size:var(--text-xs);font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--color-text-muted);padding:var(--space-6) var(--space-3) var(--space-2);margin:0;white-space:nowrap;overflow:hidden}
 .sidenav__group:first-child{padding-top:var(--space-2)}
 .sidenav.is-collapsed .sidenav__group{height:var(--space-4);padding:0;margin:0;color:transparent;overflow:hidden;pointer-events:none}
+/* DARK: o app-shell usa a superfície dark NEUTRA (não o navy da versão light). Canvas do conteúdo
+   escuro (não o slate-100 primitivo). :root[data-theme="dark"] vence por especificidade. */
+:root[data-theme="dark"] .content{background:var(--color-bg)}
+:root[data-theme="dark"] .sidenav--navy{
+  --color-text:var(--slate-100); --color-text-muted:var(--slate-400); --color-heading:#fff;
+  --color-primary:var(--color-primary-darker); --color-primary-subtle:color-mix(in srgb, var(--color-on-navy) 9%, transparent);
+  --color-border:var(--slate-700); --color-divider:var(--slate-800);
+  color:var(--slate-100); background:var(--color-surface); border:1px solid var(--color-border);
+}
+/* DARK: elementos que ficam SOBRE um card (mesma cor no dark) sobem para a superfície elevada, senão somem */
+:root[data-theme="dark"] .btn--secondary{background:var(--color-surface-2)}
+:root[data-theme="dark"] .stat{background:var(--color-surface-2)}
+:root[data-theme="dark"] .input,:root[data-theme="dark"] .select,:root[data-theme="dark"] textarea.input{background:var(--color-surface-2)}
+
 /* Variante ESCURA institucional: navy gov.br (#071d41) com gradiente + pontinhos sutis.
    Redefine tokens no escopo → todas as regras .sidenav__* já renderizam sobre o navy. */
 .sidenav--navy{
@@ -797,6 +834,9 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 .dalert__text{font-size:var(--text-sm);color:var(--color-text);margin:var(--space-1) 0 0;line-height:1.55}
 .dalert__body{flex:1;min-width:0}
 .dalert__act{flex:0 0 auto;align-self:center;white-space:nowrap}
+/* comentário citado dentro do banner (ex.: pedido de ajuste do aprovador, motivo da rejeição) */
+.dalert__comment{display:flex;gap:var(--space-3);margin-top:var(--space-3);padding:var(--space-4);background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-lg);font-size:var(--text-sm);color:var(--color-text);line-height:1.55}
+.dalert__comment svg{width:18px;height:18px;flex:0 0 auto;color:var(--color-text-muted);margin-top:1px}
 /* entrada sutil do banner de estado (o .dalert é recriado a cada troca de cenário; anima o nó novo). Evita "pulo" ao mudar de mensagem. */
 @keyframes ds-dalert-in{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 .dalert{animation:ds-dalert-in .2s cubic-bezier(.2,.7,.2,1) both}
@@ -831,6 +871,8 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 .modal-backdrop[hidden]{display:none}
 .modal{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);
   box-shadow:var(--shadow-md);width:min(500px,100%);max-height:90vh;display:flex;flex-direction:column;overflow:hidden;position:relative}
+/* modais com muito conteúdo (ex.: comprovante .receipt) não podem ficar altos demais: capa a altura e o corpo rola */
+.modal:has(.receipt){max-height:min(88vh,34rem)}
 /* X de fechar: canto sup. direito (para modais sem header, ex.: confirmação/excluir) */
 .modal .modal__close{position:absolute;top:var(--space-3);right:var(--space-3);z-index:1}
 /* Barra superior do modal: só o "X" (fechar), à direita — layout em blocos (estilo OutSystems) */
@@ -848,7 +890,7 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 .modal__header{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;padding:var(--space-8) var(--space-8) var(--space-4)}
 
 .modal__title{font-size:var(--text-2xl) !important;font-weight:700 !important;color:var(--color-heading);margin:0}
-.modal__body{padding:0 var(--space-8);overflow:auto;color:var(--color-text-onmuted);font-size:var(--text-sm);scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--color-text-muted) 30%,transparent) transparent;overscroll-behavior:contain}
+.modal__body{padding:0 var(--space-8);overflow:auto;min-height:0;color:var(--color-text-onmuted);font-size:var(--text-sm);scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--color-text-muted) 30%,transparent) transparent;overscroll-behavior:contain}
 /* texto-descrição do modal (parágrafo direto do corpo) em 16px p/ conforto de leitura; não pega <p> aninhados (bloco de assinatura, .dalert__text) */
 .modal__body > p{font-size:var(--text-base);line-height:1.55}
 .modal__body::-webkit-scrollbar{width:10px}
@@ -859,6 +901,38 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 /* Cancelar/dismiss (1º botão) vai pro lado oposto; as ações ficam agrupadas à direita */
 .modal__footer > .btn:first-child:not(:last-child){margin-right:auto}
 .modal__footer .btn{height:var(--control-h-lg);font-size:var(--text-base);padding:0 var(--space-6)}
+/* .cinfo — bloco de informação (responsável/assinatura) dentro do corpo do modal. Usado no envio/transmissão (D-1001 e D-1011). */
+.cinfo{display:flex;flex-direction:column;gap:var(--space-4);background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-4)}
+.cinfo__row{display:flex;flex-direction:column;gap:2px}
+.cinfo__k{font-size:var(--text-xs);color:var(--color-text-muted);font-weight:600}
+.cinfo__v{font-size:var(--text-base);color:var(--color-heading);line-height:1.5}
+.cinfo__v .avatar{display:inline-grid;vertical-align:middle;margin-right:var(--space-1-5)}
+/* .vmode — escolha da consequência ao mudar a data de início (nova vigência × corrigir data). Compartilhado D-1001/D-1011. */
+.vmode{display:flex;flex-direction:column;gap:var(--space-2);margin-top:var(--space-2)}
+.vmode__opt{display:flex;gap:var(--space-2);align-items:flex-start;padding:var(--space-2) var(--space-3);border:1px solid var(--color-border);border-radius:var(--radius-base);cursor:pointer}
+.vmode__opt:hover{border-color:var(--color-warning)}
+.vmode__opt:has(input:checked){border-color:var(--color-warning);background:color-mix(in srgb,var(--color-warning) 8%,var(--color-surface))}
+.vmode__opt:focus-within{outline:none;box-shadow:var(--ring)}
+.vmode__opt input{margin-top:3px;flex:0 0 auto}
+.vmode__b{display:flex;flex-direction:column;gap:2px;font-size:var(--text-sm)}
+.vmode__hint{font-size:var(--text-xs);color:var(--color-text-muted);line-height:1.45}
+/* .decisionbar — barra sticky de decisão do aprovador no rodapé do detalhe (Iniciar revisão / Aprovar / Solicitar ajustes). Compartilhado D-1001/D-1011. */
+.decisionbar{position:sticky;bottom:0;z-index:30;background:var(--color-surface);border-top:1px solid var(--color-border);box-shadow:var(--shadow-up)}
+.decisionbar[hidden]{display:none}
+.decisionbar__inner{max-width:1600px;margin:0 auto;padding:var(--space-4) var(--space-10);display:flex;align-items:center;justify-content:flex-end;gap:var(--space-3);box-sizing:border-box}
+.decisionbar__inner .decisionbar__back{margin-right:auto}
+body.has-decisionbar .content{scroll-padding-bottom:96px}
+@keyframes ds-decisionbar-in{from{opacity:0;transform:translateY(100%)}to{opacity:1;transform:none}}
+.decisionbar:not([hidden]){animation:ds-decisionbar-in .24s cubic-bezier(.2,.7,.2,1) both}
+@media (prefers-reduced-motion:reduce){.decisionbar:not([hidden]){animation:none}}
+/* .signrow — bloco "assinado com" (certificado ICP-Brasil) no modal de aprovação. Compartilhado D-1001/D-1011. */
+.signrow{display:flex;gap:var(--space-3);align-items:flex-start;background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-4);margin-top:var(--space-6)}
+.signrow__ic{flex:0 0 auto;width:36px;height:36px;border-radius:var(--radius-lg);display:grid;place-items:center;background:var(--color-primary-subtle);color:var(--color-primary)}
+.signrow__ic svg{width:19px;height:19px}
+.signrow__k{margin:0;font-size:var(--text-xs);font-weight:700;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:.04em}
+.signrow__v{margin:var(--space-1) 0 0;font-size:var(--text-base);font-weight:600;color:var(--color-heading);line-height:1.35}
+.signrow__rel{margin:2px 0 0;font-size:var(--text-sm);color:var(--color-text-onmuted)}
+.signrow__note{margin:var(--space-2) 0 0;font-size:var(--text-sm);color:var(--color-text-muted);line-height:1.5}
 .confirm{display:flex;gap:1rem;padding:var(--space-6);align-items:flex-start}
 /* Cabeçalho de modal com ícone à esquerda do título (confirmações). O ícone é danger por padrão; use as variantes. */
 .modal__header--icon{align-items:center;gap:var(--space-3)}
