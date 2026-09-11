@@ -88,7 +88,9 @@
     <a href="#selectcard">Cartão selecionável</a>
     <a href="#status">Status, tags, badges</a>
     <a href="#alertas">Alertas</a>
+    <a href="#statusbar">Statusbar</a>
     <a href="#tabela">Tabela</a>
+    <a href="#tablefoot">Rodapé de tabela</a>
     <a href="#filtro">Filtro ativo</a>
     <a href="#accordion">Accordion</a>
     <a href="#abas">Abas</a>
@@ -552,6 +554,31 @@
         </div>
       </section>
 
+      <!-- STATUSBAR -->
+      <section class="sec" id="statusbar">
+        <p class="sec__k">Componentes</p>
+        <h2>Statusbar (estado da submissão)</h2>
+        <p class="sec__hint">Hero de estado no topo do detalhe de uma submissão (reutilizado no D-1001 e no D-1011): ícone-chip + título + descrição + comentário citado + ações à direita. Variantes <code>info/warning/success/danger</code>.</p>
+        <div class="stack">
+          <div class="statusbar statusbar--info">
+            <span class="statusbar__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>
+            <div class="statusbar__b">
+              <p class="statusbar__title">Em revisão</p>
+              <p class="statusbar__desc">A submissão está com o aprovador. Enquanto não for revisada, você ainda pode cancelar e editar.</p>
+            </div>
+            <div class="statusbar__actions"><button class="btn btn--secondary">Cancelar</button><button class="btn btn--primary">Alterar</button></div>
+          </div>
+          <div class="statusbar statusbar--danger">
+            <span class="statusbar__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg></span>
+            <div class="statusbar__b">
+              <p class="statusbar__title">Ajustes solicitados</p>
+              <p class="statusbar__desc">O aprovador devolveu a submissão com pedidos de ajuste. Faça as correções e reenvie.</p>
+              <div class="statusbar__comment"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Ana Prado: “Revise o codTrib das contas de cosseguro antes de reenviar.”</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- TABELA -->
       <section class="sec" id="tabela">
         <p class="sec__k">Componentes</p>
@@ -628,6 +655,19 @@
               </tr>
             </tbody>
           </table>
+        </div>
+      </section>
+
+      <!-- RODAPÉ DE TABELA -->
+      <section class="sec" id="tablefoot">
+        <p class="sec__k">Componentes</p>
+        <h2>Rodapé de tabela</h2>
+        <p class="sec__hint">Contagem à esquerda + paginador à direita, com borda superior. Padrão único <code>.tablefoot</code> para toda listagem paginada; o paginador reusa <code>.pagination</code>/<code>.page-btn</code> (numerado) ou <code>.tpager</code> (compacto).</p>
+        <div class="card">
+          <div class="tablefoot">
+            <span class="tablefoot__count">Mostrando <strong>1–50</strong> de <strong>52</strong> contas</span>
+            <span class="pagination"><button class="page-btn" aria-label="Página anterior" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><button class="page-btn is-active" aria-current="page">1</button><button class="page-btn">2</button><button class="page-btn" aria-label="Próxima página"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button></span>
+          </div>
         </div>
       </section>
 

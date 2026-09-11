@@ -846,6 +846,27 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 .filterbar__x svg{width:13px;height:13px}
 .filterbar__x:hover{opacity:1;background:color-mix(in srgb, var(--color-primary) 16%, transparent)}
 .filterbar__x:focus-visible{outline:none;box-shadow:var(--ring);opacity:1}
+/* Statusbar: hero de estado da submissão (ícone-chip + título + descrição + comentário citado + ações).
+   Reutilizado no detalhe do D-1001 (canônico) e do D-1011. Variantes info/warning/success/danger. */
+.statusbar{display:flex;gap:var(--space-4);align-items:flex-start;background:var(--color-surface);border:1px solid var(--color-border);border-left:4px solid var(--color-border-strong);border-radius:var(--radius-2xl);box-shadow:var(--shadow-sm);padding:var(--space-6);margin-bottom:var(--space-6)}
+.statusbar--info{border-left-color:var(--color-info-fg)}
+.statusbar--warning{border-left-color:var(--color-warning)}
+.statusbar--success{border-left-color:var(--color-success-fg)}
+.statusbar--danger{border-left-color:var(--color-danger)}
+.statusbar__ic{width:40px;height:40px;border-radius:var(--radius-lg);display:grid;place-items:center;flex:0 0 auto;background:var(--color-surface-2);color:var(--color-text-onmuted)}
+.statusbar--info .statusbar__ic{background:var(--color-info-bg);color:var(--color-info-fg)}
+.statusbar--warning .statusbar__ic{background:var(--color-warning-bg);color:var(--color-warning-fg)}
+.statusbar--success .statusbar__ic{background:var(--color-success-bg);color:var(--color-success-fg)}
+.statusbar--danger .statusbar__ic{background:var(--color-danger-bg);color:var(--color-danger-fg)}
+.statusbar__ic svg{width:20px;height:20px}
+.statusbar__b{flex:1;min-width:0}
+.statusbar__title{font-size:var(--text-lg)!important;font-weight:700!important;color:var(--color-heading);margin:0;line-height:1.25}
+.statusbar__desc{font-size:var(--text-base);color:var(--color-text-onmuted);margin:var(--space-2) 0 0;line-height:1.5}
+.statusbar__comment{display:flex;gap:var(--space-3);margin-top:var(--space-4);padding:var(--space-4);background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-lg);font-size:var(--text-base);color:var(--color-text);line-height:1.5}
+.statusbar__comment svg{width:18px;height:18px;flex:0 0 auto;color:var(--color-text-muted);margin-top:1px}
+.statusbar__actions{display:flex;gap:var(--space-2);flex:0 0 auto;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.statusbar__actions .btn{white-space:nowrap}
+@media(max-width:820px){.statusbar{flex-wrap:wrap}.statusbar__actions{width:100%}}
 /* comentário citado dentro do banner (ex.: pedido de ajuste do aprovador, motivo da rejeição) */
 .dalert__comment{display:flex;gap:var(--space-3);margin-top:var(--space-3);padding:var(--space-4);background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-lg);font-size:var(--text-sm);color:var(--color-text);line-height:1.55}
 .dalert__comment svg{width:18px;height:18px;flex:0 0 auto;color:var(--color-text-muted);margin-top:1px}
@@ -1070,7 +1091,7 @@ body.has-decisionbar .content{scroll-padding-bottom:96px}
   border-radius:var(--radius-base);display:grid;place-items:center;background:var(--color-primary-subtle);color:var(--color-primary)}
 .stat__ic--danger{background:var(--color-danger-bg);color:var(--color-danger)}
 .stat__ic--success{background:var(--color-success-bg);color:var(--color-success)}
-.stat__label{font-size:var(--text-xs);color:var(--color-text-muted);font-weight:600}
+.stat__label{font-size:var(--text-xs);color:var(--color-text-muted);font-weight:600;padding-right:calc(var(--space-8) + var(--space-6) + var(--space-2))}   /* reserva a coluna do .stat__ic (absoluto, top-right) para o rótulo não passar por baixo do ícone */
 .stat__value{font-size:var(--text-3xl);font-weight:700;color:var(--color-heading);font-variant-numeric:tabular-nums;line-height:1.1}
 .stat__delta{display:inline-flex;align-items:center;gap:var(--space-1);font-size:var(--text-xs);font-weight:600}
 .stat__delta--up{color:var(--color-success-fg)}
@@ -1233,6 +1254,14 @@ body.has-decisionbar .content{scroll-padding-bottom:96px}
 .page-btn.is-active{background:var(--color-primary);color:var(--color-primary-contrast);border-color:var(--color-primary)}
 .page-btn:disabled{opacity:.5;cursor:not-allowed}
 .page-btn:focus-visible{outline:none;box-shadow:var(--ring)}
+/* Rodapé de tabela: contagem (esquerda) + paginador (direita), borda superior. Reutilizável em toda listagem paginada. */
+.tablefoot{display:flex;justify-content:space-between;align-items:center;gap:var(--space-4);flex-wrap:wrap;padding:var(--space-4) var(--space-6);border-top:1px solid var(--color-border);font-size:var(--text-sm);color:var(--color-text-muted)}
+.tablefoot[hidden]{display:none}
+.tablefoot__count{font-size:var(--text-sm);color:var(--color-text-muted)}
+.tablefoot__count strong,.tablefoot b{color:var(--color-heading);font-variant-numeric:tabular-nums}
+.tablefoot__gap{padding:0 var(--space-1);color:var(--color-text-muted)}
+.tpager{display:inline-flex;align-items:center;gap:var(--space-2)}   /* paginador compacto (prev/próximo com .icon-btn) */
+.tpager button:disabled{opacity:.4;cursor:default}
 
 /* Tag / chip (filtros) */
 .tag{display:inline-flex;align-items:center;line-height:1;gap:var(--space-2);padding:var(--space-1) var(--space-3);border-radius:var(--radius-pill);
@@ -1302,6 +1331,8 @@ body.has-decisionbar .content{scroll-padding-bottom:96px}
 .notifitem__text{font-size:var(--text-xs);color:var(--color-text-muted);line-height:1.45}
 /* badge no canto do icon-btn (sino): utilitário p/ não repetir inline em cada tela */
 .icon-btn__badge{position:absolute;top:3px;right:3px}
+/* separador vertical de barra de ferramentas (entre grupos da topbar/toolbar) — evita o inline repetido */
+.vsep{width:1px;height:22px;background:var(--color-divider);flex:0 0 auto}
 .menu__item{display:flex;align-items:center;gap:var(--space-3);width:100%;padding:var(--space-2) var(--space-3);border:0;background:transparent;
   border-radius:var(--radius-base);cursor:pointer;color:var(--color-text);font:inherit;font-size:var(--text-sm);font-weight:500;text-align:left;transition:background-color .12s}
 .menu__item svg{width:18px;height:18px;flex:0 0 auto}

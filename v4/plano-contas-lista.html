@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Plano Geral de Contas Comentado</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=64">
+  <link rel="stylesheet" href="../design-system/ds.css?v=66">
   <script src="../design-system/ds-tailwind.js"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
@@ -77,11 +77,7 @@
     .th-btn:focus-visible{outline:none;box-shadow:var(--ring);border-radius:var(--radius-sm)}
     /* texto base da tabela a 16px; cabeçalhos ficam nos 12px do DS (--text-xs) */
     .table td{font-size:var(--text-base)}
-    /* rodapé da tabela: contagem + paginador (padrão do app) */
-    .tablefoot{display:flex;justify-content:space-between;align-items:center;gap:var(--space-3);padding:var(--space-4) var(--space-6);border-top:1px solid var(--color-border);font-size:var(--text-sm);color:var(--color-text-muted);flex-wrap:wrap}
-    .tablefoot b{color:var(--color-heading);font-variant-numeric:tabular-nums}
-    .tpager{display:inline-flex;align-items:center;gap:var(--space-2)}
-    .tpager button:disabled{opacity:.4;cursor:default}
+    /* rodapé da tabela (.tablefoot + .tpager) agora vive no ds.css */
     /* mesmas margens do cabeçalho do card (space-6) nas extremidades da tabela */
     .card__h{padding:var(--space-6)}
     .table th:first-child,.table td:first-child{padding-left:var(--space-6)}
@@ -192,7 +188,7 @@
             <div class="menu__panel notifpanel" hidden role="region" aria-label="Notificações"><div class="notifpanel__head">Notificações</div><div class="notifpanel__list" id="notifList"></div></div>
           </div>
         </div>
-        <span aria-hidden="true" style="width:1px;height:22px;background:var(--color-divider);flex:0 0 auto"></span>
+        <span class="vsep" aria-hidden="true"></span>
         <div class="menu" data-menu>
           <span class="tooltip tooltip--end"><button class="avatar" aria-haspopup="true" aria-expanded="false" aria-label="Ricardo Alves, abrir menu do usuário">RA</button><span class="tooltip__bubble tooltip__bubble--stack" role="tooltip"><strong>Ricardo Alves</strong>Administrador da conta</span></span>
           <div class="menu__panel" hidden><div class="menu__head"><p class="menu__head-name">Ricardo Alves</p><p class="menu__head-mail">Administrador da conta</p></div><div class="menu__sep"></div><button class="menu__item">Perfil</button><button class="menu__item">Preferências</button><button class="menu__item menu__item--danger">Sair</button></div>
