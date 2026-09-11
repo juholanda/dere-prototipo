@@ -346,8 +346,8 @@
       tone:'danger', ic:ALERT, pill:'status--danger', label:'Ajustes solicitados', ver:'Versão 3', sub:'Ajustes solicitados',
       desc:'O aprovador devolveu a submissão com pedidos de ajuste. Faça as correções e reenvie para revisão. Nada foi transmitido à Receita.',
       meta:[{k:'Enviado por',by:'Ricardo Alves',v:'hoje, 14:32'},{k:'Revisado por',by:'Ana Prado',v:'hoje, 15:10'}],
-      comment:'Ana Prado: “O regime secundário não se aplica à MAG Seguros. Remova a marcação e confirme a vigência antes de reenviar.”',
-      topActions:'<button class="btn btn--danger-outline" type="button" data-open-excluir>'+IC_TRASH+'Excluir versão</button><a class="btn btn--primary" href="plano-contas-classificar.html?modo=editar&mesa=1">'+IC_REFRESH+'Corrigir e reenviar</a>',
+      comment:'Ana Prado: “Revisar o codTrib das contas de cosseguro antes de reenviar; confira também a descrição das analíticas.”',
+      topActions:'<button class="btn btn--danger-outline" type="button" data-open-excluir>'+IC_TRASH+'Excluir versão</button><a class="btn btn--primary" href="plano-contas-classificar.html?modo=editar&corr=ajustes">'+IC_REFRESH+'Corrigir e reenviar</a>',
       cardActions:''
     },
     aprovado:{
@@ -379,7 +379,7 @@
       desc:'A Receita rejeitou o evento no processamento. Nada ficou vigente. Corrija o apontamento abaixo e reenvie para revisão.',
       meta:[{k:'Enviado por',by:'Ricardo Alves',v:'hoje, 15:40'},{k:'Aprovado por',by:'Ana Prado',v:'hoje, 16:05'},{k:'Protocolo (Receita)',v:'PT-2026.09.51001'}],
       comment:'Receita (MS1077): a conta contábil informada em [cCtaRef] para a conta 32101001 não existe no Plano de Contas Referencial SUSEP (Tabela 23).',
-      topActions:'<a class="btn btn--primary" href="plano-contas-classificar.html?modo=editar&mesa=1">Corrigir e reenviar</a>',
+      topActions:'<a class="btn btn--primary" href="plano-contas-classificar.html?modo=editar&corr=rejeitado">Corrigir e reenviar</a>',
       cardActions:''
     }
   };
@@ -400,7 +400,7 @@
     /* rejeitada: Ver comprovante + Excluir versão + ação primária (como no D-1001) */
     var ver='<button class="btn btn--secondary" type="button" data-comprovante>'+IC_FILE+'Ver comprovante</button>'+
             '<button class="btn btn--danger-outline" type="button" data-open-excluir>'+IC_TRASH+'Excluir versão</button>';
-    if(rj.tipo==='corrigir') return ver+'<a class="btn btn--primary" href="plano-contas-classificar.html?modo=editar&mesa=1">'+IC_REFRESH+esc(rj.acao)+'</a>';
+    if(rj.tipo==='corrigir') return ver+'<a class="btn btn--primary" href="plano-contas-classificar.html?modo=editar&corr=rejeitado">'+IC_REFRESH+esc(rj.acao)+'</a>';
     if(rj.tipo==='d1001')    return ver+'<a class="btn btn--primary" href="info-contribuinte-empresa.html?emp='+EMPQ+'">'+esc(rj.acao)+'</a>';
     return ver+'<button class="btn btn--primary" type="button">'+esc(rj.acao)+'</button>';  /* assinatura/cadastral: resolve fora da plataforma (e-CAC / Receita) */
   }
@@ -644,7 +644,7 @@
     R.innerHTML='<div class="receipt__state '+scls+'"><span class="receipt__state-ic">'+sic+'</span><div><p class="receipt__state-tt">'+esc(stt)+'</p><p class="receipt__state-tx">'+esc(stx)+'</p></div></div><div class="receipt__rows">'+rows+'</div>'+occ;
     var DL='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>';
     var f='<button class="btn btn--ghost btn--lg" type="button" data-comp-close>Fechar</button>';
-    if(state==='rejeitado'){ f+='<a class="btn btn--primary btn--lg" href="plano-contas-classificar.html?modo=editar&mesa=1&emp='+EMPQ+'">'+IC_PENCIL+esc(curRej().acao)+'</a>'; }
+    if(state==='rejeitado'){ f+='<a class="btn btn--primary btn--lg" href="plano-contas-classificar.html?modo=editar&corr=rejeitado&emp='+EMPQ+'">'+IC_PENCIL+esc(curRej().acao)+'</a>'; }
     else { f+='<button class="btn btn--secondary btn--lg" type="button" data-comp-dl>'+DL+'Baixar XML</button><button class="btn btn--secondary btn--lg" type="button" data-comp-dl>'+DL+'Baixar PDF</button>'; }
     if(F) F.innerHTML=f;
   }

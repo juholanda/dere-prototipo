@@ -451,6 +451,9 @@
           </div>
 
           <div class="wrap">
+            <!-- UC9: banner persistente de "Ajustes solicitados" / "Rejeitada" quando o preparador vem corrigir
+                 (espelha o corrBanner do D-1001). Mostra o comentário real do aprovador. Preenchido por renderCorrBanner(). -->
+            <div id="corrBanner"></div>
             <!-- Banner da dependência do D-1001 (MS1069): o tom e o texto refletem o status real
                  (vigente = info / expira = atenção / sem vigente = bloqueio). Atualizado via JS (D1001). -->
             <div class="dalert dalert--info" id="d1001Banner" role="status" style="margin-bottom:var(--space-6);align-items:center">
@@ -1993,9 +1996,28 @@
   document.querySelectorAll('[data-menu]').forEach(function(m){ var b=m.querySelector('.avatar'), p=m.querySelector('.menu__panel'); if(!b||!p) return; b.addEventListener('click',function(){ var open=p.hasAttribute('hidden'); if(open){p.removeAttribute('hidden');b.setAttribute('aria-expanded','true');}else{p.setAttribute('hidden','');b.setAttribute('aria-expanded','false');} }); document.addEventListener('click',function(ev){ if(!m.contains(ev.target)){p.setAttribute('hidden','');b.setAttribute('aria-expanded','false');} }); });
 
 
+  /* UC9: banner persistente de ajuste/rejeição (espelha o corrBanner do D-1001). O comentário do aprovador
+     (real, se houver) vem de adere.d1011.decision.<emp>.comment; sem ele, um texto-padrão do contexto D-1011. */
+  function renderCorrBanner(){
+    var el=document.getElementById('corrBanner'); if(!el) return;
+    var corr=param('corr');
+    if(corr!=='ajustes' && corr!=='rejeitado'){ el.innerHTML=''; return; }
+    var ic='<span class="dalert__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg></span>';
+    var title, text;
+    if(corr==='ajustes'){
+      var cmt=''; try{ var d=JSON.parse(localStorage.getItem('adere.d1011.decision.'+empId)||'null'); if(d&&d.comment) cmt=d.comment; }catch(e){}
+      title='Ajustes solicitados por Ana Prado';
+      text=cmt||'Revisar o codTrib das contas de cosseguro antes de reenviar; confira também a descrição das analíticas.';
+    } else {
+      title='Versão rejeitada pela Receita Federal';
+      text='MS1077 · A conta referencial (cCtaRef) informada não existe no Plano de Contas Referencial SUSEP. Corrija na origem (planilha) e reenvie.';
+    }
+    el.innerHTML='<div class="dalert dalert--danger" role="status" style="margin-bottom:var(--space-6)">'+ic+'<div class="dalert__body"><p class="dalert__title">'+esc(title)+'</p><p class="dalert__text">'+esc(text)+'</p></div></div>';
+  }
   /* atalho de preview (#tabela) e modo alterar (a partir do detalhe): abrem direto na tabela do plano existente */
   (function(){
     initDatefields(document);   /* liga os datepickers da planmeta (Início/Fim da vigência): no modo editar/alterar a triagem não roda, então precisam ser ligados aqui */
+    renderCorrBanner();   /* UC9: se veio corrigir (corr=ajustes|rejeitado), mostra o banner persistente com o comentário */
     /* Toda manutenção (editar/alterar/corrigir após rejeição/abrir tabela completa) abre DIRETO na tabela do
        plano existente — nunca na tela de importação vazia (evita o beco "sumiu tudo o que classifiquei"). */
     if(location.hash==='#tabela' || location.hash==='#triagem' || IS_EDIT || HAS_MESA){
