@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Plano de Contas · Nova versão</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=66">
+  <link rel="stylesheet" href="../design-system/ds.css?v=67">
   <script src="../design-system/ds-tailwind.js"></script>
   <script src="../design-system/ds-dialog.js"></script>
   <style>
@@ -807,7 +807,7 @@
   function pcSetConseq(){
     var cq=document.getElementById('pcConfirmConseq'); if(!cq) return;
     if(!IS_ALT){ cq.hidden=true; return; }
-    var v=parseInt(param('v')||'2',10), src=(v>1?v-1:v), ini=(document.getElementById('pmVigIni')||{}).value||'';
+    var src=parseInt(param('v')||'1',10), v=src+1, ini=(document.getElementById('pmVigIni')||{}).value||'';   /* v (do link) = versão vigente atual; a nova versão é v+1 (numeração atual+1) */
     if(ini && pmBaseline && ini!==pmBaseline){
       cq.className='dalert dalert--warning'; cq.hidden=false;
       var vm=cq.getAttribute('data-vmode')||'novavig';
