@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Plano de Contas · Nova versão</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=63">
+  <link rel="stylesheet" href="../design-system/ds.css?v=64">
   <script src="../design-system/ds-tailwind.js"></script>
   <script src="../design-system/ds-dialog.js"></script>
   <style>
@@ -121,7 +121,7 @@
     .tbedit-metahd svg{width:14px;height:14px;flex:0 0 auto;color:var(--color-text-muted)}
     .tbedit-meta{display:flex;flex-wrap:wrap;gap:var(--space-1-5) var(--space-6);padding:0;background:transparent;border:0;margin:0}
     /* header da tabela sempre visível: a tabela cresce naturalmente (sem altura fixa) e o thead gruda no topo da rolagem da página (.cadscroll). O wrapper não pode ser container de scroll, senão prende o sticky. */
-    #tableCard .table-wrap{overflow:visible;padding:0 var(--space-4)}   /* alinha o conteúdo das células com os KPIs/progresso/toggle (recuo do card) */
+    #tableCard .table-wrap{overflow-x:auto;scrollbar-width:thin;padding:0 var(--space-4)}   /* recuo alinha as células aos KPIs/toggle; overflow-x:auto mantém a borda direita do card intacta (a tabela larga rola dentro, não vaza) */
     #tableCard .table thead th{position:sticky;top:0;z-index:2}
     .tbedit-meta__i{display:inline-flex;align-items:baseline;gap:var(--space-1-5);font-size:var(--text-sm);white-space:nowrap}
     .tbedit-meta__k{color:var(--color-text-muted)}
@@ -171,7 +171,19 @@
     .tbsummary{padding:var(--space-6) var(--space-8);border-bottom:1px solid var(--color-border);display:flex;flex-direction:column;gap:var(--space-6)}
     .tbstats{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-4)}
     /* barra de ferramentas da tabela (toggle + revisar) logo acima da tabela, à direita */
-    .tbtools{display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);flex-wrap:wrap;padding:var(--space-6) var(--space-8)}   /* toggle à esquerda, Revisar triagem à direita */
+    .tbtools{display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);flex-wrap:wrap;padding:var(--space-6) var(--space-8) var(--space-2)}   /* toggle à esquerda, Revisar triagem à direita */
+    #tableCard .filterbar{padding:0 var(--space-8) var(--space-4)}   /* "Filtrando por" alinhado ao recuo do card, logo acima da tabela */
+    #tableCard .tbpager{display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);flex-wrap:wrap;padding:var(--space-4) var(--space-8);border-top:1px solid var(--color-border)}
+    #tableCard .tbpager[hidden]{display:none}
+    .tbpager__count{font-size:var(--text-sm);color:var(--color-text-muted)}
+    .tbpager__count strong{color:var(--color-heading);font-variant-numeric:tabular-nums}
+    .tbpager__gap{padding:0 var(--space-1);color:var(--color-text-muted)}
+    /* skeleton de carga da tabela (plano grande sendo carregado) */
+    .tbskel td{padding:var(--space-3) var(--space-4)}
+    .tbskel .skeleton{height:14px;border-radius:var(--radius-sm)}
+    .valdrawer-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:var(--space-2)}
+    .valdrawer-list li{display:flex;gap:var(--space-3);align-items:flex-start;padding:var(--space-3) var(--space-4);background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-lg);font-size:var(--text-sm);color:var(--color-text);line-height:1.5}
+    .valdrawer-list li b{color:var(--color-heading);font-variant-numeric:tabular-nums}
     @media(max-width:640px){ .tbtools{justify-content:stretch} .tbtools .segmented{flex:1} }
     .tbempty{padding:var(--space-8);text-align:center;color:var(--color-text-muted);font-size:var(--text-sm)}
     @media(max-width:900px){.tbstats{grid-template-columns:repeat(2,1fr)}}
@@ -249,6 +261,10 @@
     @keyframes aispark{0%,100%{opacity:.55;transform:scale(.9) rotate(-6deg)}50%{opacity:1;transform:scale(1.06) rotate(6deg)}}
     @media(prefers-reduced-motion:reduce){.aititle__spark svg{animation:none;opacity:1;transform:none}}
     .aimain__lead{font-size:var(--text-base);color:var(--color-text-muted);margin:0 0 var(--space-6);line-height:1.5}
+    /* empty state de sucesso quando todos os grupos já foram tratados (fundo cinza claro + ícone em verde) */
+    .aitri-done{background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-xl);padding:var(--space-6) var(--space-8)}
+    .aitri-done .empty__icon{background:color-mix(in srgb, var(--color-success-fg) 14%, var(--color-surface));color:var(--color-success-fg)}
+    .aitri-done .empty__text{max-width:48ch}
     #aiLead{font-size:var(--text-sm);margin-bottom:var(--space-3)}
     .aifoot{flex:0 0 auto;border-top:1px solid var(--color-border);padding:var(--space-4) var(--space-8);display:flex;align-items:center;justify-content:space-between;gap:var(--space-3)}
     .aifoot--end{justify-content:flex-end}
@@ -295,7 +311,7 @@
     .aigfield__lbl label{margin-bottom:0}
     .aigvig{display:flex;gap:var(--space-4);flex-wrap:wrap}
     .aigvig .aigfield{flex:1;min-width:150px}
-    .aigvig .aigvig__ab{margin-top:var(--space-3);margin-bottom:0;display:inline-flex;font-size:var(--text-sm);font-weight:400;color:var(--color-text)}
+    .aigvig__ab{margin-top:var(--space-3);margin-bottom:0;display:inline-flex;font-size:var(--text-sm);font-weight:400;color:var(--color-text)}   /* checkbox "Vigência em aberto": afasta do campo de data — vale no grid do editor (sem wrapper .aigvig) e no lado a lado */
     .aigchecks{display:flex;flex-direction:column;gap:var(--space-3)}
     .aimanual{margin-top:var(--space-8);padding-top:var(--space-6);border-top:1px solid var(--color-border)}
     .aimanual__h{font-size:var(--text-base);font-weight:700;color:var(--color-heading);margin:0 0 var(--space-1)}
@@ -533,6 +549,7 @@
                 </div>
                 <button class="btn btn--secondary" type="button" id="btnReTriage"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4M22 5h-4M4 17v2M5 18H3"/></svg>Revisar triagem</button>
               </div>
+              <div class="filterbar" id="tbFilterBar" role="status" aria-live="polite" hidden></div>
               <div class="table-wrap">
                 <table class="table">
                   <thead><tr>
@@ -546,6 +563,7 @@
                   <tbody id="tbRows"></tbody>
                 </table>
               </div>
+              <div class="tbpager" id="tbPager" hidden></div>
             </section>
           </div>
         </div>
@@ -658,6 +676,10 @@
           <span class="dalert__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span>
           <div class="dalert__body"><p class="dalert__text">A conta mãe vira <strong>sintética</strong> e deixa de ter codTrib. Cada subconta nasce analítica, <strong>herda o mesmo referencial (cCtaRef <span id="dsbRefCode" style="font-variant-numeric:tabular-nums">—</span>)</strong> da mãe e recebe o próprio codTrib depois, na tabela. O código de cada subconta é gerado pelo sistema.</p></div>
         </div>
+        <div class="dalert dalert--warning" id="dsbWarnCt" role="alert" hidden style="margin:0 0 var(--space-6)">
+          <span class="dalert__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg></span>
+          <div class="dalert__body"><p class="dalert__text">Esta conta já está classificada com o codTrib <strong id="dsbWarnCode" style="font-variant-numeric:tabular-nums">—</strong>. Ao desdobrar, a mãe vira sintética e esse código é <strong>descartado</strong> (cada subconta recebe o seu).</p></div>
+        </div>
         <div class="dsb-list">
           <div class="dsb-list__hd">
             <span class="dsb-list__hd-k">Desdobrar em <strong id="dsbCount">2</strong> subcontas</span>
@@ -672,6 +694,39 @@
         <button class="btn btn--primary btn--lg" type="button" id="dsbGo">Desdobrar em 2 subcontas</button>
       </div>
     </div>
+  </div>
+
+  <!-- Confirmação de desfazer desdobramento (só aparece quando alguma subconta já foi classificada) -->
+  <div class="scrim" id="undoDsbModal" hidden>
+    <div class="modal modal--sm" role="dialog" aria-modal="true" aria-labelledby="undoDsbTitle">
+      <div class="modal__header modal__header--icon">
+        <span class="modal__ic modal__ic--danger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg></span>
+        <h3 class="modal__title" id="undoDsbTitle">Desfazer o desdobramento?</h3>
+        <button class="icon-btn" type="button" data-undodsb-close aria-label="Fechar" style="flex:0 0 auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="modal__body"><p id="undoDsbBody" style="margin:0;line-height:1.5;font-size:var(--text-base)"></p></div>
+      <div class="modal__footer">
+        <button class="btn btn--ghost btn--lg" type="button" data-undodsb-close>Manter desdobramento</button>
+        <button class="btn btn--danger btn--lg" type="button" id="undoDsbGo">Desfazer mesmo assim</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Drawer: lista das pendências de estrutura (o banner só resume a contagem; "ver detalhes" abre isto) -->
+  <div class="drawer-backdrop" id="valDrawer" hidden>
+    <aside class="drawer drawer--md" role="dialog" aria-modal="true" aria-labelledby="valDrawerTitle">
+      <div class="drawer__header">
+        <div>
+          <h2 id="valDrawerTitle" tabindex="-1">Pendências de estrutura</h2>
+          <p id="valDrawerSub">Vieram do plano importado. Corrija na origem (planilha) e reimporte: a Receita rejeitaria o evento enquanto existirem.</p>
+        </div>
+        <button class="icon-btn drawer__x" type="button" data-valdrawer-close aria-label="Fechar" data-tooltip="Fechar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="drawer__body"><ul class="valdrawer-list" id="valDrawerBody"></ul></div>
+      <div class="drawer__footer">
+        <button class="btn btn--secondary btn--lg" type="button" data-valdrawer-close>Fechar</button>
+      </div>
+    </aside>
   </div>
 
   <div class="toast-wrap" id="toasts" aria-live="polite"></div>
@@ -832,43 +887,42 @@
 
   /* ================= modelo único de contas (triagem e tabela compartilham) ================= */
   var STEPS=['Lendo dados da planilha importada','Identificando contas analíticas','Gerando sugestões de codTrib','Sugerindo a descrição (o "comentado")','Calculando níveis de confiança'];
-  var CODTRIB_NAMES={'110010101':'Prêmios de seguros diretos','218010301':'Rendimentos de aplicações financeiras','110020101':'Prêmios de cosseguro cedidos','310010101':'Sinistros de seguros diretos','410010201':'Despesas de comercialização','110250001':'Não tributável · Exportação de serviços','110250002':'Não tributável / alíquota zero (geral)'};
-  /* Tabela 11 (subconjunto ilustrativo; codTrib de 9 dígitos, regra oficial MS1115). grp:'notrib' = família 11025 (não tributáveis / alíquota zero) */
+  var CODTRIB_NAMES={'111111101':'Prêmios de seguros e resseguros recebidos','110112003':'Rendimentos em operações de TVM','111111623':'Prêmio pago em cosseguro','111111801':'Indenizações pagas a segurados (sinistros)','111111622':'Serviços de intermediação de seguros','111111624':'Parcela de prêmios destinada a provisões','111111102':'Reversão de provisões ou reserva técnica','110250001':'Não tributável · Exportação de serviços','111111401':'Não tributável · valores do PIS/Cofins'};
+  /* Tabela 11 (subconjunto real do Anexo I v1.1.0; codTrib de 9 dígitos, regra oficial MS1115). grp:'notrib' = valores recebidos não tributáveis / alíquota zero */
   var T11=[
-    {code:'110010101', nome:'Prêmios de seguros diretos'},
-    {code:'110020101', nome:'Prêmios de cosseguro cedidos'},
-    {code:'120030101', nome:'Rendas de prestação de serviços'},
-    {code:'218010301', nome:'Rendimentos de aplicações financeiras'},
-    {code:'250010101', nome:'Provisões técnicas'},
-    {code:'310010101', nome:'Sinistros de seguros diretos'},
-    {code:'320010101', nome:'Despesas administrativas · Pessoal'},
-    {code:'410010201', nome:'Despesas de comercialização'},
-    {code:'510090101', nome:'Outras despesas administrativas'},
+    {code:'111111101', nome:'Prêmios de seguros, cosseguros e resseguros recebidos'},
+    {code:'111111623', nome:'Prêmio pago em operações de cosseguro'},
+    {code:'111111624', nome:'Parcela de prêmios destinada a provisões técnicas'},
+    {code:'111111622', nome:'Serviços de intermediação de seguros (comercialização)'},
+    {code:'111111801', nome:'Indenizações pagas a segurados (sinistros)'},
+    {code:'111111102', nome:'Reversão de provisões ou reserva técnica'},
+    {code:'110112003', nome:'Valores recebidos em operações de TVM'},
     {code:'110250001', nome:'Exportação de serviços', grp:'notrib'},
-    {code:'110250002', nome:'Alíquota zero / não tributável (geral)', grp:'notrib'}
+    {code:'111111401', nome:'Valores tributados pelo PIS/Cofins · não tributáveis', grp:'notrib'}
   ];
   function t11name(code){ if(!code) return ''; if(CODTRIB_NAMES[code]) return CODTRIB_NAMES[code]; var f=T11.filter(function(x){return x.code===code;})[0]; return f?f.nome:''; }
+  function isNotrib(code){ for(var i=0;i<T11.length;i++){ if(T11[i].code===code) return T11[i].grp==='notrib'; } return false; }   /* não tributável = flag do T11 (não mais por prefixo, pois os códigos reais não compartilham prefixo) */
 
   var SEED_CONTAS=[
-    {cod:'3.1.1.01', nome:'Prêmios de seguros diretos · Vida', indCta:'A', codNat:4, natCta:'C', cCtaSup:'3.1.1', cCtaRef:'31111', cDbrMista:'000', desc:'Prêmios de apólices de seguro de vida emitidas diretamente.', vigIni:'01/01/2026', vigFim:'', codTrib:'110010101', origin:'validada', conf:'alta', iss:false},
-    {cod:'3.1.1.02', nome:'Prêmios de seguros diretos · Automóvel', indCta:'A', codNat:4, natCta:'C', cCtaSup:'3.1.1', cCtaRef:'31111', cDbrMista:'000', desc:'Prêmios de apólices de seguro de automóvel emitidas diretamente.', vigIni:'01/01/2026', vigFim:'', codTrib:'110010101', origin:'validada', conf:'alta', iss:false},
-    {cod:'3.2.1.01', nome:'Rendimentos de aplicações · Renda fixa', indCta:'A', codNat:4, natCta:'C', cCtaSup:'3.2.1', cCtaRef:'32101', cDbrMista:'000', desc:'Juros e correção de títulos de renda fixa da carteira.', vigIni:'01/01/2026', vigFim:'', codTrib:'218010301', origin:'sugerida', conf:'alta', iss:false},
-    {cod:'3.2.1.02', nome:'Rendimentos de aplicações · Renda variável', indCta:'A', codNat:4, natCta:'C', cCtaSup:'3.2.1', cCtaRef:'32101', cDbrMista:'000', desc:'Ganhos com ações e fundos de renda variável.', vigIni:'01/01/2026', vigFim:'', codTrib:'218010301', origin:'sugerida', conf:'alta', iss:false},
-    {cod:'3.1.2.01', nome:'Prêmios de cosseguro cedidos', indCta:'A', codNat:4, natCta:'D', cCtaSup:'3.1.2', cCtaRef:'31201', cDbrMista:'000', desc:'Parcela de prêmios repassada em cosseguro cedido.', vigIni:'01/01/2026', vigFim:'', codTrib:'110020101', origin:'sugerida', conf:'alta', iss:false},
-    {cod:'4.1.1.01', nome:'Sinistros de seguros diretos', indCta:'A', codNat:5, natCta:'D', cCtaSup:'4.1.1', cCtaRef:'41101', cDbrMista:'000', desc:'Indenizações pagas em sinistros de apólices diretas.', vigIni:'01/01/2026', vigFim:'', codTrib:'310010101', origin:'sugerida', conf:'alta', iss:false},
-    {cod:'4.2.1.01', nome:'Despesas de comercialização · Corretagem', indCta:'A', codNat:5, natCta:'D', cCtaSup:'4.2.1', cCtaRef:'42101', cDbrMista:'000', desc:'Comissões de corretagem sobre prêmios emitidos.', vigIni:'01/01/2026', vigFim:'', codTrib:'410010201', origin:'sugerida', conf:'media', iss:false},
-    {cod:'4.2.1.02', nome:'Despesas de comercialização · Agenciamento', indCta:'A', codNat:5, natCta:'D', cCtaSup:'4.2.1', cCtaRef:'42101', cDbrMista:'000', desc:'Despesas de agenciamento de vendas.', vigIni:'01/01/2026', vigFim:'', codTrib:'410010201', origin:'sugerida', conf:'media', iss:false},
+    {cod:'3.1.1.01', nome:'Prêmios de seguros diretos · Vida', indCta:'A', codNat:4, natCta:'C', cCtaSup:'3.1.1', cCtaRef:'31111', cDbrMista:'000', desc:'Prêmios de apólices de seguro de vida emitidas diretamente.', vigIni:'01/01/2026', vigFim:'', codTrib:'111111101', origin:'validada', conf:'alta', iss:false},
+    {cod:'3.1.1.02', nome:'Prêmios de seguros diretos · Automóvel', indCta:'A', codNat:4, natCta:'C', cCtaSup:'3.1.1', cCtaRef:'31111', cDbrMista:'000', desc:'Prêmios de apólices de seguro de automóvel emitidas diretamente.', vigIni:'01/01/2026', vigFim:'', codTrib:'111111101', origin:'validada', conf:'alta', iss:false},
+    {cod:'3.2.1.01', nome:'Rendimentos de aplicações · Renda fixa', indCta:'A', codNat:4, natCta:'C', cCtaSup:'3.2.1', cCtaRef:'32101', cDbrMista:'000', desc:'Juros e correção de títulos de renda fixa da carteira.', vigIni:'01/01/2026', vigFim:'', codTrib:'110112003', origin:'sugerida', conf:'alta', iss:false},
+    {cod:'3.2.1.02', nome:'Rendimentos de aplicações · Renda variável', indCta:'A', codNat:4, natCta:'C', cCtaSup:'3.2.1', cCtaRef:'32101', cDbrMista:'000', desc:'Ganhos com ações e fundos de renda variável.', vigIni:'01/01/2026', vigFim:'', codTrib:'110112003', origin:'sugerida', conf:'alta', iss:false},
+    {cod:'3.1.2.01', nome:'Prêmios de cosseguro cedidos', indCta:'A', codNat:4, natCta:'D', cCtaSup:'3.1.2', cCtaRef:'31201', cDbrMista:'000', desc:'Parcela de prêmios repassada em cosseguro cedido.', vigIni:'01/01/2026', vigFim:'', codTrib:'111111623', origin:'sugerida', conf:'alta', iss:false},
+    {cod:'4.1.1.01', nome:'Sinistros de seguros diretos', indCta:'A', codNat:5, natCta:'D', cCtaSup:'4.1.1', cCtaRef:'41101', cDbrMista:'000', desc:'Indenizações pagas em sinistros de apólices diretas.', vigIni:'01/01/2026', vigFim:'', codTrib:'111111801', origin:'sugerida', conf:'alta', iss:false},
+    {cod:'4.2.1.01', nome:'Despesas de comercialização · Corretagem', indCta:'A', codNat:5, natCta:'D', cCtaSup:'4.2.1', cCtaRef:'42101', cDbrMista:'000', desc:'Comissões de corretagem sobre prêmios emitidos.', vigIni:'01/01/2026', vigFim:'', codTrib:'111111622', origin:'sugerida', conf:'media', iss:false},
+    {cod:'4.2.1.02', nome:'Despesas de comercialização · Agenciamento', indCta:'A', codNat:5, natCta:'D', cCtaSup:'4.2.1', cCtaRef:'42101', cDbrMista:'000', desc:'Despesas de agenciamento de vendas.', vigIni:'01/01/2026', vigFim:'', codTrib:'111111622', origin:'sugerida', conf:'media', iss:false},
     {cod:'2.3.1.01', nome:'Provisões técnicas · Constituição', indCta:'A', codNat:2, natCta:'C', cCtaSup:'2.3.1', cCtaRef:'23101', cDbrMista:'000', desc:'Constituição de provisões técnicas do período.', vigIni:'01/01/2026', vigFim:'', codTrib:null, origin:'classificar', reason:'sem-sugestao', conf:null, iss:false},
     {cod:'2.9.1.01', nome:'Conta mista · Tributos a recuperar e a recolher', indCta:'A', codNat:2, natCta:'V', cCtaSup:'2.9.1', cCtaRef:'29101', cDbrMista:'000', desc:'Conta com desdobramentos de naturezas distintas (a recuperar e a recolher).', vigIni:'01/01/2026', vigFim:'', codTrib:null, origin:'classificar', reason:'mista', conf:null, iss:false}
   ];
   /* MOCK: mais contas só para visualizar a tabela com volume (dados de exemplo, não oficiais) */
   (function(){
     var groups=[
-      {p:'3.3', nm:'Receita de prestação de serviços', codNat:4, natCta:'C', ct:'120030101'},
-      {p:'3.4', nm:'Outras receitas operacionais', codNat:4, natCta:'C', ct:'110010101'},
-      {p:'4.3', nm:'Despesas administrativas', codNat:5, natCta:'D', ct:'320010101'},
-      {p:'4.4', nm:'Despesas com pessoal', codNat:5, natCta:'D', ct:'320010101'},
-      {p:'4.5', nm:'Outras despesas operacionais', codNat:5, natCta:'D', ct:'510090101'},
+      {p:'3.3', nm:'Receita de prestação de serviços', codNat:4, natCta:'C', ct:'110112003'},
+      {p:'3.4', nm:'Outras receitas operacionais', codNat:4, natCta:'C', ct:'111111102'},
+      {p:'4.3', nm:'Despesas administrativas', codNat:5, natCta:'D', ct:'111111622'},
+      {p:'4.4', nm:'Despesas com pessoal', codNat:5, natCta:'D', ct:'111111623'},
+      {p:'4.5', nm:'Outras despesas operacionais', codNat:5, natCta:'D', ct:'111111801'},
       {p:'2.1', nm:'Obrigações fiscais a recolher', codNat:2, natCta:'C', ct:null},
       {p:'1.2', nm:'Créditos a receber', codNat:1, natCta:'D', ct:null}
     ];
@@ -881,7 +935,10 @@
       }
     });
   })();
-  var contas=null, openG={}, openC={}, openAcc={}, altG={}, openEdit=null, manualOpen=true, TBFILTER='', TBSORT={key:'cod',dir:'asc'}, TBVIEW='tabela', openTree={};
+  var contas=null, openG={}, openC={}, openAcc={}, altG={}, openEdit=null, manualOpen=true, TBFILTER='', TBSORT={key:'cod',dir:'asc'}, TBVIEW='tabela', openTree={}, LAST_VRES=[];
+  var TBPAGE=1, TBPP=50;   /* paginação da tabela (o produto promete até 50k contas): 50 por página */
+  var TBSTATE=(function(){ var e=param('estado'); return (e==='carregando'||e==='erro'||e==='semacesso')?e:'ok'; })();   /* estados da tabela demonstráveis por URL (carga/erro/permissão), como o detalhe usa ?st= */
+  var FILTER_LABELS={ok:'Contas validadas', ia:'Sugeridas pela IA', none:'A classificar'};   /* rótulos legíveis do filtro por KPI (padrão "Filtrando por: X") */
   function clone(x){ return JSON.parse(JSON.stringify(x)); }
   function findC(cod){ for(var i=0;i<contas.length;i++){ if(contas[i].cod===cod) return contas[i]; } return null; }
   /* rótulos do leiaute D-1011 */
@@ -971,13 +1028,34 @@
       return '<div class="dalert dalert--warning" role="status" style="margin-bottom:var(--space-4)"><span class="dalert__ic">'+warnic+'</span><div class="dalert__body"><p class="dalert__text"><b>Estrutura conferida, mas a classificação está incompleta.</b> Faltam <b>'+o.none+' conta(s) analíticas a classificar</b> (sem codTrib). Toda conta analítica precisa de um código de tributação antes do envio; a Receita rejeita sem ele.</p></div></div>';
     }
     if(!vres.length){
-      return '<div class="dalert dalert--success" role="status" style="margin-bottom:var(--space-4)"><span class="dalert__ic">'+okic+'</span><div class="dalert__body"><p class="dalert__text"><b>Estrutura conferida e '+o.total+' contas classificadas.</b> Hierarquia correta, sem código de conta repetido e cada conta apontando para uma conta válida do plano de referência ('+esc(e.ref)+'). Nada impede o envio.</p></div></div>';
+      return '<div class="dalert dalert--success" role="status" style="margin-bottom:var(--space-4)"><span class="dalert__ic">'+okic+'</span><div class="dalert__body"><p class="dalert__text"><b>Estrutura conferida e '+o.total+' contas classificadas.</b> Hierarquia correta, sem código de conta repetido e cada conta apontando para uma conta válida do plano de referência ('+esc(curPlanoRef)+'). Nada impede o envio.</p></div></div>';
     }
-    var items=vres.slice(0,8).map(function(f){ return '<li><span class="status status--danger status--micro">'+esc(f.ms)+'</span> <b class="num">'+esc(f.cod)+'</b> · '+esc(f.msg)+'</li>'; }).join('');
-    var more=vres.length>8?('<li style="color:var(--color-text-muted)">… e mais '+(vres.length-8)+' pendência(s).</li>'):'';
-    return '<div class="dalert dalert--danger" role="alert" style="margin-bottom:var(--space-4)"><span class="dalert__ic">'+warnic+'</span><div class="dalert__body"><p class="dalert__text"><b>'+vres.length+' pendência(s) de estrutura impedem o envio.</b> Corrija na origem (planilha) e reimporte. A Receita rejeitaria o evento.</p><ul style="margin:var(--space-2) 0 0;padding-left:var(--space-4);display:flex;flex-direction:column;gap:var(--space-1);font-size:var(--text-sm)">'+items+more+'</ul></div></div>';
+    /* banner compacto: só a contagem + "ver detalhes" → o drawer lista as pendências (não polui o resumo) */
+    LAST_VRES=vres;
+    var plural=vres.length>1;
+    return '<div class="dalert dalert--danger" role="alert" style="margin-bottom:var(--space-4)"><span class="dalert__ic">'+warnic+'</span><div class="dalert__body"><p class="dalert__text"><b>'+vres.length+' pendência'+(plural?'s':'')+' de estrutura '+(plural?'impedem':'impede')+' o envio.</b> '+(plural?'Vieram':'Veio')+' do plano importado. Corrija na origem (planilha) e reimporte; a Receita rejeitaria o evento.</p></div><div class="dalert__act"><button type="button" class="btn btn--secondary btn--sm" data-open-valdrawer><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>Ver '+(plural?('as '+vres.length+' pendências'):'a pendência')+'</button></div></div>';
   }
 
+  /* Drawer com a lista completa das pendências de estrutura (o banner só resume) */
+  function renderValDrawer(){
+    var sub=document.getElementById('valDrawerSub'), body=document.getElementById('valDrawerBody'), ttl=document.getElementById('valDrawerTitle');
+    if(ttl) ttl.textContent='Pendências de estrutura ('+LAST_VRES.length+')';
+    if(sub) sub.textContent=(LAST_VRES.length>1?'Vieram':'Veio')+' do plano importado. Corrija na origem (planilha) e reimporte: a Receita rejeitaria o evento enquanto '+(LAST_VRES.length>1?'existirem':'existir')+'.';
+    if(body) body.innerHTML=LAST_VRES.map(function(f){ return '<li><span class="status status--danger status--micro">'+esc(f.ms)+'</span><span><b>'+esc(f.cod)+'</b> · '+esc(f.msg)+'</span></li>'; }).join('') || '<li>Nenhuma pendência.</li>';
+  }
+  function openValDrawer(){ renderValDrawer(); var bd=document.getElementById('valDrawer'); if(window.dsDialog) dsDialog.open(bd,{focus:document.getElementById('valDrawerTitle')}); else bd.hidden=false; }
+  function closeValDrawer(){ if(window.dsDialog) dsDialog.close(); else document.getElementById('valDrawer').hidden=true; }
+  /* Sincroniza o estado visual do filtro sem re-render do resumo (evita "piscar"): marca o KPI ativo e mostra a barra "Filtrando por" */
+  function syncFilterUI(){
+    var sum=document.getElementById('tbSummary');
+    if(sum){ Array.prototype.forEach.call(sum.querySelectorAll('[data-kpi]'),function(b){ var on=(b.getAttribute('data-kpi')===TBFILTER); b.classList.toggle('is-active',on); b.setAttribute('aria-pressed',String(on)); }); }
+    var bar=document.getElementById('tbFilterBar'); if(!bar) return;
+    if(TBFILTER && TBVIEW==='tabela'){
+      var lbl=FILTER_LABELS[TBFILTER]||TBFILTER;
+      bar.innerHTML='<span class="filterbar__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg></span><span class="filterbar__lbl">Filtrando por</span><span class="filterbar__chip">'+esc(lbl)+'<button type="button" class="filterbar__x" data-clear-filter aria-label="Limpar filtro: '+esc(lbl)+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></span>';
+      bar.hidden=false;
+    } else { bar.hidden=true; bar.innerHTML=''; }
+  }
   var CHECK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>';
   function renderSteps(activeIdx){
     document.getElementById('aiSteps').innerHTML=STEPS.map(function(s,i){
@@ -1199,7 +1277,7 @@
         (altG[g.code]?altPickerHtml(g):'')+
         (open?contaDetail(g):'')+
       '</div>';
-    }).join('') || '<p class="aimain__lead" style="margin:0">Todos os grupos foram tratados. Confirme para ir à tabela.</p>';
+    }).join('') || '<div class="empty aitri-done"><span class="empty__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></svg></span><p class="empty__title">Tudo tratado por aqui</p><p class="empty__text">Você já tratou todos os grupos sugeridos. Confirme abaixo para ir à tabela e revisar conta a conta.</p></div>';
 
     var av=acceptedView();
     var wrap=document.getElementById('aiAcceptedWrap');
@@ -1385,7 +1463,7 @@
     if(c.origin==='sugerida'){ return '<span class="status status--ia">'+SPARK+'Sugerida pela IA</span>'; }
     return '<span class="status status--warning"><span class="status__dot"></span>A classificar</span>';
   }
-  function ctCell(c){ if(!c.codTrib) return '<span class="muted">—</span>'; if((''+c.codTrib).indexOf('11025')===0) return '<span class="tag">Não tributável · alíquota zero</span>'; return '<span class="ct-code">'+esc(c.codTrib)+'</span>'; }  /* não tributável (família 11025) = mesmo selo da visualização */
+  function ctCell(c){ if(!c.codTrib) return '<span class="muted">—</span>'; if(isNotrib(c.codTrib)) return '<span class="tag">Não tributável · <span class="ct-code">'+esc(c.codTrib)+'</span></span>'; return '<span class="ct-code">'+esc(c.codTrib)+'</span>'; }  /* não tributável = flag do T11 (o codTrib segue obrigatório e aparece) */
   function editorHtml(c){
     if(c.vigAberta==null) c.vigAberta=!c.vigFim;
     var comboVal=c.codTrib?(c.codTrib+' — '+t11name(c.codTrib)):'';
@@ -1410,7 +1488,7 @@
       return '<button type="button" class="'+(selected?'is-selected':'')+'"'+(selected?' aria-current="true"':'')+' data-pick="'+o.code+'" data-cod="'+esc(c.cod)+'" data-search="'+esc((o.code+' '+o.nome).toLowerCase())+'"><span class="tbcombo__c">'+o.code+'</span><span class="tbcombo__n">'+esc(o.nome)+'</span>'+right+'</button>';
     };
     /* toggle Tributável × Não tributável escopa o combo (o codTrib continua obrigatório nos dois casos — o "não tributável" é um código 11025) */
-    var ctIsNotrib = c.codTrib && (''+c.codTrib).indexOf('11025')===0;
+    var ctIsNotrib = c.codTrib && isNotrib(c.codTrib);
     var tribOpts='';
     if(sugCode && compat.length){
       tribOpts+='<div class="tbcombo__grp" data-combo-sub>Mais compatíveis</div>'+compat.map(function(o,i){return comboBtn(o, SCORES[i]!=null?SCORES[i]:60, o.code===sugCode);}).join('');
@@ -1478,11 +1556,12 @@
     if(va<vb) return -dir; if(va>vb) return dir; return 0;
   }
   function setTbFilter(key){
-    TBFILTER=(TBFILTER===key)?'':key; openEdit=null;
+    TBFILTER=(TBFILTER===key)?'':key; openEdit=null; TBPAGE=1;   /* novo filtro volta pra 1ª página */
     /* filtrar só faz sentido na Tabela (a Árvore é hierárquica) → ao filtrar, volta pra Tabela e sincroniza o toggle */
     if(TBFILTER && TBVIEW!=='tabela'){ TBVIEW='tabela'; var _tg=document.getElementById('tbViewToggle'); if(_tg) _tg.querySelectorAll('[data-view]').forEach(function(x){ var on=x.getAttribute('data-view')==='tabela'; x.classList.toggle('is-active',on); x.setAttribute('aria-pressed',String(on)); }); }
     var body=document.getElementById('tbRows');
-    function done(){ renderTable(); var b=document.querySelector('#tbSummary [data-kpi="'+key+'"]'); if(b) b.focus(); }
+    /* só as linhas mudam com o filtro; o resumo (KPIs/progresso) fica igual → renderRows()+syncFilterUI(), sem redesenhar o resumo (não pisca) */
+    function done(){ renderRows(); syncFilterUI(); var b=document.querySelector('#tbSummary [data-kpi="'+key+'"]'); if(b) b.focus(); }
     if(body && !REDUCE){
       body.style.transition='opacity .16s ease'; body.style.opacity='0';
       setTimeout(function(){ done(); body.style.opacity='1'; setTimeout(function(){ body.style.transition=''; },200); },150);
@@ -1547,15 +1626,23 @@
     document.getElementById('tbRows').innerHTML=html||'<tr><td colspan="6" class="tbempty">Sem contas.</td></tr>';
     initDatefields(document.getElementById('tbRows'));
     applyTreeVis();
-    renderTbSummary();
   }
-  function renderTable(){
+  /* renderTable() = linhas + resumo (usar quando os DADOS mudam). renderRows() só as linhas
+     (usar em filtro/ordenação/troca de visão: o resumo não muda, então não é redesenhado — não pisca). */
+  function renderTable(){ renderRows(); renderTbSummary(); syncFilterUI(); }
+  function renderRows(){
     if(!contas) return;
-    if(TBVIEW==='arvore'){ renderTree(); return; }
+    var pager=document.getElementById('tbPager');
+    if(TBSTATE!=='ok'){ renderTbState(); if(pager) pager.hidden=true; return; }   /* carga/erro/permissão têm prioridade sobre a listagem */
+    if(TBVIEW==='arvore'){ if(pager) pager.hidden=true; renderTree(); return; }
     var rows=contas.filter(tbMatch);
     if(TBSORT.key){ rows=rows.slice().sort(tbCmp); }
-    if(!rows.length){ document.getElementById('tbRows').innerHTML='<tr><td colspan="6" class="tbempty">Nenhuma conta neste filtro.</td></tr>'; renderTbSummary(); return; }
-    document.getElementById('tbRows').innerHTML=rows.map(function(c){
+    if(!rows.length){ document.getElementById('tbRows').innerHTML='<tr><td colspan="6" class="tbempty">Nenhuma conta neste filtro.</td></tr>'; if(pager) pager.hidden=true; return; }
+    var total=rows.length, pages=Math.max(1, Math.ceil(total/TBPP));
+    if(openEdit){ var _i=rows.map(function(x){return x.cod;}).indexOf(openEdit); if(_i>=0) TBPAGE=Math.floor(_i/TBPP)+1; }   /* abrir editor salta pra página da conta */
+    if(TBPAGE>pages) TBPAGE=pages; if(TBPAGE<1) TBPAGE=1;
+    var _start=(TBPAGE-1)*TBPP, pageRows=rows.slice(_start, _start+TBPP);
+    document.getElementById('tbRows').innerHTML=pageRows.map(function(c){
       var actLabel=(openEdit===c.cod)?'Fechar':(c.origin==='classificar'&&c.indCta!=='S'?'Classificar':'Editar');
       var actCls=(c.origin==='classificar'&&c.indCta!=='S'&&openEdit!==c.cod)?'btn--primary':'btn--secondary';
       var row='<tr class="tbrow'+(openEdit===c.cod?' is-open':'')+'" data-cod="'+esc(c.cod)+'">'+
@@ -1569,9 +1656,47 @@
       return row + (openEdit===c.cod?editorHtml(c):'');
     }).join('');
     initDatefields(document.getElementById('tbRows'));   /* calendário do DS no editor (mesmo da triagem) */
-    renderTbSummary();
+    renderPager(total, pages, _start, pageRows.length);
+  }
+  /* paginação da tabela (padrão .pagination/.page-btn do DS) */
+  function renderPager(total, pages, start, shown){
+    var pager=document.getElementById('tbPager'); if(!pager) return;
+    if(pages<=1){ pager.hidden=true; pager.innerHTML=''; return; }
+    var CHEVL='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>';
+    var CHEVR='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>';
+    function pb(label,page,dis,active,aria){ return '<button type="button" class="page-btn'+(active?' is-active':'')+'"'+(dis?' disabled':'')+' data-page="'+page+'"'+(aria?' aria-label="'+aria+'"':'')+(active?' aria-current="page"':'')+'>'+label+'</button>'; }
+    var btns=pb(CHEVL, TBPAGE-1, TBPAGE<=1, false, 'Página anterior');
+    var e=Math.min(pages, Math.max(1,TBPAGE-2)+4), s=Math.max(1, e-4);
+    if(s>1){ btns+=pb('1',1,false,TBPAGE===1); if(s>2) btns+='<span class="tbpager__gap" aria-hidden="true">…</span>'; }
+    for(var p=s;p<=e;p++){ btns+=pb(''+p,p,false,p===TBPAGE); }
+    if(e<pages){ if(e<pages-1) btns+='<span class="tbpager__gap" aria-hidden="true">…</span>'; btns+=pb(''+pages,pages,false,TBPAGE===pages); }
+    btns+=pb(CHEVR, TBPAGE+1, TBPAGE>=pages, false, 'Próxima página');
+    pager.innerHTML='<span class="tbpager__count">Mostrando <strong>'+(start+1)+'–'+(start+shown)+'</strong> de <strong>'+total+'</strong> contas</span><span class="pagination">'+btns+'</span>';
+    pager.hidden=false;
+  }
+  /* estados da tabela: carga (skeleton), erro de carregamento (com repetir) e sem permissão */
+  function renderTbState(){
+    var body=document.getElementById('tbRows'); if(!body) return;
+    if(TBSTATE==='carregando'){
+      var w=['70%','55%','52%','60%','58%','42%'];
+      body.innerHTML=Array.apply(null,{length:8}).map(function(){
+        return '<tr class="tbskel">'+w.map(function(ww,i){ return '<td'+(i===5?' class="col-act"':'')+'><span class="skeleton" style="display:block;width:'+ww+';'+(i===5?'margin-left:auto':'')+'"></span></td>'; }).join('')+'</tr>';
+      }).join('');
+      return;
+    }
+    var ic, ttl, txt, act;
+    if(TBSTATE==='erro'){
+      ic='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>';
+      ttl='Não foi possível carregar as contas'; txt='Houve uma falha ao buscar o plano de contas do contribuinte. Verifique a conexão e tente novamente.';
+      act='<button type="button" class="btn btn--secondary" data-tb-retry><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Tentar novamente</button>';
+    } else {   /* semacesso */
+      ic='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
+      ttl='Você não tem acesso a estas contas'; txt='Seu perfil não permite ver ou editar as contas deste contribuinte. Fale com o administrador da conta para solicitar acesso.'; act='';
+    }
+    body.innerHTML='<tr><td colspan="6"><div class="empty" style="padding:var(--space-12) var(--space-6)"><span class="empty__icon">'+ic+'</span><p class="empty__title">'+ttl+'</p><p class="empty__text">'+txt+'</p>'+act+'</div></td></tr>';
   }
   function renderTbSummary(){
+    if(TBSTATE!=='ok'){ var _s=document.getElementById('tbSummary'); if(_s) _s.innerHTML=''; return; }   /* em carga/erro/sem-permissão o resumo não faz sentido */
     var o=stats();
     var pOk=o.total?Math.round(o.ok/o.total*100):0, pIa=o.total?Math.round(o.ia/o.total*100):0;
     function sv(inner){ return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+inner+'</svg>'; }
@@ -1665,7 +1790,7 @@
     var ths=document.querySelectorAll('#tableCard th.sortable');
     function updateHeaders(){ ths.forEach(function(th){ var on=th.getAttribute('data-sort')===TBSORT.key; th.setAttribute('aria-sort', on?(TBSORT.dir==='asc'?'ascending':'descending'):'none'); th.classList.toggle('is-sorted', on); }); }
     ths.forEach(function(th){
-      (th.querySelector('.th-btn')||th).addEventListener('click',function(){ var k=th.getAttribute('data-sort'); if(TBSORT.key===k){ TBSORT.dir=(TBSORT.dir==='asc'?'desc':'asc'); } else { TBSORT.key=k; TBSORT.dir='asc'; } openEdit=null; renderTable(); updateHeaders(); });
+      (th.querySelector('.th-btn')||th).addEventListener('click',function(){ var k=th.getAttribute('data-sort'); if(TBSORT.key===k){ TBSORT.dir=(TBSORT.dir==='asc'?'desc':'asc'); } else { TBSORT.key=k; TBSORT.dir='asc'; } openEdit=null; TBPAGE=1; renderRows(); syncFilterUI(); updateHeaders(); });   /* ordenar só reordena linhas; resumo intacto (não pisca) */
     });
     updateHeaders();
   })();
@@ -1674,9 +1799,21 @@
     var tg=document.getElementById('tbViewToggle'); if(!tg) return;
     tg.addEventListener('click',function(e){ var b=e.target.closest('[data-view]'); if(!b) return; if(b.getAttribute('data-view')===TBVIEW) return;
       TBVIEW=b.getAttribute('data-view'); openEdit=null;
+      if(TBVIEW==='arvore') TBFILTER='';   /* a árvore é hierárquica: filtro por KPI não se aplica → limpa o recorte ao entrar */
       tg.querySelectorAll('[data-view]').forEach(function(x){ var on=x===b; x.classList.toggle('is-active',on); x.setAttribute('aria-pressed',String(on)); });
-      renderTable();
+      renderRows(); syncFilterUI();   /* troca de visão não muda o resumo → não redesenha (não pisca) */
     });
+  })();
+  /* banner de pendências → drawer com a lista · chip "Filtrando por" → limpar (delegado, sobrevive aos re-renders) */
+  (function(){
+    document.addEventListener('click',function(ev){
+      if(ev.target.closest('[data-open-valdrawer]')){ openValDrawer(); return; }
+      if(ev.target.closest('[data-valdrawer-close]')){ closeValDrawer(); return; }
+      if(ev.target.closest('[data-clear-filter]')){ if(TBFILTER) setTbFilter(TBFILTER); return; }
+      var pgb=ev.target.closest('#tbPager [data-page]'); if(pgb && !pgb.disabled){ var np=parseInt(pgb.getAttribute('data-page'),10); if(np && np!==TBPAGE){ TBPAGE=np; openEdit=null; renderRows(); syncFilterUI(); var tc=document.getElementById('tableCard'); if(tc) tc.scrollIntoView({behavior:'smooth',block:'start'}); } return; }
+      if(ev.target.closest('[data-tb-retry]')){ TBSTATE='carregando'; renderRows(); setTimeout(function(){ TBSTATE='ok'; renderTable(); },700); return; }   /* repetir a carga: skeleton e depois a tabela */
+    });
+    var vb=document.getElementById('valDrawer'); if(vb) vb.addEventListener('click',function(ev){ if(ev.target===this) closeValDrawer(); });
   })();
   function saveConta(cod){
     var c=findC(cod); if(!c) return;
@@ -1706,6 +1843,8 @@
     var _code=document.getElementById('dsbSrcCode'); if(_code) _code.textContent=c.cod;
     var _name=document.getElementById('dsbSrcName'); if(_name) _name.textContent=c.nome||'';
     var _ref=document.getElementById('dsbRefCode'); if(_ref) _ref.textContent=c.cCtaRef||'—';
+    /* aviso: se a mãe já tem codTrib classificado, ele será descartado ao virar sintética */
+    var _w=document.getElementById('dsbWarnCt'); if(_w){ if(c.codTrib){ var _wc=document.getElementById('dsbWarnCode'); if(_wc) _wc.textContent=c.codTrib; _w.hidden=false; } else { _w.hidden=true; } }
     dsbRenderRows();
     var modal=document.getElementById('dsbModal');
     if(window.dsDialog) dsDialog.open(modal,{focus:document.querySelector('#dsbRows [data-dsb-nome]')}); else { modal.hidden=false; document.body.style.overflow='hidden'; }
@@ -1743,14 +1882,37 @@
     openEdit=kids[0].cod; renderTable();
     toast('Conta desdobrada em '+n+' subcontas. A mãe virou sintética; classifique cada subconta abaixo.','ok');
   }
-  /* desfazer o desdobramento: remove as subcontas e devolve a mãe a analítica (evita conta sintética sem filhas) */
+  /* desfazer o desdobramento: remove as subcontas e devolve a mãe a analítica (evita conta sintética sem filhas).
+     Se alguma subconta já foi classificada, confirma antes (o trabalho seria perdido). */
+  var _undoDsbCod=null;
   function desfazerDesdobramento(cod){
+    var c=findC(cod); if(!c) return;
+    var kids=dsbKids(cod);
+    var classif=kids.filter(function(k){ return k.codTrib || k.origin==='validada'; });
+    if(classif.length){
+      _undoDsbCod=cod;
+      var body=document.getElementById('undoDsbBody');
+      if(body) body.innerHTML='Esta conta foi desdobrada em <strong>'+kids.length+'</strong> subcontas e <strong>'+classif.length+'</strong> '+(classif.length>1?'já foram classificadas':'já foi classificada')+'. Desfazer remove todas as subcontas e devolve a mãe a analítica; a classificação '+(classif.length>1?'delas será perdida':'dela será perdida')+'.';
+      var m=document.getElementById('undoDsbModal');
+      if(window.dsDialog) dsDialog.open(m,{focus:m.querySelector('[data-undodsb-close]')}); else { m.hidden=false; document.body.style.overflow='hidden'; }
+      return;
+    }
+    _doDesfazer(cod);
+  }
+  function _doDesfazer(cod){
     var c=findC(cod); if(!c) return;
     contas=contas.filter(function(x){ return !(x.cDbrMista && x.cDbrMista!=='000' && x.cCtaSup===cod); });
     c.indCta='A'; c.origin=(c.codTrib&&(c.desc||'').trim())?'validada':'classificar';
     openEdit=cod; renderTable();
     toast('Desdobramento desfeito. A conta voltou a ser analítica.','info');
   }
+  function undoDsbClose(){ var m=document.getElementById('undoDsbModal'); if(window.dsDialog) dsDialog.close(); else { m.hidden=true; document.body.style.overflow=''; } }
+  (function(){
+    document.addEventListener('click',function(e){
+      if(e.target.closest('[data-undodsb-close]')||e.target.id==='undoDsbModal'){ undoDsbClose(); return; }
+      if(e.target.closest('#undoDsbGo')){ undoDsbClose(); if(_undoDsbCod){ _doDesfazer(_undoDsbCod); _undoDsbCod=null; } return; }
+    });
+  })();
 
   document.getElementById('btnImport').addEventListener('click',openPopup);
   document.getElementById('btnErp').addEventListener('click',function(){ toast('Integração direta com ERP em breve. Por ora, importe o plano por planilha.','info'); });

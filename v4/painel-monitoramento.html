@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Painel de Monitoramento</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=1788978341">
-  <script src="../design-system/ds-tailwind.js?v=1788978341"></script>
-  <script src="../design-system/ds-dialog.js?v=1788978341"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=64">
+  <script src="../design-system/ds-tailwind.js"></script>
+  <script src="../design-system/ds-dialog.js"></script>
   <style>
     /* ===== app-shell (igual às outras telas do v4) ===== */
     body{margin:0;background:var(--color-bg)}
@@ -257,7 +257,6 @@
     else{e.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg> Senha incorreta. Tente novamente.';i.select();}
     return false;}
 </script>
-
   <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
   <div class="shell">
     <nav class="sidenav sidenav--navy" data-sidenav aria-label="Navegação principal"><script>try{if(localStorage.getItem('adere.nav.collapsed')==='1'){var _n=document.querySelector('[data-sidenav]');if(_n)_n.classList.add('is-collapsed');}}catch(e){}</script>
@@ -1044,25 +1043,6 @@
   /* menu do usuário + colapsar (padrão do DS) */
   document.querySelectorAll('[data-menu]').forEach(function(menu){ var b=menu.querySelector('button'), p=menu.querySelector('.menu__panel'); if(!b||!p) return; b.addEventListener('click',function(e){ e.stopPropagation(); var o=p.hidden; document.querySelectorAll('.menu__panel').forEach(function(x){x.hidden=true;}); p.hidden=!o; b.setAttribute('aria-expanded',String(o)); }); document.addEventListener('click',function(e){ if(!menu.contains(e.target)){ p.hidden=true; b.setAttribute('aria-expanded','false'); } }); });
   document.querySelectorAll('[data-sidenav-toggle]').forEach(function(btn){ var nav=btn.closest('[data-sidenav]'); btn.addEventListener('click',function(){ var c=nav.classList.toggle('is-collapsed'); btn.setAttribute('aria-expanded',String(!c)); try{ localStorage.setItem('adere.nav.collapsed', c?'1':'0'); }catch(e){} }); });
-})();
-</script>
-<script>
-(function(){
-  var MYV='1788978341';
-  var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
-  var dirty=false;
-  document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
-  try{ if(/[?&]_cb=/.test(location.search)){ var u=new URLSearchParams(location.search); u.delete('_cb'); history.replaceState(null,'',location.pathname+(u.toString()?('?'+u.toString()):'')+location.hash); } }catch(e){}
-  function goFresh(v){ var s=location.search?'&':'?'; location.replace(location.pathname+location.search+s+'_cb='+encodeURIComponent(v)+location.hash); }
-  function check(force){
-    fetch(base+'?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null;}).then(function(d){
-      if(!d||!d.v||d.v===MYV) return;
-      if(force){ var k='dere_cb_'+d.v; if(!sessionStorage.getItem(k)){ sessionStorage.setItem(k,'1'); goFresh(d.v); } }
-      else if(!dirty){ goFresh(d.v); }
-    }).catch(function(){});
-  }
-  check(true);
-  document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='visible') check(false); });
 })();
 </script>
 </body>

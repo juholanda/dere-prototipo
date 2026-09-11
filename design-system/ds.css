@@ -834,6 +834,18 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 .dalert__text{font-size:var(--text-sm);color:var(--color-text);margin:var(--space-1) 0 0;line-height:1.55}
 .dalert__body{flex:1;min-width:0}
 .dalert__act{flex:0 0 auto;align-self:center;white-space:nowrap}
+/* Barra de filtro ativo (padrão reutilizável): fica logo acima de uma tabela/lista, com um ícone de funil,
+   o rótulo "Filtrando por" e um chip removível (× limpa o recorte). Use sempre que um KPI/atalho recortar a lista abaixo. */
+.filterbar{display:flex;align-items:center;flex-wrap:wrap;gap:var(--space-2);font-size:var(--text-sm);color:var(--color-text-muted)}
+.filterbar[hidden]{display:none}
+.filterbar__ic{display:inline-flex;align-items:center;color:var(--color-text-muted)}
+.filterbar__ic svg{width:15px;height:15px}
+.filterbar__lbl{color:var(--color-text-muted)}
+.filterbar__chip{display:inline-flex;align-items:center;gap:var(--space-1);padding:var(--space-1) var(--space-1) var(--space-1) var(--space-3);background:var(--color-primary-subtle);color:var(--color-primary-darker);border:1px solid color-mix(in srgb, var(--color-primary) 20%, transparent);border-radius:999px;font-weight:600;line-height:1.25}
+.filterbar__x{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;padding:0;border:0;border-radius:999px;background:transparent;color:inherit;cursor:pointer;opacity:.72;transition:opacity .12s ease,background-color .12s ease}
+.filterbar__x svg{width:13px;height:13px}
+.filterbar__x:hover{opacity:1;background:color-mix(in srgb, var(--color-primary) 16%, transparent)}
+.filterbar__x:focus-visible{outline:none;box-shadow:var(--ring);opacity:1}
 /* comentário citado dentro do banner (ex.: pedido de ajuste do aprovador, motivo da rejeição) */
 .dalert__comment{display:flex;gap:var(--space-3);margin-top:var(--space-3);padding:var(--space-4);background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-lg);font-size:var(--text-sm);color:var(--color-text);line-height:1.55}
 .dalert__comment svg{width:18px;height:18px;flex:0 0 auto;color:var(--color-text-muted);margin-top:1px}

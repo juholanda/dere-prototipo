@@ -89,6 +89,7 @@
     <a href="#status">Status, tags, badges</a>
     <a href="#alertas">Alertas</a>
     <a href="#tabela">Tabela</a>
+    <a href="#filtro">Filtro ativo</a>
     <a href="#accordion">Accordion</a>
     <a href="#abas">Abas</a>
     <a href="#modais">Modais</a>
@@ -628,6 +629,25 @@
             </tbody>
           </table>
         </div>
+      </section>
+
+      <!-- FILTRO ATIVO -->
+      <section class="sec" id="filtro">
+        <p class="sec__k">Componentes</p>
+        <h2>Filtro ativo</h2>
+        <p class="sec__hint">Fica logo <strong>acima de uma tabela ou lista</strong> quando um KPI ou atalho recorta o que está sendo exibido: mostra <strong>por que</strong> a lista está filtrada e deixa limpar em um clique. Padrão único <code>.filterbar</code> (ícone de funil + rótulo + chip removível) para reutilizar em toda tela que filtra.</p>
+        <div class="card"><div class="card__body stack" style="gap:18px">
+          <div class="filterbar">
+            <span class="filterbar__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg></span>
+            <span class="filterbar__lbl">Filtrando por</span>
+            <span class="filterbar__chip">Sugeridas pela IA<button type="button" class="filterbar__x" aria-label="Limpar filtro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></span>
+          </div>
+          <div class="filterbar">
+            <span class="filterbar__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg></span>
+            <span class="filterbar__lbl">Filtrando por</span>
+            <span class="filterbar__chip">A classificar<button type="button" class="filterbar__x" aria-label="Limpar filtro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></span>
+          </div>
+        </div></div>
       </section>
 
       <!-- ACCORDION -->
@@ -1369,25 +1389,6 @@
     links.forEach(function(a){ a.addEventListener('click',function(){ setTimeout(spy,60); }); });
     spy();
   })();
-</script>
-<script>
-(function(){
-  var MYV='1788978341';
-  var seg=location.pathname.split('/'); var base='/'+(seg[1]||'')+'/version.json';
-  var dirty=false;
-  document.addEventListener('input',function(e){ var t=e.target; if(t&&t.matches&&t.matches('input,textarea,select')) dirty=true; },true);
-  try{ if(/[?&]_cb=/.test(location.search)){ var u=new URLSearchParams(location.search); u.delete('_cb'); history.replaceState(null,'',location.pathname+(u.toString()?('?'+u.toString()):'')+location.hash); } }catch(e){}
-  function goFresh(v){ var s=location.search?'&':'?'; location.replace(location.pathname+location.search+s+'_cb='+encodeURIComponent(v)+location.hash); }
-  function check(force){
-    fetch(base+'?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null;}).then(function(d){
-      if(!d||!d.v||d.v===MYV) return;
-      if(force){ var k='dere_cb_'+d.v; if(!sessionStorage.getItem(k)){ sessionStorage.setItem(k,'1'); goFresh(d.v); } }
-      else if(!dirty){ goFresh(d.v); }
-    }).catch(function(){});
-  }
-  check(true);
-  document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='visible') check(false); });
-})();
 </script>
 </body>
 </html>
