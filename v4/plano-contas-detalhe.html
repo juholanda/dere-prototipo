@@ -273,15 +273,14 @@
 
           <!-- Contas -->
           <section class="card" aria-labelledby="d-contas">
-            <div class="card__h" style="justify-content:space-between;gap:var(--space-4);flex-wrap:wrap">
-              <div style="display:flex;align-items:center;gap:var(--space-3);min-width:0"><span class="card__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8M13 12h8M13 18h8"/></svg></span><h2 id="d-contas">Contas</h2></div>
-              <div class="ctbar__tools">
-                <span class="ctsearch">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                  <input type="search" id="ctSearch" class="input" placeholder="Ex.: 1.1.01 ou Caixa" aria-label="Buscar conta por código ou nome">
-                </span>
-                <div class="segmented" role="group" aria-label="Ver as contas"><button type="button" class="segmented__btn is-active" data-ctview="tabela">Tabela</button><button type="button" class="segmented__btn" data-ctview="arvore">Árvore</button></div>
-              </div>
+            <div class="card__h"><span class="card__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8M13 12h8M13 18h8"/></svg></span><h2 id="d-contas">Contas</h2></div>
+            <!-- toolbar da tabela: toggle Tabela/Árvore à esquerda, busca na extrema direita (mesmo lugar do editar) -->
+            <div class="ctbar">
+              <div class="segmented" role="group" aria-label="Ver as contas"><button type="button" class="segmented__btn is-active" data-ctview="tabela">Tabela</button><button type="button" class="segmented__btn" data-ctview="arvore">Árvore</button></div>
+              <span class="ctsearch" style="margin-left:auto">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                <input type="search" id="ctSearch" class="input" placeholder="Ex.: 1.1.01 ou Caixa" aria-label="Buscar conta por código ou nome">
+              </span>
             </div>
             <div class="table-wrap" id="ctTableWrap">
               <table class="table" aria-label="Contas do plano">

@@ -627,6 +627,17 @@
           </div>
           <div id="aiManual"></div>
         </div>
+        <!-- E4 (UC1): planilha inválida/parcial na importação. A estrutura vem da planilha (read-only): o sistema
+             lista as linhas problemáticas com o MS e NÃO segue para a triagem; o preparador corrige na origem e reimporta. -->
+        <div class="aimain__scroll" id="aiInvalid" hidden>
+          <h2 id="aiInvalidTitle">Importação com problemas</h2>
+          <p class="aimain__lead" id="aiInvalidLead">A planilha não seguiu para a triagem. Corrija os problemas de estrutura na origem e reimporte.</p>
+          <div class="dalert dalert--danger" role="alert" style="margin:0 0 var(--space-6)">
+            <span class="dalert__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg></span>
+            <div class="dalert__body"><p class="dalert__text">A estrutura das contas vem da planilha (<strong>read-only</strong>), então estes erros se corrigem <strong>na origem</strong>, não aqui. Ajuste a planilha e importe de novo; a Receita rejeitaria o evento com eles.</p></div>
+          </div>
+          <ul class="valdrawer-list" id="aiInvalidList"></ul>
+        </div>
 
         <footer class="aifoot aifoot--end" id="aiFootLoading">
           <button class="btn btn--secondary" type="button" id="aiCancel">Cancelar</button>
@@ -634,6 +645,10 @@
         <footer class="aifoot" id="aiFootTriage" hidden>
           <button class="btn btn--ghost btn--lg" type="button" id="aiDiscard">Descartar sugestões da IA</button>
           <button class="btn btn--primary btn--lg" type="button" id="aiConfirm">Confirmar e ir para a tabela</button>
+        </footer>
+        <footer class="aifoot" id="aiFootInvalid" hidden>
+          <button class="btn btn--ghost btn--lg" type="button" id="aiInvalidTpl"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>Baixar template</button>
+          <button class="btn btn--primary btn--lg" type="button" id="aiInvalidRetry"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>Corrigir e reimportar</button>
         </footer>
       </div>
     </div>
@@ -648,7 +663,7 @@
       </div>
       <div class="modal__body">
         <p id="pcConfirmDesc">O Plano de Contas (D-1011) vai para <b>revisão interna</b> do aprovador antes de ser transmitido à Receita.</p>
-        <div id="pcConfirmConseq" class="dalert" role="status" style="margin-bottom:var(--space-4)" hidden></div>
+        <div id="pcConfirmConseq" class="dalert" role="status" style="margin:var(--space-6) 0" hidden></div>
         <div class="cinfo"><div class="cinfo__row"><span class="cinfo__k" id="pcConfirmWhoK">Aprovador responsável</span><span class="cinfo__v" id="pcConfirmWhoV"><span class="avatar avatar--sm">AP</span>Ana Prado</span></div></div>
       </div>
       <div class="modal__footer">
@@ -699,7 +714,7 @@
     </div>
   </div>
 
-  <!-- Confirmação de desfazer desdobramento (só aparece quando alguma subconta já foi classificada) -->
+  <!-- Confirmação de desfazer desdobramento (SEMPRE confirma; a mensagem e o botão adaptam se há classificação a perder) -->
   <div class="scrim" id="undoDsbModal" hidden>
     <div class="modal modal--sm" role="dialog" aria-modal="true" aria-labelledby="undoDsbTitle">
       <div class="modal__header modal__header--icon">
@@ -1094,8 +1109,10 @@
     document.getElementById('aiSide').hidden=true;
     document.getElementById('aiLoading').hidden=false;
     document.getElementById('aiTriage').hidden=true;
+    document.getElementById('aiInvalid').hidden=true;
     document.getElementById('aiFootLoading').hidden=false;
     document.getElementById('aiFootTriage').hidden=true;
+    document.getElementById('aiFootInvalid').hidden=true;
     document.getElementById('stTotal').textContent='10';document.getElementById('stOk').textContent='0';document.getElementById('stIa').textContent='0';document.getElementById('stNone').textContent='0';document.getElementById('stLeft').textContent='10';
     document.getElementById('aiPct').textContent='0%';document.getElementById('aiSegOk').style.width='0%';document.getElementById('aiSegIa').style.width='0%';
     document.getElementById('aiProgSub').textContent='0 de 10 contas validadas · 0% concluído';
@@ -1140,6 +1157,7 @@
   }
   var loadTimer=null, barTimer=null, lastTrigger=null, closeTimer=null;
   var HOLD_LOAD=/[?&]hold=load/.test(location.search); /* dev: segura na tela de carregamento (não avança pra triagem) */
+  var IMPORT_INVALID=/[?&]import=invalido/.test(location.search); /* E4 (UC1): demonstra planilha inválida/parcial — a importação não segue para a triagem */
   function runLoading(){
     var stepDur=(/[?&]slow=/.test(location.search)?4000:1200), start=Date.now(), total=STEPS.length*stepDur, i=0; /* dev: ?slow=1 deixa o carregamento lento pra análise */
     var bar=document.getElementById('aiProcBar'), pn=document.getElementById('aiProcN');
@@ -1154,13 +1172,33 @@
     /* cada etapa fica visível (~1,2s) com seu spinner antes de concluir */
     var live=document.getElementById('aiLive');
     function nextStep(){
-      if(i>=STEPS.length){ if(barTimer){clearInterval(barTimer);barTimer=null;} bar.style.width='100%'; bar.parentNode.setAttribute('aria-valuenow',100); pn.textContent='10'; renderSteps(STEPS.length); if(live) live.textContent='Processamento concluído.'; if(HOLD_LOAD) return; loadTimer=setTimeout(showTriage,700); return; }
+      if(i>=STEPS.length){ if(barTimer){clearInterval(barTimer);barTimer=null;} bar.style.width='100%'; bar.parentNode.setAttribute('aria-valuenow',100); pn.textContent='10'; renderSteps(STEPS.length); if(live) live.textContent='Processamento concluído.'; if(HOLD_LOAD) return; loadTimer=setTimeout(IMPORT_INVALID?showImportInvalid:showTriage,700); return; }
       if(live) live.textContent='Etapa '+(i+1)+' de '+STEPS.length+': '+STEPS[i];
       renderSteps(i); i++; loadTimer=setTimeout(nextStep,stepDur);
     }
     nextStep();
   }
-  function showTriage(){ var pop=document.getElementById('aiPopup'); pop.classList.remove('is-loading','is-expanded'); pop.setAttribute('aria-labelledby','aiTriageTitle'); document.getElementById('aiSide').hidden=false; document.getElementById('aiLoading').hidden=true; document.getElementById('aiTriage').hidden=false; document.getElementById('aiFootLoading').hidden=true; document.getElementById('aiFootTriage').hidden=false; renderTriage(); }
+  function showTriage(){ var pop=document.getElementById('aiPopup'); pop.classList.remove('is-loading','is-expanded'); pop.setAttribute('aria-labelledby','aiTriageTitle'); document.getElementById('aiSide').hidden=false; document.getElementById('aiLoading').hidden=true; document.getElementById('aiTriage').hidden=false; document.getElementById('aiInvalid').hidden=true; document.getElementById('aiFootLoading').hidden=true; document.getElementById('aiFootTriage').hidden=false; document.getElementById('aiFootInvalid').hidden=true; renderTriage(); }
+  /* E4 (UC1): a planilha importada tem problemas de estrutura → mostra as linhas com o MS e NÃO segue para a triagem.
+     A estrutura é read-only (vem da planilha): o preparador corrige na origem e reimporta. Demonstrável por ?import=invalido. */
+  var IMPORT_INVALID_ROWS=[
+    {cod:'3.1.1.02', ms:'MS1071', msg:'Código de conta (cCta) duplicado na planilha (aparece em duas linhas).'},
+    {cod:'1.2.3.04', ms:'MS1099', msg:'Conta superior (1.2.3) não existe no plano: hierarquia quebrada.'},
+    {cod:'2.4.1.07', ms:'MS1077', msg:'Conta referencial (cCtaRef 24107) não existe no plano SUSEP.'},
+    {cod:'4.1.2.09', ms:'MS1075', msg:'Coluna obrigatória vazia: conta analítica sem descrição.'},
+    {cod:'5.3.0.11', ms:'MS1115', msg:'codTrib malformado na planilha: precisa ter 9 dígitos.'}
+  ];
+  function showImportInvalid(){
+    var pop=document.getElementById('aiPopup'); pop.classList.remove('is-loading','is-expanded'); pop.setAttribute('aria-labelledby','aiInvalidTitle');
+    document.getElementById('aiSide').hidden=true;
+    document.getElementById('aiLoading').hidden=true; document.getElementById('aiTriage').hidden=true; document.getElementById('aiInvalid').hidden=false;
+    document.getElementById('aiFootLoading').hidden=true; document.getElementById('aiFootTriage').hidden=true; document.getElementById('aiFootInvalid').hidden=false;
+    var n=IMPORT_INVALID_ROWS.length, plural=(n>1);
+    var lead=document.getElementById('aiInvalidLead');
+    if(lead) lead.innerHTML='<strong>'+n+' problema'+(plural?'s':'')+' de estrutura</strong> '+(plural?'impediram':'impediu')+' a importação. A planilha <strong>não seguiu para a triagem</strong>: corrija na origem e reimporte.';
+    var list=document.getElementById('aiInvalidList');
+    if(list) list.innerHTML=IMPORT_INVALID_ROWS.map(function(f){ return '<li><span class="status status--danger status--micro">'+esc(f.ms)+'</span><span><b>'+esc(f.cod)+'</b> · '+esc(f.msg)+'</span></li>'; }).join('');
+  }
   function reopenTriage(){ if(!contas){ openPopup(); return; } if(closeTimer){clearTimeout(closeTimer);closeTimer=null;} var pop=document.getElementById('aiPopup'); pop.hidden=false; pop.classList.remove('is-loading','is-expanded','is-closing'); pop.setAttribute('aria-labelledby','aiTriageTitle'); document.getElementById('aiSide').hidden=false; document.getElementById('aiLoading').hidden=true; document.getElementById('aiTriage').hidden=false; document.getElementById('aiFootLoading').hidden=true; document.getElementById('aiFootTriage').hidden=false; lastTrigger=document.getElementById('btnReTriage'); setBgInert(true); renderTriage(); document.getElementById('aiClose').focus(); }
 
   function confLabel(c){ return c==='alta'?'Confiança alta':'Confiança média'; }
@@ -1513,8 +1551,11 @@
          +'<button type="button" class="linkact linkact--ia" data-resetcodtrib="'+esc(c.cod)+'"'+(c.codTrib===c.codTribSug?' hidden':'')+'>'+SPARK+'Restaurar sugestão da IA</button>')
       : (c.origin==='classificar' ? '<span class="status status--warning status--sm"><span class="status__dot"></span>Sem sugestão da IA</span>' : '');
     var metaStrip=structStrip(c);
+    /* nudge profissional da IA quando a conta tem naturezas distintas (indício de conta mista): explica e sugere o desdobramento */
+    var mistaNote=(c.reason==='mista')?('<div class="dalert dalert--info" role="note" style="margin:0 0 var(--space-5)"><span class="dalert__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span><div class="dalert__body"><p class="dalert__text">A IA identificou <strong>naturezas tributárias distintas</strong> nesta conta (indício de conta mista). Considere <strong>desdobrá-la em subcontas</strong> para classificar cada parcela com o seu próprio codTrib.</p></div></div>'):'';
     return '<tr class="tbedit"><td colspan="6" class="tbedit-cell"><div class="tbeditor">'+
       metaStrip+
+      mistaNote+
       (c.indCta!=='S'?('<div class="ctmode" data-ctmode="'+esc(c.cod)+'">'+
         '<span class="ctmode__radios" role="radiogroup" aria-label="Natureza tributária da conta">'+
           '<label class="check"><input type="radio" name="ctmode-'+esc(c.cod)+'" value="trib" data-ctmode-val="trib" data-cod="'+esc(c.cod)+'"'+(ctIsNotrib?'':' checked')+'><span>Tributável</span></label>'+
@@ -1893,21 +1934,23 @@
     toast('Conta desdobrada em '+n+' subcontas. A mãe virou sintética; classifique cada subconta abaixo.','ok');
   }
   /* desfazer o desdobramento: remove as subcontas e devolve a mãe a analítica (evita conta sintética sem filhas).
-     Se alguma subconta já foi classificada, confirma antes (o trabalho seria perdido). */
+     SEMPRE confirma antes (é destrutivo: remove subcontas). A mensagem e o botão adaptam ao caso
+     (com classificação a perder = tom de perda; sem classificação = confirmação simples). */
   var _undoDsbCod=null;
   function desfazerDesdobramento(cod){
     var c=findC(cod); if(!c) return;
     var kids=dsbKids(cod);
     var classif=kids.filter(function(k){ return k.codTrib || k.origin==='validada'; });
-    if(classif.length){
-      _undoDsbCod=cod;
-      var body=document.getElementById('undoDsbBody');
-      if(body) body.innerHTML='Esta conta foi desdobrada em <strong>'+kids.length+'</strong> subcontas e <strong>'+classif.length+'</strong> '+(classif.length>1?'já foram classificadas':'já foi classificada')+'. Desfazer remove todas as subcontas e devolve a mãe a analítica; a classificação '+(classif.length>1?'delas será perdida':'dela será perdida')+'.';
-      var m=document.getElementById('undoDsbModal');
-      if(window.dsDialog) dsDialog.open(m,{focus:m.querySelector('[data-undodsb-close]')}); else { m.hidden=false; document.body.style.overflow='hidden'; }
-      return;
+    _undoDsbCod=cod;
+    var body=document.getElementById('undoDsbBody');
+    if(body){
+      body.innerHTML = classif.length
+        ? ('Esta conta foi desdobrada em <strong>'+kids.length+'</strong> subcontas e <strong>'+classif.length+'</strong> '+(classif.length>1?'já foram classificadas':'já foi classificada')+'. Desfazer <strong>remove todas as subcontas</strong> e devolve a mãe a analítica; a classificação '+(classif.length>1?'delas será perdida':'dela será perdida')+'.')
+        : ('Desfazer <strong>remove as '+kids.length+' subcontas</strong> e devolve a conta mãe a <strong>analítica</strong> (você a classifica de novo). As subcontas ainda não foram classificadas, então nada de classificação se perde.');
     }
-    _doDesfazer(cod);
+    var go=document.getElementById('undoDsbGo'); if(go) go.textContent=(classif.length?'Desfazer mesmo assim':'Desfazer desdobramento');
+    var m=document.getElementById('undoDsbModal');
+    if(window.dsDialog) dsDialog.open(m,{focus:m.querySelector('[data-undodsb-close]')}); else { m.hidden=false; document.body.style.overflow='hidden'; }
   }
   function _doDesfazer(cod){
     var c=findC(cod); if(!c) return;
@@ -1928,6 +1971,9 @@
   document.getElementById('btnErp').addEventListener('click',function(){ toast('Integração direta com ERP em breve. Por ora, importe o plano por planilha.','info'); });
   document.getElementById('btnTemplate').addEventListener('click',function(ev){ ev.preventDefault(); toast('Baixando o template de importação (planilha modelo)…','ok'); });
   document.getElementById('btnReTriage').addEventListener('click',reopenTriage);
+  /* E4: rodapé do estado "planilha inválida" — baixar o template e voltar para reimportar (corrige na origem) */
+  document.getElementById('aiInvalidTpl').addEventListener('click',function(){ toast('Baixando o template de importação (planilha modelo)…','ok'); });
+  document.getElementById('aiInvalidRetry').addEventListener('click',function(){ closePopup(); toast('Ajuste os pontos apontados na planilha e importe novamente.','info'); });
   document.getElementById('aiCancel').addEventListener('click',closePopup);
   document.getElementById('aiClose').addEventListener('click',closePopup);
   document.getElementById('aiPopup').addEventListener('keydown',trapTab);
@@ -1952,10 +1998,21 @@
     initDatefields(document);   /* liga os datepickers da planmeta (Início/Fim da vigência): no modo editar/alterar a triagem não roda, então precisam ser ligados aqui */
     /* Toda manutenção (editar/alterar/corrigir após rejeição/abrir tabela completa) abre DIRETO na tabela do
        plano existente — nunca na tela de importação vazia (evita o beco "sumiu tudo o que classifiquei"). */
-    if(location.hash==='#tabela' || IS_EDIT || HAS_MESA){
+    if(location.hash==='#tabela' || location.hash==='#triagem' || IS_EDIT || HAS_MESA){
       contas=clone(SEED_CONTAS); contas.forEach(function(c){ c.descSug=c.desc; c.codTribSug=(c.origin==='classificar'?null:c.codTrib); });
       openG={}; openC={}; openAcc={}; altG={}; openEdit=null; manualOpen=true; TBFILTER=''; TBSORT={key:'cod',dir:'asc'};
       showTable();
+      /* atalho da UC2 (#triagem): abre a triagem SOBRE a tabela populada, como o botão "Revisar triagem".
+         É onde a UC2 começa (decisão por grupo); ao Confirmar vai à tabela, ao fechar volta à tabela (sem beco). */
+      if(location.hash==='#triagem'){ reopenTriage(); }
+    }
+    /* E4 (UC1): link público do cenário "planilha inválida" — abre direto no estado de importação com problemas
+       (sem tabela atrás, porque a importação falhou); fechar volta à tela de importação para reimportar. */
+    if(IMPORT_INVALID){
+      var _p=document.getElementById('aiPopup'); _p.hidden=false; setBgInert(true);
+      lastTrigger=document.getElementById('btnImport');
+      showImportInvalid();
+      try{ document.getElementById('aiClose').focus(); }catch(e){}
     }
     if(IS_ALT){
       pmBaseline=(document.getElementById('pmVigIni')||{}).value||'';   /* baseline da vigência: novaValidade dispara se o início mudar */
