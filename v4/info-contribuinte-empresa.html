@@ -219,7 +219,7 @@
     .tlv__row{position:relative;height:60px}
     /* divisórias entre as linhas (rótulo + gráfico), no lugar de linhas-guia no meio de cada linha */
     .tlv__row:not(:last-child),.tlv__labels .tlv__lab:not(:last-child){border-bottom:1px solid var(--color-border)}
-    .tlv__bar{position:absolute;top:50%;transform:translateY(-50%);height:28px;border-radius:var(--radius-base);z-index:3;display:flex;align-items:center;padding:0 var(--space-2-5,10px);font-size:var(--text-2xs);font-weight:600;white-space:nowrap;overflow:hidden;box-shadow:var(--shadow-sm);text-decoration:none;box-sizing:border-box;font-variant-numeric:tabular-nums;letter-spacing:.01em}
+    .tlv__bar{position:absolute;top:50%;transform:translateY(-50%);height:28px;border-radius:var(--radius-sm);z-index:3;display:flex;align-items:center;padding:0 var(--space-2-5,10px);font-size:var(--text-2xs);font-weight:600;white-space:nowrap;overflow:hidden;box-shadow:var(--shadow-sm);text-decoration:none;box-sizing:border-box;font-variant-numeric:tabular-nums;letter-spacing:.01em}
     a.tlv__bar{cursor:pointer;transition:filter .12s,box-shadow .12s}
     a.tlv__bar:hover{filter:brightness(.96)}
     a.tlv__bar:focus-visible{outline:none;box-shadow:var(--ring)}
@@ -685,7 +685,7 @@
   function parseVig(v){ if(!v||v==='—') return null; var open=/em aberto/.test(v); var m=(v.match(/\d{2}\/\d{2}\/\d{4}/g)||[]); if(!m.length) return null; return {from:pdate(m[0]), to:open?null:(m[1]?pdate(m[1]):null), open:open}; }
   /* cenários de demonstração da linha do tempo (mudam SÓ este render; os dados reais da empresa ficam intactos) */
   var TL_DEMO={
-    corte:   [{v:1,ini:'01/01/2025',fim:'31/12/2025'},{v:2,ini:'01/01/2026',fim:'25/01/2026'},{v:3,ini:'26/01/2026',cur:1}],
+    corte:   [{v:1,ini:'01/01/2025',fim:'31/12/2025'},{v:2,ini:'01/01/2026',fim:'31/03/2026'},{v:3,ini:'01/04/2026',cur:1}],
     futura:  [{v:2,ini:'01/01/2026',fim:'30/09/2026',cur:1},{v:3,ini:'01/10/2026',fut:1}],
     lacuna:  [{v:1,ini:'01/01/2025',fim:'28/02/2026'},{v:2,ini:'01/06/2026',cur:1}],
     semcob:  [{v:2,ini:'01/01/2025',fim:'31/12/2025'},{v:3,ini:'01/01/2026',fim:'30/09/2026',cur:1}],
@@ -708,8 +708,9 @@
     items.sort(function(a,b){ return a.from-b.from; });
     var today=new Date(2026,8,3); var DAY=86400000;   /* hoje do protótipo */
     function isFut(i){ return i.fut || i.from.getTime()>today.getTime(); }
-    /* fim visual de uma barra aberta: hoje (se já começou) ou início + ~6 meses (se é futura) */
-    function endOfBar(i){ return i.to ? i.to.getTime() : (isFut(i) ? i.from.getTime()+DAY*180 : today.getTime()); }
+    /* fim visual da barra: fim do último dia coberto (to + 1 dia), assim períodos consecutivos
+       encostam (30/09 termina exatamente onde 01/10 começa); aberta vai até hoje, futura ~6 meses */
+    function endOfBar(i){ return i.to ? i.to.getTime()+DAY : (isFut(i) ? i.from.getTime()+DAY*180 : today.getTime()); }
     var hasFut=items.some(isFut), hasExcl=items.some(function(i){ return i.excl; });
     var minT=items[0].from.getTime();
     var maxT=Math.max(today.getTime(), Math.max.apply(null, items.map(endOfBar)));
@@ -756,8 +757,9 @@
                       : ('<div class="tlv__lab'+labMod+'">'+labIn+'</div>');
       var end=endOfBar(i), l=pct(i.from.getTime()), w=Math.max(pct(end)-l,3);
       var cls=i.excl?'tlv__bar--excl':(isFut(i)?'tlv__bar--fut':(i.current?'tlv__bar--vig':'tlv__bar--ina'));
-      var txt=i.excl?(fmt(i.from)+' → excluída na Receita'):(fmt(i.from)+' → '+(i.open?(isFut(i)?'em diante':'em aberto'):fmt(i.to)));
-      if(w<16) txt='';   /* barra estreita: sem texto cortado; o tooltip conta a história */
+      var _datas=i.excl?(fmt(i.from)+' → excluída na Receita'):(fmt(i.from)+' → '+(i.open?(isFut(i)?'em diante':'em aberto'):fmt(i.to)));
+      /* toda barra carrega o identificador; as datas entram quando há largura (senão, tooltip) */
+      var txt='v'+i.ver+(w>=16?(' · '+_datas):'');
       var _bl='Versão '+i.ver+' · '+esc(i.vig||'');
       var attrs=' class="tlv__bar '+cls+'" style="left:'+l.toFixed(2)+'%;width:'+w.toFixed(2)+'%" data-tip="'+_bl+(i.href?' · abrir detalhe':'')+'" aria-label="'+_bl+(i.href?', abrir detalhe':'')+'"';
       rows+='<div class="tlv__row">'+(i.href?('<a href="'+i.href+'"'+attrs+'>'):('<span'+attrs+'>'))+txt+(i.href?'</a>':'</span>')+'</div>';
