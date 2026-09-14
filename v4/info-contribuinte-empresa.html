@@ -199,8 +199,8 @@
     .tlv__tick{position:absolute;top:0}
     .tlv__tick--now{transform:translateX(-50%);text-align:center;top:28px}
     /* conectores: amarram as datas do eixo à linha de base (e o "hoje" ao balizador azul) */
-    .tlv__conn{position:absolute;bottom:0;height:30px;border-left:1.5px solid var(--color-border-strong)}
-    .tlv__conn--now{border-left:2px solid var(--color-primary);height:7px}
+    .tlv__conn{position:absolute;bottom:0;height:30px;border-left:2px solid var(--color-text-muted)}
+    .tlv__conn--now{border-left:0;width:2px;background:var(--color-primary);transform:translateX(-50%);height:7px}
     .tlv__tick--r{transform:translateX(-100%);text-align:right}
     .tlv__cap{font-size:var(--text-2xs);color:var(--color-text-muted);line-height:1.35;text-transform:uppercase;letter-spacing:.04em;font-weight:600}
     .tlv__date{font-size:var(--text-base);font-weight:700;color:var(--color-heading);white-space:nowrap;font-variant-numeric:tabular-nums;margin-top:3px}
@@ -215,9 +215,10 @@
     .tlv__lab--fut small{color:var(--color-success-fg)}
     .tlv__lab--excl small{color:var(--color-danger)}
     .tlv__baliz{position:absolute;top:0;bottom:0;border-left:1px solid var(--color-border-strong);z-index:1}
-    .tlv__baliz--now{border-left:2px solid var(--color-primary);z-index:4}
-    /* bolinha no topo da linha do hoje, no encontro com a linha de base */
-    .tlv__baliz--now::before{content:"";position:absolute;top:-4px;left:-4px;width:8px;height:8px;border-radius:50%;background:var(--color-primary);border:1.5px solid var(--color-surface);box-sizing:content-box}
+    .tlv__baliz--edge{border-left:2px solid var(--color-text-muted)}
+    /* linha do hoje: faixa de 2px CENTRADA no ponto (transform), pra linha, conector e bolinha ficarem no mesmo eixo */
+    .tlv__baliz--now{border-left:0;width:2px;background:var(--color-primary);transform:translateX(-50%);z-index:4}
+    .tlv__baliz--now::before{content:"";position:absolute;top:-4px;left:50%;transform:translateX(-50%);width:9px;height:9px;border-radius:50%;background:var(--color-primary);border:1.5px solid var(--color-surface);box-sizing:border-box}
     .tlv__row{position:relative;height:60px}
     /* divisórias entre as linhas (rótulo + gráfico), no lugar de linhas-guia no meio de cada linha */
     .tlv__row:not(:last-child),.tlv__labels .tlv__lab:not(:last-child){border-bottom:1px solid var(--color-border)}
@@ -744,10 +745,10 @@
     axis+='<div class="tlv__tick tlv__tick--r" style="left:100%"><div class="tlv__cap">'+(_endIsToday?'Hoje':'Término')+'</div><div class="tlv__date">'+fmt(new Date(maxT))+'</div></div>';
     axis+='<span class="tlv__conn" style="left:0"></span><span class="tlv__conn" style="left:100%"></span>';
     if(showNow){ axis+='<span class="tlv__conn tlv__conn--now" style="left:'+pct(today.getTime()).toFixed(2)+'%"></span>'; }
-    /* balizadores: início de cada versão, bordas e hoje (o de 0% emenda no conector do "Início") */
-    var bset={'0.00':1,'100.00':1};
-    items.forEach(function(i){ bset[pct(i.from.getTime()).toFixed(2)]=1; });
-    var baliz='';
+    /* balizadores: bordas do eixo mais fortes; inícios de versão mais leves; hoje em azul */
+    var baliz='<div class="tlv__baliz tlv__baliz--edge" style="left:0"></div><div class="tlv__baliz tlv__baliz--edge" style="left:100%"></div>';
+    var bset={};
+    items.forEach(function(i){ var _p=pct(i.from.getTime()).toFixed(2); if(_p!=='0.00'&&_p!=='100.00') bset[_p]=1; });
     Object.keys(bset).forEach(function(p){ baliz+='<div class="tlv__baliz" style="left:'+p+'%"></div>'; });
     if(showNow){ baliz+='<div class="tlv__baliz tlv__baliz--now" style="left:'+pct(today.getTime()).toFixed(2)+'%"></div>'; }
     /* uma linha por versão, mais novas em cima */
