@@ -220,7 +220,9 @@
     .tlv__baliz--edge{border-left:2px solid var(--color-text-muted)}
     /* linha do hoje: faixa de 2px CENTRADA no ponto (transform); por cima de tudo */
     .tlv__baliz--now{border-left:0;width:2px;background:var(--color-primary);transform:translateX(-50%);z-index:5}
-    .tlv__row{position:relative;height:60px;z-index:2}
+    .tlv__row{position:relative;height:60px}
+    /* as linhas verticais (bordas e marcos) passam por cima das barras, como trilhos do gráfico */
+    .tlv__baliz{z-index:4}
     /* divisórias entre as linhas (rótulo + gráfico), no lugar de linhas-guia no meio de cada linha */
     .tlv__row:not(:last-child),.tlv__labels .tlv__lab:not(:last-child){border-bottom:1px solid var(--color-border)}
     .tlv__bar{position:absolute;top:50%;transform:translateY(-50%);height:28px;border-radius:var(--radius-sm);z-index:3;display:flex;align-items:center;padding:0 var(--space-2-5,10px);font-size:var(--text-2xs);font-weight:600;white-space:nowrap;overflow:hidden;box-shadow:var(--shadow-sm);text-decoration:none;box-sizing:border-box;font-variant-numeric:tabular-nums;letter-spacing:.01em}
@@ -230,7 +232,7 @@
     .tlv__bar--vig{background:var(--color-success);color:#fff}
     .tlv__bar--ina{background:var(--color-border);color:var(--color-text-onmuted);border:1px solid var(--color-border-strong)}
     .tlv__bar--fut{background:color-mix(in srgb,var(--color-success-bg) 55%,var(--color-surface));color:var(--color-success-fg);border:1px dashed var(--color-success-fg)}
-    .tlv__bar--excl{background:transparent;color:var(--color-danger);border:1.5px dashed var(--color-danger);box-shadow:none}
+    .tlv__bar--excl{background:var(--color-surface);color:var(--color-danger);border:1.5px dashed var(--color-danger);box-shadow:none}
     .tlv__gapcol{position:absolute;top:0;bottom:0;z-index:1;background:repeating-linear-gradient(45deg,color-mix(in srgb,var(--color-danger) 18%,transparent) 0 5px,transparent 5px 10px);border-left:1px dashed var(--color-danger);border-right:1px dashed var(--color-danger);cursor:help}
     .tlv__gapcol-lbl{position:absolute;top:2px;left:50%;transform:translateX(-50%);font-size:var(--text-2xs);font-weight:700;color:var(--color-danger);white-space:nowrap;background:var(--color-surface);padding:0 var(--space-1);border-radius:var(--radius-sm)}
     .tl__sw--vigS{background:var(--color-success)}
