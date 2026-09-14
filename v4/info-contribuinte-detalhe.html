@@ -879,13 +879,22 @@
     var _vn=vnum||String(vlabel).replace(/\D/g,'')||'3';
     if($('dTitle')) $('dTitle').textContent = 'Informações do contribuinte · versão '+_vn;
     if($('bcVer')) $('bcVer').textContent = vlabel;
-    if($('dBadge')){ var _st=SIT[sit]||{label:s.sub,pill:s.pill}; var _bh='<span class="status '+_st.pill+'"><span class="status__dot"></span>'+esc(_st.label)+'</span>'; $('dBadge').innerHTML=_bh; }
-    /* tipo de operação da versão (derivado da porta): na linha de metadados abaixo do subtítulo */
-    if($('dOpLbl')) $('dOpLbl').textContent=opLabel();
-    /* recibo no cabeçalho: só quando a versão FOI aceita pela Receita (rejeitada/em processamento não têm recibo) */
+    /* exclusão pendente: quem está "Em processamento" é o PEDIDO de exclusão, não a versão.
+       A versão aceita nunca regride: segue "Processada com sucesso", com o selo do pedido ao lado. */
+    var _exclPend=(curOp==='exclusao' && sit==='processando');
+    if($('dBadge')){
+      var _st=_exclPend?SIT.sucesso:(SIT[sit]||{label:s.sub,pill:s.pill});
+      var _bh='<span class="status '+_st.pill+'"><span class="status__dot"></span>'+esc(_st.label)+'</span>';
+      if(_exclPend){ _bh+='<span class="status status--info" style="margin-left:var(--space-2)"><span class="status__dot"></span>Exclusão em processamento</span>'; }
+      $('dBadge').innerHTML=_bh;
+    }
+    /* tipo de operação da versão (derivado da porta): na exclusão pendente, o tipo é o da PRÓPRIA versão
+       (o pedido de exclusão é solicitação à parte, acompanhada no Histórico e no selo acima) */
+    if($('dOpLbl')) $('dOpLbl').textContent=_exclPend?((_vn==='1')?'Inclusão':'Alteração'):opLabel();
+    /* recibo no cabeçalho: só quando a versão FOI aceita (a exclusão pendente não apaga o recibo da versão) */
     var _recEl=$('dRecibo');
     if(_recEl){
-      var _hasRec=['sucesso','advertencias','encerrada','futura','excluida'].indexOf(sit)>=0;
+      var _hasRec=_exclPend || ['sucesso','advertencias','encerrada','futura','excluida'].indexOf(sit)>=0;
       if(_hasRec && $('dReciboNum')) $('dReciboNum').textContent=REC.slice(0,10)+'…'+REC.slice(-4);
       _recEl.hidden=!_hasRec;
     }
