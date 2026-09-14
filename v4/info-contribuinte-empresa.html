@@ -216,6 +216,8 @@
     .tlv__lab--excl small{color:var(--color-danger)}
     .tlv__baliz{position:absolute;top:0;bottom:0;border-left:1px solid var(--color-border-strong);z-index:1}
     .tlv__baliz--now{border-left:2px solid var(--color-primary);z-index:4}
+    /* bolinha no topo da linha do hoje, no encontro com a linha de base */
+    .tlv__baliz--now::before{content:"";position:absolute;top:-4px;left:-4px;width:8px;height:8px;border-radius:50%;background:var(--color-primary);border:1.5px solid var(--color-surface);box-sizing:content-box}
     .tlv__row{position:relative;height:60px}
     /* divisórias entre as linhas (rótulo + gráfico), no lugar de linhas-guia no meio de cada linha */
     .tlv__row:not(:last-child),.tlv__labels .tlv__lab:not(:last-child){border-bottom:1px solid var(--color-border)}
