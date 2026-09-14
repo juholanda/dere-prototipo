@@ -190,7 +190,9 @@
     .tl__empty{margin:0;padding:var(--space-8) var(--space-4);text-align:center;color:var(--color-text-muted);font-size:var(--text-base)}
     /* Linha do tempo por VERSÃO (mockup validado): eixo, balizadores e barras compartilham
        o mesmo sistema de coordenadas (coluna 2 da grade); uma linha por versão */
-    .tlv{display:grid;grid-template-columns:max-content 1fr;grid-template-rows:72px auto;column-gap:var(--space-4);margin-top:var(--space-2)}
+    .tlv{display:grid;grid-template-columns:max-content 1fr;grid-template-rows:72px auto;column-gap:var(--space-4);margin-top:var(--space-2);position:relative}
+    /* linha de base entre o eixo e o gráfico, atravessando rótulos + plot */
+    .tlv::before{content:"";position:absolute;top:72px;left:0;right:0;border-top:1px solid var(--color-border-strong)}
     .tlv__axis{grid-column:2;grid-row:1;position:relative}
     .tlv__labels{grid-column:1;grid-row:2;display:flex;flex-direction:column}
     .tlv__plot{grid-column:2;grid-row:2;position:relative}
@@ -731,9 +733,9 @@
     var axis='<div class="tlv__tick"><div class="tlv__cap">Início mais antigo</div><div class="tlv__date">'+fmt(new Date(minT))+'</div></div>';
     if(showNow){ axis+='<div class="tlv__tick tlv__tick--now" style="left:'+pct(today.getTime()).toFixed(2)+'%"><div class="tlv__date">'+fmt(today)+'</div><div class="tlv__cap">hoje</div></div>'; }
     axis+='<div class="tlv__tick tlv__tick--r" style="left:100%"><div class="tlv__cap">Término mais distante</div><div class="tlv__date">'+fmt(new Date(maxT))+(Math.abs(maxT-today.getTime())<DAY?' · hoje':'')+'</div></div>';
-    /* balizadores: bordas, início de cada versão e hoje */
-    var bset={'0.00':1,'100.00':1};
-    items.forEach(function(i){ bset[pct(i.from.getTime()).toFixed(2)]=1; });
+    /* balizadores: início de cada versão (menos o 0%, que a divisória dos rótulos já marca), fim e hoje */
+    var bset={'100.00':1};
+    items.forEach(function(i){ var _p=pct(i.from.getTime()); if(_p>0.5) bset[_p.toFixed(2)]=1; });
     var baliz='';
     Object.keys(bset).forEach(function(p){ baliz+='<div class="tlv__baliz" style="left:'+p+'%"></div>'; });
     if(showNow){ baliz+='<div class="tlv__baliz tlv__baliz--now" style="left:'+pct(today.getTime()).toFixed(2)+'%"></div>'; }
