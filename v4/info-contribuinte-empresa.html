@@ -290,7 +290,7 @@
           <div class="wrap">
             <div class="page-h__row">
               <div class="page-h__main">
-                <div class="page-h__title"><h1>Versões</h1><span class="tag page-h__code">D-1001</span></div>
+                <div class="page-h__title"><h1>Informações do contribuinte</h1><span class="tag page-h__code">D-1001</span></div>
                 <p class="page-h__desc" id="pageSub">Acompanhe e gerencie as versões das informações do contribuinte.</p>
               </div>
               <div class="page-h__act" id="headerActSlot"></div>
@@ -440,7 +440,7 @@
   /* trilha, menu lateral e subtítulo levam a empresa e o cenário */
   $('bcNome').textContent=CO.nome;
   document.querySelectorAll('.bc a, .sidenav a[href^="info-contribuinte-lista.html"]').forEach(function(a){ a.setAttribute('href','info-contribuinte-lista.html'+Q(true)); });
-  $('pageSub').innerHTML='Acompanhe e gerencie as versões das <strong>informações do contribuinte</strong> de <strong>'+esc(CO.nome)+'</strong>.';
+  $('pageSub').innerHTML='Acompanhe e gerencie as <strong>versões</strong> do D-1001 de <strong>'+esc(CO.nome)+'</strong>.';
 
   /* cenário: primeiro acesso mostra só o que foi criado nesta sessão; populado traz o histórico */
   var _d1Sent=false; try{ _d1Sent=localStorage.getItem('adere.sent.d1001')===EMP; }catch(e){}
