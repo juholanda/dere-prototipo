@@ -317,7 +317,7 @@
           <div class="wrap">
             <div class="page-h__row">
               <div class="page-h__main">
-                <div class="page-h__title"><h1 id="dTitle">Informações do contribuinte</h1><span id="dBadge" role="status" aria-live="polite"></span></div>
+                <div class="page-h__title"><h1 id="dTitle">Informações do contribuinte</h1><span class="tag" id="dOpTag" title="Tipo de operação" hidden></span><span id="dBadge" role="status" aria-live="polite"></span></div>
                 <p id="dSub" class="page-h__desc"><strong>Informações do contribuinte</strong> desta versão e o acompanhamento na <strong>Receita Federal</strong>.</p>
                 <div id="dRecibo" class="hdr-recibo" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 17.5v-11"/></svg><span>Recibo</span><span class="hdr-recibo__n" id="dReciboNum"></span><button class="icon-btn" type="button" id="dReciboCopy" aria-label="Copiar número do recibo" title="Copiar recibo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg></button></div>
               </div>
@@ -606,11 +606,13 @@
         '</dl>'+
       '</div></li>';
     }).join('');
-    if($('histCount')){ var _opLbl = (curOp==='exclusao')?'Exclusão':((curOp==='alteracao')?'Alteração':(((dparam('v')||'3')==='1')?'Inclusão':'Alteração')); $('histCount').textContent = keys.length+(keys.length===1?' etapa':' etapas')+' · Tipo de operação: '+_opLbl; }
+    if($('histCount')){ $('histCount').textContent = keys.length+(keys.length===1?' etapa':' etapas')+' · Tipo de operação: '+opLabel(); }
   }
     /* ===== Visão do APROVADOR (role=aprovador) + operação (op=nova|alteracao|exclusao) — só demo ===== */
   var curRole = (dparam('role')==='aprovador') ? 'aprovador' : 'elaborador';
   var curOp   = (['nova','alteracao','exclusao'].indexOf(dparam('op'))>=0) ? dparam('op') : 'nova';
+  /* rótulo do tipo de operação da versão (derivado da porta; v1 sem op explícita = Inclusão) */
+  function opLabel(){ return (curOp==='exclusao')?'Exclusão':((curOp==='alteracao')?'Alteração':(((dparam('v')||'3')==='1')?'Inclusão':'Alteração')); }
   /* operação pendente gravada no envio (adere.d1001.altop): alteração ou exclusão define o op da versão */
   try{ var _ao0=localStorage.getItem('adere.d1001.altop.'+empId()); if(curOp==='nova' && _ao0){ curOp=(JSON.parse(_ao0).op==='exclusao')?'exclusao':'alteracao'; } }catch(e){}
   var _ajusteComment = '';
@@ -863,6 +865,8 @@
     if($('dTitle')) $('dTitle').textContent = 'Informações do contribuinte · versão '+_vn;
     if($('bcVer')) $('bcVer').textContent = vlabel;
     if($('dBadge')){ var _st=SIT[sit]||{label:s.sub,pill:s.pill}; var _bh='<span class="status '+_st.pill+'"><span class="status__dot"></span>'+esc(_st.label)+'</span>'; $('dBadge').innerHTML=_bh; }
+    /* tipo de operação da versão (derivado da porta): tag neutra antes da situação */
+    if($('dOpTag')){ $('dOpTag').textContent=opLabel(); $('dOpTag').hidden=false; }
     /* recibo no cabeçalho: só quando a versão FOI aceita pela Receita (rejeitada/em processamento não têm recibo) */
     var _recEl=$('dRecibo');
     if(_recEl){
