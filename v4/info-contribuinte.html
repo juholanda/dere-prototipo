@@ -259,6 +259,23 @@
             <div class="cadwrap">
               <div class="cadform">
 
+                <!-- Tipo de alteração (só na alteração da vigente, decisão de 14/09): reflete a escolha do popup do detalhe e permite ajustar aqui, sem voltar -->
+                <section id="s-tipo" class="card cadsec" aria-labelledby="h-tipo" hidden>
+                  <div class="card__h"><span class="card__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.375 2.625a1 1 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z"/></svg></span><h2 id="h-tipo">Tipo de alteração</h2></div>
+                  <div class="selectcard-list" role="radiogroup" aria-label="Tipo de alteração">
+                    <label class="selectcard">
+                      <span class="selectcard__lead"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></span>
+                      <span class="selectcard__body"><span class="selectcard__title">Corrigir a versão vigente</span><span class="selectcard__desc">Substitui os dados da versão atual, mantendo o mesmo período de validade. Indicada para corrigir informações preenchidas incorretamente.</span></span>
+                      <input class="selectcard__input" type="radio" name="tipoAlt" value="corrigir" checked>
+                    </label>
+                    <label class="selectcard">
+                      <span class="selectcard__lead"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M12 13v6M9 16h6"/></svg></span>
+                      <span class="selectcard__body"><span class="selectcard__title">Incluir uma nova versão a partir de uma data</span><span class="selectcard__desc">A nova versão passa a valer na data informada. A atual é encerrada automaticamente na véspera e permanece na lista de versões como Encerrada, válida para o período anterior. Indicada quando a situação do contribuinte mudou de fato.</span></span>
+                      <input class="selectcard__input" type="radio" name="tipoAlt" value="incluir">
+                    </label>
+                  </div>
+                </section>
+
                 <!-- Identificação -->
                 <section id="s-ident" class="card cadsec" aria-labelledby="h-ident">
                   <div class="card__h"><span class="card__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg></span><h2 id="h-ident">Identificação</h2></div>
@@ -280,7 +297,7 @@
                 <section id="s-vig" class="card cadsec" aria-labelledby="h-vig">
                   <div class="card__h"><span class="card__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span><h2 id="h-vig">Validade</h2></div>
                   <div class="cadrow">
-                    <div class="cadrow__label"><span class="lb">Início da validade<span class="req" aria-hidden="true">*</span></span><p class="cadrow__hint">A partir de quando o enquadramento passa a valer.</p></div>
+                    <div class="cadrow__label"><span class="lb">Início da validade<span class="req" aria-hidden="true">*</span></span><p class="cadrow__hint" id="iniVigHint">A partir de quando o enquadramento passa a valer.</p></div>
                     <div class="cadrow__field">
                       <div class="datefield" data-datefield><input class="input" id="iniVig" type="text" value="01/01/2026" readonly placeholder="dd/mm/aaaa" autocomplete="off" aria-label="Início da validade"><span class="datefield__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span><div class="dp" hidden></div></div>
                     </div>
@@ -370,6 +387,7 @@
               </div>
 
               <nav class="cadnav" aria-label="Seções do formulário">
+                <a href="#s-tipo" class="cadnav__item" id="navTipo" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.375 2.625a1 1 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z"/></svg><span>Tipo de alteração</span></a>
                 <a href="#s-ident" class="cadnav__item is-current"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg><span>Identificação</span></a>
                 <a href="#s-vig" class="cadnav__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span>Validade</span></a>
                 <a href="#s-reg" class="cadnav__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10M12 3v18M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg><span>Regime tributário</span></a>
@@ -505,7 +523,14 @@
          começar do zero (sem rascunho) é que é "Nova versão". */
       var _hasDraft=false; try{ _hasDraft=!!localStorage.getItem('adere.d1001.draft.'+(param('emp')||'seg')); }catch(e){}
       var _vN=param('v')||'1', _scn=param('scn')?('&scn='+param('scn')):'', _emp=param('emp')?('&emp='+param('emp')):'';
-      if(_hasDraft){
+      if(param('from')==='detalhe' && param('v')){
+        /* alteração da vigente (veio do Alterar): o topo diz o que a pessoa está fazendo; a criação da Versão N fica no banner e no envio */
+        var _vSrcT=(parseInt(_vN,10)>1)?(parseInt(_vN,10)-1):parseInt(_vN,10);
+        if($('bcAcao')) $('bcAcao').textContent='Alterar Versão '+_vSrcT;
+        if($('formTitle')) $('formTitle').textContent='Alterar Versão '+_vSrcT+' · Informações do contribuinte';
+        document.title='a-DeRE · Alterar Versão '+_vSrcT;
+        if($('cancelBtn')) $('cancelBtn').setAttribute('href','info-contribuinte-detalhe.html?emp='+(param('emp')||'seg')+(param('v')?('&v='+param('v')):'')+(param('cenario')?('&cenario='+param('cenario')):'')+_scn);
+      } else if(_hasDraft){
         if($('bcAcao')) $('bcAcao').textContent='Alterar Versão '+_vN;
         if($('formTitle')) $('formTitle').textContent='Alterar Versão '+_vN+' · Informações do contribuinte';
         document.title='a-DeRE · Alterar Versão '+_vN;
@@ -764,60 +789,78 @@
     window.__d1001Review=renderReviewSummary; /* resumo de revisão, chamado também no submit (outra IIFE) */
   })();
 
-  /* Guarda-corpo inline da Validade: a pergunta fina (corrigir x nova vigência) nasce AQUI,
-     imediatamente abaixo das datas, no momento em que o início muda. O modal só confirma a escolha.
-     Órfão (demo ?orfao=1): o período atual tem filho transmitido (D-1011) -> Corrigir retiraria a
-     cobertura dele (EXISTE_INFO_CONTRIBUINTE) e a Receita apontaria pendência. Bloqueia o envio
-     enquanto "Corrigir" estiver escolhida; a saída é Nova vigência (preserva o período) ou excluir
-     os documentos do período antes. */
+  /* Tipo de alteração + consequência na Validade (decisão de 14/09): na alteração da vigente a
+     escolha (corrigir × incluir nova versão) vem do popup do detalhe (?tipo=) e mora na primeira
+     seção do formulário, ajustável. O alerta abaixo das datas mostra a consequência da combinação
+     escolha + data. Órfão (demo ?orfao=1): o período atual tem filho transmitido (D-1011) ->
+     corrigir a data retiraria a cobertura dele (EXISTE_INFO_CONTRIBUINTE); bloqueia o envio
+     enquanto a correção da data estiver escolhida; a saída é incluir uma nova versão (preserva o
+     período) ou excluir os documentos do período antes. */
   (function(){
     var box=document.getElementById('valGuard'), ini=$('iniVig'); if(!box||!ini) return;
     function _q(k){ var m=new RegExp('[?&]'+k+'=([^&]*)').exec(location.search); return m?decodeURIComponent(m[1]):''; }
-    var isAlt=(_q('modo')==='nova' && _q('from')==='detalhe');
+    /* alteração da vigente = veio do Alterar do detalhe COM número de versão; "Nova versão D-1001"
+       (vigência no fim / excluída) também chega com from=detalhe, mas sem v: é inclusão pura, sem seção */
+    var isAlt=(_q('modo')==='nova' && _q('from')==='detalhe' && !!_q('v'));
     var baseline=ini.value||'';
     var temOrfao=(_q('orfao')==='1');
     var _v=parseInt(_q('v')||'1',10), _src=(_v>1?_v-1:_v);
+    var sec=document.getElementById('s-tipo'), nav=document.getElementById('navTipo');
+    if(isAlt){
+      if(sec) sec.hidden=false; if(nav) nav.hidden=false;
+      var _pre=(_q('tipo')==='incluir')?'incluir':'corrigir';
+      var _rpre=document.querySelector('input[name="tipoAlt"][value="'+_pre+'"]'); if(_rpre) _rpre.checked=true;
+    }
     var IC_WARN='<span class="dalert__ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg></span>';
     var IC_DANGER='<span class="dalert__ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></span>';
     var _ICN_INFO='<span class="dalert__ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span>';
     function vespera(dstr){ var m=/^(\d{2})\/(\d{2})\/(\d{4})$/.exec(dstr||''); if(!m) return dstr||''; var d=new Date(+m[3],+m[2]-1,+m[1]); d.setDate(d.getDate()-1); var p=function(n){return (n<10?'0':'')+n;}; return p(d.getDate())+'/'+p(d.getMonth()+1)+'/'+d.getFullYear(); }
-    var vm='novavig';
+    function vm(){ var r=document.querySelector('input[name="tipoAlt"]:checked'); return r?r.value:'corrigir'; }
     function changed(){ return isAlt && !!ini.value && !!baseline && ini.value!==baseline; }
-    function blocked(){ return changed() && vm==='validade' && temOrfao; }
+    function blocked(){ return isAlt && ((vm()==='incluir' && !changed()) || (vm()==='corrigir' && changed() && temOrfao)); }
     function render(){
-      if(!changed()){ box.hidden=true; box.innerHTML=''; return; }
-      var h='<div class="dalert dalert--warning" role="group" aria-label="O que fazer com a data de início">'+IC_WARN+
-        '<div class="dalert__body"><p class="dalert__title">A data de início foi alterada. Como deseja prosseguir?</p><div class="vmode" role="radiogroup" aria-label="O que fazer com a data de início">'+
-        '<label class="vmode__opt"><input type="radio" name="vmode" value="novavig"'+(vm==='novavig'?' checked':'')+'><span class="vmode__b"><b>Nova vigência a partir de '+esc(ini.value)+'</b><span class="vmode__hint">A Versão '+_src+' (vigente) é <strong>encerrada em '+esc(vespera(ini.value))+'</strong> (véspera) e a Versão '+_v+' passa a valer a partir de '+esc(ini.value)+'. Mantém o histórico.</span></span></label>'+
-        '<label class="vmode__opt"><input type="radio" name="vmode" value="validade"'+(vm==='validade'?' checked':'')+'><span class="vmode__b"><b>Corrigir a data informada</b><span class="vmode__hint">Corrige o início da Versão '+_src+' para '+esc(ini.value)+', <strong>sem criar uma nova vigência</strong> nem encerrar a anterior. Use quando a data original tiver sido informada incorretamente.</span></span></label>'+
-        '</div></div></div>';
-      if(blocked()){
-        h+='<div class="dalert dalert--danger" role="alert">'+IC_DANGER+
-          '<div class="dalert__body"><p class="dalert__title">O período atual já tem documentos transmitidos</p>'+
-          '<p class="dalert__text">O Plano de contas (D-1011) foi transmitido dentro da validade que começa em '+esc(baseline)+'. Corrigir a data para '+esc(ini.value)+' retiraria a cobertura desse período: os documentos ficariam sem Informações do contribuinte válidas e a Receita passaria a apontar pendência da obrigação.</p>'+
-          '<p class="dalert__text">Use <strong>Nova vigência</strong> (o período anterior continua valendo para o passado) ou exclua antes os documentos transmitidos no período.</p>'+
-          '<div style="margin-top:var(--space-3)"><button class="btn btn--secondary btn--sm" type="button" data-guard-novavig><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg>Usar nova vigência</button></div>'+
-          '</div></div>';
+      var hint=document.getElementById('iniVigHint');
+      if(hint) hint.textContent=(isAlt && vm()==='incluir')?'A partir de quando a nova versão passa a valer.':'A partir de quando o enquadramento passa a valer.';
+      if(!isAlt){ box.hidden=true; box.innerHTML=''; return; }
+      var m=vm(), c=changed(), h='';
+      if(m==='corrigir' && !c){
+        h='<div class="dalert dalert--info" role="status">'+_ICN_INFO+'<div class="dalert__body"><p class="dalert__title">Correção da versão vigente</p><p class="dalert__text">Mesmo período de validade (início em '+esc(baseline)+'). Ao ser aprovada, a Versão '+_v+' substitui a Versão '+_src+' (vigente).</p></div></div>';
+      } else if(m==='corrigir' && c){
+        h='<div class="dalert dalert--warning" role="status">'+IC_WARN+'<div class="dalert__body"><p class="dalert__title">Correção da data de validade</p><p class="dalert__text">O início da Versão '+_src+' (vigente) será corrigido para <strong>'+esc(ini.value)+'</strong>. Isso <strong>reescreve o mesmo período</strong>: não abre período novo. Use só se a data original foi digitada errada.</p></div></div>';
+        if(temOrfao){
+          h+='<div class="dalert dalert--danger" role="alert">'+IC_DANGER+
+            '<div class="dalert__body"><p class="dalert__title">O período atual já tem documentos transmitidos</p>'+
+            '<p class="dalert__text">O Plano de contas (D-1011) foi transmitido dentro da validade que começa em '+esc(baseline)+'. Corrigir a data para '+esc(ini.value)+' retiraria a cobertura desse período: os documentos ficariam sem Informações do contribuinte válidas e a Receita passaria a apontar pendência da obrigação.</p>'+
+            '<p class="dalert__text">Use <strong>Incluir uma nova versão a partir de uma data</strong> (o período anterior continua valendo para o passado) ou exclua antes os documentos transmitidos no período.</p>'+
+            '<div style="margin-top:var(--space-3)"><button class="btn btn--secondary btn--sm" type="button" data-guard-incluir><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg>Incluir uma nova versão</button></div>'+
+            '</div></div>';
+        }
+      } else if(m==='incluir' && !c){
+        h='<div class="dalert dalert--danger" role="alert">'+IC_DANGER+'<div class="dalert__body"><p class="dalert__title">Informe o início do novo período</p><p class="dalert__text">A data está igual à da versão atual ('+esc(baseline)+'). Para abrir um período novo, informe a partir de quando a nova versão vale; com a mesma data, a Receita rejeitaria o envio.</p></div></div>';
+      } else {
+        h='<div class="dalert dalert--warning" role="status">'+IC_WARN+'<div class="dalert__body"><p class="dalert__title">Nova versão a partir de '+esc(ini.value)+'</p><p class="dalert__text">A Versão '+_src+' (vigente) será <strong>encerrada em '+esc(vespera(ini.value))+'</strong> (véspera), automaticamente, e continua valendo para o passado. A Versão '+_v+' passa a valer a partir de '+esc(ini.value)+'. Ficam dois períodos na Receita.</p></div></div>';
       }
       box.innerHTML=h; box.hidden=false;
-      box.querySelectorAll('input[name="vmode"]').forEach(function(rb){ rb.addEventListener('change',function(){ vm=rb.value; render(); }); });
-      var b=box.querySelector('[data-guard-novavig]'); if(b){ b.addEventListener('click',function(){ vm='novavig'; render(); var r=box.querySelector('input[name="vmode"][value="novavig"]'); if(r) r.focus(); }); }
+      var b=box.querySelector('[data-guard-incluir]'); if(b){ b.addEventListener('click',function(){ var r=document.querySelector('input[name="tipoAlt"][value="incluir"]'); if(r){ r.checked=true; r.dispatchEvent(new Event('change')); r.focus(); } }); }
     }
     ini.addEventListener('change',render);
-    /* Resumo: o Tipo de operação acompanha a derivação (porta + data) */
+    document.querySelectorAll('input[name="tipoAlt"]').forEach(function(rb){ rb.addEventListener('change',render); });
+    /* Resumo: o Tipo de operação acompanha a escolha (incluir -> Inclusão; corrigir -> Alteração) */
     function updateTipo(){
       var el=document.getElementById('revTpOper'); if(!el) return;
       var t='Inclusão';
       if(_q('modo')==='editar'){ t=(_q('v')==='1')?'Inclusão':'Alteração'; }
-      else if(isAlt){ t=(changed() && vm==='novavig')?'Inclusão':'Alteração'; }
+      else if(isAlt){ t=(vm()==='incluir')?'Inclusão':'Alteração'; }
       el.textContent=t;
     }
     var _r0=render; render=function(){ _r0(); updateTipo(); };
     ini.addEventListener('change',updateTipo);
-    updateTipo();
+    /* os listeners acima capturaram o render de antes do wrap: o updateTipo precisa do próprio listener */
+    document.querySelectorAll('input[name="tipoAlt"]').forEach(function(rb){ rb.addEventListener('change',updateTipo); });
+    render();
     window.__d1001Guard={
       changed:changed, blocked:blocked,
-      mode:function(){ return changed()?vm:null; },
+      mode:function(){ if(!isAlt) return null; if(vm()==='incluir') return 'novavig'; return changed()?'validade':null; },
       focus:function(){ box.scrollIntoView({behavior:'smooth',block:'center'}); var al=box.querySelector('.dalert--danger')||box.querySelector('.dalert')||box; setTimeout(function(){ var f=al.querySelector('button,input'); if(f){ try{ f.focus({preventScroll:true}); }catch(e){ f.focus(); } } },350); }
     };
   })();
@@ -836,7 +879,7 @@
     /* deriva correção × nova vigência pela DATA (só quando alterando a vigente: veio do detalhe, populado, nova versão) */
     function setConseq(){
       var cq=document.getElementById('confirmConseq'); if(!cq) return;
-      var isAlt=(_q('modo')==='nova' && _q('from')==='detalhe');
+      var isAlt=(_q('modo')==='nova' && _q('from')==='detalhe' && !!_q('v'));
       if(!isAlt){ cq.hidden=true; return; }
       var _v=parseInt(_q('v')||'1',10), _src=(_v>1?_v-1:_v);
       /* diz explicitamente que é uma alteração: cria a Versão N a partir da vigente (Versão N-1) */
@@ -848,13 +891,13 @@
       var _vm=(window.__d1001Guard && window.__d1001Guard.mode())||null;
       if(_vm==='novavig'){
         cq.className='dalert dalert--warning'; cq.hidden=false;
-        cq.innerHTML=_IC_WARN+'<div class="dalert__body"><p class="dalert__title">Nova vigência a partir de '+esc(ini)+'</p><p class="dalert__text">A Versão '+_src+' (vigente) será <strong>encerrada em '+esc(_vespera(ini))+'</strong> (véspera) e a Versão '+_v+' passa a valer a partir de '+esc(ini)+'. O período anterior continua valendo para o passado.</p></div>';
+        cq.innerHTML=_IC_WARN+'<div class="dalert__body"><p class="dalert__title">Nova versão a partir de '+esc(ini)+'</p><p class="dalert__text">A Versão '+_src+' (vigente) será <strong>encerrada em '+esc(_vespera(ini))+'</strong> (véspera) e a Versão '+_v+' passa a valer a partir de '+esc(ini)+'. O período anterior continua valendo para o passado.</p></div>';
       } else if(_vm==='validade'){
         cq.className='dalert dalert--warning'; cq.hidden=false;
-        cq.innerHTML=_IC_WARN+'<div class="dalert__body"><p class="dalert__title">Corrigir a data informada</p><p class="dalert__text">O início da Versão '+_src+' será corrigido para '+esc(ini)+', <strong>sem criar uma nova vigência</strong> nem encerrar a anterior.</p></div>';
+        cq.innerHTML=_IC_WARN+'<div class="dalert__body"><p class="dalert__title">Correção da data de validade</p><p class="dalert__text">O início da Versão '+_src+' será corrigido para '+esc(ini)+', <strong>sem abrir um período novo</strong> nem encerrar a anterior.</p></div>';
       } else {
         cq.className='dalert dalert--info'; cq.hidden=false;
-        cq.innerHTML=_IC_INFO+'<div class="dalert__body"><p class="dalert__title">Correção da versão vigente</p><p class="dalert__text">Você manteve a mesma vigência ('+esc(_vigBaseline)+') da Versão '+_src+'. Ao ser aprovada, a Versão '+_v+' substituirá a versão vigente, mantendo o mesmo período de vigência.</p></div>';
+        cq.innerHTML=_IC_INFO+'<div class="dalert__body"><p class="dalert__title">Correção da versão vigente</p><p class="dalert__text">Você manteve a mesma vigência ('+esc(_vigBaseline)+') da Versão '+_src+'. Ao ser aprovada, a Versão '+_v+' substituirá a versão vigente, mantendo o mesmo período de validade.</p></div>';
       }
     }
     openB.addEventListener('click',function(){
@@ -883,7 +926,7 @@
     });
     modal.querySelectorAll('[data-confirm-close]').forEach(function(b){ b.addEventListener('click',close); });
     modal.addEventListener('click',function(e){ if(e.target===modal) close(); });
-    $('confirmSubmit').addEventListener('click',function(){ if(IS_ADMIN){ var qa=function(k){var m=new RegExp('[?&]'+k+'=([^&]+)').exec(location.search);return m?decodeURIComponent(m[1]):'';}; window.location.href='info-contribuinte-detalhe.html?emp='+(qa('emp')||'cap')+'&v='+(qa('v')||'1')+'&st=aprovado&sit=processando&fresh=1&perfil=admin'+(qa('scn')?('&scn='+qa('scn')):'')+'&sent=1'; return; } var q=function(k){var m=new RegExp('[?&]'+k+'=([^&]+)').exec(location.search);return m?decodeURIComponent(m[1]):'';}; try{ localStorage.setItem('adere.sent.d1001', q('emp')||'seg'); localStorage.setItem('adere.sent.d1001.t', String(Date.now())); var _rp=document.querySelector('input[name="regprin"]:checked'), _rl=_rp&&_rp.closest('.selectcard')&&_rp.closest('.selectcard').querySelector('.selectcard__title'); if(_rl) localStorage.setItem('adere.sent.d1001.regime', _rl.textContent.replace(/^Regime Específico de /,'').trim()); }catch(e){} try{ var _isAlt=(q('modo')==='nova' && q('from')==='detalhe'); var _kAlt='adere.d1001.altop.'+(q('emp')||'seg'); if(_isAlt){ var _ini=($('iniVig')||{}).value||''; var _mudou=(_ini&&_vigBaseline&&_ini!==_vigBaseline); var _vm=(document.querySelector('input[name="vmode"]:checked')||{}).value; var _op=_mudou?((_vm==='validade')?'validade':'novavig'):'corrigir'; localStorage.setItem(_kAlt, JSON.stringify({op:_op, data:_ini})); } else { localStorage.removeItem(_kAlt); } }catch(e){} var _cen=q('cenario'); var _dest='info-contribuinte-detalhe.html?emp='+(q('emp')||'seg')+'&v='+(q('v')||'1')+'&st=revisao'+(_cen?('&cenario='+_cen):'')+(q('scn')?('&scn='+q('scn')):''); window.location.href=_dest+'&sent=1'; });
+    $('confirmSubmit').addEventListener('click',function(){ if(IS_ADMIN){ var qa=function(k){var m=new RegExp('[?&]'+k+'=([^&]+)').exec(location.search);return m?decodeURIComponent(m[1]):'';}; window.location.href='info-contribuinte-detalhe.html?emp='+(qa('emp')||'cap')+'&v='+(qa('v')||'1')+'&st=aprovado&sit=processando&fresh=1&perfil=admin'+(qa('scn')?('&scn='+qa('scn')):'')+'&sent=1'; return; } var q=function(k){var m=new RegExp('[?&]'+k+'=([^&]+)').exec(location.search);return m?decodeURIComponent(m[1]):'';}; try{ localStorage.setItem('adere.sent.d1001', q('emp')||'seg'); localStorage.setItem('adere.sent.d1001.t', String(Date.now())); var _rp=document.querySelector('input[name="regprin"]:checked'), _rl=_rp&&_rp.closest('.selectcard')&&_rp.closest('.selectcard').querySelector('.selectcard__title'); if(_rl) localStorage.setItem('adere.sent.d1001.regime', _rl.textContent.replace(/^Regime Específico de /,'').trim()); }catch(e){} try{ var _isAlt=(q('modo')==='nova' && q('from')==='detalhe' && !!q('v')); var _kAlt='adere.d1001.altop.'+(q('emp')||'seg'); if(_isAlt){ var _ini=($('iniVig')||{}).value||''; var _mudou=(_ini&&_vigBaseline&&_ini!==_vigBaseline); var _ta=(document.querySelector('input[name="tipoAlt"]:checked')||{}).value||'corrigir'; var _op=(_ta==='incluir')?'novavig':(_mudou?'validade':'corrigir'); localStorage.setItem(_kAlt, JSON.stringify({op:_op, data:_ini})); } else { localStorage.removeItem(_kAlt); } }catch(e){} var _cen=q('cenario'); var _dest='info-contribuinte-detalhe.html?emp='+(q('emp')||'seg')+'&v='+(q('v')||'1')+'&st=revisao'+(_cen?('&cenario='+_cen):'')+(q('scn')?('&scn='+q('scn')):''); window.location.href=_dest+'&sent=1'; });
   })();
 
   /* Tooltip da sugestão da IA (position:fixed para escapar o recorte do drawer) */
@@ -1004,7 +1047,7 @@
     var secs=[].slice.call(document.querySelectorAll('.cadsec'));
     var items=[].slice.call(document.querySelectorAll('.cadnav__item'));
     function setCurrent(i){ items.forEach(function(n,j){ var on=j===i; n.classList.toggle('is-current',on); if(on) n.setAttribute('aria-current','true'); else n.removeAttribute('aria-current'); }); }
-    function spy(){ var sr=scroller.getBoundingClientRect().top, best=0; secs.forEach(function(s,i){ if(s.getBoundingClientRect().top - sr <= 140) best=i; }); setCurrent(best); }
+    function spy(){ var sr=scroller.getBoundingClientRect().top, best=-1; secs.forEach(function(s,i){ if(s.hidden) return; if(best<0) best=i; if(s.getBoundingClientRect().top - sr <= 140) best=i; }); setCurrent(best<0?0:best); }
     scroller.addEventListener('scroll',spy,{passive:true});
     items.forEach(function(n,i){ n.addEventListener('click',function(e){ e.preventDefault(); var t=secs[i]; var target=scroller.scrollTop + (t.getBoundingClientRect().top - scroller.getBoundingClientRect().top) - 20; scroller.scrollTo({top:Math.max(0,target), behavior:'smooth'}); setCurrent(i); }); });
     spy();
