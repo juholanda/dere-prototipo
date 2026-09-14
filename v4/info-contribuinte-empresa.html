@@ -188,6 +188,43 @@
     .tl__tickd{font-size:var(--text-sm);color:var(--color-text-muted);font-variant-numeric:tabular-nums;white-space:nowrap;order:3}
     .tl__note{margin-top:var(--space-4);text-align:center}
     .tl__empty{margin:0;padding:var(--space-8) var(--space-4);text-align:center;color:var(--color-text-muted);font-size:var(--text-base)}
+    /* Linha do tempo por VERSÃO (mockup validado): eixo, balizadores e barras compartilham
+       o mesmo sistema de coordenadas (coluna 2 da grade); uma linha por versão */
+    .tlv{display:grid;grid-template-columns:max-content 1fr;grid-template-rows:72px auto;column-gap:var(--space-4);margin-top:var(--space-2)}
+    .tlv__axis{grid-column:2;grid-row:1;position:relative}
+    .tlv__labels{grid-column:1;grid-row:2;display:flex;flex-direction:column}
+    .tlv__plot{grid-column:2;grid-row:2;position:relative}
+    .tlv__tick{position:absolute;top:0}
+    .tlv__tick--now{transform:translateX(-50%);text-align:center;top:28px}
+    .tlv__tick--r{transform:translateX(-100%);text-align:right}
+    .tlv__cap{font-size:var(--text-2xs);color:var(--color-text-muted);line-height:1.35;text-transform:uppercase;letter-spacing:.04em;font-weight:600}
+    .tlv__date{font-size:var(--text-base);font-weight:700;color:var(--color-heading);white-space:nowrap;font-variant-numeric:tabular-nums;margin-top:3px}
+    .tlv__tick--now .tlv__date{color:var(--color-primary);margin-top:0;font-size:var(--text-sm)}
+    .tlv__tick--now .tlv__cap{color:var(--color-primary)}
+    .tlv__lab{height:60px;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;text-align:right;padding-left:var(--space-2);padding-right:var(--space-4);border-right:1px solid var(--color-divider);text-decoration:none}
+    a.tlv__lab{cursor:pointer} a.tlv__lab:hover b{color:var(--color-primary);text-decoration:underline}
+    a.tlv__lab:focus-visible{outline:none;box-shadow:var(--ring);border-radius:var(--radius-base)}
+    .tlv__lab b{font-size:var(--text-sm);font-weight:600;color:var(--color-heading)}
+    .tlv__lab small{font-size:var(--text-2xs);color:var(--color-text-muted);margin-top:2px;text-transform:uppercase;letter-spacing:.04em;font-weight:600}
+    .tlv__lab--vig small{color:var(--color-success-fg)}
+    .tlv__lab--fut small{color:var(--color-success-fg)}
+    .tlv__lab--excl small{color:var(--color-danger)}
+    .tlv__baliz{position:absolute;top:0;bottom:0;border-left:1px solid var(--color-border-strong);z-index:1}
+    .tlv__baliz--now{border-left:2px solid var(--color-primary);z-index:2}
+    .tlv__row{position:relative;height:60px}
+    .tlv__lead{position:absolute;top:50%;left:0;right:0;border-top:1px dashed color-mix(in srgb,var(--color-border) 70%,transparent);z-index:0}
+    .tlv__bar{position:absolute;top:50%;transform:translateY(-50%);height:28px;border-radius:var(--radius-base);z-index:3;display:flex;align-items:center;padding:0 var(--space-2-5,10px);font-size:var(--text-2xs);font-weight:600;white-space:nowrap;overflow:hidden;box-shadow:var(--shadow-sm);text-decoration:none;box-sizing:border-box;font-variant-numeric:tabular-nums;letter-spacing:.01em}
+    a.tlv__bar{cursor:pointer;transition:filter .12s,box-shadow .12s}
+    a.tlv__bar:hover{filter:brightness(.96)}
+    a.tlv__bar:focus-visible{outline:none;box-shadow:var(--ring)}
+    .tlv__bar--vig{background:var(--color-success);color:#fff}
+    .tlv__bar--ina{background:var(--color-border);color:var(--color-text-onmuted);border:1px solid var(--color-border-strong)}
+    .tlv__bar--fut{background:color-mix(in srgb,var(--color-success-bg) 55%,var(--color-surface));color:var(--color-success-fg);border:1px dashed var(--color-success-fg)}
+    .tlv__bar--excl{background:transparent;color:var(--color-danger);border:1.5px dashed var(--color-danger);box-shadow:none}
+    .tlv__gapcol{position:absolute;top:0;bottom:0;z-index:1;background:repeating-linear-gradient(45deg,color-mix(in srgb,var(--color-danger) 18%,transparent) 0 5px,transparent 5px 10px);border-left:1px dashed var(--color-danger);border-right:1px dashed var(--color-danger)}
+    .tlv__gapcol-lbl{position:absolute;top:2px;left:50%;transform:translateX(-50%);font-size:var(--text-2xs);font-weight:700;color:var(--color-danger);white-space:nowrap;background:var(--color-surface);padding:0 var(--space-1);border-radius:var(--radius-sm)}
+    .tl__sw--vigS{background:var(--color-success)}
+    .tl__sw--excl{background:transparent;border:1.5px dashed var(--color-danger)}
 
     /* Overlay de DEMONSTRAÇÃO (dev): cenário acompanha a navegação, flutua por cima, não é parte do produto */
     .demobar{position:fixed;bottom:var(--space-4);left:50%;transform:translateX(-50%);z-index:200;display:flex;align-items:center;gap:var(--space-1);background:var(--slate-900);border:1px solid rgba(255,255,255,.14);border-radius:var(--radius-pill);padding:2px var(--space-1-5);box-shadow:var(--shadow-md);font-size:var(--text-xs);opacity:.92;flex-wrap:wrap;justify-content:center;max-width:calc(100vw - var(--space-8));row-gap:var(--space-1)}
@@ -640,66 +677,96 @@
   /* Linha do tempo das vigências (barras por versão; destaca lacuna/sobreposição) */
   function pdate(s){ var m=/(\d{2})\/(\d{2})\/(\d{4})/.exec(s||''); return m?new Date(+m[3],+m[2]-1,+m[1]):null; }
   function parseVig(v){ if(!v||v==='—') return null; var open=/em aberto/.test(v); var m=(v.match(/\d{2}\/\d{2}\/\d{4}/g)||[]); if(!m.length) return null; return {from:pdate(m[0]), to:open?null:(m[1]?pdate(m[1]):null), open:open}; }
+  /* cenários de demonstração da linha do tempo (mudam SÓ este render; os dados reais da empresa ficam intactos) */
+  var TL_DEMO={
+    corte:   [{v:1,ini:'01/01/2025',fim:'31/12/2025'},{v:2,ini:'01/01/2026',fim:'25/01/2026'},{v:3,ini:'26/01/2026',cur:1}],
+    futura:  [{v:2,ini:'01/01/2026',fim:'30/09/2026',cur:1},{v:3,ini:'01/10/2026',fut:1}],
+    lacuna:  [{v:1,ini:'01/01/2025',fim:'28/02/2026'},{v:2,ini:'01/06/2026',cur:1}],
+    semcob:  [{v:2,ini:'01/01/2025',fim:'31/12/2025'},{v:3,ini:'01/01/2026',fim:'30/09/2026',cur:1}],
+    excluida:[{v:1,ini:'01/01/2025',fim:'31/12/2025'},{v:2,ini:'01/01/2026',excl:1}]
+  };
   function renderTimeline(){
     var el=$('tl'); if(!el) return;
+    var _sel=document.getElementById('demoTl');
+    var _mode=(_sel&&TL_DEMO[_sel.value])?_sel.value:'auto';
     var items=[];
-    VERSIONS.forEach(function(v){ var p=parseVig(v.vig); if(p&&p.from) items.push({ver:v.n, current:v.current, from:p.from, to:p.to, open:p.open, vig:v.vig, href:hrefOf(v)}); });
+    if(_mode!=='auto'){
+      TL_DEMO[_mode].forEach(function(d){
+        var _sit=d.excl?'excluida':(d.fut?'futura':(d.cur?'sucesso':'encerrada'));
+        items.push({ver:d.v, current:!!d.cur, fut:!!d.fut, excl:!!d.excl, from:pdate(d.ini), to:d.fim?pdate(d.fim):null, open:!d.fim&&!d.excl, vig:d.ini+(d.fim?(' a '+d.fim):(d.excl?'':' · em aberto')), href:'info-contribuinte-detalhe.html?emp='+EMP+'&v='+d.v+'&st=aprovado&sit='+_sit+Q(false)});
+      });
+    } else {
+      VERSIONS.forEach(function(v){ var p=parseVig(v.vig); if(p&&p.from) items.push({ver:v.n, current:v.current, from:p.from, to:p.to, open:p.open, vig:v.vig, href:hrefOf(v)}); });
+    }
     if(items.length<1){ el.innerHTML='<div class="empty"><div class="empty__icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><rect width="4" height="7" x="7" y="10" rx="1"/><rect width="4" height="12" x="15" y="5" rx="1"/></svg></div><p class="empty__title">Nenhuma vigência ainda</p><p class="empty__text">A linha do tempo aparece quando houver uma versão processada com sucesso na Receita.</p></div>'; return; }
     items.sort(function(a,b){ return a.from-b.from; });
     var today=new Date(2026,8,3); var DAY=86400000;   /* hoje do protótipo */
+    function isFut(i){ return i.fut || i.from.getTime()>today.getTime(); }
     /* fim visual de uma barra aberta: hoje (se já começou) ou início + ~6 meses (se é futura) */
-    function isFut(i){ return i.from.getTime()>today.getTime(); }
     function endOfBar(i){ return i.to ? i.to.getTime() : (isFut(i) ? i.from.getTime()+DAY*180 : today.getTime()); }
-    var hasFut=items.some(isFut);
+    var hasFut=items.some(isFut), hasExcl=items.some(function(i){ return i.excl; });
     var minT=items[0].from.getTime();
     var maxT=Math.max(today.getTime(), Math.max.apply(null, items.map(endOfBar)));
-    /* L3 · lacuna FUTURA: a vigente tem fim e NÃO há versão que cubra depois → projeta o vão a jusante (estende o eixo p/ mostrá-lo) */
-    var _lastP=items[items.length-1];
-    var projLacuna = !!(_lastP.to) && !items.some(function(i){ return i.from.getTime() > _lastP.to.getTime(); });
+    /* cobertura ignora excluídas: o período de uma vigência excluída é lacuna */
+    var cov=items.filter(function(i){ return !i.excl; });
+    /* L3 · lacuna FUTURA: a vigente tem fim e NÃO há versão que cubra depois → projeta o vão a jusante */
+    var _lastP=cov.length?cov[cov.length-1]:null;
+    var projLacuna = !!(_lastP && _lastP.to) && !cov.some(function(i){ return i.from.getTime() > _lastP.to.getTime(); });
     if(projLacuna){ maxT=Math.max(maxT, _lastP.to.getTime()+DAY*90); }
     var span=Math.max(maxT-minT, DAY*60);
-    function pct(t){ return ((t-minT)/span)*100; }
-    var bars='', gaps='', hasGap=false, hasOverlap=false;
-    items.forEach(function(i){
-      var end=endOfBar(i), l=pct(i.from.getTime()), w=Math.max(pct(end)-l,6);
-      var cls=isFut(i)?'tl__bar--fut':(i.current?'tl__bar--vig':'tl__bar--ina');
-      var _bl='Versão '+i.ver+' · '+esc(i.vig||'');
-      bars+='<a class="tl__bar '+cls+(i.open?' tl__bar--open':'')+'" href="'+i.href+'" style="left:'+l.toFixed(2)+'%;width:'+w.toFixed(2)+'%" data-tip="'+_bl+' · abrir detalhe" aria-label="'+_bl+', abrir detalhe">v'+i.ver+'</a>';
-    });
-    for(var k=0;k<items.length-1;k++){
-      var a=items[k], b=items[k+1];
+    function pct(t){ return Math.min(100,Math.max(0,((t-minT)/span)*100)); }
+    var fmt=function(d){ return ('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2)+'/'+d.getFullYear(); };
+    /* lacunas e sobreposição (mesma detecção de antes, sobre as versões que cobrem) */
+    var gaps='', hasGap=false, hasOverlap=false;
+    for(var k=0;k<cov.length-1;k++){
+      var a=cov[k], b=cov[k+1];
       if(a.to){
         if(b.from.getTime() <= a.to.getTime()){ hasOverlap=true; }
-        else if(b.from.getTime() > a.to.getTime()+DAY+DAY){ hasGap=true; var gs=a.to.getTime()+DAY, gl=pct(gs), gw=Math.max(pct(b.from.getTime())-gl,1); gaps+='<div class="tl__gap" style="left:'+gl.toFixed(2)+'%;width:'+gw.toFixed(2)+'%"><span class="tl__gap-lbl">lacuna</span></div>'; }
+        else if(b.from.getTime() > a.to.getTime()+DAY+DAY){ hasGap=true; var gl=pct(a.to.getTime()+DAY), gw=Math.max(pct(b.from.getTime())-gl,1); gaps+='<div class="tlv__gapcol" style="left:'+gl.toFixed(2)+'%;width:'+gw.toFixed(2)+'%"><span class="tlv__gapcol-lbl">lacuna</span></div>'; }
       }
     }
-    /* L3 · lacuna futura projetada após a vigente com fim sem sucessora */
-    if(projLacuna){ hasGap=true; var _pgs=_lastP.to.getTime()+DAY, _pgl=pct(_pgs), _pgw=Math.max(pct(maxT)-_pgl,1); gaps+='<div class="tl__gap" style="left:'+_pgl.toFixed(2)+'%;width:'+_pgw.toFixed(2)+'%"><span class="tl__gap-lbl">sem cobertura</span></div>'; }
-    var fmt=function(d){ return ('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2)+'/'+d.getFullYear(); };
-    var last=items[items.length-1];
-    /* marcador/tick "hoje" só quando há vigência futura (senão "hoje" = fim do eixo e colidiria com o tick final) */
-    var hoje=hasFut?'<div class="tl__today" style="left:'+pct(today.getTime()).toFixed(2)+'%"></div>':'';
-    var ticks='';
-    items.forEach(function(i,idx){
-      var l=pct(i.from.getTime());
-      ticks+='<div class="tl__tick'+(idx===0?' tl__tick--start':'')+'" style="left:'+l.toFixed(2)+'%"><span class="tl__tickv">v'+i.ver+'</span><span class="tl__tickd">'+fmt(i.from)+'</span></div>';
+    if(projLacuna){ hasGap=true; var _pgl=pct(_lastP.to.getTime()+DAY), _pgw=Math.max(100-_pgl,1); gaps+='<div class="tlv__gapcol" style="left:'+_pgl.toFixed(2)+'%;width:'+_pgw.toFixed(2)+'%"><span class="tlv__gapcol-lbl">sem cobertura</span></div>'; }
+    /* eixo (3 marcos): menor início · hoje · maior término */
+    var showNow = today.getTime()>minT+DAY && today.getTime()<maxT-DAY;
+    var axis='<div class="tlv__tick"><div class="tlv__cap">Início mais antigo</div><div class="tlv__date">'+fmt(new Date(minT))+'</div></div>';
+    if(showNow){ axis+='<div class="tlv__tick tlv__tick--now" style="left:'+pct(today.getTime()).toFixed(2)+'%"><div class="tlv__date">'+fmt(today)+'</div><div class="tlv__cap">hoje</div></div>'; }
+    axis+='<div class="tlv__tick tlv__tick--r" style="left:100%"><div class="tlv__cap">Término mais distante</div><div class="tlv__date">'+fmt(new Date(maxT))+(Math.abs(maxT-today.getTime())<DAY?' · hoje':'')+'</div></div>';
+    /* balizadores: bordas, início de cada versão e hoje */
+    var bset={'0.00':1,'100.00':1};
+    items.forEach(function(i){ bset[pct(i.from.getTime()).toFixed(2)]=1; });
+    var baliz='';
+    Object.keys(bset).forEach(function(p){ baliz+='<div class="tlv__baliz" style="left:'+p+'%"></div>'; });
+    if(showNow){ baliz+='<div class="tlv__baliz tlv__baliz--now" style="left:'+pct(today.getTime()).toFixed(2)+'%"></div>'; }
+    /* uma linha por versão, mais novas em cima */
+    var disp=items.slice().sort(function(a,b){ return b.ver-a.ver; });
+    var labels='', rows='';
+    disp.forEach(function(i){
+      var st=i.excl?'excluída':(isFut(i)?'vigência futura':(i.current?'vigente':'encerrada'));
+      var labMod=i.excl?' tlv__lab--excl':(isFut(i)?' tlv__lab--fut':(i.current?' tlv__lab--vig':''));
+      var labIn='<b>Versão '+i.ver+'</b><small>'+st+'</small>';
+      labels+= i.href ? ('<a class="tlv__lab'+labMod+'" href="'+i.href+'" aria-label="Abrir a Versão '+i.ver+'">'+labIn+'</a>')
+                      : ('<div class="tlv__lab'+labMod+'">'+labIn+'</div>');
+      var end=endOfBar(i), l=pct(i.from.getTime()), w=Math.max(pct(end)-l,3);
+      var cls=i.excl?'tlv__bar--excl':(isFut(i)?'tlv__bar--fut':(i.current?'tlv__bar--vig':'tlv__bar--ina'));
+      var txt=i.excl?(fmt(i.from)+' → excluída na Receita'):(fmt(i.from)+' → '+(i.open?(isFut(i)?'em diante':'em aberto'):fmt(i.to)));
+      if(w<16) txt='';   /* barra estreita: sem texto cortado; o tooltip conta a história */
+      var _bl='Versão '+i.ver+' · '+esc(i.vig||'');
+      var attrs=' class="tlv__bar '+cls+'" style="left:'+l.toFixed(2)+'%;width:'+w.toFixed(2)+'%" data-tip="'+_bl+(i.href?' · abrir detalhe':'')+'" aria-label="'+_bl+(i.href?', abrir detalhe':'')+'"';
+      rows+='<div class="tlv__row"><div class="tlv__lead"></div>'+(i.href?('<a href="'+i.href+'"'+attrs+'>'):('<span'+attrs+'>'))+txt+(i.href?'</a>':'</span>')+'</div>';
     });
-    if(hasFut){ ticks+='<div class="tl__tick tl__tick--today" style="left:'+pct(today.getTime()).toFixed(2)+'%"><span class="tl__tickv">hoje</span><span class="tl__tickd">'+fmt(today)+'</span></div>'; }
-    ticks+='<div class="tl__tick tl__tick--end" style="left:100%"><span class="tl__tickv">'+(last.open?(isFut(last)?'em diante':'hoje'):'fim')+'</span><span class="tl__tickd">'+((last.open&&!isFut(last))?'em aberto':fmt(new Date(maxT)))+'</span></div>';
     var status = hasGap ? '<span style="color:var(--color-danger);font-weight:600;font-size:var(--text-xs)">Há lacuna de vigência</span>'
       : hasOverlap ? '<span style="color:var(--color-warning);font-weight:600;font-size:var(--text-xs)">Há sobreposição de vigência</span>'
       : '';
-    var legend='<span><span class="tl__sw tl__sw--vig"></span>Vigente</span>'+(hasFut?'<span><span class="tl__sw tl__sw--fut"></span>Vigência futura</span>':'')+'<span><span class="tl__sw tl__sw--ina"></span>Encerrada</span>';
+    var legend='<span><span class="tl__sw tl__sw--vigS"></span>Vigente</span>'+(hasFut?'<span><span class="tl__sw tl__sw--fut"></span>Vigência futura</span>':'')+'<span><span class="tl__sw tl__sw--ina"></span>Encerrada</span>'+(hasExcl?'<span><span class="tl__sw tl__sw--excl"></span>Excluída</span>':'');
     el.innerHTML='<div class="tl__cap"><div class="tl__legend">'+legend+'</div></div>'+
-      '<div class="tl__track">'+bars+gaps+hoje+'</div>'+
-      '<div class="tl__ticks">'+ticks+'</div>'+
+      '<div class="tlv"><div class="tlv__axis">'+axis+'</div><div class="tlv__labels">'+labels+'</div><div class="tlv__plot">'+baliz+gaps+rows+'</div></div>'+
       (status?'<div class="tl__note">'+status+'</div>':'');
   }
   renderTimeline();
   /* tooltip flutuante nas barras da linha do tempo (hover e foco) */
   (function(){
     var tip=document.createElement('div'); tip.className='tltip'; tip.setAttribute('role','tooltip'); tip.hidden=true; document.body.appendChild(tip);
-    function hit(e){ return e.target && e.target.closest ? e.target.closest('.tl__bar[data-tip]') : null; }
+    function hit(e){ return e.target && e.target.closest ? e.target.closest('.tl__bar[data-tip], .tlv__bar[data-tip]') : null; }
     function show(el){ var t=el.getAttribute('data-tip'); if(!t) return; tip.textContent=t; tip.hidden=false; var r=el.getBoundingClientRect(), tw=tip.offsetWidth, th=tip.offsetHeight; var left=Math.min(Math.max(8, r.left+r.width/2-tw/2), window.innerWidth-tw-8); var top=r.top-th-8; if(top<8) top=r.bottom+8; tip.style.left=left+'px'; tip.style.top=top+'px'; }
     function hide(){ tip.hidden=true; }
     document.addEventListener('mouseover',function(e){ var el=hit(e); if(el) show(el); });
@@ -750,10 +817,31 @@
     <span class="demobar__body">
       <button type="button" data-scn="pop">Populado</button>
       <button type="button" data-scn="new">Primeiro acesso</button>
+      <span id="demoTlWrap" style="display:contents">
+        <span class="demobar__sep" aria-hidden="true"></span>
+        <span class="demobar__lbl">Linha do tempo</span>
+        <select id="demoTl" aria-label="Cenário da linha do tempo" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);color:#fff;font-family:inherit;font-size:var(--text-xs);border-radius:var(--radius-pill);padding:var(--space-1) var(--space-2)">
+          <option value="auto" style="color:#111">Dados da empresa</option>
+          <option value="corte" style="color:#111">Nova vigência (corte automático)</option>
+          <option value="futura" style="color:#111">Vigência futura programada</option>
+          <option value="lacuna" style="color:#111">Lacuna entre vigências</option>
+          <option value="semcob" style="color:#111">Fim sem sucessora (sem cobertura)</option>
+          <option value="excluida" style="color:#111">Vigência excluída</option>
+        </select>
+      </span>
       <span class="demobar__sep" aria-hidden="true"></span>
       <button type="button" id="demoReset" title="Zera as ações do primeiro acesso e volta à lista">Resetar</button>
     </span>
   </div>
+  <script>(function(){
+    var s=document.getElementById('demoTl'); if(!s) return;
+    /* cenários da linha do tempo: só no Populado (no primeiro acesso não há versões) */
+    if(/[?&]scn=new/.test(location.search)){ var w=document.getElementById('demoTlWrap'); if(w) w.style.display='none'; return; }
+    s.addEventListener('change',function(){
+      if(typeof renderTimeline==='function') renderTimeline();
+      var t=document.getElementById('vt-tl'); if(t && typeof selectTab==='function') selectTab(t);
+    });
+  })();</script>
   <script>(function(){ var bar=document.querySelector('.demobar'); if(!bar) return; var tog=bar.querySelector('[data-demo-toggle]'); if(!tog) return; function set(open){ bar.classList.toggle('is-collapsed', !open); tog.setAttribute('aria-expanded', String(open)); tog.setAttribute('aria-label', open?'Recolher ferramenta de demonstração':'Abrir ferramenta de demonstração de cenários'); try{ localStorage.setItem('adere.demo.open', open?'1':'0'); }catch(e){} } var open=false; try{ open=localStorage.getItem('adere.demo.open')==='1'; }catch(e){} set(open); tog.addEventListener('click',function(){ set(bar.classList.contains('is-collapsed')); }); })();</script>
   <script>
     (function(){
