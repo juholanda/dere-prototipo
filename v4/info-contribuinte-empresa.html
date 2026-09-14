@@ -215,7 +215,7 @@
     .tlv__lab--fut small{color:var(--color-success-fg)}
     .tlv__lab--excl small{color:var(--color-danger)}
     .tlv__baliz{position:absolute;top:0;bottom:0;border-left:1px solid var(--color-border-strong);z-index:1}
-    .tlv__baliz--now{border-left:2px solid var(--color-primary);z-index:2}
+    .tlv__baliz--now{border-left:2px solid var(--color-primary);z-index:4}
     .tlv__row{position:relative;height:60px}
     /* divisórias entre as linhas (rótulo + gráfico), no lugar de linhas-guia no meio de cada linha */
     .tlv__row:not(:last-child),.tlv__labels .tlv__lab:not(:last-child){border-bottom:1px solid var(--color-border)}
@@ -227,7 +227,7 @@
     .tlv__bar--ina{background:var(--color-border);color:var(--color-text-onmuted);border:1px solid var(--color-border-strong)}
     .tlv__bar--fut{background:color-mix(in srgb,var(--color-success-bg) 55%,var(--color-surface));color:var(--color-success-fg);border:1px dashed var(--color-success-fg)}
     .tlv__bar--excl{background:transparent;color:var(--color-danger);border:1.5px dashed var(--color-danger);box-shadow:none}
-    .tlv__gapcol{position:absolute;top:0;bottom:0;z-index:1;background:repeating-linear-gradient(45deg,color-mix(in srgb,var(--color-danger) 18%,transparent) 0 5px,transparent 5px 10px);border-left:1px dashed var(--color-danger);border-right:1px dashed var(--color-danger)}
+    .tlv__gapcol{position:absolute;top:0;bottom:0;z-index:1;background:repeating-linear-gradient(45deg,color-mix(in srgb,var(--color-danger) 18%,transparent) 0 5px,transparent 5px 10px);border-left:1px dashed var(--color-danger);border-right:1px dashed var(--color-danger);cursor:help}
     .tlv__gapcol-lbl{position:absolute;top:2px;left:50%;transform:translateX(-50%);font-size:var(--text-2xs);font-weight:700;color:var(--color-danger);white-space:nowrap;background:var(--color-surface);padding:0 var(--space-1);border-radius:var(--radius-sm)}
     .tl__sw--vigS{background:var(--color-success)}
     .tl__sw--excl{background:transparent;border:1.5px dashed var(--color-danger)}
@@ -729,15 +729,17 @@
       var a=cov[k], b=cov[k+1];
       if(a.to){
         if(b.from.getTime() <= a.to.getTime()){ hasOverlap=true; }
-        else if(b.from.getTime() > a.to.getTime()+DAY+DAY){ hasGap=true; var gl=pct(a.to.getTime()+DAY), gw=Math.max(pct(b.from.getTime())-gl,1); gaps+='<div class="tlv__gapcol" style="left:'+gl.toFixed(2)+'%;width:'+gw.toFixed(2)+'%"><span class="tlv__gapcol-lbl">lacuna</span></div>'; }
+        else if(b.from.getTime() > a.to.getTime()+DAY+DAY){ hasGap=true; var gl=pct(a.to.getTime()+DAY), gw=Math.max(pct(b.from.getTime())-gl,1); var _gtip='Lacuna de '+fmt(new Date(a.to.getTime()+DAY))+' a '+fmt(new Date(b.from.getTime()-DAY))+': período sem Informações do contribuinte válidas. As declarações mensais deste intervalo ficam bloqueadas até uma versão cobrir o período.'; gaps+='<div class="tlv__gapcol" style="left:'+gl.toFixed(2)+'%;width:'+gw.toFixed(2)+'%" data-tip="'+_gtip+'" role="img" aria-label="'+_gtip+'"><span class="tlv__gapcol-lbl">lacuna</span></div>'; }
       }
     }
-    if(projLacuna){ hasGap=true; var _pgl=pct(_lastP.to.getTime()+DAY), _pgw=Math.max(100-_pgl,1); gaps+='<div class="tlv__gapcol" style="left:'+_pgl.toFixed(2)+'%;width:'+_pgw.toFixed(2)+'%"><span class="tlv__gapcol-lbl">sem cobertura</span></div>'; }
+    if(projLacuna){ hasGap=true; var _pgl=pct(_lastP.to.getTime()+DAY), _pgw=Math.max(100-_pgl,1); var _ptip='Sem cobertura a partir de '+fmt(new Date(_lastP.to.getTime()+DAY))+': nenhuma versão cobre o período seguinte. Envie uma nova versão para as declarações mensais não ficarem bloqueadas.'; gaps+='<div class="tlv__gapcol" style="left:'+_pgl.toFixed(2)+'%;width:'+_pgw.toFixed(2)+'%" data-tip="'+_ptip+'" role="img" aria-label="'+_ptip+'"><span class="tlv__gapcol-lbl">sem cobertura</span></div>'; }
     /* eixo (3 marcos): menor início · hoje · maior término */
     var showNow = today.getTime()>minT+DAY && today.getTime()<maxT-DAY;
     var axis='<div class="tlv__tick"><div class="tlv__cap">Início</div><div class="tlv__date">'+fmt(new Date(minT))+'</div></div>';
     if(showNow){ axis+='<div class="tlv__tick tlv__tick--now" style="left:'+pct(today.getTime()).toFixed(2)+'%"><div class="tlv__date">'+fmt(today)+'</div><div class="tlv__cap">hoje</div></div>'; }
-    axis+='<div class="tlv__tick tlv__tick--r" style="left:100%"><div class="tlv__cap">Término</div><div class="tlv__date">'+fmt(new Date(maxT))+(Math.abs(maxT-today.getTime())<DAY?' · hoje':'')+'</div></div>';
+    /* fim do eixo = hoje quando há vigência em aberto (nada "termina"): rótulo vira "Hoje" */
+    var _endIsToday=Math.abs(maxT-today.getTime())<DAY;
+    axis+='<div class="tlv__tick tlv__tick--r" style="left:100%"><div class="tlv__cap">'+(_endIsToday?'Hoje':'Término')+'</div><div class="tlv__date">'+fmt(new Date(maxT))+'</div></div>';
     axis+='<span class="tlv__conn" style="left:0"></span><span class="tlv__conn" style="left:100%"></span>';
     if(showNow){ axis+='<span class="tlv__conn tlv__conn--now" style="left:'+pct(today.getTime()).toFixed(2)+'%"></span>'; }
     /* balizadores: início de cada versão, bordas e hoje (o de 0% emenda no conector do "Início") */
@@ -776,7 +778,7 @@
   /* tooltip flutuante nas barras da linha do tempo (hover e foco) */
   (function(){
     var tip=document.createElement('div'); tip.className='tltip'; tip.setAttribute('role','tooltip'); tip.hidden=true; document.body.appendChild(tip);
-    function hit(e){ return e.target && e.target.closest ? e.target.closest('.tl__bar[data-tip], .tlv__bar[data-tip]') : null; }
+    function hit(e){ return e.target && e.target.closest ? e.target.closest('.tl__bar[data-tip], .tlv__bar[data-tip], .tlv__gapcol[data-tip]') : null; }
     function show(el){ var t=el.getAttribute('data-tip'); if(!t) return; tip.textContent=t; tip.hidden=false; var r=el.getBoundingClientRect(), tw=tip.offsetWidth, th=tip.offsetHeight; var left=Math.min(Math.max(8, r.left+r.width/2-tw/2), window.innerWidth-tw-8); var top=r.top-th-8; if(top<8) top=r.bottom+8; tip.style.left=left+'px'; tip.style.top=top+'px'; }
     function hide(){ tip.hidden=true; }
     document.addEventListener('mouseover',function(e){ var el=hit(e); if(el) show(el); });
