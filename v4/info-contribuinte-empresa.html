@@ -206,7 +206,7 @@
     .tlv__date{font-size:var(--text-base);font-weight:700;color:var(--color-heading);white-space:nowrap;font-variant-numeric:tabular-nums;margin-top:3px}
     .tlv__tick--now .tlv__date{color:var(--color-primary);margin-top:0;font-size:var(--text-sm)}
     .tlv__tick--now .tlv__cap{color:var(--color-primary)}
-    .tlv__lab{height:60px;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;text-align:right;padding-left:var(--space-2);padding-right:var(--space-4);border-right:1px solid var(--color-divider);text-decoration:none}
+    .tlv__lab{height:60px;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;text-align:right;padding-left:var(--space-2);padding-right:var(--space-4);text-decoration:none}
     a.tlv__lab{cursor:pointer} a.tlv__lab:hover b{color:var(--color-primary);text-decoration:underline}
     a.tlv__lab:focus-visible{outline:none;box-shadow:var(--ring);border-radius:var(--radius-base)}
     .tlv__lab b{font-size:var(--text-sm);font-weight:600;color:var(--color-heading)}
@@ -739,9 +739,9 @@
     axis+='<div class="tlv__tick tlv__tick--r" style="left:100%"><div class="tlv__cap">Término</div><div class="tlv__date">'+fmt(new Date(maxT))+(Math.abs(maxT-today.getTime())<DAY?' · hoje':'')+'</div></div>';
     axis+='<span class="tlv__conn" style="left:0"></span><span class="tlv__conn" style="left:100%"></span>';
     if(showNow){ axis+='<span class="tlv__conn tlv__conn--now" style="left:'+pct(today.getTime()).toFixed(2)+'%"></span>'; }
-    /* balizadores: início de cada versão (menos o 0%, que a divisória dos rótulos já marca), fim e hoje */
-    var bset={'100.00':1};
-    items.forEach(function(i){ var _p=pct(i.from.getTime()); if(_p>0.5) bset[_p.toFixed(2)]=1; });
+    /* balizadores: início de cada versão, bordas e hoje (o de 0% emenda no conector do "Início") */
+    var bset={'0.00':1,'100.00':1};
+    items.forEach(function(i){ bset[pct(i.from.getTime()).toFixed(2)]=1; });
     var baliz='';
     Object.keys(bset).forEach(function(p){ baliz+='<div class="tlv__baliz" style="left:'+p+'%"></div>'; });
     if(showNow){ baliz+='<div class="tlv__baliz tlv__baliz--now" style="left:'+pct(today.getTime()).toFixed(2)+'%"></div>'; }
