@@ -214,7 +214,8 @@
     .tlv__baliz{position:absolute;top:0;bottom:0;border-left:1px solid var(--color-border-strong);z-index:1}
     .tlv__baliz--now{border-left:2px solid var(--color-primary);z-index:2}
     .tlv__row{position:relative;height:60px}
-    .tlv__lead{position:absolute;top:50%;left:0;right:0;border-top:1px dashed color-mix(in srgb,var(--color-border) 70%,transparent);z-index:0}
+    /* divisórias entre as linhas (rótulo + gráfico), no lugar de linhas-guia no meio de cada linha */
+    .tlv__row:not(:last-child),.tlv__labels .tlv__lab:not(:last-child){border-bottom:1px solid var(--color-border)}
     .tlv__bar{position:absolute;top:50%;transform:translateY(-50%);height:28px;border-radius:var(--radius-base);z-index:3;display:flex;align-items:center;padding:0 var(--space-2-5,10px);font-size:var(--text-2xs);font-weight:600;white-space:nowrap;overflow:hidden;box-shadow:var(--shadow-sm);text-decoration:none;box-sizing:border-box;font-variant-numeric:tabular-nums;letter-spacing:.01em}
     a.tlv__bar{cursor:pointer;transition:filter .12s,box-shadow .12s}
     a.tlv__bar:hover{filter:brightness(.96)}
@@ -730,9 +731,9 @@
     if(projLacuna){ hasGap=true; var _pgl=pct(_lastP.to.getTime()+DAY), _pgw=Math.max(100-_pgl,1); gaps+='<div class="tlv__gapcol" style="left:'+_pgl.toFixed(2)+'%;width:'+_pgw.toFixed(2)+'%"><span class="tlv__gapcol-lbl">sem cobertura</span></div>'; }
     /* eixo (3 marcos): menor início · hoje · maior término */
     var showNow = today.getTime()>minT+DAY && today.getTime()<maxT-DAY;
-    var axis='<div class="tlv__tick"><div class="tlv__cap">Início mais antigo</div><div class="tlv__date">'+fmt(new Date(minT))+'</div></div>';
+    var axis='<div class="tlv__tick"><div class="tlv__cap">Início</div><div class="tlv__date">'+fmt(new Date(minT))+'</div></div>';
     if(showNow){ axis+='<div class="tlv__tick tlv__tick--now" style="left:'+pct(today.getTime()).toFixed(2)+'%"><div class="tlv__date">'+fmt(today)+'</div><div class="tlv__cap">hoje</div></div>'; }
-    axis+='<div class="tlv__tick tlv__tick--r" style="left:100%"><div class="tlv__cap">Término mais distante</div><div class="tlv__date">'+fmt(new Date(maxT))+(Math.abs(maxT-today.getTime())<DAY?' · hoje':'')+'</div></div>';
+    axis+='<div class="tlv__tick tlv__tick--r" style="left:100%"><div class="tlv__cap">Término</div><div class="tlv__date">'+fmt(new Date(maxT))+(Math.abs(maxT-today.getTime())<DAY?' · hoje':'')+'</div></div>';
     /* balizadores: início de cada versão (menos o 0%, que a divisória dos rótulos já marca), fim e hoje */
     var bset={'100.00':1};
     items.forEach(function(i){ var _p=pct(i.from.getTime()); if(_p>0.5) bset[_p.toFixed(2)]=1; });
@@ -754,7 +755,7 @@
       if(w<16) txt='';   /* barra estreita: sem texto cortado; o tooltip conta a história */
       var _bl='Versão '+i.ver+' · '+esc(i.vig||'');
       var attrs=' class="tlv__bar '+cls+'" style="left:'+l.toFixed(2)+'%;width:'+w.toFixed(2)+'%" data-tip="'+_bl+(i.href?' · abrir detalhe':'')+'" aria-label="'+_bl+(i.href?', abrir detalhe':'')+'"';
-      rows+='<div class="tlv__row"><div class="tlv__lead"></div>'+(i.href?('<a href="'+i.href+'"'+attrs+'>'):('<span'+attrs+'>'))+txt+(i.href?'</a>':'</span>')+'</div>';
+      rows+='<div class="tlv__row">'+(i.href?('<a href="'+i.href+'"'+attrs+'>'):('<span'+attrs+'>'))+txt+(i.href?'</a>':'</span>')+'</div>';
     });
     var status = hasGap ? '<span style="color:var(--color-danger);font-weight:600;font-size:var(--text-xs)">Há lacuna de vigência</span>'
       : hasOverlap ? '<span style="color:var(--color-warning);font-weight:600;font-size:var(--text-xs)">Há sobreposição de vigência</span>'
