@@ -203,9 +203,12 @@
     .person__date{font-size:var(--text-sm);color:var(--color-text-muted);font-variant-numeric:tabular-nums;margin-top:1px}
     .rf-wait{display:inline-flex;align-items:center;gap:var(--space-1-5);color:var(--color-text-muted);font-size:var(--text-sm)}
     /* recibo no cabeçalho: linha discreta abaixo do subtítulo; só existe quando a versão tem recibo */
-    .hdr-recibo{display:flex;align-items:center;flex-wrap:wrap;gap:var(--space-2) var(--space-6);margin-top:var(--space-2);color:var(--color-text-muted);font-size:var(--text-sm)}
+    .hdr-recibo{display:flex;align-items:center;flex-wrap:wrap;gap:var(--space-2) var(--space-6);margin-top:var(--space-6);color:var(--color-text-muted);font-size:var(--text-sm)}
     .hdr-recibo .hm{display:inline-flex;align-items:center;gap:var(--space-2)}
     .hdr-recibo .hm[hidden]{display:none}
+    /* status na linha de metadados: um pouco menor que o pill padrão */
+    .hdr-recibo .status{font-size:var(--text-xs)}
+    .hdr-recibo .status__dot{width:5px;height:5px}
     .hdr-recibo svg{width:15px;height:15px;flex:0 0 auto}
     .hdr-recibo__n{color:var(--color-text);font-variant-numeric:tabular-nums;white-space:nowrap}
     .hdr-recibo .icon-btn{width:26px;height:26px}
@@ -318,15 +321,17 @@
           <div class="wrap">
             <div class="page-h__row">
               <div class="page-h__main">
-                <div class="page-h__title"><h1 id="dTitle">Informações do contribuinte</h1><span id="dBadge" role="status" aria-live="polite"></span></div>
+                <div class="page-h__title"><h1 id="dTitle">Informações do contribuinte</h1></div>
                 <p id="dSub" class="page-h__desc"><strong>Informações do contribuinte</strong> desta versão e o acompanhamento na <strong>Receita Federal</strong>.</p>
-                <div class="hdr-recibo">
-                  <span class="hm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg><span>Tipo de operação</span><span class="hdr-recibo__n" id="dOpLbl"></span></span>
-                  <span class="hm" id="dRecibo" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 17.5v-11"/></svg><span>Recibo</span><span class="hdr-recibo__n" id="dReciboNum"></span><button class="icon-btn" type="button" id="dReciboCopy" aria-label="Copiar número do recibo" title="Copiar recibo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg></button></span>
-                </div>
               </div>
               <!-- ações da versão (variam por estado): Editar, Excluir, etc. -->
               <div class="statusbar__actions page-h__act" id="pageActions"></div>
+            </div>
+            <!-- metadados da versão: largura total do cabeçalho, respiro maior em relação ao subtítulo -->
+            <div class="hdr-recibo">
+              <span id="dBadge" role="status" aria-live="polite"></span>
+              <span class="hm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg><span>Tipo de operação</span><span class="hdr-recibo__n" id="dOpLbl"></span></span>
+              <span class="hm" id="dRecibo" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 17.5v-11"/></svg><span>Recibo</span><span class="hdr-recibo__n" id="dReciboNum"></span><button class="icon-btn" type="button" id="dReciboCopy" aria-label="Copiar número do recibo" title="Copiar recibo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg></button></span>
             </div>
           </div>
         </div>
