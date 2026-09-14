@@ -190,7 +190,7 @@
     .tl__empty{margin:0;padding:var(--space-8) var(--space-4);text-align:center;color:var(--color-text-muted);font-size:var(--text-base)}
     /* Linha do tempo por VERSÃO (mockup validado): eixo, balizadores e barras compartilham
        o mesmo sistema de coordenadas (coluna 2 da grade); uma linha por versão */
-    .tlv{display:grid;grid-template-columns:max-content 1fr;grid-template-rows:72px auto;column-gap:var(--space-4);margin-top:var(--space-2);position:relative}
+    .tlv{display:grid;grid-template-columns:max-content 1fr;grid-template-rows:72px auto;margin-top:var(--space-2);position:relative}
     /* linha de base entre o eixo e o gráfico, atravessando rótulos + plot */
     .tlv::before{content:"";position:absolute;top:72px;left:0;right:0;border-top:1px solid var(--color-border-strong)}
     .tlv__axis{grid-column:2;grid-row:1;position:relative}
@@ -198,6 +198,9 @@
     .tlv__plot{grid-column:2;grid-row:2;position:relative}
     .tlv__tick{position:absolute;top:0}
     .tlv__tick--now{transform:translateX(-50%);text-align:center;top:28px}
+    /* conectores: amarram as datas do eixo à linha de base (e o "hoje" ao balizador azul) */
+    .tlv__conn{position:absolute;bottom:0;height:12px;border-left:1.5px solid var(--color-border-strong)}
+    .tlv__conn--now{border-left:2px solid var(--color-primary);height:16px}
     .tlv__tick--r{transform:translateX(-100%);text-align:right}
     .tlv__cap{font-size:var(--text-2xs);color:var(--color-text-muted);line-height:1.35;text-transform:uppercase;letter-spacing:.04em;font-weight:600}
     .tlv__date{font-size:var(--text-base);font-weight:700;color:var(--color-heading);white-space:nowrap;font-variant-numeric:tabular-nums;margin-top:3px}
@@ -734,6 +737,8 @@
     var axis='<div class="tlv__tick"><div class="tlv__cap">Início</div><div class="tlv__date">'+fmt(new Date(minT))+'</div></div>';
     if(showNow){ axis+='<div class="tlv__tick tlv__tick--now" style="left:'+pct(today.getTime()).toFixed(2)+'%"><div class="tlv__date">'+fmt(today)+'</div><div class="tlv__cap">hoje</div></div>'; }
     axis+='<div class="tlv__tick tlv__tick--r" style="left:100%"><div class="tlv__cap">Término</div><div class="tlv__date">'+fmt(new Date(maxT))+(Math.abs(maxT-today.getTime())<DAY?' · hoje':'')+'</div></div>';
+    axis+='<span class="tlv__conn" style="left:0"></span><span class="tlv__conn" style="left:100%"></span>';
+    if(showNow){ axis+='<span class="tlv__conn tlv__conn--now" style="left:'+pct(today.getTime()).toFixed(2)+'%"></span>'; }
     /* balizadores: início de cada versão (menos o 0%, que a divisória dos rótulos já marca), fim e hoje */
     var bset={'100.00':1};
     items.forEach(function(i){ var _p=pct(i.from.getTime()); if(_p>0.5) bset[_p.toFixed(2)]=1; });
