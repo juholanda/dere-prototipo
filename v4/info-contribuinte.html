@@ -66,7 +66,7 @@
     .selectstack{display:flex;flex-direction:column;gap:var(--space-3)}
     .selectcard__num{font-variant-numeric:tabular-nums}
     .atv-empty{display:flex;flex-direction:column;align-items:center;gap:var(--space-3);text-align:center;padding:var(--space-8);background:var(--color-surface-2);border:1px dashed var(--color-border);border-radius:var(--radius-xl);color:var(--color-text-muted);font-size:var(--text-sm)}
-    .cadsum{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-4) var(--space-8);margin:0}
+    .cadsum{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-6) var(--space-8);margin:0}
     .cadsum dt{font-size:var(--text-sm);color:var(--color-text-muted);font-weight:600;margin:0 0 var(--space-2)}
     .cadsum dd{margin:0;font-size:var(--text-base);color:var(--color-heading);font-weight:500;line-height:1.4}
     .cadsum > div{min-width:0}
@@ -278,20 +278,22 @@
 
                 <!-- Vigência -->
                 <section id="s-vig" class="card cadsec" aria-labelledby="h-vig">
-                  <div class="card__h"><span class="card__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span><h2 id="h-vig">Vigência</h2></div>
+                  <div class="card__h"><span class="card__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span><h2 id="h-vig">Validade</h2></div>
                   <div class="cadrow">
-                    <div class="cadrow__label"><span class="lb">Início da vigência<span class="req" aria-hidden="true">*</span></span><p class="cadrow__hint">A partir de quando o enquadramento passa a valer.</p></div>
+                    <div class="cadrow__label"><span class="lb">Início da validade<span class="req" aria-hidden="true">*</span></span><p class="cadrow__hint">A partir de quando o enquadramento passa a valer.</p></div>
                     <div class="cadrow__field">
-                      <div class="datefield" data-datefield><input class="input" id="iniVig" type="text" value="01/01/2026" readonly placeholder="dd/mm/aaaa" autocomplete="off" aria-label="Início da vigência"><span class="datefield__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span><div class="dp" hidden></div></div>
+                      <div class="datefield" data-datefield><input class="input" id="iniVig" type="text" value="01/01/2026" readonly placeholder="dd/mm/aaaa" autocomplete="off" aria-label="Início da validade"><span class="datefield__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span><div class="dp" hidden></div></div>
                     </div>
                   </div>
                   <div class="cadrow">
-                    <div class="cadrow__label"><span class="lb">Fim da vigência</span><p class="cadrow__hint">Deixe em branco para vigência por prazo indeterminado.</p></div>
+                    <div class="cadrow__label"><span class="lb">Fim da validade</span><p class="cadrow__hint">Deixe em branco para vigência por prazo indeterminado.</p></div>
                     <div class="cadrow__field">
-                      <div class="datefield" data-datefield><input class="input" id="fimVig" type="text" value="" readonly placeholder="dd/mm/aaaa" autocomplete="off" aria-label="Fim da vigência" disabled><span class="datefield__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span><div class="dp" hidden></div></div>
-                      <label class="check"><input type="checkbox" id="vigAberta" checked><span>Vigência em aberto (sem data de fim)</span></label>
+                      <div class="datefield" data-datefield><input class="input" id="fimVig" type="text" value="" readonly placeholder="dd/mm/aaaa" autocomplete="off" aria-label="Fim da validade" disabled><span class="datefield__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span><div class="dp" hidden></div></div>
+                      <label class="check"><input type="checkbox" id="vigAberta" checked><span>Validade em aberto (sem data de fim)</span></label>
                     </div>
                   </div>
+                  <!-- guarda-corpo inline: aparece imediatamente abaixo das datas quando o início muda (alteração da vigente) -->
+                  <div id="valGuard" aria-live="polite" hidden style="display:grid;gap:var(--space-3);margin-top:var(--space-4)"></div>
                 </section>
 
                 <!-- Regime tributário -->
@@ -346,12 +348,13 @@
 
                 <!-- Revisão e envio -->
                 <section id="s-rev" class="card cadsec" aria-labelledby="h-rev">
-                  <div class="card__h"><span class="card__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg></span><h2 id="h-rev">Revisão e envio</h2></div>
+                  <div class="card__h"><span class="card__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg></span><h2 id="h-rev">Resumo</h2></div>
                   <dl class="cadsum">
+                    <div><dt>Tipo de operação</dt><dd id="revTpOper">Inclusão</dd></div>
                     <div><dt>Contribuinte</dt><dd data-co-nome>MAG Seguros</dd></div>
                     <div><dt>CNPJ (raiz)</dt><dd data-co-cnpjraiz>33.608.308</dd></div>
                     <div><dt>Natureza jurídica</dt><dd data-co-natureza>Sociedade Anônima</dd></div>
-                    <div><dt>Vigência</dt><dd id="revVig">01/01/2026 · sem data de fim</dd></div>
+                    <div><dt>Validade</dt><dd id="revVig">01/01/2026 · sem data de fim</dd></div>
                     <div><dt>CNAE principal</dt><dd data-co-cnae>65.11-1/01 · Seguros de vida</dd></div>
                     <div><dt>Regime principal</dt><dd id="revRegPrin">Serviços Financeiros</dd></div>
                     <div><dt>Regimes secundários</dt><dd id="revRegSec">Nenhum</dd></div>
@@ -360,7 +363,7 @@
                   </dl>
                   <div class="cadnote">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-                    <p>Ao submeter, as informações vão para revisão interna do aprovador. A transmissão para a Receita acontece após a aprovação.</p>
+                    <p>Ao submeter, a solicitação entra na fila de revisão do CNPJ: qualquer revisor pode assumir e aprovar. A transmissão para a Receita acontece após a aprovação.</p>
                   </div>
                 </section>
 
@@ -368,10 +371,10 @@
 
               <nav class="cadnav" aria-label="Seções do formulário">
                 <a href="#s-ident" class="cadnav__item is-current"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg><span>Identificação</span></a>
-                <a href="#s-vig" class="cadnav__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span>Vigência</span></a>
+                <a href="#s-vig" class="cadnav__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span>Validade</span></a>
                 <a href="#s-reg" class="cadnav__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10M12 3v18M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg><span>Regime tributário</span></a>
                 <a href="#s-atv" class="cadnav__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8M13 12h8M13 18h8"/></svg><span>Atividades</span></a>
-                <a href="#s-rev" class="cadnav__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg><span>Revisão e envio</span></a>
+                <a href="#s-rev" class="cadnav__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg><span>Resumo</span></a>
               </nav>
             </div>
           </div>
@@ -424,7 +427,8 @@
         <p id="confirmDesc">As informações do contribuinte (D-1001) vão para <b>revisão interna</b> antes de serem transmitidas à Receita.</p>
         <div id="confirmConseq" class="dalert" role="status" style="margin-bottom:var(--space-4)" hidden></div>
         <div class="cinfo">
-          <div class="cinfo__row"><span class="cinfo__k">Aprovador responsável</span><span class="cinfo__v"><span class="avatar avatar--sm">AP</span>Ana Prado</span></div>
+          <!-- revisão NÃO é nominal: entra na fila do CNPJ e qualquer revisor elegível pode assumir -->
+          <div class="cinfo__row"><span class="cinfo__k">Revisão</span><span class="cinfo__v"><span class="avatar avatar--sm" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>Fila de revisores do CNPJ · qualquer um pode assumir</span></div>
         </div>
       </div>
       <div class="modal__footer">
@@ -538,7 +542,7 @@
     document.querySelectorAll('[data-co-cnae]').forEach(function(el){ el.textContent=co.cnae||'—'; });
   })();
 
-  /* Vigência em aberto → habilita/limpa o Fim */
+  /* Validade em aberto → habilita/limpa o Fim */
   (function(){
     var chk=$('vigAberta'), fim=$('fimVig');
     function sync(){ fim.disabled=chk.checked; if(chk.checked) fim.value=''; }
@@ -760,6 +764,52 @@
     window.__d1001Review=renderReviewSummary; /* resumo de revisão, chamado também no submit (outra IIFE) */
   })();
 
+  /* Guarda-corpo inline da Validade: a pergunta fina (corrigir x nova vigência) nasce AQUI,
+     imediatamente abaixo das datas, no momento em que o início muda. O modal só confirma a escolha.
+     Órfão (demo ?orfao=1): o período atual tem filho transmitido (D-1011) -> Corrigir retiraria a
+     cobertura dele (EXISTE_INFO_CONTRIBUINTE) e a Receita apontaria pendência. Bloqueia o envio
+     enquanto "Corrigir" estiver escolhida; a saída é Nova vigência (preserva o período) ou excluir
+     os documentos do período antes. */
+  (function(){
+    var box=document.getElementById('valGuard'), ini=$('iniVig'); if(!box||!ini) return;
+    function _q(k){ var m=new RegExp('[?&]'+k+'=([^&]*)').exec(location.search); return m?decodeURIComponent(m[1]):''; }
+    var isAlt=(_q('modo')==='nova' && _q('from')==='detalhe');
+    var baseline=ini.value||'';
+    var temOrfao=(_q('orfao')==='1');
+    var _v=parseInt(_q('v')||'1',10), _src=(_v>1?_v-1:_v);
+    var IC_WARN='<span class="dalert__ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg></span>';
+    var IC_DANGER='<span class="dalert__ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></span>';
+    function vespera(dstr){ var m=/^(\d{2})\/(\d{2})\/(\d{4})$/.exec(dstr||''); if(!m) return dstr||''; var d=new Date(+m[3],+m[2]-1,+m[1]); d.setDate(d.getDate()-1); var p=function(n){return (n<10?'0':'')+n;}; return p(d.getDate())+'/'+p(d.getMonth()+1)+'/'+d.getFullYear(); }
+    var vm='novavig';
+    function changed(){ return isAlt && !!ini.value && !!baseline && ini.value!==baseline; }
+    function blocked(){ return changed() && vm==='validade' && temOrfao; }
+    function render(){
+      if(!changed()){ box.hidden=true; box.innerHTML=''; return; }
+      var h='<div class="dalert dalert--warning" role="group" aria-label="O que fazer com a data de início">'+IC_WARN+
+        '<div class="dalert__body"><p class="dalert__title">A data de início foi alterada. Como deseja prosseguir?</p><div class="vmode" role="radiogroup" aria-label="O que fazer com a data de início">'+
+        '<label class="vmode__opt"><input type="radio" name="vmode" value="novavig"'+(vm==='novavig'?' checked':'')+'><span class="vmode__b"><b>Nova vigência a partir de '+esc(ini.value)+'</b><span class="vmode__hint">A Versão '+_src+' (vigente) é <strong>encerrada em '+esc(vespera(ini.value))+'</strong> (véspera) e a Versão '+_v+' passa a valer a partir de '+esc(ini.value)+'. Mantém o histórico.</span></span></label>'+
+        '<label class="vmode__opt"><input type="radio" name="vmode" value="validade"'+(vm==='validade'?' checked':'')+'><span class="vmode__b"><b>Corrigir a data informada</b><span class="vmode__hint">Corrige o início da Versão '+_src+' para '+esc(ini.value)+', <strong>sem criar uma nova vigência</strong> nem encerrar a anterior. Use quando a data original tiver sido informada incorretamente.</span></span></label>'+
+        '</div></div></div>';
+      if(blocked()){
+        h+='<div class="dalert dalert--danger" role="alert">'+IC_DANGER+
+          '<div class="dalert__body"><p class="dalert__title">O período atual já tem documentos transmitidos</p>'+
+          '<p class="dalert__text">O Plano de contas (D-1011) foi transmitido dentro da validade que começa em '+esc(baseline)+'. Corrigir a data para '+esc(ini.value)+' retiraria a cobertura desse período: os documentos ficariam sem Informações do contribuinte válidas e a Receita passaria a apontar pendência da obrigação.</p>'+
+          '<p class="dalert__text">Use <strong>Nova vigência</strong> (o período anterior continua valendo para o passado) ou exclua antes os documentos transmitidos no período.</p>'+
+          '<div style="margin-top:var(--space-3)"><button class="btn btn--secondary btn--sm" type="button" data-guard-novavig><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg>Usar nova vigência</button></div>'+
+          '</div></div>';
+      }
+      box.innerHTML=h; box.hidden=false;
+      box.querySelectorAll('input[name="vmode"]').forEach(function(rb){ rb.addEventListener('change',function(){ vm=rb.value; render(); }); });
+      var b=box.querySelector('[data-guard-novavig]'); if(b){ b.addEventListener('click',function(){ vm='novavig'; render(); var r=box.querySelector('input[name="vmode"][value="novavig"]'); if(r) r.focus(); }); }
+    }
+    ini.addEventListener('change',render);
+    window.__d1001Guard={
+      changed:changed, blocked:blocked,
+      mode:function(){ return changed()?vm:null; },
+      focus:function(){ box.scrollIntoView({behavior:'smooth',block:'center'}); var al=box.querySelector('.dalert--danger')||box; setTimeout(function(){ var f=al.querySelector('button,input'); if(f){ try{ f.focus({preventScroll:true}); }catch(e){ f.focus(); } } },350); }
+    };
+  })();
+
   /* Modal de confirmação: submeter para revisão */
   (function(){
     var modal=$('confirmModal'), openB=$('submitBtn'); if(!modal||!openB) return;
@@ -781,17 +831,16 @@
       var _cd=document.getElementById('confirmDesc');
       if(_cd && !IS_ADMIN){ _cd.innerHTML='Você está criando a <b>Versão '+_v+'</b> a partir da <b>Versão '+_src+'</b> (vigente). Ela será enviada para <b>revisão interna</b> antes da transmissão à Receita.'; }
       var ini=($('iniVig')||{}).value||'';
-      if(ini && _vigBaseline && ini!==_vigBaseline){
+      /* a escolha corrigir x nova vigência já foi feita no guarda-corpo inline (abaixo das datas);
+         aqui o modal só reafirma a consequência da escolha */
+      var _vm=(window.__d1001Guard && window.__d1001Guard.mode())||null;
+      if(_vm==='novavig'){
         cq.className='dalert dalert--warning'; cq.hidden=false;
-        /* L2 · a mudança de data é uma alteração (tpOper=2): com o grupo novaValidade preenchido, reescreve o mesmo período (corrigir a data); sem ele, seria uma nova inclusão que abre um período novo (nova vigência). Aqui o usuário só responde a essa bifurcação. */
-        var _vm=(cq.getAttribute('data-vmode')||'novavig');
-        cq.innerHTML=_IC_WARN+'<div class="dalert__body"><p class="dalert__title">A data de início foi alterada. Como deseja prosseguir?</p><div class="vmode" role="radiogroup" aria-label="O que fazer com a data de início">'+
-          '<label class="vmode__opt"><input type="radio" name="vmode" value="novavig"'+(_vm==='novavig'?' checked':'')+'><span class="vmode__b"><b>Nova vigência a partir de '+esc(ini)+'</b><span class="vmode__hint">A Versão '+_src+' (vigente) é <strong>encerrada em '+esc(_vespera(ini))+'</strong> (véspera) e a Versão '+_v+' passa a valer a partir de '+esc(ini)+'. Mantém o histórico.</span></span></label>'+
-          '<label class="vmode__opt"><input type="radio" name="vmode" value="validade"'+(_vm==='validade'?' checked':'')+'><span class="vmode__b"><b>Corrigir a data informada</b><span class="vmode__hint">Corrige o início da Versão '+_src+' para '+esc(ini)+', <strong>sem criar uma nova vigência</strong> nem encerrar a anterior. Use esta opção quando a data original tiver sido informada incorretamente.</span></span></label>'+
-          '</div></div>';
-        cq.querySelectorAll('input[name="vmode"]').forEach(function(rb){ rb.addEventListener('change',function(){ cq.setAttribute('data-vmode',rb.value); }); });
+        cq.innerHTML=_IC_WARN+'<div class="dalert__body"><p class="dalert__title">Nova vigência a partir de '+esc(ini)+'</p><p class="dalert__text">A Versão '+_src+' (vigente) será <strong>encerrada em '+esc(_vespera(ini))+'</strong> (véspera) e a Versão '+_v+' passa a valer a partir de '+esc(ini)+'. O período anterior continua valendo para o passado.</p></div>';
+      } else if(_vm==='validade'){
+        cq.className='dalert dalert--warning'; cq.hidden=false;
+        cq.innerHTML=_IC_WARN+'<div class="dalert__body"><p class="dalert__title">Corrigir a data informada</p><p class="dalert__text">O início da Versão '+_src+' será corrigido para '+esc(ini)+', <strong>sem criar uma nova vigência</strong> nem encerrar a anterior.</p></div>';
       } else {
-        cq.removeAttribute('data-vmode');
         cq.className='dalert dalert--info'; cq.hidden=false;
         cq.innerHTML=_IC_INFO+'<div class="dalert__body"><p class="dalert__title">Correção da versão vigente</p><p class="dalert__text">Você manteve a mesma vigência ('+esc(_vigBaseline)+') da Versão '+_src+'. Ao ser aprovada, a Versão '+_v+' substituirá a versão vigente, mantendo o mesmo período de vigência.</p></div>';
       }
@@ -815,6 +864,8 @@
         return;
       }
       var _e=document.getElementById('atvErr'); if(_e) _e.remove(); if(box){ box.removeAttribute('aria-invalid'); box.removeAttribute('aria-describedby'); }
+      /* órfão: enquanto "Corrigir a data" estiver escolhida com documento transmitido no período, o envio não abre */
+      if(window.__d1001Guard && window.__d1001Guard.blocked()){ window.__d1001Guard.focus(); return; }
       setConseq();
       dsDialog.open(modal);
     });

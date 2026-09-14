@@ -451,7 +451,7 @@
           </div>
 
           <div class="wrap">
-            <!-- UC9: banner persistente de "Ajustes solicitados" / "Rejeitada" quando o preparador vem corrigir
+            <!-- UC9: banner persistente de "Ajustes solicitados" / "Rejeitada" quando o elaborador vem corrigir
                  (espelha o corrBanner do D-1001). Mostra o comentário real do aprovador. Preenchido por renderCorrBanner(). -->
             <div id="corrBanner"></div>
             <!-- Banner da dependência do D-1001 (MS1069): o tom e o texto refletem o status real
@@ -631,7 +631,7 @@
           <div id="aiManual"></div>
         </div>
         <!-- E4 (UC1): planilha inválida/parcial na importação. A estrutura vem da planilha (read-only): o sistema
-             lista as linhas problemáticas com o MS e NÃO segue para a triagem; o preparador corrige na origem e reimporta. -->
+             lista as linhas problemáticas com o MS e NÃO segue para a triagem; o elaborador corrige na origem e reimporta. -->
         <div class="aimain__scroll" id="aiInvalid" hidden>
           <h2 id="aiInvalidTitle">Importação com problemas</h2>
           <p class="aimain__lead" id="aiInvalidLead">A planilha não seguiu para a triagem. Corrija os problemas de estrutura na origem e reimporte.</p>
@@ -804,7 +804,7 @@
     el.innerHTML='<span class="toast__icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+ic+'</svg></span><div><p class="toast__text">'+esc(msg)+'</p></div>';
     wrap.appendChild(el); setTimeout(function(){ el.remove(); }, 4200);
   }
-  /* perfil admin (?perfil=admin): acumula preparador+aprovador → transmite direto, sem revisão de terceiro (mesmo modelo do D-1001, UC11) */
+  /* perfil admin (?perfil=admin): acumula elaborador+aprovador → transmite direto, sem revisão de terceiro (mesmo modelo do D-1001, UC11) */
   var IS_ADMIN=/[?&]perfil=admin/.test(location.search);
   (function(){ if(!IS_ADMIN) return;
     function setTxt(el,txt){ if(!el) return; for(var i=el.childNodes.length-1;i>=0;i--){ if(el.childNodes[i].nodeType===3){ el.childNodes[i].nodeValue=txt; return; } } el.appendChild(document.createTextNode(txt)); }
@@ -898,7 +898,7 @@
     /* registra a operação de alteração (correção × nova vigência × novaValidade) pro detalhe/empresa refletirem */
     if(IS_ALT){ var cq=document.getElementById('pcConfirmConseq'); var ini=(document.getElementById('pmVigIni')||{}).value||''; var mudou=(ini&&pmBaseline&&ini!==pmBaseline); var vm=cq&&cq.getAttribute('data-vmode'); var op=mudou?(vm==='validade'?'validade':'novavig'):'corrigir'; try{ localStorage.setItem('adere.d1011.altop.'+emp, JSON.stringify({op:op,data:ini})); }catch(e){} }
     else { try{ localStorage.removeItem('adere.d1011.altop.'+emp); }catch(e){} }
-    /* admin transmite direto (st=processando); preparador manda para revisão (st=revisao). Propaga o cenário (scn) pra jornada seguir coerente. */
+    /* admin transmite direto (st=processando); elaborador manda para revisão (st=revisao). Propaga o cenário (scn) pra jornada seguir coerente. */
     var scn=param('scn'), scnq=scn?('&scn='+scn):'';
     var dest= IS_ADMIN
       ? 'plano-contas-detalhe.html?emp='+emp+'&v='+v+'&st=processando&perfil=admin&sent=1'+scnq
@@ -1183,7 +1183,7 @@
   }
   function showTriage(){ var pop=document.getElementById('aiPopup'); pop.classList.remove('is-loading','is-expanded'); pop.setAttribute('aria-labelledby','aiTriageTitle'); document.getElementById('aiSide').hidden=false; document.getElementById('aiLoading').hidden=true; document.getElementById('aiTriage').hidden=false; document.getElementById('aiInvalid').hidden=true; document.getElementById('aiFootLoading').hidden=true; document.getElementById('aiFootTriage').hidden=false; document.getElementById('aiFootInvalid').hidden=true; renderTriage(); }
   /* E4 (UC1): a planilha importada tem problemas de estrutura → mostra as linhas com o MS e NÃO segue para a triagem.
-     A estrutura é read-only (vem da planilha): o preparador corrige na origem e reimporta. Demonstrável por ?import=invalido. */
+     A estrutura é read-only (vem da planilha): o elaborador corrige na origem e reimporta. Demonstrável por ?import=invalido. */
   var IMPORT_INVALID_ROWS=[
     {cod:'3.1.1.02', ms:'MS1071', msg:'Código de conta (cCta) duplicado na planilha (aparece em duas linhas).'},
     {cod:'1.2.3.04', ms:'MS1099', msg:'Conta superior (1.2.3) não existe no plano: hierarquia quebrada.'},

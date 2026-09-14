@@ -416,7 +416,7 @@
         <div class="dsec__hd"><h3 class="dsec__h">Responsáveis <span class="dsec__n" id="respCount">(1)</span></h3><p class="dsec__sub">Pessoas responsáveis por realizar e acompanhar as atividades do contribuinte no sistema.</p></div>
         <div class="resplist" id="resplist"></div>
         <button class="btn btn--link" id="addPersonBtn" type="button" style="align-self:flex-start"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Convidar responsável</button>
-        <p class="field__msg field__msg--error" id="respMsg" role="alert" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Defina ao menos um preparador e um aprovador entre os responsáveis.</p>
+        <p class="field__msg field__msg--error" id="respMsg" role="alert" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Defina ao menos um elaborador e um aprovador entre os responsáveis.</p>
       </section>
     </div>
     <div class="drawer__footer">
@@ -614,7 +614,7 @@
     $('logoBtn').addEventListener('click',function(){$('logoInput').click()});
     $('logoInput').addEventListener('change',function(e){ var f=e.target.files&&e.target.files[0]; if(!f)return; var r=new FileReader(); r.onload=function(ev){ setLogo(ev.target.result); }; r.readAsDataURL(f); });
     $('logoRemove').addEventListener('click',function(){ resetLogo(); $('logoInput').value=''; });
-    var PERFIS=[{k:'Preparador',d:'Prepara e edita as informações da declaração.'},{k:'Aprovador',d:'Revisa e aprova o envio à Receita.'}];
+    var PERFIS=[{k:'Elaborador',d:'Prepara e edita as informações da declaração.'},{k:'Aprovador',d:'Revisa e aprova o envio à Receita.'}];
     function resetResp(){ resp=[{nome:'Ricardo Alves',email:'ricardo.alves@magseguros.com.br',perfis:[],admin:true}]; renderResp(); }
     function initials(n){ return (n||'').trim().split(/\s+/).filter(Boolean).map(function(x){return x[0]}).slice(0,2).join('').toUpperCase()||'?'; }
     function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
@@ -669,11 +669,11 @@
       var wrap=$('resplist'); wrap.innerHTML='';
       resp.forEach(function(p,i){ wrap.appendChild(buildResp(p,i)); });
       $('respCount').textContent='('+resp.length+')';
-      if($('respMsg')){ var hp=resp.some(function(p){return (p.admin||(p.perfis||[]).indexOf('Preparador')>=0);}), ha=resp.some(function(p){return (p.admin||(p.perfis||[]).indexOf('Aprovador')>=0);}); if(hp&&ha)$('respMsg').hidden=true; }
+      if($('respMsg')){ var hp=resp.some(function(p){return (p.admin||(p.perfis||[]).indexOf('Elaborador')>=0);}), ha=resp.some(function(p){return (p.admin||(p.perfis||[]).indexOf('Aprovador')>=0);}); if(hp&&ha)$('respMsg').hidden=true; }
     }
     /* Confirmar: fecha o form de preenchimento e revela o card com transição (colapsa o form, expande o card). */
     function swapToCard(el,p,i){
-      if($('respMsg')){ var hp=resp.some(function(x){return x.admin||(x.perfis||[]).indexOf('Preparador')>=0;}), ha=resp.some(function(x){return x.admin||(x.perfis||[]).indexOf('Aprovador')>=0;}); if(hp&&ha)$('respMsg').hidden=true; }
+      if($('respMsg')){ var hp=resp.some(function(x){return x.admin||(x.perfis||[]).indexOf('Elaborador')>=0;}), ha=resp.some(function(x){return x.admin||(x.perfis||[]).indexOf('Aprovador')>=0;}); if(hp&&ha)$('respMsg').hidden=true; }
       var card=buildResp(p,i);
       el.parentNode.replaceChild(card, el);            /* swap instantâneo */
       if(!matchMedia('(prefers-reduced-motion:reduce)').matches){
@@ -684,7 +684,7 @@
       }
     }
     $('addPersonBtn').addEventListener('click',function(){
-      resp.push({nome:'',email:'',perfis:['Preparador'],admin:false,_edit:true,_new:true});
+      resp.push({nome:'',email:'',perfis:['Elaborador'],admin:false,_edit:true,_new:true});
       var i=resp.length-1;
       var el=buildResp(resp[i],i);            /* anexa só o form novo — não reconstrói a lista */
       $('resplist').appendChild(el);
@@ -740,7 +740,7 @@
       var d=onlyDigits($('cnpj').value);
       if(d.length!==14){ setCnpjError('Informe um CNPJ válido (14 dígitos).'); $('cnpj').focus(); return; }
       if(!CNPJDB[d]){ setCnpjError('CNPJ não encontrado. Confira o número e tente novamente.'); $('cnpj').focus(); return; }
-      var hasPrep=resp.some(function(p){return (p.admin||(p.perfis||[]).indexOf('Preparador')>=0);});
+      var hasPrep=resp.some(function(p){return (p.admin||(p.perfis||[]).indexOf('Elaborador')>=0);});
       var hasAprov=resp.some(function(p){return (p.admin||(p.perfis||[]).indexOf('Aprovador')>=0);});
       if(!hasPrep||!hasAprov){ $('respMsg').hidden=false; return; }
       var obj={ cnpj:$('roCnpj').textContent||maskCNPJ(d), razao:$('roRazao').textContent, resp:resp.filter(function(p){return !p._new;}).map(function(p){return {nome:p.nome,email:p.email,perfis:(p.perfis||[]).slice(),admin:p.admin};}), logo:logoData };

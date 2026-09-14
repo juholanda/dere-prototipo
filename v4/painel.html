@@ -474,7 +474,7 @@
   /* evento em foco (próximo da jornada) — governa a pendência */
   function focoEmp(e){
     var d1=ev(e,'D-1001');
-    /* 'revisao' = enviado, aguardando o aprovador. Para o preparador não é mais pendência dele;
+    /* 'revisao' = enviado, aguardando o aprovador. Para o elaborador não é mais pendência dele;
        a jornada segue pro plano de contas. (A revisão aparece em Eventos.) */
     if(d1 && !isDone(d1.st) && d1.st!=='revisao') return d1;
     var pg=ev(e,'D-1011');
