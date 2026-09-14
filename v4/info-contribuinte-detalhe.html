@@ -728,6 +728,8 @@
   function retURL(){ var _s=sitFor(curDetState); return 'info-contribuinte-detalhe.html?emp='+empId()+'&v='+(dparam('v')||'')+'&st='+curDetState+(_s?('&sit='+_s):'')+(dparam('rej')?('&rej='+dparam('rej')):'')+(dparam('op')?('&op='+dparam('op')):'')+(dparam('role')?('&role='+dparam('role')):'')+(dparam('scn')?('&scn='+dparam('scn')):''); }
   /* transmitida (vigente/avisos) → alterar cria uma NOVA versão numerada atual+1 (não duplica o número); rascunho/revisão/ajustes = edição in-place (mesmo número) */
   function goEditar(){ var _sit=sitFor(curDetState); var _transmitida=(_sit==='sucesso'||_sit==='advertencias'); var _cur=parseInt(dparam('v')||'4',10); var v=_transmitida?String(_cur+1):String(dparam('v')||'4'); var _modo=_transmitida?'nova':'editar'; window.location.href='info-contribuinte.html?modo='+_modo+'&v='+v+'&emp='+empId()+'&from=detalhe'+(dparam('scn')?('&scn='+dparam('scn')):'')+(dparam('cenario')?('&cenario='+dparam('cenario')):'')+'&back='+encodeURIComponent(retURL()); }
+  /* porta própria da NOVA VIGÊNCIA (decisão do estudo: híbrido): abre o formulário com a intenção declarada */
+  function goNovaVig(){ var _cur=parseInt(dparam('v')||'4',10); window.location.href='info-contribuinte.html?modo=nova&v='+String(_cur+1)+'&emp='+empId()+'&from=detalhe&intent=novavig'+(dparam('scn')?('&scn='+dparam('scn')):'')+(dparam('cenario')?('&cenario='+dparam('cenario')):'')+'&back='+encodeURIComponent(retURL()); }
   function optActive(o){
     if(o.act) return false;
     if((o.role||'elaborador')!==curRole) return false;
@@ -868,7 +870,9 @@
     else if(sit==='sucesso' || sit==='advertencias'){
       /* vigente aceita: 2 secundários (comprovante + exclusão na Receita) agrupam em "Mais ações"; Alterar é a primária.
          Rótulo "Excluir da Receita" (não "Excluir a vigência"): não colide com "Excluir versão" (descarte local) e casa com o UC5. */
-      _acts=moreMenu([_miComp,'<button class="menu__item menu__item--danger" type="button" role="menuitem" data-open-excluir>'+_SVGTRASH+'Excluir da Receita</button>'])
+      _acts=moreMenu([_miComp,
+          '<button class="menu__item" type="button" role="menuitem" data-go-novavig><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M12 14v4M10 16h4"/></svg>Nova vigência</button>',
+          '<button class="menu__item menu__item--danger" type="button" role="menuitem" data-open-excluir>'+_SVGTRASH+'Excluir da Receita</button>'])
         +'<button class="btn btn--primary" type="button" data-go-editar><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>Alterar</button>';
     }
     else { _acts=s.topActions; }
@@ -918,6 +922,7 @@
       return;
     }
     if(e.target.closest('[data-go-editar]')){ goEditar(); return; }
+    if(e.target.closest('[data-go-novavig]')){ goNovaVig(); return; }
     /* rejeição por certificado/cadastro: resolvido na página Minhas empresas (tela ainda não desenhada). Placeholder. */
     if(e.target.closest('[data-go-cert]')){ var _r=curRej(); showToast((_r.natureza==='Cadastral'?'A situação do CNPJ':'O certificado/procuração')+' é resolvido em Meus contribuintes. Tela ainda não desenhada.'); return; }
     var op=e.target.closest('[data-opt-i]');

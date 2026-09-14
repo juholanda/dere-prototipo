@@ -774,17 +774,33 @@
     var box=document.getElementById('valGuard'), ini=$('iniVig'); if(!box||!ini) return;
     function _q(k){ var m=new RegExp('[?&]'+k+'=([^&]*)').exec(location.search); return m?decodeURIComponent(m[1]):''; }
     var isAlt=(_q('modo')==='nova' && _q('from')==='detalhe');
+    /* porta "Nova vigência": a intenção já veio declarada; a pergunta não é feita, só a consequência */
+    var intent=(_q('intent')==='novavig');
     var baseline=ini.value||'';
     var temOrfao=(_q('orfao')==='1');
     var _v=parseInt(_q('v')||'1',10), _src=(_v>1?_v-1:_v);
     var IC_WARN='<span class="dalert__ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg></span>';
     var IC_DANGER='<span class="dalert__ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></span>';
+    var _ICN_INFO='<span class="dalert__ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span>';
     function vespera(dstr){ var m=/^(\d{2})\/(\d{2})\/(\d{4})$/.exec(dstr||''); if(!m) return dstr||''; var d=new Date(+m[3],+m[2]-1,+m[1]); d.setDate(d.getDate()-1); var p=function(n){return (n<10?'0':'')+n;}; return p(d.getDate())+'/'+p(d.getMonth()+1)+'/'+d.getFullYear(); }
     var vm='novavig';
     function changed(){ return isAlt && !!ini.value && !!baseline && ini.value!==baseline; }
     function blocked(){ return changed() && vm==='validade' && temOrfao; }
+    /* guarda inverso da porta "Nova vigência": sem data nova, o envio colidiria com a chave atual (MS1005) */
+    function needsNewDate(){ return intent && !changed(); }
     function render(){
-      if(!changed()){ box.hidden=true; box.innerHTML=''; return; }
+      if(!changed()){
+        if(intent){
+          box.innerHTML='<div class="dalert dalert--info" role="status">'+_ICN_INFO+'<div class="dalert__body"><p class="dalert__title">Nova vigência: informe o novo início</p><p class="dalert__text">Você está abrindo um <strong>período novo</strong>. Informe a data em que o novo enquadramento passa a valer: a Versão '+_src+' (vigente) será <strong>encerrada na véspera, automaticamente</strong>, e continua valendo para o passado. Para corrigir o conteúdo do período atual sem mexer nas datas, volte e use <strong>Alterar</strong>.</p></div></div>';
+          box.hidden=false; return;
+        }
+        box.hidden=true; box.innerHTML=''; return;
+      }
+      if(intent){
+        /* intenção declarada na porta: sem pergunta; só a consequência da nova vigência */
+        box.innerHTML='<div class="dalert dalert--warning" role="status">'+IC_WARN+'<div class="dalert__body"><p class="dalert__title">Nova vigência a partir de '+esc(ini.value)+'</p><p class="dalert__text">A Versão '+_src+' (vigente) será <strong>encerrada em '+esc(vespera(ini.value))+'</strong> (véspera) e a Versão '+_v+' passa a valer a partir de '+esc(ini.value)+'. O período anterior continua valendo para o passado.</p></div></div>';
+        box.hidden=false; return;
+      }
       var h='<div class="dalert dalert--warning" role="group" aria-label="O que fazer com a data de início">'+IC_WARN+
         '<div class="dalert__body"><p class="dalert__title">A data de início foi alterada. Como deseja prosseguir?</p><div class="vmode" role="radiogroup" aria-label="O que fazer com a data de início">'+
         '<label class="vmode__opt"><input type="radio" name="vmode" value="novavig"'+(vm==='novavig'?' checked':'')+'><span class="vmode__b"><b>Nova vigência a partir de '+esc(ini.value)+'</b><span class="vmode__hint">A Versão '+_src+' (vigente) é <strong>encerrada em '+esc(vespera(ini.value))+'</strong> (véspera) e a Versão '+_v+' passa a valer a partir de '+esc(ini.value)+'. Mantém o histórico.</span></span></label>'+
@@ -803,10 +819,25 @@
       var b=box.querySelector('[data-guard-novavig]'); if(b){ b.addEventListener('click',function(){ vm='novavig'; render(); var r=box.querySelector('input[name="vmode"][value="novavig"]'); if(r) r.focus(); }); }
     }
     ini.addEventListener('change',render);
+    /* Resumo: o Tipo de operação acompanha a derivação (porta + data) */
+    function updateTipo(){
+      var el=document.getElementById('revTpOper'); if(!el) return;
+      var t='Inclusão';
+      if(_q('modo')==='editar'){ t=(_q('v')==='1')?'Inclusão':'Alteração'; }
+      else if(isAlt){ t=(intent || (changed() && vm==='novavig'))?'Inclusão':'Alteração'; }
+      el.textContent=t;
+    }
+    var _r0=render; render=function(){ _r0(); updateTipo(); };
+    ini.addEventListener('change',updateTipo);
+    if(intent){
+      render();
+      /* a porta abre já na seção de Validade, com o campo do início em foco */
+      setTimeout(function(){ var s=document.getElementById('s-vig'); if(s) s.scrollIntoView({behavior:'smooth',block:'center'}); try{ ini.focus({preventScroll:true}); }catch(e){} },250);
+    } else { updateTipo(); }
     window.__d1001Guard={
-      changed:changed, blocked:blocked,
-      mode:function(){ return changed()?vm:null; },
-      focus:function(){ box.scrollIntoView({behavior:'smooth',block:'center'}); var al=box.querySelector('.dalert--danger')||box; setTimeout(function(){ var f=al.querySelector('button,input'); if(f){ try{ f.focus({preventScroll:true}); }catch(e){ f.focus(); } } },350); }
+      changed:changed, blocked:blocked, needsNewDate:needsNewDate,
+      mode:function(){ return changed()?(intent?'novavig':vm):null; },
+      focus:function(){ box.scrollIntoView({behavior:'smooth',block:'center'}); var al=box.querySelector('.dalert--danger')||box.querySelector('.dalert')||box; setTimeout(function(){ var f=al.querySelector('button,input'); if(f){ try{ f.focus({preventScroll:true}); }catch(e){ f.focus(); } } },350); }
     };
   })();
 
@@ -866,6 +897,8 @@
       var _e=document.getElementById('atvErr'); if(_e) _e.remove(); if(box){ box.removeAttribute('aria-invalid'); box.removeAttribute('aria-describedby'); }
       /* órfão: enquanto "Corrigir a data" estiver escolhida com documento transmitido no período, o envio não abre */
       if(window.__d1001Guard && window.__d1001Guard.blocked()){ window.__d1001Guard.focus(); return; }
+      /* guarda inverso da porta "Nova vigência": sem data nova não há período novo (colidiria com a chave atual) */
+      if(window.__d1001Guard && window.__d1001Guard.needsNewDate && window.__d1001Guard.needsNewDate()){ window.__d1001Guard.focus(); return; }
       setConseq();
       dsDialog.open(modal);
     });
