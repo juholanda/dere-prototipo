@@ -200,7 +200,9 @@
     .tlv__tick--now{transform:translateX(-50%);text-align:center;top:28px}
     /* conectores: amarram as datas do eixo à linha de base (e o "hoje" ao balizador azul) */
     .tlv__conn{position:absolute;bottom:0;height:30px;border-left:2px solid var(--color-text-muted)}
-    .tlv__conn--now{border-left:0;width:2px;background:var(--color-primary);transform:translateX(-50%);height:7px}
+    /* conector do hoje com a bolinha na PONTA (cabeça do pino, logo abaixo do rótulo) */
+    .tlv__conn--now{border-left:0;width:2px;background:var(--color-primary);transform:translateX(-50%);height:7px;z-index:5}
+    .tlv__conn--now::before{content:"";position:absolute;top:-4px;left:50%;transform:translateX(-50%);width:8px;height:8px;border-radius:50%;background:var(--color-primary)}
     .tlv__tick--r{transform:translateX(-100%);text-align:right}
     .tlv__cap{font-size:var(--text-2xs);color:var(--color-text-muted);line-height:1.35;text-transform:uppercase;letter-spacing:.04em;font-weight:600}
     .tlv__date{font-size:var(--text-base);font-weight:700;color:var(--color-heading);white-space:nowrap;font-variant-numeric:tabular-nums;margin-top:3px}
@@ -216,9 +218,8 @@
     .tlv__lab--excl small{color:var(--color-danger)}
     .tlv__baliz{position:absolute;top:0;bottom:0;border-left:1px solid var(--color-border-strong);z-index:1}
     .tlv__baliz--edge{border-left:2px solid var(--color-text-muted)}
-    /* linha do hoje: faixa de 2px CENTRADA no ponto (transform), pra linha, conector e bolinha ficarem no mesmo eixo */
-    .tlv__baliz--now{border-left:0;width:2px;background:var(--color-primary);transform:translateX(-50%);z-index:4}
-    .tlv__baliz--now::before{content:"";position:absolute;top:-4px;left:50%;transform:translateX(-50%);width:9px;height:9px;border-radius:50%;background:var(--color-primary);border:1.5px solid var(--color-surface);box-sizing:border-box}
+    /* linha do hoje: faixa de 2px CENTRADA no ponto (transform); por cima de tudo */
+    .tlv__baliz--now{border-left:0;width:2px;background:var(--color-primary);transform:translateX(-50%);z-index:5}
     .tlv__row{position:relative;height:60px}
     /* divisórias entre as linhas (rótulo + gráfico), no lugar de linhas-guia no meio de cada linha */
     .tlv__row:not(:last-child),.tlv__labels .tlv__lab:not(:last-child){border-bottom:1px solid var(--color-border)}
