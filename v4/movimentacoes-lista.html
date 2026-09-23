@@ -283,7 +283,7 @@
      antes de transmitir = interno (Em preparação, engloba não iniciada); depois de transmitir = retorno assíncrono
      da Receita (Em processamento → Fechada quando o D-9199 aceita, Rejeitada quando o D-9199 acusa erro). */
   /* Ordem pré-transmissão: Não iniciada (nada, nem rascunho → contorno tracejado, "vazio") → Em preparação (tem rascunho → neutral cinza, igual ao Painel) */
-  var SIT={ fechada:['status--success','Fechada'], processando:['status--info','Em processamento'], pendente:['status--neutral','Em preparação'], naoiniciada:['status--idle','Não iniciada'], rejeitada:['status--danger','Rejeitada'] };
+  var SIT={ fechada:['status--success','Fechada'], processando:['status--info','Em processamento'], pendente:['status--neutral','Em preparação'], naoiniciada:['status--idle','Não iniciada'], rejeitada:['status--danger','Rejeitada pela Receita'] };
   function sitPill(s){ var m=SIT[s]||['status--neutral',s]; return '<span class="status status--sm '+m[0]+'"><span class="status__dot"></span>'+esc(m[1])+'</span>'; }
 
   function evBar(ev){
