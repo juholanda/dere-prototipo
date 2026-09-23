@@ -135,6 +135,18 @@
     .fechrow{display:flex;align-items:center;justify-content:space-between;gap:var(--space-3) var(--space-4);flex-wrap:wrap;margin-bottom:var(--space-6)}
     .fechrow__act{display:flex;gap:var(--space-2);flex:0 0 auto;flex-wrap:wrap;margin-left:auto}
     .evna{font-size:var(--text-sm);color:var(--color-text-muted)} /* "Não se aplica" é texto apagado, não pill (a PO: status de verdade é só o do vocabulário) */
+    /* barra de demonstração (mesmo padrão da Info do Contribuinte) */
+    .demobar{position:fixed;bottom:var(--space-4);left:50%;transform:translateX(-50%);z-index:200;display:flex;align-items:center;gap:var(--space-1);background:var(--slate-900);border:1px solid rgba(255,255,255,.14);border-radius:var(--radius-pill);padding:2px var(--space-1-5);box-shadow:var(--shadow-md);font-size:var(--text-xs);opacity:.92;flex-wrap:wrap;justify-content:center;max-width:calc(100vw - var(--space-8));row-gap:var(--space-1)}
+    .demobar:hover{opacity:1}
+    .demobar__toggle{display:inline-flex;align-items:center;gap:var(--space-1);background:none;border:0;color:rgba(255,255,255,.72);font-family:inherit;font-size:var(--text-2xs);font-weight:700;text-transform:uppercase;letter-spacing:.08em;cursor:pointer;padding:var(--space-1) var(--space-1-5);border-radius:var(--radius-pill)}
+    .demobar__toggle:hover{color:#fff;background:rgba(255,255,255,.08)}
+    .demobar__toggle svg{width:14px;height:14px;opacity:.8}
+    .demobar__body{display:flex;align-items:center;gap:var(--space-1);flex-wrap:wrap;justify-content:center;row-gap:var(--space-1)}
+    .demobar.is-collapsed{padding:2px}
+    .demobar.is-collapsed .demobar__body{display:none}
+    .demobar button{background:none;border:0;color:rgba(255,255,255,.72);font-family:inherit;font-size:var(--text-xs);cursor:pointer;padding:var(--space-1) var(--space-2);border-radius:var(--radius-pill)}
+    .demobar button:hover{color:rgba(255,255,255,1);background:rgba(255,255,255,.08)}
+    .demobar button.on{background:rgba(255,255,255,.16);color:rgba(255,255,255,1);font-weight:600}
 
     /* ===== prazo do balancete: linha simples (tratamento visual a definir) ===== */
     .prazoline{display:inline-flex;align-items:center;gap:var(--space-2);margin:var(--space-4) 0 0;font-size:var(--text-sm);color:var(--color-text-onmuted)}
@@ -1245,6 +1257,19 @@
   function openModal(id){ var m=document.getElementById(id); if(!m) return; m.hidden=false; document.body.style.overflow='hidden'; }
   function closeAllModals(){ ['compModal','versoesModal','confirmModal','extratoModal','impModal'].forEach(function(id){var m=document.getElementById(id); if(m) m.hidden=true;}); document.body.style.overflow=''; }
   /* Importar planilha: mostra o modal "lendo…" com os passos, e ao terminar revela o evento preparado. */
+  /* Estado "competência importada": usado pelo runImport E na carga (demo persistida via localStorage). */
+  function applyImported(M){
+    ORDER.forEach(function(k){ var ev=M.ev[k];
+      if(ev.st==='pendente' && !ev.prep){ ev.prep=true;
+        ev.sub=(k==='d1101')?'57 contas · 2 a corrigir antes de transmitir':(EV_META[k].name+' importado · pronto para conferir'); }
+    });
+    // A planilha traz o balancete → a base apurada (estimada) já existe antes de transmitir (mesmo shape do MAG).
+    if(emp==='s2u'){
+      M.ev.d1101.valLbl='Base apurada (estimada)'; M.ev.d1101.val='R$ 6.420.000,00';
+      M.total=M.total||{}; M.total.base='R$ 6.420.000,00'; M.total.baseFull='R$ 6.420.000,00';
+      M.total.codtrib=[{cod:'110112003', desc:'Valores recebidos em operações de TVM', base:'R$ 6.420.000,00'}];
+    }
+  }
   function runImport(evKey){
     var M=MESES[perIdx];
     // Uma planilha alimenta TODOS os eventos aplicáveis do mês (não só um).
@@ -1288,16 +1313,9 @@
         else setTimeout(function(){
           if(document.getElementById('impModal').hidden) return;
           closeAllModals();
-          ORDER.forEach(function(k){ var ev=M.ev[k];
-            if(ev.st==='pendente' && !ev.prep){ ev.prep=true;
-              ev.sub=(k==='d1101')?'57 contas · 2 a corrigir antes de transmitir':(EV_META[k].name+' importado · pronto para conferir'); }
-          });
-          // A planilha traz o balancete → a base apurada (estimada) já existe antes de transmitir (mesmo shape do MAG).
-          if(emp==='s2u'){
-            M.ev.d1101.valLbl='Base apurada (estimada)'; M.ev.d1101.val='R$ 6.420.000,00';
-            M.total=M.total||{}; M.total.base='R$ 6.420.000,00'; M.total.baseFull='R$ 6.420.000,00';
-            M.total.codtrib=[{cod:'110112003', desc:'Valores recebidos em operações de TVM', base:'R$ 6.420.000,00'}];
-          }
+          applyImported(M);
+          // Demo de ponta a ponta: a importação PERSISTE (a lista e o reload passam a refletir).
+          try{ localStorage.setItem('adere.mov.imp.'+emp+'.'+M.per,'1'); }catch(e){}
           renderPanels(); navTo(tab, false);
         }, 520);
       }, 760);
@@ -1524,10 +1542,31 @@
   });
 
   /* ===== init ===== */
+  /* Demo persistida: se a importação já foi feita nesta demo, restaura o estado importado na carga. */
+  try{ MESES.forEach(function(M){ if(localStorage.getItem('adere.mov.imp.'+emp+'.'+M.per)==='1') applyImported(M); }); }catch(e){}
   syncComp(); renderPanels(); navTo(tab,false);
   history.replaceState({per:MESES[perIdx].per,ev:tab},'','?emp='+emp+'&per='+MESES[perIdx].per+'&ev='+tab);
 
   document.querySelectorAll('[data-sidenav-toggle]').forEach(function(btn){ var nav=btn.closest('[data-sidenav]'); btn.addEventListener('click',function(){ var c=nav.classList.toggle('is-collapsed'); try{localStorage.setItem('adere.nav.collapsed',c?'1':'0');}catch(e){} btn.setAttribute('aria-expanded',String(!c)); }); });
   </script>
+  <!-- barra de demo (mesmo padrão da Info): jornada do Simple2u — Sem nada → Importar planilha (popup) → Populado -->
+  <div class="demobar is-collapsed" id="demobar" role="group" aria-label="Demonstração: alternar cenário">
+    <button type="button" class="demobar__toggle" data-demo-toggle aria-expanded="false" aria-label="Abrir ferramenta de demonstração de cenários">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2v6.5L4.8 17a2 2 0 0 0 1.7 3h11a2 2 0 0 0 1.7-3L14 8.5V2"/><path d="M8.5 2h7"/><path d="M7 14h10"/></svg><span>Demo</span>
+    </button>
+    <span class="demobar__body">
+      <button type="button" data-demo-imp="0" title="Simple2u volta ao zero (nada importado)">Sem nada</button>
+      <button type="button" data-demo-imp="1" title="Simple2u com a movimentação importada">Populado</button>
+    </span>
+  </div>
+  <script>(function(){ var bar=document.getElementById('demobar'); if(!bar) return; var tog=bar.querySelector('[data-demo-toggle]');
+    function set(open){ bar.classList.toggle('is-collapsed', !open); tog.setAttribute('aria-expanded', String(open)); tog.setAttribute('aria-label', open?'Recolher ferramenta de demonstração':'Abrir ferramenta de demonstração de cenários'); try{ localStorage.setItem('adere.demo.open', open?'1':'0'); }catch(e){} }
+    var open=false; try{ open=localStorage.getItem('adere.demo.open')==='1'; }catch(e){} set(open);
+    tog.addEventListener('click',function(){ set(bar.classList.contains('is-collapsed')); });
+    var KEY='adere.mov.imp.s2u.2026-09', cur='0'; try{ cur=(localStorage.getItem(KEY)==='1')?'1':'0'; }catch(e){}
+    bar.querySelectorAll('[data-demo-imp]').forEach(function(b){ if(b.getAttribute('data-demo-imp')===cur) b.classList.add('on');
+      b.addEventListener('click',function(){ try{ if(b.getAttribute('data-demo-imp')==='1'){ localStorage.setItem(KEY,'1'); } else { Object.keys(localStorage).forEach(function(k){ if(k.indexOf('adere.mov.imp.')===0) localStorage.removeItem(k); }); } }catch(e){} location.href='?emp=s2u&per=2026-09&ev=visao'; });
+    });
+  })();</script>
 </body>
 </html>
