@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>a-DeRE · Movimentações Mensais</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=80">
+  <script src="../design-system/ds-tailwind.js"></script>
+  <style>
+    body{margin:0;background:var(--color-bg)}
+    .shell{display:flex;height:100vh;overflow:hidden}
+    .shell > .sidenav{border:0;border-radius:0;padding:0;position:relative!important;transform:none!important;visibility:visible!important;z-index:auto!important;transition:width .18s ease}
+    .brandrow{height:64px;flex:0 0 auto;display:flex;align-items:center;gap:var(--space-3);padding:0 var(--space-4) 0 var(--space-6);border-bottom:1px solid var(--color-border)}
+    .brandrow .wm{font-weight:800;font-size:var(--text-lg);letter-spacing:-.01em;color:var(--color-heading)}
+    .brandrow .avatar{background:color-mix(in srgb, var(--color-on-navy) 14%, transparent);color:var(--color-on-navy);width:34px;height:34px;font-size:var(--text-sm);flex:0 0 auto;font-weight:800}
+    .navlist{flex:1;overflow:auto;min-height:0;padding:var(--space-3) var(--space-3) 0;display:flex;flex-direction:column;gap:2px}
+    .col{flex:1;display:flex;flex-direction:column;min-width:0;min-height:0}
+    .topbar{height:64px;flex:0 0 auto;background:var(--color-surface);border-bottom:1px solid var(--color-border);display:flex;align-items:center;gap:var(--space-4);padding:0 var(--space-6)}
+    .content{flex:1;overflow:auto;min-height:0;background:var(--slate-100);scrollbar-gutter:stable}
+    :root[data-theme="dark"] .content{background:var(--color-bg)}
+    .wrap{padding:var(--space-8) var(--space-10);max-width:1600px;width:100%;margin:0 auto;box-sizing:border-box}
+    .bc{display:flex;align-items:center;gap:var(--space-2);font-size:var(--text-sm);min-width:0;overflow:hidden}
+    .bc span{color:var(--color-text);font-weight:400}
+
+    /* seletor de competência = MESMO do Painel (.filterf--comp + .compnav do ds); Exportar alinhado ao controle */
+    /* cabeçalho quebra a competência para baixo do título quando não couber (evita "Atual" estourar a margem), sempre à direita */
+    .page-h__row{flex-wrap:wrap;row-gap:var(--space-3)}
+    .page-h__act{display:flex;align-items:flex-end;gap:var(--space-4);flex-wrap:wrap;margin-left:auto}
+
+    /* KPIs / totalizadores da competência */
+    .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:var(--space-4);margin-bottom:var(--space-6)}
+    .kpis .stat__ic svg{width:16px;height:16px}
+    .kpis .stat__value{font-size:var(--text-2xl)}
+    /* CBS apurada usa a MESMA borda dos outros cards (sem destaque de borda); só o valor é colorido */
+    .stat--money .stat__value{color:var(--color-primary-darker);font-size:var(--text-xl)}
+    .stat__dot{display:inline-block;width:8px;height:8px;border-radius:50%;position:absolute;top:calc(var(--space-6) + 6px);right:var(--space-6)}
+    .stat__dot--success{background:var(--color-success-fg)}
+    .stat__dot--warning{background:var(--color-warning)}
+    .stat__dot--danger{background:var(--color-danger)}
+    .stat__dot--muted{background:var(--color-text-muted)}
+
+    /* barra de filtro: busca + chips de situação */
+    /* cabeçalho do card: título à esquerda, busca+ações à direita (padrão das outras listas) */
+    .card__h{display:flex;align-items:center;gap:var(--space-4);padding:var(--space-6);justify-content:space-between;flex-wrap:wrap}
+    .card__h h2{font-size:var(--text-xl);margin:0;font-weight:700}
+    .card__hint{font-size:var(--text-sm);color:var(--color-text-muted);margin:var(--space-2) 0 0}
+    .card__h-tools{display:flex;align-items:center;gap:var(--space-3);flex-wrap:wrap;justify-content:flex-end;margin-left:auto}
+    .search{position:relative;flex:0 0 260px;max-width:100%}
+    .search svg{position:absolute;left:var(--space-3);top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--color-text-muted);pointer-events:none}
+    .search input{width:100%;height:var(--control-h);padding:0 var(--space-3) 0 calc(var(--space-3) + 22px);border:1px solid var(--color-field-border);border-radius:var(--radius-base);background:var(--color-surface);color:var(--color-text);font-family:var(--font-sans);font-size:var(--text-sm);box-sizing:border-box}
+    .search input:focus-visible{outline:none;box-shadow:var(--ring);border-color:var(--color-primary)}
+    /* .statbtn (KPI clicável = filtro), incl. estado ativo com fundo, agora vem do ds.css (fonte única, igual ao Painel) */
+    .fdot--success{background:var(--color-success-fg)}.fdot--info{background:var(--color-info)}.fdot--warning{background:var(--color-warning)}.fdot--danger{background:var(--color-danger)}.fdot--muted{background:var(--color-text-muted)}
+    /* "Não iniciada" = .status--idle (tracejado) agora vem do ds.css (fonte única) */
+
+    /* tabela */
+    .card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-2xl);box-shadow:var(--shadow-sm);overflow:hidden}
+    .table{margin:0}
+    .table--fixed{table-layout:fixed;min-width:1120px}
+    .table--fixed td,.table--fixed th{overflow:hidden;text-overflow:ellipsis}
+    .table--fixed .evemp .celltitle,.table--fixed .evemp .cellcnpj{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .table td{padding-top:var(--space-4);padding-bottom:var(--space-4);font-size:var(--text-base);vertical-align:middle}
+    .table th:first-child,.table td:first-child{padding-left:var(--space-6)}
+    .table th:last-child,.table td:last-child{padding-right:var(--space-6)}
+    .table tbody tr[data-href]{cursor:pointer}
+    .table tbody tr[data-href]:hover{background:var(--color-primary-subtle)}
+    .table tbody tr:last-child td{border-bottom:0}
+    /* cabeçalho e célula das colunas numéricas alinhados à direita (o th do ds vem left por padrão, então subo a especificidade) */
+    .table th.col-num,.table td.col-num{text-align:right;white-space:nowrap}
+    .col-act{text-align:right}
+    .rowbtn{white-space:nowrap}
+    .celltitle{font-size:var(--text-base);font-weight:600;color:var(--color-heading)}
+    .cellcnpj{font-size:var(--text-sm);color:var(--color-text-muted);font-variant-numeric:tabular-nums;margin-top:2px}
+    .evemp{display:flex;align-items:center;gap:var(--space-3);min-width:0}
+    .evemp > div{min-width:0}
+    .co-logo{width:var(--space-10);height:var(--space-10);border-radius:var(--radius-lg);flex:0 0 auto;display:grid;place-items:center;overflow:hidden}
+    .co-logo--code{background:var(--color-primary-subtle);color:var(--color-primary);font-weight:700;font-size:var(--text-sm)}
+    .co-logo--img{background:var(--color-surface);border:1px solid var(--color-border)}
+    .co-logo--img img{width:100%;height:100%;object-fit:cover;display:block}
+    .muted{color:var(--color-text-muted)}
+    .valnum{font-variant-numeric:tabular-nums;font-weight:600;color:var(--color-heading)}
+    .valnum--none{color:var(--color-text-muted);font-weight:400}
+
+    /* eventos = tracinhos (um por evento aplicável) + contador; sem dizer qual é (isso fica no detalhe) */
+    .evbar{display:flex;align-items:center;gap:var(--space-2)}
+    .evdots{display:flex;gap:3px}
+    .evdot{width:16px;height:8px;border-radius:3px;background:var(--color-border)}
+    .evdot--ok{background:var(--color-success-fg)}
+    .evdot--wait{background:var(--color-warning)}
+    .evdot--rej{background:var(--color-danger)}
+    .evdot--prep{background:var(--color-border-strong)}
+    .evcount{font-size:var(--text-sm);color:var(--color-text-muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+
+    /* recibo do D-1199 */
+    .recibo{font-variant-numeric:tabular-nums;font-size:var(--text-sm)}
+    .recibo__n{font-weight:600;color:var(--color-heading);white-space:nowrap}
+    .recibo__d{color:var(--color-text-muted);margin-top:2px;white-space:nowrap}
+
+    /* ocorrências (advertência/erro) */
+    .ocbadge{display:inline-flex;align-items:center;gap:var(--space-1-5);padding:2px var(--space-2);border-radius:var(--radius-pill);font-size:var(--text-xs);font-weight:700;white-space:nowrap}
+    .ocbadge--avi{background:var(--color-warning-bg);color:var(--color-warning)}
+    .ocbadge--err{background:var(--color-danger-bg);color:var(--color-danger)}
+    .ocbadge svg{width:13px;height:13px}
+
+    .rowchev{color:var(--color-text-muted);display:inline-flex}
+    .rowchev svg{width:18px;height:18px}
+    .emptyrow td{padding:var(--space-12) var(--space-6);text-align:center;color:var(--color-text-muted)}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  </style>
+</head>
+<body>
+<style id="dere-gate-css">
+  #dere-gate{position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;padding:var(--space-6);background:var(--color-primary-darker);font-family:var(--font-sans)}
+  #dere-gate .dgate__card{width:100%;max-width:360px;background:var(--color-surface);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);padding:var(--space-10) var(--space-8) var(--space-8);text-align:center;animation:dgateIn .38s cubic-bezier(.2,.7,.2,1) both}
+  @media (prefers-reduced-motion:reduce){#dere-gate .dgate__card{animation:none}}
+  @keyframes dgateIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  #dere-gate .dgate__brand{font-size:var(--text-xl);font-weight:800;letter-spacing:-.01em;color:var(--color-heading)}
+  #dere-gate .dgate__sub{display:inline-flex;align-items:center;gap:var(--space-1-5);color:var(--color-text-muted);font-size:var(--text-xs);margin:var(--space-1-5) 0 var(--space-8)}
+  #dere-gate .dgate__sub svg{width:14px;height:14px}
+  #dere-gate .dgate__lbl{display:block;text-align:left;font-size:var(--text-xs);font-weight:600;color:var(--color-text);margin-bottom:var(--space-1-5)}
+  #dere-gate .dgate__err{display:flex;align-items:center;gap:var(--space-1-5);text-align:left;min-height:var(--space-4);margin-top:var(--space-2);color:var(--color-danger);font-size:var(--text-xs)}
+  #dere-gate .dgate__err svg{width:14px;height:14px;flex:0 0 auto}
+  #dere-gate .dgate__foot{margin-top:var(--space-6);font-size:var(--text-2xs);letter-spacing:.02em;color:var(--color-text-muted)}
+  #dere-gate form{margin:0}
+  #dere-gate .btn{width:100%;justify-content:center;margin-top:var(--space-2)}
+</style>
+<div id="dere-gate">
+  <form class="dgate__card" onsubmit="return dereGate(this)">
+    <div class="dgate__brand">a-DeRE</div>
+    <div class="dgate__sub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Protótipo &middot; acesso restrito</div>
+    <label class="dgate__lbl" for="dere-pw">Senha de acesso</label>
+    <input class="input input--lg" id="dere-pw" type="password" placeholder="Digite a senha" autofocus autocomplete="off" aria-label="Senha de acesso">
+    <div class="dgate__err" id="dere-err" role="alert"></div>
+    <button class="btn btn--primary btn--lg" type="submit">Entrar</button>
+    <div class="dgate__foot">uma solução Axians</div>
+  </form>
+</div>
+<script>
+  if(localStorage.getItem('dere_ok')==='1'){var _g=document.getElementById('dere-gate');if(_g)_g.remove();}
+  function dereGate(f){var i=f.querySelector('input'),e=document.getElementById('dere-err');
+    if(i.value==='dere123'){localStorage.setItem('dere_ok','1');document.getElementById('dere-gate').remove();}
+    else{e.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg> Senha incorreta. Tente novamente.';i.select();}
+    return false;}
+</script>
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  <div class="shell">
+    <nav class="sidenav sidenav--navy" data-sidenav aria-label="Navegação principal">
+      <div class="brandrow"><span class="avatar">a</span><span class="sidenav__label wm">a-DeRE</span></div>
+      <div class="navlist">
+        <p class="sidenav__group">Principal</p>
+        <a class="sidenav__item" href="painel-monitoramento.html" data-tip="Painel de Monitoramento"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg><span class="sidenav__label">Painel de Monitoramento</span></a>
+        <a class="sidenav__item" href="#" data-tip="Meus contribuintes"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4M10 10h4M10 14h4M10 18h4"/></svg><span class="sidenav__label">Meus contribuintes</span></a>
+        <p class="sidenav__group">Cadastro</p>
+        <a class="sidenav__item" href="info-contribuinte-lista.html" data-tip="Informações do Contribuinte"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg><span class="sidenav__label">Informações do Contribuinte</span></a>
+        <a class="sidenav__item" href="plano-contas-lista.html" data-tip="Plano Geral de Contas Comentado"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M7 12h14M7 18h14M3 12h.01M3 18h.01"/></svg><span class="sidenav__label">Plano Geral de Contas Comentado</span></a>
+        <p class="sidenav__group">Declarações</p>
+        <a class="sidenav__item is-active" href="movimentacoes-lista.html" aria-current="page" data-tip="Movimentações Mensais"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span class="sidenav__label">Movimentações Mensais</span></a>
+        <a class="sidenav__item" href="#" data-tip="Recibos e envios"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6M16 12h-6M13 16H10"/></svg><span class="sidenav__label">Recibos e envios</span></a>
+        <p class="sidenav__group">Sistema</p>
+        <a class="sidenav__item" href="#" data-tip="Configurações"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg><span class="sidenav__label">Configurações</span></a>
+      </div>
+      <div class="sidenav__foot"><button class="sidenav__item sidenav__toggle" type="button" aria-label="Colapsar menu" data-tip="Colapsar menu" aria-expanded="true" data-sidenav-toggle><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m11 17-5-5 5-5"/><path d="m18 17-5-5 5-5"/></svg><span class="sidenav__label">Colapsar</span></button></div>
+    </nav>
+
+    <div class="col">
+      <header class="topbar">
+        <nav class="bc" aria-label="Trilha de navegação"><span>Movimentações Mensais</span></nav>
+        <div class="menu" data-menu style="margin-left:auto">
+          <span class="tooltip tooltip--end"><button class="avatar" aria-haspopup="true" aria-expanded="false" aria-label="Ricardo Alves, abrir menu do usuário">RA</button><span class="tooltip__bubble tooltip__bubble--stack" role="tooltip"><strong>Ricardo Alves</strong>Administrador da conta</span></span>
+          <div class="menu__panel" hidden><div class="menu__head"><p class="menu__head-name">Ricardo Alves</p><p class="menu__head-mail">Administrador da conta</p></div><div class="menu__sep"></div><button class="menu__item">Perfil</button><button class="menu__item menu__item--danger">Sair</button></div>
+        </div>
+      </header>
+
+      <main class="content" id="conteudo" tabindex="-1">
+        <div class="page-h">
+          <div class="wrap">
+            <div class="page-h__row">
+              <div class="page-h__main">
+                <div class="page-h__title"><h1>Movimentações Mensais</h1><span class="tag page-h__code">D-1199</span></div>
+                <p class="page-h__desc">Situação do fechamento e a CBS apurada por contribuinte na competência (D-1199).</p>
+              </div>
+              <div class="page-h__act">
+                <div class="filterf filterf--comp">
+                  <span class="flbl" id="lblComp">Competência</span>
+                  <div class="compnav">
+                    <button class="compnav__arrow" type="button" id="compPrev" aria-label="Competência anterior"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
+                    <div class="cselect mpwrap" id="wrapComp">
+                      <button class="cselect__trigger" type="button" id="compTrig" aria-haspopup="true" aria-expanded="false" aria-labelledby="lblComp compVal"><span class="cselect__value" id="compVal">set/2026</span><span class="cselect__chev"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button>
+                      <div class="mp" id="compMP" aria-label="Escolher competência" hidden></div>
+                    </div>
+                    <button class="compnav__arrow" type="button" id="compNext" aria-label="Competência seguinte"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+                    <span class="compnav__sep" aria-hidden="true">·</span>
+                    <button class="compnav__now" type="button" id="compNow">Atual</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="wrap">
+          <!-- prazo da competência -->
+          <div class="dalert dalert--warning" role="status">
+            <span class="dalert__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>
+            <div class="dalert__body"><p class="dalert__title">Prazo da competência 09/2026</p><p class="dalert__text">Entrega do fechamento até <strong>15/10/2026</strong>. O prazo é improrrogável; recomendamos concluir o envio com antecedência.</p></div>
+            <div class="dalert__act"><span class="tag" id="prazoChip">faltam — dias</span></div>
+          </div>
+
+          <!-- totalizadores da competência -->
+          <div class="kpis" id="kpis" role="group" aria-label="Totalizadores da competência"></div>
+
+          <section class="card" aria-labelledby="lst-h">
+            <div class="card__h">
+              <div>
+                <h2 id="lst-h">Contribuintes</h2>
+                <p class="card__hint">Situação do fechamento por contribuinte.</p>
+              </div>
+              <div class="card__h-tools">
+                <a class="btn btn--secondary" href="#" id="btnExport"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>Exportar</a>
+                <label class="search"><span class="sr-only">Buscar por razão social ou CNPJ</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><input type="search" id="q" placeholder="Ex.: MAG Seguros ou 33.608.308" autocomplete="off"></label>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table class="table table--fixed" aria-labelledby="lst-h">
+                <colgroup>
+                  <col style="width:22%"><col style="width:16%"><col style="width:20%"><col style="width:13%"><col style="width:16%"><col style="width:13%">
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th scope="col">Contribuinte</th>
+                    <th scope="col">Situação do fechamento</th>
+                    <th scope="col">Eventos da competência</th>
+                    <th scope="col" class="col-num">CBS apurada</th>
+                    <th scope="col">Recibo D-1199</th>
+                    <th scope="col"><span class="sr-only">Abrir</span></th>
+                  </tr>
+                </thead>
+                <tbody id="rows"></tbody>
+              </table>
+            </div>
+            <div class="tablefoot"><span id="tcount"></span></div>
+          </section>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+  var esc=function(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');};
+  function code(n){return (n||'?').replace(/[^A-Za-zÀ-ú ]/g,'').trim().split(/\s+/)[0].slice(0,3).toUpperCase();}
+  function brl(n){ if(n==null) return null; return 'R$ '+n.toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,'.'); }
+  var LOGOS={seg:'../Logos/MAG%20seguros.png', fin:'../Logos/mag%20financas.jpeg', cap:'../Logos/mag%20capitalizacoes.jpeg', sic:'../Logos/sicooboficial_logo.jpeg', s2u:'../Logos/logo_simple-2u_j7QQ4s.png'};
+  function logoHtml(e){ var url=LOGOS[e.id]; return url?('<span class="co-logo co-logo--img"><img src="'+url+'" alt="Logo '+esc(e.nome)+'"></span>'):('<span class="co-logo co-logo--code" aria-hidden="true">'+code(e.nome)+'</span>'); }
+
+  /* SITUAÇÃO da competência (fechamento D-1199) por contribuinte. EVENTOS: código + situação de cada evento aplicável
+     (na = não se aplica, fica de fora). Valores em número; os totalizadores somam. */
+  var EMP=[
+    {id:'seg', nome:'MAG Seguros', cnpj:'33.608.308/0001-73', regime:'Serviços Financeiros', sit:'fechada',
+      ev:{d1101:'ok',d1106:'ok',d1121:'ok',d2101:'na',d1199:'ok'}, ibs:210000, cbs:141000, is:0,
+      recibo:'0001-202609-A7K2P9', reciboData:'12/10/2026 14:22', ocorr:{n:1,t:'avi'}},
+    {id:'fin', nome:'MAG Finanças', cnpj:'21.995.256/0001-56', regime:'Serviços Financeiros', sit:'processando',
+      ev:{d1101:'ok',d1106:'na',d1121:'ok',d2101:'ok',d1199:'proc'}, ibs:336000, cbs:224000, is:0,
+      recibo:'', reciboData:'12/10/2026 09:41', ocorr:null},
+    {id:'sic', nome:'Sicoob Seguradora', cnpj:'26.314.512/0001-16', regime:'Serviços Financeiros', sit:'pendente',
+      ev:{d1101:'ok',d1106:'ok',d1121:'na',d2101:'na',d1199:'prep'}, ibs:153000, cbs:102000, is:0,
+      recibo:'', reciboData:'', ocorr:null},
+    {id:'cap', nome:'MAG Capitalização', cnpj:'52.780.551/0001-19', regime:'Serviços Financeiros', sit:'rejeitada',
+      ev:{d1101:'ok',d1106:'ok',d1121:'na',d2101:'na',d1199:'rej'}, ibs:15640, cbs:40760, is:0,
+      recibo:'', reciboData:'11/10/2026 18:03', ocorr:{n:2,t:'err'}},
+    {id:'s2u', nome:'Simple2u', cnpj:'40.997.879/0001-02', regime:'Serviços Financeiros', sit:'naoiniciada',
+      ev:{d1101:'none',d1106:'na',d1121:'na',d2101:'na',d1199:'na'}, ibs:null, cbs:null, is:null,
+      recibo:'', reciboData:'', ocorr:null}
+  ];
+
+  var EV_ORDER=['d1101','d1106','d1121','d2101','d1199'];
+  var EV_CODE={d1101:'1101',d1106:'1106',d1121:'1121',d2101:'2101',d1199:'1199'};
+  var EV_NAME={d1101:'Balancete',d1106:'Aplicações',d1121:'Deduções',d2101:'Títulos',d1199:'Fechamento'};
+  var EV_STLBL={ok:'processado',proc:'em processamento',rej:'rejeitado',prep:'em preparação',none:'não iniciado'};
+  /* situação da competência → pill do DS */
+  /* Vocabulário ÚNICO, o mesmo do Painel (ST). A situação do fechamento tem 2 origens:
+     antes de transmitir = interno (Em preparação, engloba não iniciada); depois de transmitir = retorno assíncrono
+     da Receita (Em processamento → Fechada quando o D-9199 aceita, Rejeitada quando o D-9199 acusa erro). */
+  /* Ordem pré-transmissão: Não iniciada (nada, nem rascunho → contorno tracejado, "vazio") → Em preparação (tem rascunho → neutral cinza, igual ao Painel) */
+  var SIT={ fechada:['status--success','Fechada'], processando:['status--info','Em processamento'], pendente:['status--neutral','Em preparação'], naoiniciada:['status--idle','Não iniciada'], rejeitada:['status--danger','Rejeitada'] };
+  function sitPill(s){ var m=SIT[s]||['status--neutral',s]; return '<span class="status status--sm '+m[0]+'"><span class="status__dot"></span>'+esc(m[1])+'</span>'; }
+
+  function evBar(ev){
+    var applic=EV_ORDER.filter(function(k){ return ev[k]!=='na'; });
+    if(!applic.length) return '<span class="muted">—</span>';
+    var dots=applic.map(function(k){
+      var st=ev[k], cls=(st==='ok')?'evdot--ok':(st==='proc')?'evdot--wait':(st==='rej')?'evdot--rej':(st==='prep')?'evdot--prep':'';
+      return '<span class="evdot '+cls+'" title="'+EV_NAME[k]+': '+(EV_STLBL[st]||st)+'"></span>';
+    }).join('');
+    var okN=applic.filter(function(k){ return ev[k]==='ok'; }).length;
+    return '<div class="evbar"><span class="evdots">'+dots+'</span><span class="evcount">'+okN+' de '+applic.length+' com recibo</span></div>';
+  }
+  function ocCell(o){
+    if(!o) return '<span class="muted">—</span>';
+    var ic = o.t==='err'
+      ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>'
+      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg>';
+    return '<span class="ocbadge ocbadge--'+o.t+'">'+ic+o.n+' '+(o.t==='err'?(o.n>1?'erros':'erro'):(o.n>1?'avisos':'aviso'))+'</span>';
+  }
+  function reciboCell(e){
+    if(e.recibo) return '<div class="recibo"><div class="recibo__n">'+esc(e.recibo)+'</div><div class="recibo__d">'+esc(e.reciboData)+'</div></div>';
+    if(e.reciboData) return '<div class="recibo"><div class="recibo__d" style="margin:0">'+esc(e.reciboData)+'</div></div>';
+    return '<span class="muted">—</span>';
+  }
+  function numCell(n){ return n==null?'<span class="valnum valnum--none">—</span>':'<span class="valnum">'+esc(brl(n))+'</span>'; }
+
+  /* filtro por situação — os próprios totalizadores (KPIs) são os filtros */
+  var FILTERS={
+    todas:function(){return true;},
+    fechada:function(e){return e.sit==='fechada';},
+    pendproc:function(e){return e.sit==='pendente'||e.sit==='processando'||e.sit==='naoiniciada';},
+    rejeitada:function(e){return e.sit==='rejeitada';}
+  };
+  var filter='todas', query='';
+
+  function kpis(){
+    var n=EMP.length;
+    var fechadas=EMP.filter(FILTERS.fechada).length;
+    var pendproc=EMP.filter(FILTERS.pendproc).length;
+    var rej=EMP.filter(FILTERS.rejeitada).length;
+    var cbsTot=EMP.reduce(function(a,e){return a+(e.cbs||0);},0);
+    function body(label,value,opts){ return (opts.dot?'<span class="stat__dot stat__dot--'+opts.dot+'"></span>':'')+
+      '<span class="stat__label">'+esc(label)+'</span><span class="stat__value">'+esc(value)+'</span>'+
+      (opts.foot?'<span class="stat__foot">'+esc(opts.foot)+'</span>':''); }
+    function money(label,value,opts){ opts=opts||{}; opts.money=true;
+      return '<div class="stat stat--money">'+body(label,value,opts)+'</div>'; }
+    function filt(label,value,opts){ opts=opts||{}; var on=(filter===opts.filt);
+      return '<button type="button" class="stat statbtn'+(on?' is-active':'')+'" data-filt="'+opts.filt+'" aria-pressed="'+on+'">'+body(label,value,opts)+'</button>'; }
+    document.getElementById('kpis').innerHTML=
+      filt('Empresas', n, {filt:'todas'})+
+      filt('Fechadas', fechadas, {filt:'fechada', dot:'success'})+
+      filt('Em andamento', pendproc, {filt:'pendproc', dot:'warning'})+
+      filt('Rejeitadas', rej, {filt:'rejeitada', dot:'danger'})+
+      money('CBS apurada', brl(cbsTot), {foot:'contribuição federal'});
+    document.querySelectorAll('#kpis [data-filt]').forEach(function(b){ b.addEventListener('click',function(){ filter=b.getAttribute('data-filt'); kpis(); renderRows(); }); });
+  }
+
+  function renderRows(){
+    var f=FILTERS[filter]||FILTERS.todas;
+    var q=query.trim().toLowerCase();
+    var list=EMP.filter(f).filter(function(e){ return !q || e.nome.toLowerCase().indexOf(q)>=0 || e.cnpj.replace(/\D/g,'').indexOf(q.replace(/\D/g,''))>=0; });
+    var tb=document.getElementById('rows');
+    if(!list.length){ tb.innerHTML='<tr class="emptyrow"><td colspan="6">Nenhum contribuinte nesse filtro.</td></tr>'; document.getElementById('tcount').innerHTML=''; return; }
+    tb.innerHTML=list.map(function(e){
+      /* Detalhe GATED: as ações aparecem mas ficam desabilitadas (não navegam). Reativar = devolver href nos botões e data-href na <tr>. */
+      var lbl = e.sit==='naoiniciada' ? 'Importar' : e.sit==='pendente' ? 'Continuar' : e.sit==='rejeitada' ? 'Corrigir' : 'Ver detalhe';
+      var variant = (e.sit==='processando'||e.sit==='fechada') ? 'btn--secondary' : 'btn--primary';
+      var btn = '<button type="button" class="btn '+variant+' rowbtn" disabled title="Em breve">'+lbl+'</button>';
+      return '<tr>'+
+        '<td><div class="evemp">'+logoHtml(e)+'<div><div class="celltitle">'+esc(e.nome)+'</div><div class="cellcnpj">'+esc(e.cnpj)+'</div></div></div></td>'+
+        '<td>'+sitPill(e.sit)+'</td>'+
+        '<td>'+evBar(e.ev)+'</td>'+
+        '<td class="col-num">'+numCell(e.cbs)+'</td>'+
+        '<td>'+reciboCell(e)+'</td>'+
+        '<td class="col-act">'+btn+'</td>'+
+      '</tr>';
+    }).join('');
+    document.getElementById('tcount').innerHTML='<b>'+list.length+'</b> de <b>'+EMP.length+'</b> contribuintes · competência 09/2026';
+    tb.querySelectorAll('tr[data-href]').forEach(function(tr){ tr.addEventListener('click',function(ev){ if(ev.target.closest('a,button'))return; window.location.href=tr.getAttribute('data-href'); }); });
+  }
+
+  function setPrazo(){
+    var due=new Date(2026,9,15), today=new Date(2026,8,23); // 15/10/2026 e 23/09/2026
+    var d=Math.round((due-today)/86400000);
+    document.getElementById('prazoChip').textContent = d>0 ? ('faltam '+d+' dias') : (d===0?'vence hoje':('venceu há '+Math.abs(d)+' dias'));
+  }
+
+  setPrazo(); kpis(); renderRows();
+  document.getElementById('q').addEventListener('input',function(){ query=this.value; renderRows(); });
+
+  document.querySelectorAll('[data-menu]').forEach(function(m){ var b=m.querySelector('button'), p=m.querySelector('.menu__panel'); if(!b||!p)return; b.addEventListener('click',function(){ if(p.hasAttribute('hidden')){p.removeAttribute('hidden');b.setAttribute('aria-expanded','true');}else{p.setAttribute('hidden','');b.setAttribute('aria-expanded','false');} }); document.addEventListener('click',function(ev){ if(!m.contains(ev.target)){p.setAttribute('hidden','');b.setAttribute('aria-expanded','false');} }); });
+  document.querySelectorAll('[data-sidenav-toggle]').forEach(function(btn){ var nav=btn.closest('[data-sidenav]'); btn.addEventListener('click',function(){ var c=nav.classList.toggle('is-collapsed'); btn.setAttribute('aria-expanded',String(!c)); }); });
+  </script>
+</body>
+</html>
