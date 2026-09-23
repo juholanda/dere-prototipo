@@ -66,7 +66,7 @@
     .totgrid .stat__ic svg{width:16px;height:16px}
     .totgrid .stat__foot{line-height:1.4}
     /* faixa de metadados abaixo do título (espelha .hdr-recibo da Info do Contribuinte): status + fatos-chave */
-    .hdrmeta{display:flex;align-items:center;flex-wrap:wrap;gap:var(--space-2) var(--space-4);margin-top:var(--space-4);color:var(--color-text-muted);font-size:var(--text-sm)}
+    .hdrmeta{display:flex;align-items:center;flex-wrap:wrap;gap:var(--space-2) var(--space-6);margin-top:var(--space-4);color:var(--color-text-muted);font-size:var(--text-sm)}
     .hdrmeta:empty{display:none}
     .hdrmeta .status{font-size:var(--text-xs)}
     .hdrmeta__fact{display:inline-flex;align-items:center;gap:var(--space-2)}
@@ -372,6 +372,8 @@
               <div class="page-h__main">
                 <div class="page-h__title"><h1 id="pageTitle">Movimentações Mensais</h1><span id="pageBadge" class="dethead__title"></span></div>
                 <p class="page-h__desc" id="pageSub"></p>
+                <!-- faixa de metadados DENTRO da coluna do título (como o .hdr-recibo da Info): cola no título com space-4, sem esperar a altura do seletor de competência -->
+                <div class="hdrmeta" id="hdrMeta"></div>
               </div>
               <!-- seletor de competência: a competência PRECISA existir nas Movimentações Mensais (define o período do fechamento). -->
               <div class="page-h__act">
@@ -390,8 +392,6 @@
                 </div>
               </div>
             </div>
-            <!-- faixa de metadados (largura total, abaixo do título): status + fatos-chave (padrão .hdr-recibo da Info do Contribuinte) -->
-            <div class="hdrmeta" id="hdrMeta"></div>
           </div>
         </div>
 
@@ -1442,9 +1442,9 @@
       title.textContent=meta.name;
       badge.innerHTML='<span class="tag">'+meta.code+'</span>';   // só o código ao lado do título
       document.getElementById('pageSub').textContent='';          // a frase do hub não aparece no evento (lá a faixa .hdrmeta assume)
-      // faixa: status + fatos-chave inline (padrão da Info do Contribuinte). Vazio (nada importado) NÃO é "Em preparação": sem pill.
-      var isEmpty=(e.st==='pendente' && !e.prep);
-      meta_.innerHTML=(isEmpty?'':pill(e.st))+factsFrom(e.sub);
+      // faixa: SÓ fatos-chave (a PO 23/set: sem o pill "Em preparação" no cabeçalho do evento —
+      // a situação já está na lista de eventos do hub e no conteúdo/decisionbar).
+      meta_.innerHTML=factsFrom(e.sub);
       setBar(evActions(evKey, M));                               // ações vão pra barra fixa (.decisionbar), não pro cabeçalho
     }
     dn.innerHTML='';

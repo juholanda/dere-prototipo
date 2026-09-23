@@ -360,8 +360,10 @@
       {n:2, current:false, sit:'rejeitado', vigrole:null, vig:'—', recibo:'—', quando:'03/09/2026, 08:10'},
       {n:1, current:true, sit:'sucesso', vigrole:'now', vig:'01/01/2026 · em aberto', recibo:'RC-2026.0001', quando:'20/08/2026, 09:00', proc:'20/08/2026, 09:00'}
     ]},
-    s2u:{nome:'Simple2u', cnpj:'40.997.879/0001-02', logo:'../Logos/logo_simple-2u_j7QQ4s.png', ref:'SUSEP', versions:[
-      {n:1, current:false, sit:'rascunho', vigrole:null, vig:'—', recibo:'—', quando:'03/09/2026, 11:20'}
+    s2u:{nome:'Simple2u', cnpj:'40.997.879/0001-02', logo:'../Logos/logo_simple-2u_j7QQ4s.png', ref:'BCB', versions:[
+      /* COERÊNCIA com as Movimentações Mensais: lá o Simple2u tem "PGCC vigente: Versão 1"
+         (premissa do cenário — sem PGCC vigente o balancete nem importaria). */
+      {n:1, current:true, sit:'sucesso', vigrole:'now', vig:'01/01/2026 · em aberto', recibo:'RC-2026.0107', quando:'12/08/2026, 15:40', proc:'12/08/2026, 15:40'}
     ]}
   };
   /* Ciclo de vida único (interno → Receita). A pílula mostra o estágio; "vigente" é a seção, não um estado. */
