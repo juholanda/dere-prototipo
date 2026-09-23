@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Design System · DeRE</title>
-  <link rel="stylesheet" href="ds.css?v=5e70f7b0">
+  <link rel="stylesheet" href="ds.css?v=b673b330">
   <style>
     /* Layout do catálogo (só do doc, não é componente do DS) */
     .app{display:grid;grid-template-columns:236px 1fr;min-height:100vh}
@@ -924,6 +924,22 @@
         <div class="card" style="margin-top:12px"><div class="card__body stack">
           <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--color-text-onmuted)"><span>Processamento</span><span>72%</span></div>
           <div class="progress"><div class="progress__bar" style="width:72%"></div></div>
+        </div></div>
+        <!-- Checklist de carregamento (.ldsteps): popup de processamento (import do PGCC, import da movimentação).
+             Estados: concluído (check verde + negrito) · ativo (spinner) · pendente (ponto vazado). -->
+        <div class="card" style="margin-top:12px"><div class="card__body stack">
+          <div style="font-size:13px;color:var(--color-text-onmuted)">Checklist de carregamento (popup de processamento)</div>
+          <div class="ldsteps">
+            <div class="ldstep is-done"><span class="ldstep__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg></span><span>Lendo dados da planilha importada</span></div>
+            <div class="ldstep is-done"><span class="ldstep__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg></span><span>Separando os eventos do mês (balancete, aplicações…)</span></div>
+            <div class="ldstep is-active"><span class="ldstep__ic"><span class="ldspin"></span></span><span>Conferindo as contas contra o Plano de Contas vigente…</span></div>
+            <div class="ldstep"><span class="ldstep__ic"><span class="ldstep__dot"></span></span><span>Validando saldos e movimentos do balancete</span></div>
+            <div class="ldstep"><span class="ldstep__ic"><span class="ldstep__dot"></span></span><span>Calculando a base tributável por conta</span></div>
+          </div>
+          <div class="ldproc" style="margin-top:0">
+            <div class="ldproc__top"><span><b>34</b> de <b>57</b> linhas processadas</span></div>
+            <div class="ldprocbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="60" aria-label="Progresso do processamento"><i style="width:60%"></i></div>
+          </div>
         </div></div>
       </section>
 

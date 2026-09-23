@@ -24,7 +24,8 @@ const DS = fs.readFileSync(path.join(ROOT, 'design-system', 'ds.css'), 'utf8');
 // Seletores que são IDENTIDADE de componente do DS: moram só no ds.css.
 // (O container .card__h fica de fora de propósito: cada tela define seu padding/divisória
 //  de contexto — lista vs. banda. É o TÍTULO/hint/ferramentas que não podem divergir.)
-const PROTECTED = ['.card__h h2', '.card__hint', '.card__h-tools'];
+const PROTECTED = ['.card__h h2', '.card__hint', '.card__h-tools',
+  '.ldsteps', '.ldstep', '.ldstep__ic', '.ldstep__dot', '.ldspin', '.ldproc', '.ldprocbar'];
 
 // tokens --x definidos no ds.css
 const defined = new Set();

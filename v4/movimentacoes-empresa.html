@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Movimentações Mensais · MAG Seguros</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=5e70f7b0">
+  <link rel="stylesheet" href="../design-system/ds.css?v=b673b330">
   <script src="../design-system/ds-tailwind.js"></script>
   <style>
     /* ===== app-shell ===== */
@@ -206,9 +206,7 @@
     @keyframes imp-pulse{0%,100%{opacity:.55}50%{opacity:1}}
     @media (prefers-reduced-motion:reduce){.impproc__ic svg{animation:none}}
     .impproc__t{font-size:var(--text-lg);font-weight:700;color:var(--color-heading);margin:0 0 var(--space-1)}
-    .impproc__step{font-size:var(--text-sm);color:var(--color-text-onmuted);margin:0 0 var(--space-6);min-height:1.4em}
-    .impproc__bar{height:6px;border-radius:var(--radius-pill);background:var(--color-surface-2);overflow:hidden;max-width:20rem;margin:0 auto}
-    .impproc__bar i{display:block;height:100%;background:var(--color-primary);border-radius:var(--radius-pill);width:0;transition:width .45s ease}
+    .impproc__lead{font-size:var(--text-sm);color:var(--color-text-onmuted);margin:0 0 var(--space-6)}
     .evimport{display:inline-flex;align-items:center;gap:var(--space-1);font-size:var(--text-sm);font-weight:600;color:var(--color-primary);text-decoration:none;white-space:nowrap}
     .evimport svg{width:15px;height:15px}
     .evimport:hover{text-decoration:underline}
@@ -447,15 +445,25 @@
   </div>
 
   <!-- Modal: lendo a planilha importada (processamento) -->
+  <!-- Popup de carregamento da importação: MESMO padrão do Plano de Contas (checklist .ldsteps do DS:
+       check verde = concluído, spinner = ativo, ponto = pendente) + barra de linhas processadas. -->
   <div class="scrim" id="impModal" hidden>
-    <div class="modal modal--sm" role="dialog" aria-modal="true" aria-labelledby="impTitle" aria-describedby="impStep">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="impTitle" aria-describedby="impLead">
       <div class="modal__body">
         <div class="impproc">
           <span class="impproc__ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6"/></svg></span>
-          <p class="impproc__t" id="impTitle">Lendo a planilha…</p>
-          <p class="impproc__step" id="impStep" role="status" aria-live="polite"></p>
-          <div class="impproc__bar"><i id="impBar"></i></div>
+          <p class="impproc__t" id="impTitle">Importando a movimentação…</p>
+          <p class="impproc__lead" id="impLead">Validando a planilha da competência contra o Plano de Contas vigente.</p>
         </div>
+        <div class="ldsteps" id="impSteps"></div>
+        <div class="ldproc">
+          <div class="ldproc__top"><span><b id="impN">0</b> de <b id="impT">57</b> linhas processadas</span></div>
+          <div class="ldprocbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Progresso da importação" id="impBarWrap"><i id="impBar"></i></div>
+        </div>
+        <span class="sr-only" id="impLive" role="status" aria-live="polite"></span>
+      </div>
+      <div class="modal__footer">
+        <button class="btn btn--secondary" type="button" data-modal-close>Cancelar</button>
       </div>
     </div>
   </div>
@@ -905,7 +913,7 @@
       '<div class="create-opt">'+
         '<span class="create-opt__ic" aria-hidden="true">'+ICO.download+'</span>'+
         '<h3>Importar planilha</h3>'+
-        '<p>Envie a movimentação do mês em CSV ou Excel. Uma planilha alimenta todos os eventos (balancete, aplicações…). Baixe o template para preencher no formato do leiaute.</p>'+
+        '<p>Envie a movimentação do mês em CSV ou Excel. Baixe o template para preencher a planilha no formato correto.</p>'+
         '<button class="btn btn--primary" type="button" data-import-run data-ev="'+firstEv+'">'+ICO.upload+'Importar planilha</button>'+
         '<button class="create-opt__tpl" type="button" data-template>'+ICO.download+'Baixar template de importação</button>'+
       '</div>'+
@@ -1232,21 +1240,53 @@
   function runImport(evKey){
     var M=MESES[perIdx];
     // Uma planilha alimenta TODOS os eventos aplicáveis do mês (não só um).
-    var steps=['Lendo a planilha da movimentação','Separando os eventos do mês (balancete, aplicações…)','Conferindo as contas contra o PGCC vigente','Validando saldos e calculando a base por conta'];
-    var stepEl=document.getElementById('impStep'), bar=document.getElementById('impBar');
-    document.getElementById('impTitle').textContent='Lendo a planilha da movimentação';
-    bar.style.width='0%'; stepEl.textContent=''; openModal('impModal');
+    // Checks do processamento — cada um mapeia uma validação REAL da doc oficial:
+    // leiaute do template (Modelo 02) · separação por evento · CCTA_NO_PGCC (conta existe no
+    // PGCC vigente, só analítica recebe movimento) · consistência do balancete (saldo inicial
+    // + débitos − créditos = saldo final) · base tributável derivada do codTrib de cada conta.
+    var steps=[
+      'Lendo dados da planilha importada',
+      'Separando os eventos do mês (balancete, aplicações…)',
+      'Conferindo as contas contra o Plano de Contas vigente',
+      'Validando saldos e movimentos do balancete',
+      'Calculando a base tributável por conta'
+    ];
+    var TOTAL=57, marks=[9,18,34,49,57]; // linhas processadas ao fim de cada check
+    var stepsEl=document.getElementById('impSteps'), bar=document.getElementById('impBar'),
+        wrap=document.getElementById('impBarWrap'), nEl=document.getElementById('impN'),
+        live=document.getElementById('impLive');
+    document.getElementById('impT').textContent=TOTAL;
+    document.getElementById('impLead').textContent='Validando a planilha de '+MESES[perIdx].txt+' contra o Plano de Contas vigente.';
+    function paint(active){
+      stepsEl.innerHTML=steps.map(function(s,i){
+        var cls=i<active?' is-done':(i===active?' is-active':'');
+        var ic=i<active?('<span class="ldstep__ic">'+ICO.check+'</span>')
+              :(i===active?'<span class="ldstep__ic"><span class="ldspin"></span></span>'
+              :'<span class="ldstep__ic"><span class="ldstep__dot"></span></span>');
+        var suf=(i===active && !/…\)?$/.test(s))?'…':''; // não duplica reticência de passo que já termina nela
+        return '<div class="ldstep'+cls+'">'+ic+'<span>'+esc(s)+suf+'</span></div>';
+      }).join('');
+      var n=active>0?marks[active-1]:0, pct=Math.round(n/TOTAL*100);
+      nEl.textContent=n; bar.style.width=pct+'%'; wrap.setAttribute('aria-valuenow',pct);
+      live.textContent=active<steps.length?steps[active]:'Importação concluída';
+    }
+    paint(0); openModal('impModal');
     var i=0;
     (function tick(){
-      if(i<steps.length){ stepEl.textContent=steps[i]; i++; bar.style.width=Math.round(i/steps.length*100)+'%'; setTimeout(tick, 620); }
-      else setTimeout(function(){
-        closeAllModals();
-        ORDER.forEach(function(k){ var ev=M.ev[k];
-          if(ev.st==='pendente' && !ev.prep){ ev.prep=true;
-            ev.sub=(k==='d1101')?'57 contas · 2 a corrigir antes de transmitir':(EV_META[k].name+' importado · pronto para conferir'); }
-        });
-        renderPanels(); navTo(tab, false);
-      }, 500);
+      setTimeout(function(){
+        if(document.getElementById('impModal').hidden) return; // cancelado (Cancelar, Esc ou clique fora)
+        i++; paint(i);
+        if(i<steps.length){ tick(); }
+        else setTimeout(function(){
+          if(document.getElementById('impModal').hidden) return;
+          closeAllModals();
+          ORDER.forEach(function(k){ var ev=M.ev[k];
+            if(ev.st==='pendente' && !ev.prep){ ev.prep=true;
+              ev.sub=(k==='d1101')?'57 contas · 2 a corrigir antes de transmitir':(EV_META[k].name+' importado · pronto para conferir'); }
+          });
+          renderPanels(); navTo(tab, false);
+        }, 520);
+      }, 760);
     })();
   }
   /* Extrato D-9199: memória de cálculo (bases + débito IBS/CBS/IS) devolvida no fechamento. */

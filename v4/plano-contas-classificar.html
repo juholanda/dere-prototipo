@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Plano de Contas · Nova versão</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=5e70f7b0">
+  <link rel="stylesheet" href="../design-system/ds.css?v=b673b330">
   <script src="../design-system/ds-tailwind.js"></script>
   <script src="../design-system/ds-dialog.js"></script>
   <style>
@@ -265,23 +265,6 @@
     #aiLead{font-size:var(--text-sm);margin-bottom:var(--space-3)}
     .aifoot{flex:0 0 auto;border-top:1px solid var(--color-border);padding:var(--space-4) var(--space-8);display:flex;align-items:center;justify-content:space-between;gap:var(--space-3)}
     .aifoot--end{justify-content:flex-end}
-    .aisteps{display:flex;flex-direction:column;gap:var(--space-1);background:var(--color-surface-2);border-radius:var(--radius-xl);padding:var(--space-4) var(--space-6)}
-    .aistep{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-2) 0;font-size:var(--text-sm);color:var(--color-text-onmuted)}
-    .aistep__ic{width:22px;height:22px;flex:0 0 auto;display:grid;place-items:center;color:var(--color-text-muted)}
-    .aistep__ic svg{width:22px;height:22px}
-    .aistep__dot{width:10px;height:10px;border-radius:50%;border:2px solid var(--color-border-strong)}
-    .aistep.is-done{color:var(--color-text-onmuted);font-weight:700}
-    .aistep.is-done .aistep__ic{color:var(--color-success-fg)}
-    .aistep.is-active{color:var(--color-primary);font-weight:700}
-    .aispin{width:20px;height:20px;border:2px solid var(--color-primary);border-top-color:transparent;border-radius:50%;animation:aispin .7s linear infinite}
-    @keyframes aispin{to{transform:rotate(360deg)}}
-    @media(prefers-reduced-motion:reduce){.aispin{animation:none}}
-    .aiproc{margin-top:var(--space-8)}
-    .aiproc__top{display:flex;justify-content:space-between;align-items:baseline;gap:var(--space-3);margin-bottom:var(--space-2);font-size:var(--text-sm)}
-    .aiproc__top b{color:var(--color-heading);font-variant-numeric:tabular-nums}
-    .aiproc__hint{color:var(--color-text-muted)}
-    .aiprocbar{height:8px;border-radius:var(--radius-pill);background:var(--color-surface-2);overflow:hidden}
-    .aiprocbar i{display:block;height:100%;width:0;background:var(--color-primary);border-radius:var(--radius-pill);transition:width .2s linear}
     .aigroup{border:1px solid var(--color-border);border-radius:var(--radius-xl);padding:var(--space-4) var(--space-6);margin-bottom:var(--space-4);transition:opacity .28s ease,transform .28s ease,height .28s ease,margin .28s ease,padding .28s ease}
     .aigroup.is-leaving{opacity:0;transform:translateY(-6px) scale(.98);border-color:transparent}
     @media(prefers-reduced-motion:reduce){.aigroup{transition:opacity .15s ease}}
@@ -343,7 +326,7 @@
     .aimanual__toggle.is-open svg{transform:rotate(180deg)}
     @media(prefers-reduced-motion:reduce){.aimanual__toggle svg{transition:none}}
     /* forced-colors: barras de progresso dependem de bg → contorno + Highlight pra não sumir */
-    @media (forced-colors: active){ .aiprog__bar,.aiprocbar{border:1px solid CanvasText} .aiprog__seg,.aiprocbar>i{background:Highlight} }
+    @media (forced-colors: active){ .aiprog__bar{border:1px solid CanvasText} .aiprog__seg{background:Highlight} }
     .aiacc{display:flex;flex-direction:column;background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-3) var(--space-4);margin-bottom:var(--space-2)}
     .aiacc__row{display:flex;align-items:center;gap:var(--space-3)}
     .aiacc__list{list-style:none;margin:var(--space-3) 0 0;padding:var(--space-3) 0 0;border-top:1px solid var(--color-border);display:flex;flex-direction:column;gap:var(--space-2)}
@@ -611,10 +594,10 @@
           <p class="aimain__lead" id="aiLead">A inteligência artificial está analisando seu plano de contas.</p>
           <span class="sr-only" id="aiLive" role="status" aria-live="polite"></span>
           <div class="aiexpand" id="aiExpand"><div class="aiexpand__in">
-            <div class="aisteps" id="aiSteps"></div>
-            <div class="aiproc">
-              <div class="aiproc__top"><span><b id="aiProcN">0</b> de <b>10</b> contas processadas</span></div>
-              <div class="aiprocbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Progresso do processamento"><i id="aiProcBar"></i></div>
+            <div class="ldsteps" id="aiSteps"></div>
+            <div class="ldproc">
+              <div class="ldproc__top"><span><b id="aiProcN">0</b> de <b>10</b> contas processadas</span></div>
+              <div class="ldprocbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Progresso do processamento"><i id="aiProcBar"></i></div>
             </div>
           </div></div>
         </div>
@@ -1084,8 +1067,8 @@
   function renderSteps(activeIdx){
     document.getElementById('aiSteps').innerHTML=STEPS.map(function(s,i){
       var cls=i<activeIdx?'is-done':(i===activeIdx?'is-active':'');
-      var ic=i<activeIdx?('<span class="aistep__ic">'+CHECK+'</span>'):(i===activeIdx?'<span class="aistep__ic"><span class="aispin"></span></span>':'<span class="aistep__ic"><span class="aistep__dot"></span></span>');
-      return '<div class="aistep '+cls+'">'+ic+'<span>'+esc(s)+(i===activeIdx?'...':'')+'</span></div>';
+      var ic=i<activeIdx?('<span class="ldstep__ic">'+CHECK+'</span>'):(i===activeIdx?'<span class="ldstep__ic"><span class="ldspin"></span></span>':'<span class="ldstep__ic"><span class="ldstep__dot"></span></span>');
+      return '<div class="ldstep '+cls+'">'+ic+'<span>'+esc(s)+(i===activeIdx?'...':'')+'</span></div>';
     }).join('');
   }
   function setStats(){

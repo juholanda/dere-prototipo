@@ -1394,6 +1394,28 @@ body.has-decisionbar .content{scroll-padding-bottom:96px}
 .progress__bar{height:100%;background:var(--color-primary);border-radius:inherit;transition:width .3s}
 @media (prefers-reduced-motion:reduce){.progress__bar{transition:none}}
 
+/* Checklist de carregamento (popup de processamento: import do PGCC, import da movimentação…).
+   Passo concluído = check verde + negrito; ativo = spinner azul; pendente = ponto vazado.
+   Fonte única — NUNCA redeclarar .ldstep*/.ldspin/.ldproc* no <style> local (guard: tooling/check-ds.js). */
+.ldsteps{display:flex;flex-direction:column;gap:var(--space-1);background:var(--color-surface-2);border-radius:var(--radius-xl);padding:var(--space-4) var(--space-6)}
+.ldstep{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-2) 0;font-size:var(--text-sm);color:var(--color-text-onmuted)}
+.ldstep__ic{width:22px;height:22px;flex:0 0 auto;display:grid;place-items:center;color:var(--color-text-muted)}
+.ldstep__ic svg{width:22px;height:22px}
+.ldstep__dot{width:10px;height:10px;border-radius:50%;border:2px solid var(--color-border-strong)}
+.ldstep.is-done{color:var(--color-text-onmuted);font-weight:700}
+.ldstep.is-done .ldstep__ic{color:var(--color-success-fg)}
+.ldstep.is-active{color:var(--color-primary);font-weight:700}
+.ldspin{width:20px;height:20px;border:2px solid var(--color-primary);border-top-color:transparent;border-radius:50%;animation:ldspin .7s linear infinite}
+@keyframes ldspin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.ldspin{animation:none}}
+.ldproc{margin-top:var(--space-8)}
+.ldproc__top{display:flex;justify-content:space-between;align-items:baseline;gap:var(--space-3);margin-bottom:var(--space-2);font-size:var(--text-sm)}
+.ldproc__top b{color:var(--color-heading);font-variant-numeric:tabular-nums}
+.ldproc__hint{color:var(--color-text-muted)}
+.ldprocbar{height:8px;border-radius:var(--radius-pill);background:var(--color-surface-2);overflow:hidden}
+.ldprocbar i{display:block;height:100%;width:0;background:var(--color-primary);border-radius:var(--radius-pill);transition:width .2s linear}
+@media (forced-colors: active){ .ldprocbar{border:1px solid CanvasText} .ldprocbar>i{background:Highlight} }
+
 /* Dropzone (upload de documentos) */
 .dropzone{display:flex;flex-direction:column;align-items:center;text-align:center;gap:var(--space-2);padding:var(--space-8) var(--space-6);
   border:1.5px dashed var(--color-border-strong);border-radius:var(--radius-lg);background:var(--color-surface-2);color:var(--color-text-muted);cursor:pointer;transition:border-color .12s,background .12s}
