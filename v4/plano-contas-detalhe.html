@@ -499,7 +499,7 @@
     fin:{nome:'MAG Finanças', cnpj:'21.995.256/0001-56', logo:'../Logos/mag%20financas.jpeg', ref:'COSIF'},
     seg:{nome:'MAG Seguros', cnpj:'33.608.308/0001-73', logo:'../Logos/MAG%20seguros.png', ref:'SUSEP'},
     sic:{nome:'Sicoob Seguradora', cnpj:'26.314.512/0001-16', logo:'../Logos/sicooboficial_logo.jpeg', ref:'SUSEP'},
-    s2u:{nome:'Simple2u', cnpj:'40.997.879/0001-02', logo:'../Logos/logo_simple-2u_j7QQ4s.png', ref:'SUSEP'}
+    s2u:{nome:'Simple2u', cnpj:'40.997.879/0001-02', logo:'../Logos/logo_simple-2u_j7QQ4s.png', ref:'BCB'}
   };
   var CO=DCO[EMPQ]||DCO.seg;
   (function(){
@@ -671,6 +671,9 @@
     }
     if(dec&&dec.comment&&STATES.ajuste) STATES.ajuste.comment='Ana Prado: “'+dec.comment+'”';
     render(STATES[st]?st:'revisao');
+    /* sincroniza a demobar com o estado inicial (o toggle .on só rodava no clique; sem isto o "Em revisão" hardcoded
+       ficava aceso). No DOMContentLoaded porque a demobar vem depois deste script no DOM. */
+    (function(){ var _k=STATES[st]?st:'revisao'; document.addEventListener('DOMContentLoaded',function(){ document.querySelectorAll('[data-sc]').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-sc')===_k); }); }); })();
     /* exclusão da vigente em andamento (persistido) — mostra o estado e sobrevive à navegação (mesmo modelo do D-1001) */
     try{ var _ep=JSON.parse(localStorage.getItem('adere.d1011.exclproc.'+EMPQ)||'null'); if(_ep && (st==='aprovado'||st==='advertencias')){ exclPendingBanner(); } }catch(e){}
   })();
@@ -989,6 +992,13 @@
     document.querySelectorAll('[data-ctview]').forEach(function(b){ b.addEventListener('click',function(){ var v=b.getAttribute('data-ctview'); if(v===view) return; setView(v); page=1; render(); }); });
     document.querySelectorAll('#ctHead th.sortable').forEach(function(th){ (th.querySelector('.th-btn')||th).addEventListener('click',function(){ var k=th.getAttribute('data-sort'); if(SORT.key===k){ SORT.dir=(SORT.dir==='asc'?'desc':'asc'); } else { SORT.key=k; SORT.dir='asc'; } if(view!=='tabela') setView('tabela'); page=1; render(); }); });
     var si=document.getElementById('ctSearch'); if(si) si.addEventListener('input',function(){ term=si.value.trim(); if(term && view!=='tabela') setView('tabela'); page=1; render(); });
+    /* ?buscar=<código> (vindo do balancete: "Classificar no plano de contas"): pré-filtra a conta que precisa de ajuste.
+       Se ela não existir nesta versão (o caso "fora do PGCC"), o estado vazio explica o porquê e o próximo passo. */
+    (function(){ var b=dparam('buscar'); if(!b||!si) return; si.value=b; si.dispatchEvent(new Event('input',{bubbles:true})); si.focus();
+      var tt=document.querySelector('.empty__title'), tx=document.querySelector('.empty__text');
+      if(tt) tt.textContent='Esta conta não está nesta versão do plano';
+      if(tx) tx.textContent='Por isso o balancete travou: a conta '+b+' precisa ser incluída e classificada. Use "Alterar" para criar uma nova versão com ela.';
+    })();
     var pg=document.getElementById('ctPager'); if(pg) pg.addEventListener('click',function(e){ var b=e.target.closest('[data-ctpage]'); if(!b||b.disabled) return; page=+b.getAttribute('data-ctpage'); render(); });
     setView('tabela'); render();
   })();

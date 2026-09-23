@@ -135,6 +135,8 @@
     .fechrow{display:flex;align-items:center;justify-content:space-between;gap:var(--space-3) var(--space-4);flex-wrap:wrap;margin-bottom:var(--space-6)}
     .fechrow__act{display:flex;gap:var(--space-2);flex:0 0 auto;flex-wrap:wrap;margin-left:auto}
     .evna{font-size:var(--text-sm);color:var(--color-text-muted)} /* "Não se aplica" é texto apagado, não pill (a PO: status de verdade é só o do vocabulário) */
+    .subwarn{display:inline-flex;align-items:center;gap:var(--space-1);color:var(--color-warning-fg);font-weight:600}
+    .subwarn svg{width:13px;height:13px;flex:0 0 auto}
     /* barra de demonstração (mesmo padrão da Info do Contribuinte) */
     .demobar{position:fixed;bottom:var(--space-4);left:50%;transform:translateX(-50%);z-index:200;display:flex;align-items:center;gap:var(--space-1);background:var(--slate-900);border:1px solid rgba(255,255,255,.14);border-radius:var(--radius-pill);padding:2px var(--space-1-5);box-shadow:var(--shadow-md);font-size:var(--text-xs);opacity:.92;flex-wrap:wrap;justify-content:center;max-width:calc(100vw - var(--space-8));row-gap:var(--space-1)}
     .demobar:hover{opacity:1}
@@ -970,9 +972,11 @@
     var evOrder=ORDER.filter(function(k){return M.ev[k].st!=='na';}).concat(ORDER.filter(function(k){return M.ev[k].st==='na';}));
     var rows=evOrder.map(function(kk){
       var e=M.ev[kk], meta=EV_META[kk], na=(e.st==='na'), hasVal=(!na&&e.val&&e.val!=='—');
+      // "N a corrigir…" ganha ícone + cor de aviso NA LISTA (a PO se sentiu perdida: o sinal do que falta aparece sem entrar no evento)
+      var subH=esc(e.sub||'').replace(/(\d+ a corrigir[^·]*)/, '<span class="subwarn">'+ICO.alert+'$1</span>');
       var nameInner='<span class="evname__ic">'+meta.ic+'</span><div class="evname__b"><div class="evname__row">'+
         (na?'<span class="evname__t">'+esc(meta.name)+'</span>':'<a class="evname__link" href="?emp='+emp+'&per='+M.per+'&ev='+meta.slug+'" data-tab="'+meta.slug+'">'+esc(meta.name)+'</a>')+
-        '<span class="tag">'+meta.code+'</span></div><div class="evname__sub">'+esc(e.sub)+'</div></div>';
+        '<span class="tag">'+meta.code+'</span></div><div class="evname__sub">'+subH+'</div></div>';
       var valCell=hasVal?'<span class="evval">'+e.val+'</span><span class="evval__cap">'+esc(e.valLbl)+'</span>':'<span class="evval evval--na">—</span>';
       if(na) return '<tr class="evrow--na"><td><div class="evname">'+nameInner+'</div></td><td><span class="evna">Não se aplica</span></td><td class="evcol-num">'+valCell+'</td><td class="evcol-act"></td></tr>';
       // a lista só aparece com a competência já importada → a linha abre o detalhe (sem "Importar" por evento).
@@ -1018,7 +1022,9 @@
     pgcc:{ tone:'warning', label:'Fora do PGCC',
       problem:'Estas contas não existem no plano de contas (PGCC) vigente desta competência, então a a-DeRE não sabe a que tributo elas pertencem.',
       fix:'Classifique-as no Plano Geral de Contas e importe o balancete de novo.',
-      act:function(){ return '<a class="btn btn--secondary btn--sm" href="plano-contas-empresa.html?emp='+emp+'">'+ICO.doc+'Classificar no plano de contas</a>'; } },
+      act:function(rows){ // direto no DETALHE da versão VIGENTE, já com a conta problemática pré-filtrada (a PO: "como ele vai saber o que ajustar?")
+        var vn=(String(CO.pgcc).match(/\d+/)||['1'])[0], q=(rows&&rows[0])?('&buscar='+encodeURIComponent(rows[0].cCta)):'';
+        return '<a class="btn btn--secondary btn--sm" href="plano-contas-detalhe.html?emp='+emp+'&v='+vn+'&st=aprovado'+q+'">'+ICO.doc+'Classificar no plano de contas</a>'; } },
     saldo:{ tone:'danger', label:'Saldo não confere',
       problem:'Nestas contas, o saldo final não bate com o saldo inicial mais o movimento do mês.',
       fix:'Corrija os valores na planilha do balancete e importe o arquivo novamente.',
@@ -1037,7 +1043,7 @@
       '<div class="dalert__body"><p class="dalert__title">'+n+' conta'+(n>1?'s':'')+' · '+f.label+'</p>'+
         '<p class="dalert__text">'+f.problem+' '+f.fix+'</p>'+
         '<ul class="fixacc-list">'+accs+'</ul></div>'+
-      '<div class="dalert__act">'+f.act()+'</div></div>';
+      '<div class="dalert__act">'+f.act(rows)+'</div></div>';
   }
   function balanceteContent(M){
     var d=DETAIL[M.per].d1101;
