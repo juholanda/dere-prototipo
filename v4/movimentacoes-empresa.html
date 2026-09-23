@@ -1,0 +1,1467 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>a-DeRE · Movimentações Mensais · MAG Seguros</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=02d44618">
+  <script src="../design-system/ds-tailwind.js"></script>
+  <style>
+    /* ===== app-shell ===== */
+    body{margin:0;background:var(--color-bg)}
+    .shell{display:flex;height:100vh;overflow:hidden}
+    .shell > .sidenav{border:0;border-radius:0;padding:0;position:relative!important;transform:none!important;visibility:visible!important;z-index:auto!important;transition:width .18s ease}
+    .brandrow{height:64px;flex:0 0 auto;display:flex;align-items:center;gap:var(--space-3);padding:0 var(--space-4) 0 var(--space-6);border-bottom:1px solid var(--color-border)}
+    .brandrow .wm{font-weight:800;font-size:var(--text-lg);letter-spacing:-.01em;color:var(--color-heading)}
+    .brandrow .avatar{background:color-mix(in srgb, var(--color-on-navy) 14%, transparent);color:var(--color-on-navy);width:36px;height:36px;font-size:var(--text-sm);flex:0 0 auto;font-weight:800}
+    .navlist{flex:1;overflow:auto;min-height:0;padding:var(--space-3) var(--space-3) 0;display:flex;flex-direction:column;gap:2px}
+    .col{flex:1;display:flex;flex-direction:column;min-width:0;min-height:0}
+    .topbar{height:64px;flex:0 0 auto;background:var(--color-surface);border-bottom:1px solid var(--color-border);display:flex;align-items:center;gap:var(--space-4);padding:0 var(--space-6)}
+    .content{flex:1;overflow:auto;min-height:0;background:var(--slate-100);scrollbar-gutter:stable}
+    :root[data-theme="dark"] .content{background:var(--color-bg)}
+    .wrap{padding:var(--space-8) var(--space-10);max-width:1600px;width:100%;margin:0 auto;box-sizing:border-box;container-type:inline-size}
+    .bc{display:flex;align-items:center;gap:var(--space-2);font-size:var(--text-sm);min-width:0;overflow:hidden}
+    .bc a{color:var(--color-primary);text-decoration:none;font-weight:500;white-space:nowrap}
+    .bc a:hover{text-decoration:underline}
+    .bc span{color:var(--color-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .bc svg{width:15px;height:15px;color:var(--color-text-muted);flex:0 0 auto}
+    #bcTail{display:contents}   /* achata os crumbs (link · chevron · atual) como itens diretos do flex do breadcrumb */
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+    /* ===== seletor de competência (.compnav + .mp) e cartão (.cocard):
+       componentes do DS (design-system/ds.css). Aqui só o wrapper de layout. ===== */
+    /* .filterf / .filterf--comp agora vêm do ds.css */
+    .card{overflow:hidden;margin-bottom:var(--space-6)}
+    /* valor-link no card do contribuinte (PGCC vigente → detalhe do Plano de Contas) */
+    .colink{display:inline-flex;align-items:center;gap:var(--space-1-5);color:var(--color-primary);text-decoration:none;font-weight:600}
+    .colink:hover{text-decoration:underline}
+    .colink:focus-visible{outline:none;box-shadow:var(--ring);border-radius:var(--radius-sm)}
+    .colink__ext{display:inline-flex;color:var(--color-text-muted)}
+    .colink__ext svg{width:14px;height:14px}
+
+    /* ===== barra de abas (.tabs do DS) com scroll em tela estreita ===== */
+    .tabscroll{overflow-x:auto;scrollbar-width:thin;margin-top:var(--space-2);padding-bottom:2px}   /* padding evita que o overflow corte o sublinhado de 2px da aba ativa */
+    .tabscroll .tabs{min-width:max-content}
+    .panels{margin-top:var(--space-6)}
+
+    /* ===== seção (título + hint, ritmo do detalhe do Plano) ===== */
+    .sec{margin-top:var(--space-10)}
+    .sec:first-child{margin-top:0}
+    .sec__h{display:flex;align-items:flex-end;justify-content:space-between;gap:var(--space-4);flex-wrap:wrap;margin:0 0 var(--space-4)}
+    .sec__ht{min-width:0}
+    .sec__ht h2{font-size:var(--text-xl);font-weight:700;color:var(--color-heading);margin:0;line-height:1.25}
+    .sec__hint{font-size:var(--text-sm);color:var(--color-text-onmuted);margin:var(--space-1) 0 0;line-height:1.5}
+    .sec__act{display:flex;gap:var(--space-3);flex:0 0 auto;flex-wrap:wrap}
+
+    /* ===== apuração do mês (total no cabeçalho da seção + totalizadores KPI) ===== */
+    .totgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(224px,1fr));gap:var(--space-4)}
+    /* base por codTrib (gTotalCodTrib do D-9101): SUB-SEÇÃO do card (divisória + cabeçalho de 3º nível + tabela encaixotada) */
+    .ctblock{margin-top:var(--space-8);padding-top:var(--space-8);border-top:1px solid var(--color-border)}
+    .ctblock .dtsub{font-size:var(--text-base);font-weight:700}   /* rebaixa p/ par do rótulo do hero (16px), não compete com o título do card */
+    .ctblock thead th{background:var(--color-surface-2)}
+    .ctblock tbody tr:nth-child(even){background:transparent}   /* lista curta: corpo branco + bordas, sem zebra fantasma */
+    .ctblock .cttot th,.ctblock .cttot td{border-top:2px solid var(--color-border-strong);color:var(--color-heading);font-weight:700;padding-top:var(--space-4)}
+    .totgrid .stat__ic svg{width:16px;height:16px}
+    .totgrid .stat__foot{line-height:1.4}
+    /* faixa de metadados abaixo do título (espelha .hdr-recibo da Info do Contribuinte): status + fatos-chave */
+    .hdrmeta{display:flex;align-items:center;flex-wrap:wrap;gap:var(--space-2) var(--space-4);margin-top:var(--space-4);color:var(--color-text-muted);font-size:var(--text-sm)}
+    .hdrmeta:empty{display:none}
+    .hdrmeta .status{font-size:var(--text-xs)}
+    .hdrmeta__fact{display:inline-flex;align-items:center;gap:var(--space-2)}
+    .hdrmeta__fact svg{width:15px;height:15px;flex:0 0 auto}
+    .hdrmeta__fact--warn{color:var(--color-warning-fg);font-weight:600}
+    /* competência: usa .filterf--comp do ds.css (rótulo em cima), igual ao Painel; alinha ao topo do título */
+    .page-h__act{align-items:flex-start}
+    /* ações do evento vivem na .decisionbar fixa (padrão do detalhe D-1001/D-1011); o cabeçalho fica só com a competência */
+    /* motivo de trava ao lado do botão bloqueado (ex.: "corrija N contas antes de transmitir") */
+    .decisionbar__note{display:inline-flex;align-items:center;gap:var(--space-2);color:var(--color-text-muted);font-size:var(--text-sm);max-width:34rem}
+    .decisionbar__note svg{width:16px;height:16px;flex:none}
+    .decisionbar__note--warn{color:var(--color-warning-fg)}
+    /* card de seção: título + subtítulo dentro do card (padrão das outras telas) */
+    .cardhd{margin-bottom:var(--space-6)}
+    .cardhd--div{padding-bottom:var(--space-6);border-bottom:1px solid var(--color-border)}
+    .cardhd__toprow{display:flex;align-items:center;justify-content:space-between;gap:var(--space-3) var(--space-6);flex-wrap:wrap}
+    .cardhd__side{flex:0 0 auto}
+    .cardhd__side .prazoline{margin:0}
+    .cardhd__t{font-size:var(--text-xl);font-weight:700;color:var(--color-heading);margin:0;line-height:1.25}
+    .cardhd__x{font-size:var(--text-sm);color:var(--color-text-onmuted);margin:var(--space-1) 0 0;line-height:1.5}
+    .totgrid .stat{box-shadow:none}   /* caixinhas dentro do card: sem sombra (a moldura já é o card) */
+    /* total = valor principal, no TOPO do card da apuração (antes das caixinhas), com divisória embaixo */
+    .apurhero{display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-2) var(--space-4);margin-bottom:var(--space-6);padding:var(--space-4) var(--space-6);background:var(--color-primary-subtle);border:1px solid color-mix(in srgb, var(--color-primary) 20%, var(--color-border));border-radius:var(--radius-xl)}
+    .apurhero__txt{margin-right:auto;min-width:0}
+    .apurhero__lbl{display:block;font-size:var(--text-base);font-weight:700;color:var(--color-heading)}
+    .apurhero__sub{display:block;font-size:var(--text-xs);color:var(--color-text-onmuted);margin-top:2px;max-width:70ch}
+    .apurhero__val{font-size:var(--text-3xl);font-weight:800;color:var(--color-primary-darker);font-variant-numeric:tabular-nums;line-height:1}
+    .apurhero__act{margin-left:var(--space-2)}
+
+    /* sub-abas do evento (Conteúdo · Versões) */
+    .subpanels{margin-top:var(--space-6)}
+    .subpanel[hidden]{display:none}
+    .apurhead__lbl{font-size:var(--text-xs);color:var(--color-text-muted);font-weight:600}
+    .apurtotal__val{font-size:var(--text-3xl);font-weight:700;color:var(--color-heading);font-variant-numeric:tabular-nums;line-height:1}
+    .apurtotal__val--muted{color:var(--color-text-muted)}
+    .apur-wait{color:var(--color-text-muted)}
+    .apurfoot{margin-top:var(--space-4)}
+    /* tabela rótulo→valor (apuração, extrato): o th de LINHA é rótulo, não cabeçalho (sem uppercase); o thead mantém o header do DS */
+    .kvtable th[scope="row"]{text-transform:none;font-size:var(--text-sm);letter-spacing:0;color:var(--color-heading);font-weight:600}
+
+    /* ===== checkpoints (não lineares): cada evento com sua situação, sem ordem entre eles ===== */
+    .evchecks{display:flex;flex-wrap:wrap;gap:var(--space-2) var(--space-3);margin-top:var(--space-4)}
+    .evcheck{display:inline-flex;align-items:center;gap:var(--space-2);padding:var(--space-1) var(--space-3) var(--space-1) var(--space-1);border:1px solid var(--color-border);border-radius:var(--radius-pill);background:var(--color-surface);text-decoration:none;color:var(--color-heading)}
+    .evcheck:hover{border-color:var(--color-border-strong)}
+    .evcheck:focus-visible{outline:none;box-shadow:var(--ring)}
+    .evcheck__badge{display:inline-flex;width:26px;height:26px;flex:0 0 auto;align-items:center;justify-content:center;border-radius:50%}
+    .evcheck__badge svg{width:15px;height:15px}
+    .evcheck__badge--done{background:var(--color-success-bg);color:var(--color-success)}
+    .evcheck__badge--proc{background:var(--color-info-bg);color:var(--color-info)}
+    .evcheck__badge--wait{background:var(--color-surface-2);color:var(--color-text-muted)}
+    .evcheck__badge--warn{background:var(--color-warning-bg);color:var(--color-warning)}
+    .evcheck__badge--danger{background:var(--color-danger-bg);color:var(--color-danger)}
+    .evcheck__n{font-size:var(--text-sm);font-weight:600}
+
+    /* ===== conteúdo do card "Fechamento do mês": estágio + ação numa linha; abaixo, a lista dos eventos (prazo vai no cabeçalho) ===== */
+    .fechstage{margin:0;font-size:var(--text-base);font-weight:700;color:var(--color-heading)}
+    .fechrow{display:flex;align-items:center;justify-content:space-between;gap:var(--space-3) var(--space-4);flex-wrap:wrap;margin-bottom:var(--space-6)}
+    .fechrow__act{display:flex;gap:var(--space-2);flex:0 0 auto;flex-wrap:wrap;margin-left:auto}
+
+    /* ===== prazo do balancete: linha simples (tratamento visual a definir) ===== */
+    .prazoline{display:inline-flex;align-items:center;gap:var(--space-2);margin:var(--space-4) 0 0;font-size:var(--text-sm);color:var(--color-text-onmuted)}
+    .prazoline strong{color:var(--color-heading);font-variant-numeric:tabular-nums}
+    .prazoline__ic{display:inline-flex;color:var(--color-text-muted)}
+    .prazoline__ic svg{width:15px;height:15px}
+    .prazoline--warn{color:var(--color-warning-fg)}
+    .prazoline--warn .prazoline__ic{color:var(--color-warning)}
+
+    /* ===== voltar para a competência (nav do detalhe) ===== */
+    .backlink{display:inline-flex;align-items:center;gap:var(--space-1);margin:var(--space-4) 0 0;font-size:var(--text-sm);font-weight:600;color:var(--color-primary);text-decoration:none}
+    .backlink:hover{text-decoration:underline}
+    .backlink svg{flex:0 0 auto}
+
+    /* ===== eventos em cards (navegação para a página do evento) ===== */
+    .evnavgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(248px,1fr));gap:var(--space-4)}
+    .evnav{display:flex;align-items:flex-start;gap:var(--space-3);padding:var(--space-4) var(--space-6) var(--space-4) var(--space-4);border:1px solid var(--color-border);border-radius:var(--radius-2xl);background:var(--color-surface);box-shadow:var(--shadow-sm);text-decoration:none;color:inherit;position:relative;transition:border-color .12s ease,box-shadow .12s ease}
+    .evnav:hover{border-color:var(--color-border-strong)}
+    .evnav:focus-visible{outline:none;box-shadow:var(--ring)}
+    .evnav--na{opacity:.62;box-shadow:none}
+    .evnav__ic{display:inline-flex;width:var(--space-10);height:var(--space-10);flex:0 0 auto;align-items:center;justify-content:center;border-radius:var(--radius-lg);background:var(--color-primary-subtle);color:var(--color-primary)}
+    .evnav--na .evnav__ic{background:var(--color-surface-2);color:var(--color-text-muted)}
+    .evnav__ic svg{width:19px;height:19px}
+    .evnav__b{min-width:0;flex:1 1 auto;display:flex;flex-direction:column;gap:var(--space-1)}
+    .evnav__top{display:flex;align-items:center;gap:var(--space-2);flex-wrap:wrap}
+    .evnav__n{font-weight:700;color:var(--color-heading)}
+    .evnav__sub{font-size:var(--text-xs);color:var(--color-text-onmuted);margin:0;line-height:1.4}
+    .evnav__foot{display:flex;align-items:center;gap:var(--space-2);flex-wrap:wrap;margin-top:var(--space-1)}
+    .evnav__val{font-weight:700;color:var(--color-heading);font-variant-numeric:tabular-nums;font-size:var(--text-sm)}
+    .evnav__chev{position:absolute;top:var(--space-4);right:var(--space-3);color:var(--color-text-muted);display:inline-flex}
+    .evnav__chev svg{width:16px;height:16px}
+
+    /* ===== detalhe do evento = um card só (cabeçalho com background + conteúdo) ===== */
+    .evdetail__alert{margin-top:var(--space-4)}
+    .card .emptyev{border:0;box-shadow:none;background:transparent;padding:var(--space-10) var(--space-4)}   /* estado vazio dentro do card não repete a caixa */
+
+    /* ===== tabela de eventos (.evtbl): componente do DS ===== */
+
+    /* fechamento (.statusbar do DS) */
+    .statusbar{margin-bottom:0}
+    .statusbar__desc{max-width:70ch}
+    .fechact{display:flex;flex-direction:column;align-items:flex-end;gap:var(--space-2)}
+    .fechact .btn{white-space:nowrap}
+    .fechhint{display:inline-flex;align-items:center;gap:var(--space-1-5);font-size:var(--text-xs);color:var(--color-warning-fg);font-weight:600;margin:0;text-align:right}
+    .fechhint svg{width:14px;height:14px;flex:0 0 auto}
+    /* estado vazio de um evento (a preparar / nada importado) */
+    .emptyev{display:flex;flex-direction:column;align-items:center;text-align:center;gap:var(--space-2);padding:var(--space-12) var(--space-6);background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-2xl);box-shadow:var(--shadow-sm)}
+    .emptyev__ic{width:var(--space-14);height:var(--space-14);border-radius:var(--radius-lg);display:grid;place-items:center;background:var(--color-primary-subtle);color:var(--color-primary);margin-bottom:var(--space-2)}
+    .emptyev__ic svg{width:26px;height:26px}
+    .emptyev__t{font-size:var(--text-lg);font-weight:700;color:var(--color-heading);margin:0}
+    .emptyev__x{font-size:var(--text-sm);color:var(--color-text-onmuted);margin:0 0 var(--space-3);max-width:46ch;line-height:1.5}
+    /* estado vazio = dois cartões de importação (padrão do Plano de Contas): planilha × ERP */
+    .create-opts{display:grid;grid-template-columns:repeat(2,minmax(0,480px));gap:var(--space-6);justify-content:center}
+    @media(max-width:680px){.create-opts{grid-template-columns:minmax(0,480px)}}
+    .create-opt{border:1px solid var(--color-border);border-radius:var(--radius-2xl);padding:var(--space-6);background:var(--color-surface);text-align:center;display:flex;flex-direction:column;align-items:center;transition:border-color .14s,box-shadow .14s}
+    .create-opt:hover{border-color:var(--color-primary);box-shadow:var(--shadow-sm)}
+    .create-opt__ic{width:48px;height:48px;border-radius:var(--radius-lg);background:var(--color-primary-subtle);color:var(--color-primary);display:grid;place-items:center;margin-bottom:var(--space-4)}
+    .create-opt__ic svg{width:24px;height:24px}
+    .create-opt h3{font-size:var(--text-base);font-weight:700;margin:0 0 var(--space-2);color:var(--color-heading)}
+    .create-opt p{font-size:var(--text-sm);color:var(--color-text-muted);margin:0 0 var(--space-4);line-height:1.5;max-width:54ch}
+    .create-opt .btn{margin-top:var(--space-1)}
+    .create-opt__tpl{display:inline-flex;align-items:center;gap:var(--space-1-5);margin-top:var(--space-4);font-size:var(--text-sm);font-weight:600;color:var(--color-primary);text-decoration:none;background:none;border:0;cursor:pointer}
+    .create-opt__tpl:hover{text-decoration:underline}
+    .create-opt__tpl:focus-visible{outline:none;box-shadow:var(--ring);border-radius:var(--radius-sm)}
+    .create-opt__tpl svg{width:15px;height:15px;flex:0 0 auto}
+    /* modal "lendo a planilha": ícone + passo atual + barra de progresso */
+    .impproc{text-align:center;padding:var(--space-8) var(--space-6)}
+    .impproc__ic{width:var(--space-14);height:var(--space-14);margin:0 auto var(--space-4);border-radius:var(--radius-lg);display:grid;place-items:center;background:var(--color-primary-subtle);color:var(--color-primary)}
+    .impproc__ic svg{width:28px;height:28px;animation:imp-pulse 1.1s ease-in-out infinite}
+    @keyframes imp-pulse{0%,100%{opacity:.55}50%{opacity:1}}
+    @media (prefers-reduced-motion:reduce){.impproc__ic svg{animation:none}}
+    .impproc__t{font-size:var(--text-lg);font-weight:700;color:var(--color-heading);margin:0 0 var(--space-1)}
+    .impproc__step{font-size:var(--text-sm);color:var(--color-text-onmuted);margin:0 0 var(--space-6);min-height:1.4em}
+    .impproc__bar{height:6px;border-radius:var(--radius-pill);background:var(--color-surface-2);overflow:hidden;max-width:20rem;margin:0 auto}
+    .impproc__bar i{display:block;height:100%;background:var(--color-primary);border-radius:var(--radius-pill);width:0;transition:width .45s ease}
+    .evimport{display:inline-flex;align-items:center;gap:var(--space-1);font-size:var(--text-sm);font-weight:600;color:var(--color-primary);text-decoration:none;white-space:nowrap}
+    .evimport svg{width:15px;height:15px}
+    .evimport:hover{text-decoration:underline}
+    /* cabeçalho do evento: título (nome + código + situação) numa linha */
+    .dethead__title{display:flex;align-items:center;gap:var(--space-2);flex-wrap:wrap}
+
+    /* topo da aba do evento = .totalbar do DS (herói de nível evento) */
+
+    /* ===== conteúdo dos eventos (tabelas): helpers de conteúdo.
+       .table-wrap--boxed é do DS; aqui só helpers de célula. ===== */
+    .mono{font-variant-numeric:tabular-nums;letter-spacing:.01em}
+    .strong{font-weight:700;color:var(--color-heading)}
+    .tnote{font-size:var(--text-xs);color:var(--color-text-onmuted);margin:var(--space-3) 0 0}
+    /* linha sinalizada na validação: destaque por severidade (tinta + faixa colorida à esquerda) */
+    .dtable tbody tr.rowflag--warning td,.dtable tbody tr.rowflag--warning th{background:color-mix(in srgb,var(--color-warning) 12%,var(--color-surface))}
+    .dtable tbody tr.rowflag--danger td,.dtable tbody tr.rowflag--danger th{background:color-mix(in srgb,var(--color-danger) 12%,var(--color-surface))}
+    .dtable tbody tr.rowflag--warning th[scope="row"]{box-shadow:inset 3px 0 0 var(--color-warning)}
+    .dtable tbody tr.rowflag--danger th[scope="row"]{box-shadow:inset 3px 0 0 var(--color-danger)}
+    .dtable tbody tr.rowflag:hover td,.dtable tbody tr.rowflag:hover th{background:color-mix(in srgb,var(--color-danger) 6%,var(--color-surface-2))}
+
+    /* ===== tabela de CONTEÚDO (.dtable): th de linha vira célula normal (some a "linha grossa"
+       do header no corpo); só o thead mantém a divisória forte. Rodapé com contagem + paginação. ===== */
+    .dtable th[scope="row"]{text-transform:none;font-size:var(--text-sm);letter-spacing:0;color:var(--color-heading);font-weight:600;border-bottom:1px solid var(--color-border);vertical-align:middle}
+    .dtable .th-sort svg{width:13px;height:13px}
+    .dtfoot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--space-2) var(--space-4);margin-top:var(--space-3)}
+    .dtfoot .tnote{margin:0}
+    .tpager{display:inline-flex;align-items:center;gap:var(--space-3)}
+    .tpager__info{font-size:var(--text-xs);color:var(--color-text-muted);font-variant-numeric:tabular-nums}
+    .tpager__btns{display:inline-flex;gap:var(--space-2)}
+    /* blocos de conteúdo (ex.: contas a corrigir · todas as contas · versão atual · anteriores): título + subtítulo + tabela, bem separados */
+    .dtblock{margin-bottom:var(--space-10)}
+    .dtblock:last-child{margin-bottom:0}
+    .dtsub{font-size:var(--text-lg);font-weight:700;color:var(--color-heading);margin:0 0 var(--space-1)}
+    .dtsub--danger{color:var(--color-danger-fg)}
+    .dtsub__x{font-size:var(--text-sm);color:var(--color-text-onmuted);margin:0 0 var(--space-4);line-height:1.5;max-width:82ch}
+    /* lista de contas a corrigir: .dalert do DS empilhados; o último sem respiro extra dentro do bloco */
+    .fixlist .dalert:last-child{margin-bottom:0}
+    /* contas afetadas dentro de cada grupo de erro */
+    .fixacc-list{list-style:none;margin:var(--space-3) 0 0;padding:0;display:flex;flex-direction:column;gap:var(--space-2)}
+    .fixacc{font-size:var(--text-sm);color:var(--color-text);padding-left:var(--space-4);position:relative;line-height:1.45}
+    .fixacc::before{content:"";position:absolute;left:2px;top:8px;width:4px;height:4px;border-radius:50%;background:var(--color-text-muted)}
+    .fixacc .mono{color:var(--color-heading);font-weight:600}
+    .fixacc__msg{display:block;color:var(--color-text-muted);font-size:var(--text-xs);margin-top:1px}
+    /* coluna Ajustes (vAjusteDebt/vAjusteCred): valor quando há, traço discreto quando não há */
+    .ajval--none{color:var(--color-text-muted)}
+    /* razão do título (D-2101) e outras tabelas largas: sub-linha da descrição + rolagem horizontal */
+    .tsub{display:block;font-size:var(--text-xs);color:var(--color-text-muted);font-weight:400;margin-top:2px}
+    .dtable--wide{min-width:1120px}
+    /* itens do documento de dedução (itemDFe) num expandível na linha */
+    .itensrow td{padding:0 var(--space-6) var(--space-4)!important;background:var(--color-surface-2);border-bottom:1px solid var(--color-border)}
+    .itensdet > summary{cursor:pointer;display:inline-flex;align-items:center;gap:var(--space-2);font-size:var(--text-sm);font-weight:600;color:var(--color-primary);padding:var(--space-3) 0;list-style:none}
+    .itensdet > summary::-webkit-details-marker{display:none}
+    .itensdet > summary::before{content:"";width:0;height:0;border-left:5px solid currentColor;border-top:4px solid transparent;border-bottom:4px solid transparent;transition:transform .12s}
+    .itensdet[open] > summary::before{transform:rotate(90deg)}
+    /* formulário do fechamento (D-1199): decisões declaratórias antes de transmitir */
+    .fechform{display:flex;flex-direction:column;gap:var(--space-6);margin-top:var(--space-6)}
+    .fechform__sec{border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-6)}
+    .fechform__t{font-size:var(--text-sm);font-weight:700;color:var(--color-heading);margin:0 0 var(--space-3)}
+    .fechform__hint{font-size:var(--text-sm);color:var(--color-text-onmuted);margin:0 0 var(--space-3);line-height:1.5}
+    .switch-row{display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);cursor:pointer;font-size:var(--text-sm);font-weight:600;color:var(--color-heading)}
+    .fechform__met{display:flex;flex-direction:column;gap:var(--space-3);margin-top:var(--space-4)}
+    .fechform__met[hidden]{display:none}
+    @media (max-width:640px){ .fixlist .dalert{flex-wrap:wrap} .fixlist .dalert__act{align-self:stretch;width:100%} .fixlist .dalert__act .btn{width:100%} }
+    /* sub-linha da apuração (IBS Municipal/Estadual), recuada e discreta */
+    .kvtable .kvsub th[scope="row"]{padding-left:var(--space-8);font-weight:400;color:var(--color-text-muted)}
+    .kvsub td{color:var(--color-text-muted)}
+
+    /* ===== comprovante (.receipt do DS) num cartão da página ===== */
+    .compbox{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-2xl);box-shadow:var(--shadow-sm);padding:var(--space-6);max-width:600px}
+
+    @media(max-width:900px){.wrap{padding-left:var(--space-6);padding-right:var(--space-6)}.sec__act{width:100%}}
+  </style>
+</head>
+<body>
+<style id="dere-gate-css">
+  #dere-gate{position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;padding:var(--space-6);background:var(--color-primary-darker);font-family:var(--font-sans)}
+  #dere-gate .dgate__card{width:100%;max-width:360px;background:var(--color-surface);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);padding:var(--space-10) var(--space-8) var(--space-8);text-align:center;animation:dgateIn .38s cubic-bezier(.2,.7,.2,1) both}
+  @media (prefers-reduced-motion:reduce){#dere-gate .dgate__card{animation:none}}
+  @keyframes dgateIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  #dere-gate .dgate__brand{font-size:var(--text-xl);font-weight:800;letter-spacing:-.01em;color:var(--color-heading)}
+  #dere-gate .dgate__sub{display:inline-flex;align-items:center;gap:var(--space-1-5);color:var(--color-text-muted);font-size:var(--text-xs);margin:var(--space-1-5) 0 var(--space-8)}
+  #dere-gate .dgate__sub svg{width:14px;height:14px}
+  #dere-gate .dgate__lbl{display:block;text-align:left;font-size:var(--text-xs);font-weight:600;color:var(--color-text);margin-bottom:var(--space-1-5)}
+  #dere-gate .dgate__err{display:flex;align-items:center;gap:var(--space-1-5);text-align:left;min-height:var(--space-4);margin-top:var(--space-2);color:var(--color-danger);font-size:var(--text-xs)}
+  #dere-gate .dgate__err svg{width:14px;height:14px;flex:0 0 auto}
+  #dere-gate .dgate__foot{margin-top:var(--space-6);font-size:var(--text-2xs);letter-spacing:.02em;color:var(--color-text-muted)}
+  #dere-gate form{margin:0}
+  #dere-gate .btn{width:100%;justify-content:center;margin-top:var(--space-2)}
+</style>
+<div id="dere-gate">
+  <form class="dgate__card" onsubmit="return dereGate(this)">
+    <div class="dgate__brand">a-DeRE</div>
+    <div class="dgate__sub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Protótipo &middot; acesso restrito</div>
+    <label class="dgate__lbl" for="dere-pw">Senha de acesso</label>
+    <input class="input input--lg" id="dere-pw" type="password" placeholder="Digite a senha" autofocus autocomplete="off" aria-label="Senha de acesso">
+    <div class="dgate__err" id="dere-err" role="alert"></div>
+    <button class="btn btn--primary btn--lg" type="submit">Entrar</button>
+    <div class="dgate__foot">uma solução Axians</div>
+  </form>
+</div>
+<script>
+  if(localStorage.getItem('dere_ok')==='1'){var _g=document.getElementById('dere-gate');if(_g)_g.remove();}
+  function dereGate(f){var i=f.querySelector('input'),e=document.getElementById('dere-err');
+    if(i.value==='dere123'){localStorage.setItem('dere_ok','1');document.getElementById('dere-gate').remove();}
+    else{e.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg> Senha incorreta. Tente novamente.';i.select();}
+    return false;}
+</script>
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  <div class="shell">
+    <nav class="sidenav sidenav--navy" data-sidenav aria-label="Navegação principal"><script>try{if(localStorage.getItem('adere.nav.collapsed')==='1'){var _n=document.querySelector('[data-sidenav]');if(_n)_n.classList.add('is-collapsed');}}catch(e){}</script>
+      <div class="brandrow"><span class="avatar">a</span><span class="sidenav__label wm">a-DeRE</span></div>
+      <div class="navlist">
+        <p class="sidenav__group">Principal</p>
+        <a class="sidenav__item" href="painel-monitoramento.html" data-tip="Painel de Monitoramento"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg><span class="sidenav__label">Painel de Monitoramento</span></a>
+        <a class="sidenav__item" href="#" data-tip="Meus contribuintes"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4M10 10h4M10 14h4M10 18h4"/></svg><span class="sidenav__label">Meus contribuintes</span></a>
+        <p class="sidenav__group">Cadastro</p>
+        <a class="sidenav__item" href="info-contribuinte-lista.html" data-tip="Informações do Contribuinte"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg><span class="sidenav__label">Informações do Contribuinte</span></a>
+        <a class="sidenav__item" href="plano-contas-lista.html" data-tip="Plano Geral de Contas Comentado"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M7 12h14M7 18h14M3 12h.01M3 18h.01"/></svg><span class="sidenav__label">Plano Geral de Contas Comentado</span></a>
+        <p class="sidenav__group">Declarações</p>
+        <a class="sidenav__item is-active" href="movimentacoes-lista.html" aria-current="page" data-tip="Movimentações Mensais"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span class="sidenav__label">Movimentações Mensais</span></a>
+        <a class="sidenav__item" href="#" data-tip="Recibos e envios"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6M16 12h-6M13 16H10"/></svg><span class="sidenav__label">Recibos e envios</span></a>
+        <p class="sidenav__group">Sistema</p>
+        <a class="sidenav__item" href="#" data-tip="Configurações"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg><span class="sidenav__label">Configurações</span></a>
+      </div>
+      <div class="sidenav__foot"><button class="sidenav__item sidenav__toggle" type="button" aria-label="Colapsar menu" data-tip="Colapsar menu" aria-expanded="true" data-sidenav-toggle><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m11 17-5-5 5-5"/><path d="m18 17-5-5 5-5"/></svg><span class="sidenav__label">Colapsar</span></button></div>
+    </nav>
+
+    <div class="col">
+      <header class="topbar">
+        <nav class="bc" id="bcNav" aria-label="Trilha de navegação">
+          <a href="movimentacoes-lista.html">Movimentações Mensais</a>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+          <span id="bcTail"><span id="bcNome">MAG Seguros</span></span>
+        </nav>
+        <div class="flex items-center gap-1" style="margin-left:auto">
+          <span class="tooltip"><button class="icon-btn" type="button" aria-label="Buscar"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></button><span class="tooltip__bubble" role="tooltip">Buscar</span></span>
+        </div>
+        <span aria-hidden="true" style="width:1px;height:22px;background:var(--color-divider);flex:0 0 auto"></span>
+        <div class="menu" data-menu>
+          <span class="tooltip tooltip--end"><button class="avatar" aria-haspopup="true" aria-expanded="false" aria-label="Ricardo Alves, abrir menu do usuário">RA</button><span class="tooltip__bubble tooltip__bubble--stack" role="tooltip"><strong>Ricardo Alves</strong>Administrador da conta</span></span>
+          <div class="menu__panel" hidden><div class="menu__head"><p class="menu__head-name">Ricardo Alves</p><p class="menu__head-mail">Administrador da conta</p></div><div class="menu__sep"></div><button class="menu__item">Perfil</button><button class="menu__item">Preferências</button><button class="menu__item menu__item--danger">Sair</button></div>
+        </div>
+      </header>
+
+      <main class="content" id="conteudo" tabindex="-1">
+        <!-- CONTEXTO PERSISTENTE: header + competência (fixo acima das abas) -->
+        <div class="page-h">
+          <div class="wrap">
+            <div class="page-h__row">
+              <div class="page-h__main">
+                <div class="page-h__title"><h1 id="pageTitle">Movimentações Mensais</h1><span id="pageBadge" class="dethead__title"></span></div>
+              </div>
+              <!-- seletor de competência: mesmo componente das outras páginas (.filterf--comp, rótulo EM CIMA do seletor) -->
+              <div class="page-h__act">
+                <div class="filterf filterf--comp">
+                  <span class="flbl" id="lblComp">Competência</span>
+                  <div class="compnav" role="group" aria-labelledby="lblComp">
+                    <button class="compnav__arrow" type="button" id="compPrev" aria-label="Competência anterior"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
+                    <div class="cselect mpwrap" id="wrapComp">
+                      <button class="cselect__trigger" type="button" id="compTrig" aria-haspopup="true" aria-expanded="false" aria-labelledby="lblComp compVal"><span class="cselect__value" id="compVal">set/2026</span><span class="cselect__chev"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button>
+                      <div class="mp" id="compMP" aria-label="Escolher competência" hidden></div>
+                    </div>
+                    <button class="compnav__arrow" type="button" id="compNext" aria-label="Competência seguinte"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+                    <span class="compnav__sep" aria-hidden="true">·</span>
+                    <button class="compnav__now" type="button" id="compNow" disabled>Atual</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- faixa de metadados (largura total, abaixo do título): status + fatos-chave (padrão .hdr-recibo da Info do Contribuinte) -->
+            <div class="hdrmeta" id="hdrMeta"></div>
+          </div>
+        </div>
+
+        <span class="sr-only" id="compLive" role="status" aria-live="polite" aria-atomic="true"></span>
+
+        <div class="wrap">
+          <!-- Identidade do contribuinte (FIXA acima das abas) -->
+          <section class="card" aria-label="Contribuinte">
+            <div class="cocard">
+              <div class="cocard__id">
+                <span class="cocard__logo" id="coLogo"></span>
+                <div>
+                  <p class="cocard__name" id="coNome">MAG Seguros</p>
+                  <p class="cocard__cnpj" id="coCnpj">CNPJ 33.608.308/0001-73</p>
+                </div>
+              </div>
+              <div class="cometa">
+                <div><p class="kv__k">Regime principal</p><p class="kv__v" id="coRegime">Serviços Financeiros</p></div>
+                <div><p class="kv__k">PGCC vigente</p><p class="kv__v" id="coPgcc">Versão 2</p></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- NAV DO DETALHE: vazio no hub da competência; "voltar" na página de um evento -->
+          <div id="detnav"></div>
+
+          <!-- VIEW: hub da competência OU página de um evento -->
+          <div class="panels" id="panels"></div>
+        </div>
+
+        <!-- Barra fixa de ação do evento (transmitir / alterar / corrigir), padrão .decisionbar do DS. Só nas páginas de evento; o hub tem o Fechamento no card. -->
+        <div class="decisionbar" id="decisionbar" role="region" aria-label="Ações do evento" hidden><div class="decisionbar__inner" id="decisionActions"></div></div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Modal: Comprovante de envio (mesmo padrão do Plano de Contas) -->
+  <div class="scrim" id="compModal" hidden>
+    <div class="modal modal--md" role="dialog" aria-modal="true" aria-labelledby="compTitle">
+      <div class="modal__header"><h3 class="modal__title" id="compTitle">Comprovante de envio</h3><button class="icon-btn" type="button" data-modal-close aria-label="Fechar" style="flex:0 0 auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg></button></div>
+      <div class="modal__body"><div class="receipt" id="compReceipt"></div></div>
+    </div>
+  </div>
+  <!-- Modal: Versões do evento -->
+  <div class="scrim" id="versoesModal" hidden>
+    <div class="modal modal--md" role="dialog" aria-modal="true" aria-labelledby="versoesTitle">
+      <div class="modal__header"><h3 class="modal__title" id="versoesTitle">Versões</h3><button class="icon-btn" type="button" data-modal-close aria-label="Fechar" style="flex:0 0 auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg></button></div>
+      <div class="modal__body" id="versoesBody"></div>
+    </div>
+  </div>
+  <!-- Modal: extrato do fechamento (D-9199) com os débitos IBS/CBS/IS -->
+  <div class="scrim" id="extratoModal" hidden>
+    <div class="modal modal--md" role="dialog" aria-modal="true" aria-labelledby="extratoTitle">
+      <div class="modal__header"><h3 class="modal__title" id="extratoTitle">Extrato do fechamento (D-9199)</h3><button class="icon-btn" type="button" data-modal-close aria-label="Fechar" style="flex:0 0 auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg></button></div>
+      <div class="modal__body" id="extratoBody"></div>
+    </div>
+  </div>
+  <!-- Modal: confirmação de ação fiscal (fechar / reabrir) -->
+  <div class="scrim" id="confirmModal" hidden>
+    <div class="modal modal--md" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+      <div class="modal__header modal__header--icon"><span class="modal__ic modal__ic--primary" id="confirmIc" aria-hidden="true"></span><h3 class="modal__title" id="confirmTitle"></h3><button class="icon-btn" type="button" data-modal-close aria-label="Fechar" style="flex:0 0 auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg></button></div>
+      <div class="modal__body" id="confirmBody"></div>
+      <div class="modal__footer"><button class="btn btn--ghost" type="button" data-modal-close>Cancelar</button><button class="btn btn--primary" type="button" id="confirmGo"></button></div>
+    </div>
+  </div>
+
+  <!-- Modal: lendo a planilha importada (processamento) -->
+  <div class="scrim" id="impModal" hidden>
+    <div class="modal modal--sm" role="dialog" aria-modal="true" aria-labelledby="impTitle" aria-describedby="impStep">
+      <div class="modal__body">
+        <div class="impproc">
+          <span class="impproc__ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6"/></svg></span>
+          <p class="impproc__t" id="impTitle">Lendo a planilha…</p>
+          <p class="impproc__step" id="impStep" role="status" aria-live="polite"></p>
+          <div class="impproc__bar"><i id="impBar"></i></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  var esc=function(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');};
+  function code(n){return (n||'?').replace(/[^A-Za-zÀ-ú ]/g,'').trim().split(/\s+/)[0].slice(0,3).toUpperCase();}
+  function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
+  var MES3=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  function fmtComp(per){ var p=String(per).split('-'); return MES3[(+p[1]||1)-1]+'/'+p[0]; }
+  var q=new URLSearchParams(location.search);
+  var emp=q.get('emp')||'seg';
+  var TODAY=new Date(2026,8,21);
+
+  var CO={
+    seg:{nome:'MAG Seguros',cnpj:'33.608.308/0001-73',reg:'SUSEP',regime:'Serviços Financeiros',logo:'../Logos/MAG%20seguros.png',pgcc:'Versão 2'},
+    sic:{nome:'Sicoob Seguradora',cnpj:'26.314.512/0001-16',reg:'SUSEP',regime:'Serviços Financeiros',logo:'../Logos/sicooboficial_logo.jpeg',pgcc:'Versão 1'},
+    fin:{nome:'MAG Finanças',cnpj:'21.995.256/0001-56',reg:'BCB',regime:'Serviços Financeiros',logo:'../Logos/mag%20financas.jpeg',pgcc:'Versão 1'},
+    cap:{nome:'MAG Capitalização',cnpj:'52.780.551/0001-19',reg:'SUSEP',regime:'Serviços Financeiros',logo:'../Logos/mag%20capitalizacoes.jpeg',pgcc:'Versão 1'},
+    s2u:{nome:'Simple2u',cnpj:'40.997.879/0001-02',reg:'BCB',regime:'Serviços Financeiros',logo:'../Logos/logo_simple-2u_j7QQ4s.png',pgcc:'Versão 1'}
+  }[emp]||{nome:'Contribuinte',cnpj:'',reg:'—',regime:'—',logo:'',pgcc:'—'};
+
+  document.getElementById('bcNome').textContent=CO.nome;
+  document.getElementById('coNome').textContent=CO.nome;
+  document.getElementById('coCnpj').textContent='CNPJ '+CO.cnpj;
+  document.getElementById('coRegime').textContent=CO.regime;
+  // PGCC vigente: a versão é um link pro detalhe do Plano de Contas (igual ao Plano de Contas). "—" (sem PGCC) fica texto.
+  (function(){ var pg=document.getElementById('coPgcc'), n=(String(CO.pgcc).match(/\d+/)||[''])[0];
+    var extIc='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>';
+    pg.innerHTML = n ? '<a class="colink" href="plano-contas-detalhe.html?emp='+emp+'&v='+n+'" target="_blank" rel="noopener">'+esc(CO.pgcc)+'<span class="colink__ext">'+extIc+'</span></a>' : esc(CO.pgcc); })();
+  document.getElementById('coLogo').innerHTML=CO.logo?'<img src="'+CO.logo+'" alt="Logo '+esc(CO.nome)+'">':'<span class="co-code">'+code(CO.nome)+'</span>';
+  document.title='a-DeRE · Movimentações Mensais · '+CO.nome;
+
+  /* ===== ícones (Lucide) ===== */
+  var ICO={
+    bar:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><rect width="4" height="7" x="7" y="10" rx="1"/><rect width="4" height="12" x="15" y="5" rx="1"/></svg>',
+    trend:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>',
+    doc:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 15l2 2 4-4"/></svg>',
+    card:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>',
+    inbox:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>',
+    calendar:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>',
+    alert:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>',
+    check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.8 10A10 10 0 1 1 17 3.3"/><path d="m9 11 3 3L22 4"/></svg>',
+    clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>',
+    lock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',
+    lockok:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-.9"/><path d="m9 16 2 2 4-4"/></svg>',
+    receipt:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6M16 12h-6M13 16H10"/></svg>',
+    info:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>',
+    upload:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>',
+    send:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg>',
+    download:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>',
+    erp:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22v-5"/><path d="M9 8V2"/><path d="M15 8V2"/><path d="M18 8v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V8Z"/></svg>',
+    ext:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>',
+    chev:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>',
+    calc:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M8 10h.01M12 10h.01M16 10h.01M8 14h.01M12 14h.01M8 18h.01M12 18h.01"/></svg>',
+    coins:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="6"/><path d="M18.09 10.37A6 6 0 1 1 10.34 18"/><path d="M7 6h1v4"/><path d="m16.71 13.88.7.71-2.82 2.82"/></svg>',
+    pct:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" x2="5" y1="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>',
+    circle:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/></svg>',
+    sort:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 9 4-4 4 4M16 15l-4 4-4-4"/></svg>'
+  };
+
+  var EV_META={
+    d1101:{code:'D-1101', name:'Balancete', short:'Balancete', slug:'balancete', ic:ICO.bar},
+    d1106:{code:'D-1106', name:'Aplicações Financeiras', short:'Aplicações', slug:'aplicacoes', ic:ICO.trend},
+    d1121:{code:'D-1121', name:'Deduções', short:'Deduções', slug:'deducoes', ic:ICO.doc},
+    d2101:{code:'D-2101', name:'Títulos de dívida', short:'Títulos', slug:'titulos', ic:ICO.card}
+  };
+  var ORDER=['d1101','d1106','d1121','d2101'];
+  var SLUG2EV={balancete:'d1101', aplicacoes:'d1106', deducoes:'d1121', titulos:'d2101'};
+  /* Vocabulário de status único (mesmo estado, mesma palavra em toda a tela): pílula do evento, da versão e título do comprovante. */
+  /* Nível 1 (card / competência): situação SIMPLES do evento no mês. O detalhe (sucesso/advertência) é do nível 2 (versão), dentro do evento. */
+  /* Situação = ESTADO DA VERSÃO do evento (mesmo vocabulário do modal de versões e do Painel). */
+  var STMAP={recibo:['success','Processado com sucesso'], advertencia:['warning','Processado com advertência'], protocolo:['info','Em processamento'], rejeitado:['danger','Rejeitado'], pendente:['neutral','Em preparação'], na:['neutral','Não se aplica']};
+  function stMark(st){return (st==='recibo')?'<svg class="status__check" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>':'<span class="status__dot"></span>';}
+  function pill(st){var m=STMAP[st]||['neutral',st];return '<span class="status status--sm status--'+m[0]+'">'+stMark(st)+m[1]+'</span>';}
+
+  function daysToStr(ddmmyyyy){
+    var p=ddmmyyyy.split('/'); var due=new Date(+p[2],+p[1]-1,+p[0]);
+    var d=Math.round((due-TODAY)/86400000);
+    if(d>0) return {txt:'faltam '+d+' dias', tone:(d<=7?'warn':'')};
+    if(d===0) return {txt:'vence hoje', tone:'warn'};
+    return {txt:'venceu há '+Math.abs(d)+' dias', tone:'warn'};
+  }
+  function rec31(evNum, per, seq){ var c=per.replace('-',''); return String(evNum).padStart(5,'0')+c+String(seq||1).padStart(20,'0'); }
+  function prot28(per, seq){ var c=per.replace('-',''); return '99'+c+String(seq||1).padStart(20,'0'); }
+
+  /* Base apurada por codTrib (Anexo I, Tabela 11 — grupo 1111 Seguros e Resseguros). É o gTotalCodTrib do
+     retorno D-9101: a base vApur somada por código de tributação. Antes do fechamento é projeção da a-DeRE;
+     a Receita confirma no D-9101. Cada conjunto soma a base total do mês. */
+  var CT_SEG={
+    '2026-09':[
+      {cod:'111111101', desc:'Prêmios de seguros, cosseguros e resseguros (contribuintes do regime regular)', base:'R$ 2.980.000,00'},
+      {cod:'111112101', desc:'Prêmios recebidos (operações com não contribuintes do regime regular)', base:'R$ 745.000,00'},
+      {cod:'111111624', desc:'Parcela dos prêmios destinada a provisões e reservas técnicas', base:'R$ 312.400,00'},
+      {cod:'111121004', desc:'Receitas financeiras sobre o excedente de ativos garantidores', base:'R$ 96.200,00'},
+      {cod:'111135001', desc:'Resseguro e retrocessão (alíquota zero)', base:'R$ 116.400,00'}
+    ],
+    '2026-08':[
+      {cod:'111111101', desc:'Prêmios de seguros, cosseguros e resseguros (contribuintes do regime regular)', base:'R$ 2.730.000,00'},
+      {cod:'111112101', desc:'Prêmios recebidos (operações com não contribuintes do regime regular)', base:'R$ 690.000,00'},
+      {cod:'111111624', desc:'Parcela dos prêmios destinada a provisões e reservas técnicas', base:'R$ 288.000,00'},
+      {cod:'111121004', desc:'Receitas financeiras sobre o excedente de ativos garantidores', base:'R$ 88.000,00'},
+      {cod:'111135001', desc:'Resseguro e retrocessão (alíquota zero)', base:'R$ 104.000,00'}
+    ]
+  };
+
+  /* ===== Competências (status por evento + total consolidado) ===== */
+  var MESES=[
+    { per:'2026-09', txt:'setembro 2026', cur:true, prazo:'15/10/2026',
+      total:{ base:'R$ 4,25 mi', baseFull:'R$ 4.250.000,00', ibs:'R$ 210.000,00', ibsUF:'R$ 126.000,00', ibsMun:'R$ 84.000,00', cbs:'R$ 141.000,00', is:'—', bcn:'R$ 0,00', codtrib:CT_SEG['2026-09'] }, fech:'bloqueado',
+      ev:{
+        d1101:{st:'pendente', prep:true, sub:'Obrigatório todo mês · 57 contas · 2 a corrigir antes de transmitir', valLbl:'Base apurada (estimada)', val:'R$ 4.250.000,00'},
+        d1106:{st:'recibo',   sub:'Condicional (seguradora) · 12 ativos de reserva técnica', valLbl:'Base (vApur)', val:'R$ 102.000,00'},
+        d1121:{st:'protocolo',sub:'Condicional · 8 documentos · aguardando recibo', valLbl:'Deduzido no mês', val:'R$ 117.000,00'},
+        d2101:{st:'na',       sub:'Sem codTrib de títulos no PGCC deste contribuinte', valLbl:'', val:'—'}
+      } },
+    { per:'2026-08', txt:'agosto 2026', cur:false, prazo:'15/09/2026',
+      total:{ base:'R$ 3,90 mi', baseFull:'R$ 3.900.000,00', ibs:'R$ 193.000,00', ibsMun:'R$ 77.200,00', ibsUF:'R$ 115.800,00', cbs:'R$ 129.500,00', is:'—', bcn:'R$ 0,00', codtrib:CT_SEG['2026-08'] }, fech:'fechado',
+      ev:{
+        d1101:{st:'recibo',   sub:'Obrigatório todo mês · 56 contas analíticas', valLbl:'Base apurada',    val:'R$ 3.900.000,00'},
+        d1106:{st:'recibo',   sub:'Condicional (seguradora) · 12 ativos de reserva técnica', valLbl:'Base (vApur)', val:'R$ 98.000,00'},
+        d1121:{st:'recibo',   sub:'Condicional · 7 documentos', valLbl:'Deduzido no mês', val:'R$ 104.000,00'},
+        d2101:{st:'na',       sub:'Sem codTrib de títulos no PGCC deste contribuinte', valLbl:'', val:'—'}
+      } }
+  ];
+
+  /* ===== Conjunto de eventos POR CONTRIBUINTE (derivado do regime + codTrib do PGCC) =====
+     O "piso comum" é sempre D-1101 + Fechamento; a "cauda" (D-1106/D-1121/D-2101) aparece
+     conforme o contribuinte. s2u não tem PGCC vigente → nada pode ser apurado no mês. */
+  var SEMPGCC={};
+  var NAtit='Sem codTrib de títulos no PGCC deste contribuinte';
+  var EMPEV={
+    sic:{ /* seguradora, mês concluído */
+      d1101:{st:'recibo',   sub:'Obrigatório todo mês · 52 contas analíticas', valLbl:'Base apurada', val:'R$ 3.100.000,00'},
+      d1106:{st:'recibo',   sub:'Condicional (seguradora) · 9 ativos de reserva técnica', valLbl:'Base (vApur)', val:'R$ 88.000,00'},
+      d1121:{st:'recibo',   sub:'Condicional · 5 documentos', valLbl:'Deduzido no mês', val:'R$ 62.000,00'},
+      d2101:{st:'na',       sub:NAtit, valLbl:'', val:'—'} },
+    fin:{ /* banco / serviços financeiros: balancete + títulos; sem reserva técnica */
+      d1101:{st:'recibo',   sub:'Obrigatório todo mês · 71 contas analíticas', valLbl:'Base apurada', val:'R$ 6.800.000,00'},
+      d1106:{st:'na',       sub:'Sem reserva técnica no PGCC deste contribuinte', valLbl:'', val:'—'},
+      d1121:{st:'na',       sub:'Sem deduções a utilizar neste período', valLbl:'', val:'—'},
+      d2101:{st:'recibo',   sub:'Serviços financeiros · 8 títulos de dívida com oferta pública', valLbl:'Base (juros × Selic)', val:'R$ 240.000,00'} },
+    cap:{ /* capitalização: MÊS NÃO INICIADO — nada importado ainda (demonstra o estado inicial "ainda não enviei, mas vou") */
+      d1101:{st:'pendente', sub:'Obrigatório todo mês · ainda não importado', valLbl:'', val:'—'},
+      d1106:{st:'pendente', sub:'Condicional (capitalização) · ainda não importado', valLbl:'', val:'—'},
+      d1121:{st:'na',       sub:'Sem deduções a utilizar neste período', valLbl:'', val:'—'},
+      d2101:{st:'na',       sub:NAtit, valLbl:'', val:'—'} },
+    s2u:{ /* tudo certo no D-1001 e D-1011, mas NADA IMPORTADO no mês → tela de importar (create-opts) */
+      d1101:{st:'pendente', sub:'Obrigatório todo mês · ainda não importado', valLbl:'', val:'—'},
+      d1106:{st:'na',       sub:'Sem reserva técnica no PGCC deste contribuinte', valLbl:'', val:'—'},
+      d1121:{st:'na',       sub:'Sem deduções a utilizar neste período', valLbl:'', val:'—'},
+      d2101:{st:'na',       sub:NAtit, valLbl:'', val:'—'} }
+  };
+  /* Débito consolidado por contribuinte (bases apuradas → IBS/CBS/IS calculados pela Receita no fechamento). */
+  var EMPTOTAL={
+    sic:{ base:'R$ 3,10 mi', baseFull:'R$ 3.100.000,00', ibs:'R$ 153.000,00', cbs:'R$ 102.000,00', is:'—', bcn:'R$ 0,00' },
+    fin:{ base:'R$ 6,80 mi', baseFull:'R$ 6.800.000,00', ibs:'R$ 336.000,00', cbs:'R$ 224.000,00', is:'—', bcn:'R$ 0,00' },
+    cap:{ base:'—', baseFull:'—', ibs:'—', cbs:'—', is:'—', bcn:'R$ 0,00' },
+    s2u:{ base:'—', baseFull:'—', ibs:'—', cbs:'—', is:'—', bcn:'R$ 0,00' }
+  };
+  /* Aplica o conjunto do contribuinte ao mês corrente (não-seg mostram só a competência atual). */
+  // O balancete (DETAIL) é o mesmo p/ todo cenário, então a apuração e o codTrib também são os do período (MESES[0].total). Só os EVENTOS aplicáveis mudam por contribuinte.
+  if(!SEMPGCC[emp] && EMPEV[emp]){ MESES=[Object.assign({}, MESES[0], {ev:EMPEV[emp]})]; }
+
+  /* ===== Conteúdo dos eventos (campos conforme leiaute v1.2.0) ===== */
+  var DETAIL={
+    '2026-09':{
+      d1101:{ subtotal:'R$ 4,25 mi', count:'57 contas', note:'Mostrando 8 de 57 contas analíticas · base total da competência R$ 4.250.000,00.',
+        rows:[
+          {cCta:'3.1.01.001',desc:'Prêmios de seguros emitidos',ini:'C 1.240.000,00',deb:'0,00',cred:'745.000,00',fim:'C 1.985.000,00',vApur:'C 745.000,00'},
+          {cCta:'3.1.02.001',desc:'Receitas de resseguro',ini:'C 402.000,00',deb:'0,00',cred:'312.400,00',fim:'C 714.400,00',vApur:'C 312.400,00'},
+          {cCta:'3.3.01.005',desc:'Receitas financeiras de títulos',ini:'C 88.000,00',deb:'0,00',cred:'96.200,00',fim:'C 184.200,00',vApur:'C 96.200,00'},
+          {cCta:'4.1.01.001',desc:'Sinistros retidos',ini:'D 96.000,00',deb:'128.900,00',cred:'0,00',aj:'D 2.900,00',fim:'D 224.900,00',vApur:'D 126.000,00'},
+          {cCta:'4.2.01.003',desc:'Despesas de comercialização',ini:'D 51.000,00',deb:'74.300,00',cred:'0,00',fim:'D 125.300,00',vApur:'D 74.300,00'},
+          {cCta:'4.4.09.010',desc:'Outras despesas administrativas',ini:'D 33.500,00',deb:'41.750,00',cred:'0,00',fim:'D 75.250,00',vApur:'D 41.750,00'},
+          {cCta:'4.9.99.999',desc:'Conta a classificar',ini:'D 0,00',deb:'100,00',cred:'0,00',fim:'D 100,00',vApur:'D 100,00',vst:'pgcc',msg:'A conta não existe no plano de contas (PGCC) vigente desta competência, então a a-DeRE não sabe a que tributo ela pertence.'},
+          {cCta:'4.4.09.011',desc:'Provisões diversas',ini:'D 12.000,00',deb:'8.000,00',cred:'0,00',fim:'D 22.000,00',vApur:'D 8.000,00',vst:'saldo',msg:'O saldo final informado (D 22.000,00) não bate com o saldo inicial mais o movimento do mês (12.000 + 8.000 = 20.000,00).'}
+        ]},
+      d1106:{ subtotal:'R$ 102 mil', count:'12 ativos', contas:[
+          {cCta:'1.1.01.01',desc:'Reserva técnica · Títulos públicos',subtotal:'R$ 59.800,00',ativos:[
+            {idAtivo:'NTNB2035',desc:'Tesouro IPCA+ 2035',ini:'1.250.000,00',var:'+18.500,00',rendPer:'38.500,00',princ:'0,00',rendLiq:'0,00',fim:'1.268.500,00',vApur:'38.500,00'},
+            {idAtivo:'LFT2029',desc:'Tesouro Selic 2029',ini:'820.000,00',var:'+9.300,00',rendPer:'21.300,00',princ:'0,00',rendLiq:'0,00',fim:'829.300,00',vApur:'21.300,00'}
+          ]},
+          {cCta:'1.1.02.01',desc:'Reserva técnica · Debêntures',subtotal:'R$ 27.200,00',ativos:[
+            {idAtivo:'DEB2030XYZ',desc:'Debênture XYZ 2030',ini:'540.000,00',var:'+5.200,00',rendPer:'12.000,00',princ:'0,00',rendLiq:'15.200,00',fim:'545.200,00',vApur:'27.200,00'}
+          ]},
+          {cCta:'1.1.03.01',desc:'Reserva técnica · Fundos RF',subtotal:'R$ 15.000,00',ativos:[
+            {idAtivo:'FIRF001',desc:'Fundo RF Institucional',ini:'300.000,00',var:'+2.000,00',rendPer:'0,00',princ:'50.000,00',rendLiq:'15.000,00',fim:'252.000,00',vApur:'15.000,00'}
+          ]}
+        ]},
+      d1121:{ subtotal:'R$ 117 mil', count:'8 documentos', note:'Mostrando 3 de 8 documentos · dedução total da competência R$ 117.000,00.',
+        docs:[
+          {chave:'3525 09 …9012',desc:'NF-e nº 12.345',tipo:'NF-e (03)',dtEmi:'05/09/2026',tpAtiv:'03 · Seguros (exceto saúde)',vOper:'250.000,00',teto:'100.000,00',usado:'100.000,00',vDed:'100.000,00',saldo:'0,00',
+            itens:[{n:1,vItem:'150.000,00',vItemDedTotal:'60.000,00',vItemDed:'60.000,00'},{n:2,vItem:'100.000,00',vItemDedTotal:'40.000,00',vItemDed:'40.000,00'}]},
+          {chave:'3525 09 …4477',desc:'NF-e nº 12.910',tipo:'NF-e (03)',dtEmi:'08/09/2026',tpAtiv:'03 · Seguros (exceto saúde)',vOper:'180.000,00',teto:'120.000,00',usado:'67.000,00',vDed:'12.000,00',saldo:'53.000,00',
+            itens:[{n:1,vItem:'180.000,00',vItemDedTotal:'120.000,00',vItemDed:'12.000,00'}]},
+          {chave:'CPF …123-09',desc:'Imóvel (arrendamento)',tipo:'Imóvel PF',dtEmi:'02/09/2026',tpAtiv:'— (imóvel, sem DF-e)',vOper:'500.000,00',teto:'500.000,00',usado:'108.000,00',vDed:'5.000,00',saldo:'392.000,00',itens:[]}
+        ]}
+    },
+    '2026-08':{
+      d1101:{ subtotal:'R$ 3,90 mi', count:'56 contas', note:'Mostrando 5 de 56 contas analíticas · base total da competência R$ 3.900.000,00.',
+        rows:[
+          {cCta:'3.1.01.001',desc:'Prêmios de seguros emitidos',ini:'C 980.000,00',deb:'0,00',cred:'680.000,00',fim:'C 1.660.000,00',vApur:'C 680.000,00'},
+          {cCta:'3.1.02.001',desc:'Receitas de resseguro',ini:'C 350.000,00',deb:'0,00',cred:'288.000,00',fim:'C 638.000,00',vApur:'C 288.000,00'},
+          {cCta:'3.3.01.005',desc:'Receitas financeiras de títulos',ini:'C 72.000,00',deb:'0,00',cred:'88.500,00',fim:'C 160.500,00',vApur:'C 88.500,00'},
+          {cCta:'4.1.01.001',desc:'Sinistros retidos',ini:'D 84.000,00',deb:'119.000,00',cred:'0,00',fim:'D 203.000,00',vApur:'D 119.000,00'},
+          {cCta:'4.2.01.003',desc:'Despesas de comercialização',ini:'D 44.000,00',deb:'68.400,00',cred:'0,00',fim:'D 112.400,00',vApur:'D 68.400,00'}
+        ]},
+      d1106:{ subtotal:'R$ 98 mil', count:'12 ativos', contas:[
+          {cCta:'1.1.01.01',desc:'Reserva técnica · Títulos públicos',subtotal:'R$ 57.500,00',ativos:[
+            {idAtivo:'NTNB2035',desc:'Tesouro IPCA+ 2035',ini:'1.232.000,00',var:'+17.100,00',rendPer:'37.000,00',princ:'0,00',rendLiq:'0,00',fim:'1.249.100,00',vApur:'37.000,00'},
+            {idAtivo:'LFT2029',desc:'Tesouro Selic 2029',ini:'810.000,00',var:'+8.900,00',rendPer:'20.500,00',princ:'0,00',rendLiq:'0,00',fim:'818.900,00',vApur:'20.500,00'}
+          ]},
+          {cCta:'1.1.02.01',desc:'Reserva técnica · Debêntures',subtotal:'R$ 26.000,00',ativos:[
+            {idAtivo:'DEB2030XYZ',desc:'Debênture XYZ 2030',ini:'535.000,00',var:'+4.800,00',rendPer:'11.500,00',princ:'0,00',rendLiq:'14.500,00',fim:'539.800,00',vApur:'26.000,00'}
+          ]},
+          {cCta:'1.1.03.01',desc:'Reserva técnica · Fundos RF',subtotal:'R$ 14.500,00',ativos:[
+            {idAtivo:'FIRF001',desc:'Fundo RF Institucional',ini:'345.000,00',var:'+1.800,00',rendPer:'0,00',princ:'45.000,00',rendLiq:'14.500,00',fim:'301.800,00',vApur:'14.500,00'}
+          ]}
+        ]},
+      d1121:{ subtotal:'R$ 104 mil', count:'7 documentos', note:'Mostrando 2 de 7 documentos · dedução total da competência R$ 104.000,00.',
+        docs:[
+          {chave:'3525 08 …8801',desc:'NF-e nº 11.902',tipo:'NF-e (03)',teto:'100.000,00',usado:'88.000,00',vDed:'88.000,00',saldo:'12.000,00'},
+          {chave:'CPF …123-09',desc:'Imóvel (arrendamento)',tipo:'Imóvel PF',teto:'500.000,00',usado:'103.000,00',vDed:'16.000,00',saldo:'397.000,00'}
+        ]}
+    }
+  };
+
+  /* ===== Versões por evento/competência (atual=recibo · em preparação · anteriores) ===== */
+  var VERS={
+    '2026-09':{
+      d1101:{ atual:[], prep:[{n:1,titulo:'Versão 1',sit:'pendente',transm:'—',proc:'—',protocolo:'',recibo:''}], ant:[] },
+      d1106:{ atual:[{n:1,titulo:'Versão 1',sit:'recibo',transm:'10/09/2026 11:02',proc:'10/09/2026 11:03',protocolo:prot28('2026-09',1),recibo:rec31(1106,'2026-09',1)}], prep:[], ant:[] },
+      d1121:{ atual:[], prep:[{n:1,titulo:'Versão 1',sit:'protocolo',transm:'18/09/2026 16:20',proc:'—',protocolo:prot28('2026-09',1),recibo:''}], ant:[] },
+      d2101:{ atual:[{n:1,titulo:'Versão 1',sit:'recibo',transm:'11/09/2026 10:20',proc:'11/09/2026 10:21',protocolo:prot28('2026-09',1),recibo:rec31(2101,'2026-09',1)}], prep:[], ant:[] }
+    },
+    '2026-08':{
+      d1101:{ atual:[{n:2,titulo:'Versão 2 · Retificação',sit:'recibo',transm:'12/09/2026 09:40',proc:'12/09/2026 09:41',protocolo:prot28('2026-08',2),recibo:rec31(1101,'2026-08',2)}],
+              prep:[], ant:[{n:1,titulo:'Versão 1',sit:'substituida',transm:'08/09/2026 10:00',proc:'08/09/2026 10:01',protocolo:prot28('2026-08',1),recibo:rec31(1101,'2026-08',1)}] },
+      d1106:{ atual:[{n:1,titulo:'Versão 1',sit:'recibo',transm:'09/09/2026 09:15',proc:'09/09/2026 09:16',protocolo:prot28('2026-08',1),recibo:rec31(1106,'2026-08',1)}], prep:[], ant:[] },
+      d1121:{ atual:[{n:1,titulo:'Versão 1',sit:'recibo',transm:'10/09/2026 15:30',proc:'10/09/2026 15:31',protocolo:prot28('2026-08',1),recibo:rec31(1121,'2026-08',1)}], prep:[], ant:[] }
+    }
+  };
+  /* Nível 2 (versão, dentro do evento): resultado detalhado do que a Receita devolveu. */
+  var SITV={ recibo:['status--success','Processado com sucesso'], advertencia:['status--warning','Processado com advertência'], protocolo:['status--info','Em processamento'], rejeitado:['status--danger','Rejeitado'], substituida:['status--neutral','Substituída'], pendente:['status--neutral','Em preparação'] };
+
+  /* ===== estado ===== */
+  function perList(){ return MESES.map(function(m){return m.per;}); }
+  var perIdx=(function(){ var p=q.get('per'); var i=perList().indexOf(p); return i>=0?i:0; })();
+  var APPLIES=SEMPGCC[emp] ? [] : ORDER.filter(function(k){ return MESES.some(function(m){ return m.ev[k] && m.ev[k].st!=='na'; }); });
+  var TABS=['visao'].concat(APPLIES.map(function(k){ return EV_META[k].slug; }));
+  function normEv(v){ if(!v) return 'visao'; if(TABS.indexOf(v)>=0) return v; if(EV_META[v]) return EV_META[v].slug; return 'visao'; }
+  var tab=normEv(q.get('ev'));
+  if(TABS.indexOf(tab)<0) tab='visao';
+
+  /* ===== helpers de UI ===== */
+  function counts(M){ var c={recibo:0,protocolo:0,pendente:0,na:0}; ORDER.forEach(function(k){ var st=M.ev[k].st; if(c[st]!=null)c[st]++; }); c.aplic=ORDER.length-c.na; c.entregues=c.recibo+c.protocolo; c.semRecibo=c.protocolo+c.pendente; return c; }
+  function firstBlocker(M){ for(var i=0;i<ORDER.length;i++){ var k=ORDER[i], st=M.ev[k].st; if(st==='protocolo'||st==='pendente') return {code:EV_META[k].code, name:EV_META[k].name, st:st}; } return null; }
+  function isEmpty(M){ return counts(M).entregues===0; }
+  function section(title, hint, body){ return '<section class="sec"><div class="sec__h"><div class="sec__ht"><h2>'+title+'</h2>'+(hint?'<p class="sec__hint">'+hint+'</p>':'')+'</div></div>'+body+'</section>'; }
+
+  /* ===== tabela de CONTEÚDO do evento (modelo único p/ balancete, aplicações, deduções, títulos) =====
+     headers: [{label, num?, sort?(=false p/ não ordenável)}]. Cabeçalho do DS (ordenável) + rodapé com
+     contagem e paginação. Todas as quatro tabelas usam a MESMA estrutura → consistência. */
+  function thc(h){
+    if(h.sort===false) return '<th scope="col"'+(h.num?' class="col--num"':'')+'>'+esc(h.label)+'</th>';
+    return '<th scope="col" class="sortable'+(h.num?' col--num':'')+'" data-sort="'+(h.num?'num':'text')+'"><button type="button" class="th-btn">'+esc(h.label)+' <span class="th-sort" aria-hidden="true">'+ICO.sort+'</span></button></th>';
+  }
+  function contentTable(headers, rowsHtml, shown, total, noun, extra){
+    var thead=headers.map(thc).join('');
+    var pag=(total>shown)?'<nav class="tpager" aria-label="Paginação de '+esc(noun)+'"><span class="tpager__info">1–'+shown+' de '+total+'</span><span class="tpager__btns"><button class="btn btn--ghost btn--sm" type="button" disabled>Anterior</button><button class="btn btn--ghost btn--sm" type="button">Próxima</button></span></nav>':'';
+    var foot='<div class="dtfoot"><p class="tnote" style="margin:0">Mostrando '+shown+' de '+total+' '+esc(noun)+'.</p>'+pag+'</div>';
+    return '<div class="table-wrap"><table class="table dtable"><thead><tr>'+thead+'</tr></thead><tbody>'+rowsHtml+'</tbody></table></div>'+foot+(extra?'<p class="tnote">'+extra+'</p>':'');
+  }
+  function sortNum(s){ var m=(s||'').replace(/[^0-9,\-]/g,'').replace(/\./g,'').replace(',','.'); var v=parseFloat(m); return isNaN(v)?-Infinity:v; }
+  function makeSortable(table){
+    var ths=[].slice.call(table.querySelectorAll('th.sortable'));
+    ths.forEach(function(th){
+      var idx=[].indexOf.call(th.parentNode.children, th), type=th.getAttribute('data-sort');
+      (th.querySelector('.th-btn')||th).addEventListener('click', function(){
+        var dir=(th.getAttribute('aria-sort')==='ascending')?'descending':'ascending';
+        ths.forEach(function(o){ o.removeAttribute('aria-sort'); o.classList.remove('is-sorted'); });
+        th.setAttribute('aria-sort', dir); th.classList.add('is-sorted');
+        var tb=table.tBodies[0], rows=[].slice.call(tb.rows);
+        rows.sort(function(a,b){
+          var av=(a.cells[idx]||{}).textContent||'', bv=(b.cells[idx]||{}).textContent||'';
+          var r=(type==='num')?(sortNum(av)-sortNum(bv)):av.trim().localeCompare(bv.trim(),'pt',{numeric:true});
+          return dir==='ascending'?r:-r;
+        });
+        rows.forEach(function(r){ tb.appendChild(r); });
+      });
+    });
+  }
+
+  /* ===== VISÃO GERAL ===== */
+  var TONE={recibo:'success', advertencia:'warning', protocolo:'info', rejeitado:'danger', pendente:'warning', na:'neutral'};
+
+  /* Soma de valores em R$ (strings BRL) → número, e formatação de volta. Usado no total apurado. */
+  function brlNum(s){ if(!s||s==='—') return null; var n=s.replace(/[^0-9,]/g,'').replace(/\./g,'').replace(',','.'); var v=parseFloat(n); return isNaN(v)?null:v; }
+  function brlFmt(v){ return 'R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+
+  /* APURAÇÃO DO MÊS: quanto de imposto (IBS/CBS/IS) o mês apurou + a base de cálculo.
+     A a-DeRE declara e apura o DÉBITO; o "a pagar" (débito − créditos) e a guia saem FORA da a-DeRE, na
+     apuração da Receita (Manual 3.4.4). Antes do fechamento o imposto é "A apurar" (quem calcula é a Receita no D-1199). */
+  function aliq(val, base){ var v=brlNum(val), b=brlNum(base); if(v==null||b==null||b===0) return '—'; return (v/b*100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+'%'; }
+  function statTile(ic, label, value, foot, opt){ opt=opt||{}; return '<div class="stat">'+
+    '<span class="stat__ic'+(opt.tone?' stat__ic--'+opt.tone:'')+'">'+ic+'</span>'+
+    '<span class="stat__label">'+esc(label)+'</span>'+
+    '<span class="stat__value'+(opt.muted?' stat__value--muted':'')+'">'+value+'</span>'+
+    '<span class="stat__foot">'+foot+'</span></div>'; }
+  /* Seção como UM card branco: título + subtítulo + conteúdo, tudo dentro (padrão das outras telas).
+     opts.divider = uma linha separando o cabeçalho (título+subtítulo) do conteúdo. */
+  function cardSection(title, hint, body, opts){
+    opts=opts||{};
+    // aside (ex.: prazo) fica na MESMA linha do título; o subtítulo vem embaixo em largura total.
+    var titleHtml=opts.aside
+      ? '<div class="cardhd__toprow"><h2 class="cardhd__t">'+title+'</h2><div class="cardhd__side">'+opts.aside+'</div></div>'
+      : '<h2 class="cardhd__t">'+title+'</h2>';
+    var head='<div class="cardhd'+(opts.divider?' cardhd--div':'')+'">'+titleHtml+(hint?'<p class="cardhd__x">'+hint+'</p>':'')+'</div>';
+    return '<section class="sec"><section class="card"><div class="card__body">'+head+body+'</div></section></section>';
+  }
+  /* Base por codTrib: a base vApur do mês agrupada por código de tributação (= gTotalCodTrib do retorno D-9101).
+     É a ponte entre o balancete (conta a conta) e o imposto. Antes do fechamento é projeção; a Receita confirma no D-9101. */
+  function codtribBlock(M, est){
+    // a base por codTrib deriva do balancete (mesmo DETAIL p/ todo cenário) → cai pro CT_SEG do período se o total do contribuinte não trouxer.
+    var ct=(M.total&&M.total.codtrib)||CT_SEG[M.per]||[];
+    if(!ct.length) return '';
+    var rows=ct.map(function(r){
+      return '<tr><th scope="row" class="mono">'+esc(r.cod)+'</th><td>'+esc(r.desc)+'</td><td class="col--num strong">'+esc(r.base)+'</td></tr>';
+    }).join('');
+    var totalStr=(M.total&&(M.total.baseFull||M.total.base))||'—';
+    var hint=est
+      ? 'Base do mês por código de tributação (Tabela 11); a Receita confirma no retorno D-9101.'
+      : 'Base do mês por código de tributação (Tabela 11), conforme o retorno D-9101 do fechamento.';
+    return '<div class="ctblock"><h3 class="dtsub">Base apurada por codTrib</h3>'+
+      '<p class="dtsub__x">'+hint+'</p>'+
+      '<div class="table-wrap table-wrap--boxed"><table class="table dtable"><thead><tr><th scope="col">Código (codTrib)</th><th scope="col">Classificação (Tabela 11)</th><th scope="col" class="col--num">Base apurada</th></tr></thead>'+
+      '<tbody>'+rows+'</tbody>'+
+      '<tfoot><tr class="cttot"><th scope="row" colspan="2">Base total apurada</th><td class="col--num strong">'+esc(totalStr)+'</td></tr></tfoot>'+
+      '</table></div></div>';
+  }
+  /* Totalizadores da apuração dentro de um único card. O total = imposto que o mês DECLARA à Receita (não é o valor a pagar). */
+  function apuracaoSection(M, closed){
+    var t=M.total||{}, est=!closed;   // antes de fechar = ESTIMATIVA da a-DeRE; depois = valor apurado (D-9199)
+    var baseFull=t.baseFull||t.base||'—';
+    var parts=[t.ibs,t.cbs,t.is].map(brlNum).filter(function(n){return n!=null;});
+    var totalStr=parts.length?brlFmt(parts.reduce(function(a,b){return a+b;},0)):'—';
+    var sfx=est?'estimado':'apurado';
+    function v(x){ return (!x||x==='—')?'—':esc(x); }
+    function fibs(){ if(!t.ibs||t.ibs==='—') return '—'; return t.ibsMun?('Estadual '+esc(t.ibsUF)+' · Municipal '+esc(t.ibsMun)):(aliq(t.ibs,baseFull)+' sobre a base'); }
+    function f(x, isIS){ if(!x||x==='—') return isIS?'não incide neste mês':'—'; return aliq(x,baseFull)+' sobre a base'; }
+    var tiles='<div class="totgrid">'+
+      statTile(ICO.calc,'Base de cálculo', v(baseFull), 'valor sobre o qual o imposto incide', {tone:'info', muted:baseFull==='—'})+
+      statTile(ICO.coins,'CBS '+sfx, v(t.cbs), f(t.cbs), {tone:(t.cbs&&t.cbs!=='—')?'success':'', muted:!t.cbs||t.cbs==='—'})+
+      statTile(ICO.coins,'IBS '+sfx, v(t.ibs), fibs(), {tone:(t.ibs&&t.ibs!=='—')?'success':'', muted:!t.ibs||t.ibs==='—'})+
+      statTile(ICO.pct,'IS '+sfx, v(t.is), f(t.is,true), {muted:!t.is||t.is==='—'})+
+      '</div>';
+    var hint=est
+      ? '<strong>Estimativa</strong> a partir das bases declaradas. A Receita confirma no fechamento (D-1199).'
+      : 'O imposto que este mês apurou de CBS, IBS e IS, devolvido no extrato D-9199.';
+    var hero='<div class="apurhero">'+
+      '<div class="apurhero__txt"><span class="apurhero__lbl">Imposto '+sfx+' no mês (CBS + IBS + IS)</span>'+
+      '<span class="apurhero__sub">é o imposto que este mês declara à Receita no fechamento. O valor a pagar, já descontados seus créditos, sai depois na apuração da Receita.</span></div>'+
+      '<span class="apurhero__val">'+totalStr+'</span>'+
+      (closed?'<a class="btn btn--secondary btn--sm apurhero__act" href="movimentacoes-extrato.html?emp='+emp+'&per='+M.per+'"><span class="rowchev" aria-hidden="true">'+ICO.receipt+'</span>Ver extrato (D-9199)</a>':'')+'</div>';
+    return cardSection('Apuração do mês', hint, hero+tiles+codtribBlock(M, est), {divider:true});
+  }
+
+  /* HISTÓRICO DO MÊS: linha do tempo do que foi transmitido na competência (agrega as versões de todos
+     os eventos, em ordem). Enriquece a visão de fechamento com a "trilha" do mês. Usa .timeline do DS. */
+  function parseWhen(s){ var m=(s||'').match(/(\d{2})\/(\d{2})\/(\d{4})\s+(\d{2}):(\d{2})/); return m?(m[3]+m[2]+m[1]+m[4]+m[5])*1:0; }
+  var TLINE={ recibo:['success','Transmitido e processado com recibo.'], advertencia:['warning','Transmitido; processado com advertência.'], protocolo:['info','Transmitido; em processamento na Receita.'], substituida:['muted','Transmitido; depois substituído por uma nova versão.'], rejeitado:['danger','Transmitido; rejeitado pela Receita.'] };
+  function historicoSection(M){
+    var V=VERS[M.per]||{}, applicable=ORDER.filter(function(k){ return M.ev[k].st!=='na'; }), items=[];
+    applicable.forEach(function(k){ var g=V[k]; if(!g) return;
+      (g.atual||[]).concat(g.prep||[], g.ant||[]).forEach(function(v){ items.push({ev:EV_META[k].name, v:v, w:parseWhen(v.transm)}); }); });
+    items.sort(function(a,b){ return a.w-b.w; });
+    if(!items.length && M.fech!=='fechado') return '';
+    var lis=items.map(function(it){ var t=TLINE[it.v.sit]||TLINE.protocolo;
+      return '<li class="timeline__item"><span class="timeline__dot timeline__dot--'+t[0]+'"></span><div class="timeline__body"><div class="timeline__head"><p class="timeline__title">'+esc(it.ev)+' · '+esc(it.v.titulo)+'</p><span class="timeline__time">'+esc(it.v.transm||'—')+'</span></div><p class="timeline__text">'+t[1]+'</p></div></li>'; }).join('');
+    if(M.fech==='fechado') lis+='<li class="timeline__item"><span class="timeline__dot timeline__dot--success"></span><div class="timeline__body"><div class="timeline__head"><p class="timeline__title">Fechamento (D-1199)</p></div><p class="timeline__text">Competência fechada e aceita; extrato D-9199 recebido.</p></div></li>';
+    return section('Histórico do mês', 'O que foi transmitido nesta competência, em ordem.', '<div class="card"><div class="card__body"><ol class="timeline">'+lis+'</ol></div></div>');
+  }
+
+  /* CHECKPOINTS (não lineares): cada evento aplicável com a SUA situação. Não há ordem entre eles
+     (podem ser preparados em qualquer sequência); o fechamento (D-1199) é o gate, representado pelo
+     título + botão da faixa, não como um passo. Cada item leva para a aba do evento. */
+  var CHK={ recibo:['done',ICO.check,'processado com sucesso'], protocolo:['proc',ICO.clock,'em processamento'], pendente:['wait',ICO.circle,'em preparação'], rejeitado:['danger',ICO.alert,'rejeitado'], advertencia:['warn',ICO.alert,'processado com advertência'] };
+  function fechChecks(M, applicable){
+    return '<div class="evchecks">'+applicable.map(function(k){
+      var c=CHK[M.ev[k].st]||CHK.pendente, lbl=esc(EV_META[k].name)+': '+c[2];
+      return '<a class="evcheck" href="?emp='+emp+'&per='+M.per+'&ev='+EV_META[k].slug+'" data-tab="'+EV_META[k].slug+'" title="'+lbl+'" aria-label="'+lbl+'">'+
+        '<span class="evcheck__badge evcheck__badge--'+c[0]+'" aria-hidden="true">'+c[1]+'</span>'+
+        '<span class="evcheck__n">'+esc(EV_META[k].short||EV_META[k].name)+'</span></a>';
+    }).join('')+'</div>';
+  }
+
+  /* Prazo do balancete: linha simples (ícone + data + dias), cor só quando aperta. Tratamento a definir com a designer. */
+  function prazoChip(M){
+    var info=daysToStr(M.prazo), cls=(info.tone==='warn')?' prazoline--warn':'';
+    return '<p class="prazoline'+cls+'"><span class="prazoline__ic" aria-hidden="true">'+ICO.calendar+'</span>Prazo do balancete <strong>'+M.prazo.slice(0,5)+'</strong> · '+esc(info.txt)+'</p>';
+  }
+  /* Faixa "situação do mês": estágio + checkpoints + o que falta + ação. Estados: não iniciado · em preparação · pronto · fechado. */
+  /* Faixa do fechamento (layout: estágio · prazo / divisória / checkpoints · ação). */
+  function fechBand(M, applicable, s, listaView){
+    var stageTxt, stageSub, aside='', action, mod='';
+    if(s.closed){
+      stageTxt='Competência fechada'; mod=' fechinner--closed';
+      stageSub='O balancete e os eventos do mês, e o fechamento da competência (D-1199).';
+      action='<button class="btn btn--ghost" type="button" data-reabrir title="Confirmação de reabertura (D-1198)">'+ICO.lock+'Reabrir</button>'+
+             '<a class="btn btn--secondary" href="movimentacoes-extrato.html?emp='+emp+'&per='+M.per+'">'+ICO.receipt+'Ver extrato (D-9199)</a>';
+    } else if(!s.started){
+      stageTxt='Nada preparado ainda neste mês'; aside=prazoChip(M);
+      stageSub='Comece pelo balancete (D-1101); depois os eventos condicionais e o fechamento (D-1199).';
+      var fs=EV_META[applicable[0]].slug, fk=applicable[0];
+      action='<a class="btn btn--primary" href="?emp='+emp+'&per='+M.per+'&ev='+fs+'" data-tab="'+fs+'" data-importar data-ev="'+fk+'">'+ICO.upload+'Importar balancete</a>';
+    } else {
+      aside=prazoChip(M); mod=s.ready?' fechinner--ready':'';
+      stageTxt=s.ready?'Pronto para fechar':('Em preparação · '+s.comRecibo+' de '+applicable.length+' concluídos');
+      stageSub='O fechamento (D-1199) só é aceito quando todos os eventos exigidos têm recibo.';
+      action='<button class="btn btn--primary" type="button"'+(s.ready?' data-fechar':' aria-disabled="true" aria-describedby="fechHint" data-blocked="1"')+'>'+ICO.lock+'Fechar competência</button>';
+    }
+    var readyHint=(!s.closed && s.started && !s.ready)?'<span id="fechHint" class="sr-only">O fechamento fica disponível quando todos os eventos tiverem recibo.</span>':'';
+    // layout (pedido da PO): estágio + botão Fechar numa linha; abaixo, a LISTA dos eventos (no lugar dos checkpoints, sem repetir num card à parte).
+    var inner='<div class="fechinner'+mod+'">'+
+      '<div class="fechrow"><p class="fechstage">'+stageTxt+'</p><div class="fechrow__act">'+action+'</div></div>'+
+      (listaView||'')+readyHint+'</div>';
+    return cardSection('Fechamento do mês', stageSub, inner, {divider:true, aside:aside});
+  }
+  /* EVENTOS EM CARDS: mesma navegação da lista, em cards (para comparar list × cards). Cada card leva à página do evento. */
+  function eventCards(M){
+    var cards=ORDER.map(function(k){
+      var e=M.ev[k], meta=EV_META[k], na=(e.st==='na'), hasVal=(!na&&e.val&&e.val!=='—');
+      var inner='<span class="evnav__ic" aria-hidden="true">'+meta.ic+'</span>'+
+        '<div class="evnav__b"><div class="evnav__top"><span class="evnav__n">'+esc(meta.name)+'</span><span class="tag">'+meta.code+'</span></div>'+
+        '<p class="evnav__sub">'+esc(e.sub)+'</p>'+
+        '<div class="evnav__foot">'+pill(e.st)+(hasVal?'<span class="evnav__val">'+e.val+'</span>':'')+'</div></div>';
+      if(na) return '<div class="evnav evnav--na">'+inner+'</div>';
+      return '<a class="evnav" href="?emp='+emp+'&per='+M.per+'&ev='+meta.slug+'" data-tab="'+meta.slug+'">'+inner+'<span class="evnav__chev" aria-hidden="true">'+ICO.chev+'</span></a>';
+    }).join('');
+    return '<div class="evnavgrid">'+cards+'</div>';
+  }
+  /* Importação da COMPETÊNCIA (uma planilha alimenta todos os eventos), padrão do Plano de Contas: baixar template · importar planilha · conectar ERP. */
+  function importCTA(M){
+    var firstEv=(ORDER.filter(function(x){return M.ev[x].st!=='na';})[0])||'d1101';
+    var cards='<div class="create-opts">'+
+      '<div class="create-opt">'+
+        '<span class="create-opt__ic" aria-hidden="true">'+ICO.download+'</span>'+
+        '<h3>Importar planilha</h3>'+
+        '<p>Envie a movimentação do mês em CSV ou Excel. Uma planilha alimenta todos os eventos (balancete, aplicações…). Baixe o template para preencher no formato do leiaute.</p>'+
+        '<button class="btn btn--primary" type="button" data-import-run data-ev="'+firstEv+'">'+ICO.upload+'Importar planilha</button>'+
+        '<button class="create-opt__tpl" type="button" data-template>'+ICO.download+'Baixar template de importação</button>'+
+      '</div>'+
+      '<div class="create-opt">'+
+        '<span class="create-opt__ic" aria-hidden="true">'+ICO.erp+'</span>'+
+        '<h3>Integrar com ERP <span class="tag" style="vertical-align:middle">Em breve</span></h3>'+
+        '<p>Conecte seu ERP ou sistema contábil para importar a movimentação automaticamente. A integração direta está em desenvolvimento; por ora, use a importação por planilha.</p>'+
+        '<button class="btn btn--secondary" type="button" data-erp>'+ICO.erp+'Conectar ERP</button>'+
+      '</div>'+
+    '</div>';
+    return '<section class="sec" style="margin-top:0"><article class="card"><div class="card__body">'+
+      '<div class="cardhd"><h2 class="cardhd__t">Importar a movimentação de '+esc(M.txt)+'</h2>'+
+      '<p class="cardhd__x">Uma planilha traz todos os eventos do mês. A a-DeRE lê, confere as contas contra o PGCC vigente e prepara cada evento; depois você revisa e atualiza um por um, alterando só o que precisar.</p></div>'+
+      cards+'</div></article></section>';
+  }
+  function visaoPanel(M){
+    // Contribuinte sem PGCC vigente: não há como apurar/transmitir nada no mês.
+    if(SEMPGCC[emp]){
+      return '<div class="sec" style="margin-top:0"><div class="statusbar statusbar--warning" role="status"><span class="statusbar__ic" aria-hidden="true">'+ICO.alert+'</span>'+
+        '<div class="statusbar__b"><p class="statusbar__title">Sem Plano de Contas vigente</p>'+
+        '<p class="statusbar__desc">Este contribuinte ainda não tem um Plano Geral de Contas (D-1011) vigente para esta competência. Sem o plano de contas, o balancete é recusado e nenhum evento do mês pode ser transmitido.</p></div>'+
+        '<div class="statusbar__actions"><a class="btn btn--primary" href="plano-contas-empresa.html?emp='+emp+'"><span class="rowchev" aria-hidden="true">'+ICO.doc+'</span>Preparar Plano de Contas</a></div></div></div>';
+    }
+    var closed=(M.fech==='fechado');
+    var applicable=ORDER.filter(function(k){ return M.ev[k].st!=='na'; });
+    var comRecibo=applicable.filter(function(k){return M.ev[k].st==='recibo';}).length;
+    // "iniciado" = algum evento já foi importado (prep) ou transmitido. Importar é da competência (uma planilha alimenta tudo).
+    var started=applicable.some(function(k){return M.ev[k].st!=='pendente' || M.ev[k].prep;});
+    var ready=(applicable.length>0 && comRecibo===applicable.length);
+    // Nada importado ainda → a competência inteira mostra a importação (padrão do Plano de Contas). Sem "importar" por evento.
+    if(!started && !closed) return importCTA(M);
+
+    // EVENTOS: lista única (tabela). "Não se aplica" (na) sempre no fim da lista.
+    var evOrder=ORDER.filter(function(k){return M.ev[k].st!=='na';}).concat(ORDER.filter(function(k){return M.ev[k].st==='na';}));
+    var rows=evOrder.map(function(kk){
+      var e=M.ev[kk], meta=EV_META[kk], na=(e.st==='na'), hasVal=(!na&&e.val&&e.val!=='—');
+      var nameInner='<span class="evname__ic">'+meta.ic+'</span><div class="evname__b"><div class="evname__row">'+
+        (na?'<span class="evname__t">'+esc(meta.name)+'</span>':'<a class="evname__link" href="?emp='+emp+'&per='+M.per+'&ev='+meta.slug+'" data-tab="'+meta.slug+'">'+esc(meta.name)+'</a>')+
+        '<span class="tag">'+meta.code+'</span></div><div class="evname__sub">'+esc(e.sub)+'</div></div>';
+      var valCell=hasVal?'<span class="evval">'+e.val+'</span><span class="evval__cap">'+esc(e.valLbl)+'</span>':'<span class="evval evval--na">—</span>';
+      if(na) return '<tr class="evrow--na"><td><div class="evname">'+nameInner+'</div></td><td>'+pill(e.st)+'</td><td class="evcol-num">'+valCell+'</td><td class="evcol-act"></td></tr>';
+      // a lista só aparece com a competência já importada → a linha abre o detalhe (sem "Importar" por evento).
+      var actCell='<span class="rowchev" aria-hidden="true">'+ICO.chev+'</span>';
+      return '<tr data-tab="'+meta.slug+'"><td><div class="evname">'+nameInner+'</div></td><td>'+pill(e.st)+'</td><td class="evcol-num">'+valCell+'</td><td class="evcol-act">'+actCell+'</td></tr>';
+    }).join('');
+    var listaView='<div class="table-wrap"><table class="table evtbl"><thead><tr><th scope="col">Evento</th><th scope="col">Situação</th><th scope="col" class="evcol-num">Base apurada</th><th scope="col" class="evcol-act"><span class="sr-only">Abrir</span></th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+
+    // A lista de eventos mora DENTRO do card de Fechamento (no lugar dos antigos checkpoints); não há mais um card "Eventos da competência" repetido embaixo.
+    var band=fechBand(M, applicable, {closed:closed, started:started, ready:ready, comRecibo:comRecibo}, listaView);
+    return band + ((started||closed)?apuracaoSection(M, closed):'');
+  }
+
+  /* ===== ABA DE EVENTO ===== */
+  /* Cabeçalho do evento: título (nome + código + situação) à esquerda, AÇÕES na lateral direita
+     (mesmo padrão do page-h/sec__h do Plano de Contas). O valor entra no subtítulo. */
+  /* Cabeçalho do evento como corpo de card (com background): título+código+situação à esquerda,
+     ações na lateral direita, e o alerta da situação (se houver) logo abaixo. */
+  function evHead(evKey, M){
+    var meta=EV_META[evKey], e=M.ev[evKey];
+    var hasVal=(e.val && e.val!=='—');
+    var subExtra=hasVal?' · '+esc(e.valLbl||'Base no mês')+': <strong>'+e.val+'</strong>':'';
+    var acts=evActions(evKey,M), alert=evAlert(evKey,M);
+    return '<div class="card__body evdetail__head"><div class="sec__h" style="margin:0">'+
+      '<div class="sec__ht"><div class="dethead__title"><h2 style="margin:0">'+esc(meta.name)+'</h2><span class="tag">'+meta.code+'</span>'+pill(e.st)+'</div>'+
+      '<p class="sec__hint">'+esc(e.sub)+subExtra+'</p></div>'+
+      (acts?'<div class="sec__act">'+acts+'</div>':'')+
+      '</div>'+(alert?'<div class="evdetail__alert">'+alert+'</div>':'')+'</div>';
+  }
+  var VST={ pgcc:['warning','Fora do PGCC'], saldo:['danger','Saldo não confere'] };
+  function balanceteRow(r){
+    var v=r.vst&&VST[r.vst];
+    var val=v?'<span class="status status--sm status--'+v[0]+'" title="'+esc(r.msg||'')+'"><span class="status__dot"></span>'+v[1]+'</span>':'<span class="status status--sm status--success"><span class="status__dot"></span>Válida</span>';
+    var rowcls=r.vst?(' class="rowflag rowflag--'+(v[0])+'"'):'';
+    var aj=(r.aj&&r.aj!=='—')?'<span class="ajval">'+esc(r.aj)+'</span>':'<span class="ajval ajval--none">—</span>';
+    return '<tr'+rowcls+'><th scope="row" class="mono">'+r.cCta+'</th><td>'+esc(r.desc)+'</td>'+
+      '<td class="col--num mono">'+r.ini+'</td><td class="col--num mono">'+(r.deb||'0,00')+'</td><td class="col--num mono">'+(r.cred||'0,00')+'</td><td class="col--num mono">'+aj+'</td><td class="col--num mono">'+r.fim+'</td><td class="col--num strong">'+r.vApur+'</td><td>'+val+'</td></tr>';
+  }
+  // "Ajustes" cobre vAjusteDebt/vAjusteCred do leiaute (valores excluídos do movimento antes de calcular a base). D/C indica a natureza.
+  var BAL_HEADERS=[{label:'Conta (cCta)'},{label:'Descrição'},{label:'Saldo inicial',num:true},{label:'Mov. débito',num:true},{label:'Mov. crédito',num:true},{label:'Ajustes',num:true},{label:'Saldo final',num:true},{label:'Base (vApur)',num:true},{label:'Validação',sort:false}];
+  /* Cada tipo de erro: rótulo curto, o passo pra resolver e o botão que leva à correção. */
+  var FIXMAP={
+    pgcc:{ tone:'warning', label:'Fora do PGCC',
+      problem:'Estas contas não existem no plano de contas (PGCC) vigente desta competência, então a a-DeRE não sabe a que tributo elas pertencem.',
+      fix:'Classifique-as no Plano Geral de Contas e importe o balancete de novo.',
+      act:function(){ return '<a class="btn btn--secondary btn--sm" href="plano-contas-empresa.html?emp='+emp+'">'+ICO.doc+'Classificar no plano de contas</a>'; } },
+    saldo:{ tone:'danger', label:'Saldo não confere',
+      problem:'Nestas contas, o saldo final não bate com o saldo inicial mais o movimento do mês.',
+      fix:'Corrija os valores na planilha do balancete e importe o arquivo novamente.',
+      act:function(){ return '<button class="btn btn--secondary btn--sm" type="button" data-importar data-ev="d1101">'+ICO.upload+'Importar novamente</button>'; } }
+  };
+  /* Pendências AGRUPADAS por tipo de problema (escala p/ muitos erros): 1 .dalert por tipo, com o problema, como corrigir,
+     a ação uma vez, e a lista das contas afetadas embaixo. */
+  function fixGroup(vst, rows){
+    var f=FIXMAP[vst]||FIXMAP.pgcc, n=rows.length;
+    var accs=rows.map(function(r){
+      var msg=(vst==='saldo'&&r.msg)?'<span class="fixacc__msg">'+esc(r.msg)+'</span>':'';
+      return '<li class="fixacc"><span class="mono">'+esc(r.cCta)+'</span> · '+esc(r.desc)+msg+'</li>';
+    }).join('');
+    return '<div class="dalert dalert--'+f.tone+'">'+
+      '<span class="dalert__ic">'+ICO.alert+'</span>'+
+      '<div class="dalert__body"><p class="dalert__title">'+n+' conta'+(n>1?'s':'')+' · '+f.label+'</p>'+
+        '<p class="dalert__text">'+f.problem+' '+f.fix+'</p>'+
+        '<ul class="fixacc-list">'+accs+'</ul></div>'+
+      '<div class="dalert__act">'+f.act()+'</div></div>';
+  }
+  function balanceteContent(M){
+    var d=DETAIL[M.per].d1101;
+    var flagged=d.rows.filter(function(r){return r.vst;});
+    var total=parseInt(d.count)||d.rows.length;
+    // Em cima: só as contas com pendência, cada uma dizendo o problema e como corrigir (.dalert).
+    var errBlock='';
+    if(flagged.length){
+      var byType={}; flagged.forEach(function(r){ (byType[r.vst]=byType[r.vst]||[]).push(r); });
+      var groups=['pgcc','saldo'].filter(function(t){return byType[t];}).map(function(t){return fixGroup(t, byType[t]);}).join('');
+      errBlock='<div class="dtblock"><h3 class="dtsub dtsub--danger">'+flagged.length+' conta'+(flagged.length>1?'s':'')+' a corrigir antes de transmitir</h3>'+
+        '<p class="dtsub__x">Agrupadas pelo tipo de problema: resolva cada grupo e importe o balancete de novo.</p>'+
+        '<div class="fixlist">'+groups+'</div></div>';
+    }
+    // Embaixo: a lista de TODAS as contas analíticas (as com pendência aparecem sinalizadas).
+    var okTbl=contentTable(BAL_HEADERS, d.rows.map(balanceteRow).join(''), d.rows.length, total, 'contas analíticas');
+    var okBlock='<div class="dtblock"><h3 class="dtsub">'+(flagged.length?'Todas as contas':'Contas analíticas')+'</h3>'+
+      '<p class="dtsub__x">Contas analíticas do balancete (infoConta): saldos, movimento e a base apurada (vApur) por conta.'+(flagged.length?' As que precisam de correção aparecem sinalizadas na coluna Validação.':'')+'</p>'+okTbl+'</div>';
+    return errBlock+okBlock;
+  }
+  function aplicacoesContent(M){
+    var d=DETAIL[M.per].d1106, rows='', n=0;
+    d.contas.forEach(function(c){
+      c.ativos.forEach(function(a){
+        n++;
+        rows+='<tr><th scope="row" class="mono">'+esc(a.idAtivo)+'</th><td>'+esc(a.desc)+'</td><td class="mono">'+esc(c.cCta)+'</td>'+
+          '<td class="col--num mono">'+a.ini+'</td><td class="col--num mono">'+a.rendPer+'</td><td class="col--num mono">'+a.var+'</td><td class="col--num mono">'+a.fim+'</td><td class="col--num strong">'+a.vApur+'</td></tr>';
+      });
+    });
+    var headers=[{label:'Ativo (idAtivo)'},{label:'Descrição'},{label:'Conta (cCta)'},{label:'Saldo inicial',num:true},{label:'Rend. período',num:true},{label:'Variação',num:true},{label:'Saldo final',num:true},{label:'Base (vApur)',num:true}];
+    return contentTable(headers, rows, n, parseInt(d.count)||n, 'ativos', 'A base (vApur) de cada ativo é a soma dos rendimentos periódicos e dos rendimentos na liquidação (infoAplic por conta, detAtivo por ativo).');
+  }
+  function deducoesContent(M){
+    // Documento a documento (leiaute D-1121): tipo, emissão, atividade, valor da operação, teto, usado no mês e saldo,
+    // com os ITENS do documento (itemDFe) num expandível por linha.
+    var d=DETAIL[M.per].d1121;
+    var H=[{label:'Documento (chDFe)'},{label:'Tipo'},{label:'Emissão'},{label:'Atividade (tpAtiv)'},{label:'Operação (vOper)',num:true},{label:'Teto (vDedTotal)',num:true},{label:'Usado no mês (vDed)',num:true},{label:'Saldo',num:true}];
+    var thead=H.map(function(h){return '<th scope="col"'+(h.num?' class="col--num"':'')+'>'+esc(h.label)+'</th>';}).join('');
+    var body=d.docs.map(function(r){
+      var itens=(r.itens&&r.itens.length)
+        ? '<tr class="itensrow"><td colspan="8"><details class="itensdet"><summary>'+r.itens.length+' '+(r.itens.length>1?'itens':'item')+' do documento (itemDFe)</summary>'+
+            '<div class="table-wrap table-wrap--boxed"><table class="table"><thead><tr><th scope="col">Item</th><th scope="col" class="col--num">Valor do item</th><th scope="col" class="col--num">Teto do item</th><th scope="col" class="col--num">Deduzido no mês</th></tr></thead><tbody>'+
+            r.itens.map(function(it){return '<tr><th scope="row" class="mono">'+esc(it.n)+'</th><td class="col--num mono">'+esc(it.vItem)+'</td><td class="col--num mono">'+esc(it.vItemDedTotal)+'</td><td class="col--num strong">'+esc(it.vItemDed)+'</td></tr>';}).join('')+
+            '</tbody></table></div></details></td></tr>'
+        : '';
+      return '<tr><th scope="row"><span class="mono">'+esc(r.chave)+'</span><span class="tsub">'+esc(r.desc)+'</span></th>'+
+        '<td>'+esc(r.tipo)+'</td><td class="mono">'+esc(r.dtEmi)+'</td><td>'+esc(r.tpAtiv)+'</td>'+
+        '<td class="col--num mono">'+esc(r.vOper)+'</td><td class="col--num mono">'+esc(r.teto)+'</td><td class="col--num strong">'+esc(r.vDed)+'</td><td class="col--num mono">'+esc(r.saldo)+'</td></tr>'+itens;
+    }).join('');
+    var total=parseInt(d.count)||d.docs.length;
+    return '<div class="table-wrap"><table class="table dtable dtable--wide"><thead><tr>'+thead+'</tr></thead><tbody>'+body+'</tbody></table></div>'+
+      '<div class="tablefoot"><span><b>'+d.docs.length+'</b> de <b>'+total+'</b> documentos</span></div>'+
+      '<p class="tnote">A conta-corrente de cada documento acumula o valor deduzido no mês até o teto. Abra um documento para ver a dedução por item.</p>';
+  }
+  function titulosContent(M){
+    // Razão completo do título (leiaute D-2101, valores com 4 casas): ISIN, conta, devedor, saldos, entradas/saídas,
+    // juros recebidos e apropriados, Selic (teto), PIS/COFINS e a base (menor entre juros apropr. e Selic, menos PIS/COFINS).
+    var d=(DETAIL[M.per]&&DETAIL[M.per].d2101)||{ count:'8 títulos', rows:[
+      {isin:'BRSTNCLTN012',cCta:'1.2.03.001',desc:'Debênture Série 3 (2031)',cnpjDev:'12.345.678/0001-90',sIni:'C 1.200.000,0000',ent:'0,0000',sai:'0,0000',jurosRec:'C 41.000,0000',jurosApr:'C 38.500,0000',sFim:'C 1.241.000,0000',selic:'C 42.000,0000',pisCofins:'0,0000',base:'C 38.500,0000'},
+      {isin:'BRSTNCLTN020',cCta:'1.2.03.002',desc:'CRA Agronegócio (2029)',cnpjDev:'98.765.432/0001-10',sIni:'C 890.000,0000',ent:'C 120.000,0000',sai:'0,0000',jurosRec:'C 34.000,0000',jurosApr:'C 33.200,0000',sFim:'C 1.043.200,0000',selic:'C 31.000,0000',pisCofins:'0,0000',base:'C 31.000,0000'},
+      {isin:'BRSTNCLTN038',cCta:'1.2.03.003',desc:'Nota comercial (2028)',cnpjDev:'11.222.333/0001-44',sIni:'C 610.000,0000',ent:'0,0000',sai:'C 40.000,0000',jurosRec:'C 30.100,0000',jurosApr:'C 29.900,0000',sFim:'C 600.000,0000',selic:'C 30.500,0000',pisCofins:'D 1.200,0000',base:'C 28.700,0000'}
+    ]};
+    var H=[{label:'Título (ISIN)'},{label:'Conta'},{label:'CNPJ devedor'},{label:'Saldo inicial',num:true},{label:'Entradas',num:true},{label:'Saídas',num:true},{label:'Juros recebidos',num:true},{label:'Juros apropriados',num:true},{label:'Saldo final',num:true},{label:'Selic (teto)',num:true},{label:'PIS/COFINS',num:true},{label:'Base (vApur)',num:true}];
+    var thead=H.map(function(h){return '<th scope="col"'+(h.num?' class="col--num"':'')+'>'+esc(h.label)+'</th>';}).join('');
+    var body=d.rows.map(function(r){
+      return '<tr><th scope="row"><span class="mono">'+esc(r.isin)+'</span><span class="tsub">'+esc(r.desc)+'</span></th>'+
+        '<td class="mono">'+esc(r.cCta)+'</td><td class="mono">'+esc(r.cnpjDev)+'</td>'+
+        '<td class="col--num mono">'+esc(r.sIni)+'</td><td class="col--num mono">'+esc(r.ent)+'</td><td class="col--num mono">'+esc(r.sai)+'</td>'+
+        '<td class="col--num mono">'+esc(r.jurosRec)+'</td><td class="col--num mono">'+esc(r.jurosApr)+'</td><td class="col--num mono">'+esc(r.sFim)+'</td>'+
+        '<td class="col--num mono">'+esc(r.selic)+'</td><td class="col--num mono">'+esc(r.pisCofins)+'</td><td class="col--num strong">'+esc(r.base)+'</td></tr>';
+    }).join('');
+    var total=parseInt(d.count)||d.rows.length;
+    return '<div class="table-wrap"><table class="table dtable dtable--wide"><thead><tr>'+thead+'</tr></thead><tbody>'+body+'</tbody></table></div>'+
+      '<div class="tablefoot"><span><b>'+d.rows.length+'</b> de <b>'+total+'</b> títulos</span></div>'+
+      '<p class="tnote">Base por título = menor valor entre os juros apropriados e a Selic do período, menos PIS/COFINS. Valores com 4 casas decimais (leiaute D-2101).</p>';
+  }
+  /* verrow no MESMO padrão canônico da tela de Versões: badge · título+pílula · kvs · sep · ação.
+     Dedup (blocker 5): a versão que ESTÁ no Comprovante (o lar único de protocolo, recibo e datas)
+     não repete essas datas na linha. É a "Versão atual" quando há recibo; quando não há, é a
+     primeira de "Em preparação" (opts.compSubject) que caiu no Comprovante. Essa linha traz só
+     título + situação + "Ver comprovante". As demais versões mantêm as datas nos kvs, pois ali
+     não há duplicação. */
+  function verrow(v, current, opts){
+    opts=opts||{};
+    var s=SITV[v.sit]||['status--neutral',v.sit];
+    var accepted=(v.sit==='recibo'||v.sit==='advertencia');
+    var sent=!!(v.transm&&v.transm!=='—'&&(v.recibo||v.protocolo));   // já foi transmitida → tem comprovante
+    // Selo: check verde só quando a versão vigente já foi ACEITA; senão o número da versão.
+    var badge=(current&&accepted)
+      ? '<span class="verrow__badge verrow__badge--success" aria-hidden="true">'+ICO.check+'</span>'
+      : '<span class="verrow__badge" aria-hidden="true">v'+v.n+'</span>';
+    var kvs=sent
+      ? '<div class="verrow__kvs">'+[['Transmitida em',v.transm],['Processada em',v.proc||'—']]
+          .map(function(p){return '<div><p class="vkv__k">'+p[0]+'</p><p class="vkv__v" title="'+esc(p[1])+'">'+esc(p[1])+'</p></div>';}).join('')+'</div>'
+      : '<div class="verrow__kvs"><div><p class="vkv__k">Situação</p><p class="vkv__v">Ainda não transmitida à Receita</p></div></div>';
+    // Seta → abre o comprovante DESTA versão (o registro dela) num modal. Só quando houve transmissão.
+    var act=sent
+      ? '<button class="icon-btn" type="button" data-comprovante data-ev="'+(opts.evKey||'')+'" data-ver="'+v.n+'" aria-label="Ver comprovante da Versão '+v.n+'">'+ICO.chev+'</button>'
+      : '';
+    return '<div class="verrow'+(current?' verrow--current':'')+'">'+badge+
+      '<div class="verrow__top"><span class="verrow__titlewrap"><span class="verrow__title">'+esc(v.titulo)+'</span></span><span class="status status--sm '+s[0]+'"><span class="status__dot"></span>'+s[1]+'</span></div>'+
+      kvs+
+      '<span class="verrow__sep" aria-hidden="true"></span>'+
+      '<div class="verrow__act">'+act+'</div></div>';
+  }
+  function versecBlock(title, hint, list, current, opts){
+    opts=opts||{};
+    var body=list.length?'<div class="verlist">'+list.map(function(v){return verrow(v,current,opts);}).join('')+'</div>'
+      :'<div class="versec__empty">'+ICO.info+'<span>'+hint.empty+'</span></div>';
+    return '<section class="versec"><div class="versec__h"><h2>'+title+'</h2></div><p class="versec__hint">'+hint.desc+'</p>'+body+'</section>';
+  }
+  /* receiptInner: o interior do comprovante (estado + linhas), injetado no MODAL (não fica solto na tela). */
+  function receiptInner(evKey, M, verN){
+    var v=VERS[M.per][evKey]||{atual:[],prep:[],ant:[]};
+    var all=(v.atual||[]).concat(v.prep||[], v.ant||[]);
+    var active = verN ? (all.filter(function(x){return String(x.n)===String(verN);})[0]||null) : (v.atual[0]||v.prep[0]||null);
+    if(!active) return '<div class="receipt__state"><span class="receipt__state-ic">'+ICO.info+'</span><div><p class="receipt__state-tt">Sem envio nesta competência</p><p class="receipt__state-tx">Nada foi transmitido ainda para este evento.</p></div></div>';
+    var adv=(active.sit==='advertencia');
+    var hasRec=(active.recibo&&(active.sit==='recibo'||adv||active.sit==='substituida'));
+    var st=hasRec?(adv?'warning':'success'):'info';
+    var tt=adv?'Processado com advertência':(hasRec?'Processado com sucesso':'Protocolo recebido, em processamento');
+    var tx=adv?'A Receita aceitou o evento e devolveu o recibo, com uma advertência a revisar. Ele compõe o fechamento do mês.':(hasRec?'A Receita processou o evento e devolveu o recibo. Ele compõe o fechamento do mês.':'O envio foi protocolado e aguarda o processamento da Receita. O recibo aparece aqui quando concluir.');
+    var rows=[['Protocolo do envio',active.protocolo,'receipt__v--mono'],['Transmitido em',active.transm,''],['Recibo',hasRec?active.recibo:'aguardando processamento',hasRec?'receipt__v--mono receipt__v--strong':'receipt__v--wait'],['Processado em',hasRec?active.proc:'—','']];
+    var rowsHtml=rows.map(function(r){return '<div class="receipt__row"><span class="receipt__k">'+r[0]+'</span><span class="receipt__v'+(r[2]?' '+r[2]:'')+'">'+esc(r[1])+'</span></div>';}).join('');
+    return '<div class="receipt__state receipt__state--'+st+'"><span class="receipt__state-ic">'+(hasRec?ICO.check:ICO.clock)+'</span><div><p class="receipt__state-tt">'+tt+'</p><p class="receipt__state-tx">'+tx+'</p></div></div><div class="receipt__rows">'+rowsHtml+'</div>';
+  }
+  /* Tem envio (comprovante/versões) quando a PRÓPRIA situação do evento implica uma transmissão:
+     recibo/advertência/em processamento/rejeitado. "A preparar" (pendente) e "Não se aplica" (na) não têm. */
+  function hasEnvio(evKey, M){ var st=M.ev[evKey].st; return st==='recibo'||st==='advertencia'||st==='protocolo'||st==='rejeitado'; }
+  /* versoesInner: lista de versões (atual em destaque + anteriores) para o MODAL. Nunca misturada com o conteúdo. */
+  function versoesInner(evKey, M){
+    var v=VERS[M.per][evKey]||{atual:[],prep:[],ant:[]};
+    var allv=v.atual.concat(v.prep, v.ant);
+    if(!allv.length) return '<div class="versec__empty">'+ICO.info+'<span>Nenhuma versão nesta competência.</span></div>';
+    var cur=allv[0], prev=allv.slice(1);
+    var curBlock='<div class="dtblock"><h3 class="dtsub">Versão atual</h3>'+
+      '<p class="dtsub__x">A versão que está valendo nesta competência: a que já foi aceita pela Receita ou a que será transmitida.</p>'+
+      '<div class="verlist">'+verrow(cur, true, {evKey:evKey})+'</div></div>';
+    var prevBlock=prev.length?'<div class="dtblock"><h3 class="dtsub">Versões anteriores</h3>'+
+      '<p class="dtsub__x">Substituídas por uma versão mais nova. Ficam registradas para histórico; a seta abre o comprovante de cada uma.</p>'+
+      '<div class="verlist">'+prev.map(function(x){return verrow(x, false, {evKey:evKey});}).join('')+'</div></div>':'';
+    return curBlock+prevBlock;
+  }
+  /* Motivo que impede transmitir o evento (gate); null = liberado. Hoje só o balancete tem trava (contas a corrigir). */
+  function evBlocker(evKey, M){
+    if(evKey==='d1101'){
+      var d=DETAIL[M.per]&&DETAIL[M.per].d1101;
+      if(d){ var flagged=d.rows.filter(function(r){return r.vst;});
+        if(flagged.length) return 'Corrija '+flagged.length+' conta'+(flagged.length>1?'s':'')+' antes de transmitir.'; }
+    }
+    return null;
+  }
+  /* Conteúdo da barra fixa (.decisionbar) do evento, dirigido pela situação. Secundário à esquerda (decisionbar__back), primário à direita. */
+  function evActions(evKey, M){
+    var e=M.ev[evKey], meta=EV_META[evKey];
+    if(e.st==='na') return '';
+    // nada importado ainda → o estado vazio já traz o "Importar"; a barra fixa não aparece.
+    if(e.st==='pendente' && !e.prep) return '';
+    var back='', primary='';
+    if(hasEnvio(evKey,M)){
+      back='<button class="btn btn--ghost btn--lg decisionbar__back" type="button" data-comprovante data-ev="'+evKey+'">'+ICO.receipt+'Ver comprovante</button>';
+    }
+    if(e.st==='rejeitado'){
+      primary='<button class="btn btn--primary btn--lg" type="button" data-alterar data-ev="'+evKey+'">'+ICO.upload+'Corrigir e reenviar</button>';
+    } else if(e.st==='protocolo'){
+      primary='<span class="decisionbar__note">'+ICO.clock+'Em processamento na Receita. Aguarde o recibo para alterar.</span>';
+    } else if(e.st==='recibo'||e.st==='advertencia'){
+      primary='<button class="btn btn--primary btn--lg" type="button" data-alterar data-ev="'+evKey+'">'+ICO.doc+'Alterar</button>';
+    } else if(e.st==='pendente'){
+      // rascunho já importado → transmitir (travado enquanto houver conta a corrigir).
+      back='<button class="btn btn--ghost btn--lg decisionbar__back" type="button" data-importar data-ev="'+evKey+'">'+ICO.upload+'Importar novamente</button>';
+      var blk=evBlocker(evKey,M);
+      if(blk){
+        primary='<span class="decisionbar__note decisionbar__note--warn">'+ICO.alert+esc(blk)+'</span>'+
+          '<button class="btn btn--primary btn--lg" type="button" disabled aria-disabled="true">'+ICO.send+'Transmitir '+esc(meta.short)+'</button>';
+      } else {
+        primary='<button class="btn btn--primary btn--lg" type="button" data-transmitir data-ev="'+evKey+'">'+ICO.send+'Transmitir '+esc(meta.short)+'</button>';
+      }
+    }
+    return back+primary;
+  }
+  /* Alerta da situação (rejeitado/advertência/em processamento): banner acima do conteúdo. */
+  function evAlert(evKey, M){
+    var e=M.ev[evKey];
+    var A={ rejeitado:['danger', ICO.alert, 'Rejeitada pela Receita', 'A Receita rejeitou o evento no processamento; nada ficou concluído nesta competência. Corrija o apontamento e reenvie.'],
+      advertencia:['warning', ICO.alert, 'Processado com advertência', 'A Receita aceitou o evento e devolveu o recibo, com ressalvas que não impedem a aceitação. Revise na próxima alteração.'],
+      protocolo:['info', ICO.clock, 'Em processamento', 'O envio foi protocolado e aguarda o processamento da Receita. O recibo aparece no comprovante quando concluir.'] };
+    var a=A[e.st]; if(!a) return '';
+    return '<div class="statusbar statusbar--'+a[0]+'" role="status"><span class="statusbar__ic" aria-hidden="true">'+a[1]+'</span><div class="statusbar__b"><p class="statusbar__title">'+a[2]+'</p><p class="statusbar__desc">'+a[3]+'</p></div></div>';
+  }
+  /* Aba do evento = UM card só (título + ações no topo, conteúdo dentro do mesmo bloco). */
+  function eventPanel(evKey, M){
+    var meta=EV_META[evKey], e=M.ev[evKey];
+    var chint = evKey==='d1101'?'Contas analíticas do balancete (infoConta): saldos, movimento e a base apurada (vApur) por conta. A a-DeRE confere cada conta antes de transmitir.'
+      : evKey==='d1106'?'Ativos de reserva técnica agrupados por conta. A base (vApur) de cada ativo é rendimentos periódicos mais rendimentos na liquidação.'
+      : evKey==='d2101'?'Títulos de dívida com oferta pública: a base do débito por título é o menor valor entre os juros e a Selic no período.'
+      : 'Documentos que geraram dedução (infoDeducao), com teto, uso acumulado e saldo da conta-corrente.';
+    // NADA IMPORTADO AINDA: a importação é da COMPETÊNCIA (uma planilha alimenta tudo), mostrada no hub. Aqui só aponta pra lá.
+    if(e.st==='pendente' && !e.prep) return importCTA(M);
+    // Detalhe do evento em ABAS (padrão do Plano de Contas): Conteúdo (versão atual) · Versões (histórico).
+    var content = evKey==='d1101'?balanceteContent(M) : evKey==='d1106'?aplicacoesContent(M) : evKey==='d2101'?titulosContent(M) : deducoesContent(M);
+    var alert=evAlert(evKey,M);
+    var tabic=function(ic){ return '<span style="display:inline-flex;width:16px;height:16px" aria-hidden="true">'+ic+'</span>'; };
+    // Balancete já traz seus próprios subtítulos (Contas a corrigir · Todas as contas); os outros levam o chint como subtítulo.
+    var contentHead=(evKey==='d1101')?'':'<p class="sec__hint" style="margin:0 0 var(--space-4)">'+chint+'</p>';
+    var pConteudo='<div class="subpanel" id="sub-conteudo-'+evKey+'" role="tabpanel" tabindex="0" aria-label="Conteúdo">'+
+      (alert?'<div style="margin-bottom:var(--space-4)">'+alert+'</div>':'')+
+      '<article class="card"><div class="card__body">'+contentHead+content+'</div></article></div>';
+    var pVersoes='<div class="subpanel" id="sub-versoes-'+evKey+'" role="tabpanel" tabindex="0" aria-label="Versões" hidden><article class="card"><div class="card__body">'+versoesInner(evKey,M)+'</div></article></div>';
+    var subtabs='<div class="tabs" role="tablist" aria-label="Seções de '+esc(meta.name)+'">'+
+      '<button class="tab is-active" type="button" role="tab" data-subtab="conteudo" data-ev="'+evKey+'" aria-selected="true">'+tabic(ICO.doc)+'Conteúdo</button>'+
+      '<button class="tab" type="button" role="tab" data-subtab="versoes" data-ev="'+evKey+'" aria-selected="false">'+tabic(ICO.clock)+'Versões</button>'+
+      '</div>';
+    return '<section class="sec" style="margin-top:0">'+subtabs+'<div class="subpanels">'+pConteudo+pVersoes+'</div></section>';
+  }
+
+  /* ===== modais: comprovante · versões · confirmação (fechar/reabrir) ===== */
+  function openModal(id){ var m=document.getElementById(id); if(!m) return; m.hidden=false; document.body.style.overflow='hidden'; }
+  function closeAllModals(){ ['compModal','versoesModal','confirmModal','extratoModal','impModal'].forEach(function(id){var m=document.getElementById(id); if(m) m.hidden=true;}); document.body.style.overflow=''; }
+  /* Importar planilha: mostra o modal "lendo…" com os passos, e ao terminar revela o evento preparado. */
+  function runImport(evKey){
+    var M=MESES[perIdx];
+    // Uma planilha alimenta TODOS os eventos aplicáveis do mês (não só um).
+    var steps=['Lendo a planilha da movimentação','Separando os eventos do mês (balancete, aplicações…)','Conferindo as contas contra o PGCC vigente','Validando saldos e calculando a base por conta'];
+    var stepEl=document.getElementById('impStep'), bar=document.getElementById('impBar');
+    document.getElementById('impTitle').textContent='Lendo a planilha da movimentação';
+    bar.style.width='0%'; stepEl.textContent=''; openModal('impModal');
+    var i=0;
+    (function tick(){
+      if(i<steps.length){ stepEl.textContent=steps[i]; i++; bar.style.width=Math.round(i/steps.length*100)+'%'; setTimeout(tick, 620); }
+      else setTimeout(function(){
+        closeAllModals();
+        ORDER.forEach(function(k){ var ev=M.ev[k];
+          if(ev.st==='pendente' && !ev.prep){ ev.prep=true;
+            ev.sub=(k==='d1101')?'57 contas · 2 a corrigir antes de transmitir':(EV_META[k].name+' importado · pronto para conferir'); }
+        });
+        renderPanels(); navTo(tab, false);
+      }, 500);
+    })();
+  }
+  /* Extrato D-9199: memória de cálculo (bases + débito IBS/CBS/IS) devolvida no fechamento. */
+  function extratoInner(M){
+    var t=M.total||{}, base=t.baseFull||t.base||'—';
+    return '<div class="receipt"><div class="receipt__state receipt__state--success"><span class="receipt__state-ic">'+ICO.check+'</span><div><p class="receipt__state-tt">Competência fechada com recibo</p><p class="receipt__state-tx">Memória de cálculo devolvida pela Receita no fechamento: as bases apuradas e o débito de CBS, IBS e IS. A a-DeRE declara as bases; o imposto é apurado pela Receita e o pagamento é feito fora dela.</p></div></div></div>'+
+      '<div class="table-wrap table-wrap--boxed" style="margin-top:var(--space-4)"><table class="table kvtable"><thead><tr><th scope="col">Apuração da competência</th><th scope="col" class="col--num">Valor</th></tr></thead><tbody>'+
+        '<tr><th scope="row">Base tributável apurada</th><td class="col--num strong">'+esc(base)+'</td></tr>'+
+        '<tr><th scope="row">Débito de CBS</th><td class="col--num mono">'+esc(t.cbs||'—')+'</td></tr>'+
+        '<tr><th scope="row">Débito de IBS</th><td class="col--num mono">'+esc(t.ibs||'—')+'</td></tr>'+
+        (t.ibsMun?'<tr class="kvsub"><th scope="row">IBS Estadual (UF)</th><td class="col--num mono">'+esc(t.ibsUF)+'</td></tr><tr class="kvsub"><th scope="row">IBS Municipal</th><td class="col--num mono">'+esc(t.ibsMun)+'</td></tr>':'')+
+        '<tr><th scope="row">Imposto Seletivo (IS)</th><td class="col--num mono">'+esc(t.is||'—')+'</td></tr>'+
+        '<tr><th scope="row">Saldo de BCN utilizado</th><td class="col--num mono">'+esc(t.bcn||'R$ 0,00')+'</td></tr>'+
+      '</tbody></table></div>'+
+      '<p class="tnote">Recibo do fechamento: '+rec31(1199,M.per,1)+'.</p>';
+  }
+  function fillConfirm(kind, evKey){
+    var nm=evKey&&EV_META[evKey]?EV_META[evKey].name:'o evento';
+    var C={ fechar:['Fechar a competência?','Ao fechar, o evento D-1199 é transmitido à Receita como uma confissão dos valores do mês. Depois de aceito, a competência fica travada; para corrigir, é preciso reabri-la.','Transmitir fechamento'],
+      reabrir:['Reabrir a competência?','A reabertura (D-1198) destrava o mês para novas transmissões e exige um novo fechamento (D-1199) depois. Faça só se precisar corrigir algo já fechado.','Transmitir reabertura'],
+      importar:['Importar '+nm, 'Envie a planilha de '+nm+' (ou o arquivo do seu ERP). A a-DeRE valida os dados e prepara o evento; depois você transmite à Receita. Isso cria a Versão 1 nesta competência.','Selecionar arquivo'],
+      alterar:['Alterar cria uma nova versão', 'Alterar reabre '+nm+' para importar ou editar os dados, criando uma NOVA versão. Ela segue o fluxo: preparação → aprovação → transmissão à Receita. A versão vigente continua valendo até a nova ser aceita.','Importar nova versão'],
+      transmitir:['Transmitir '+nm+' à Receita?', 'A a-DeRE envia '+nm+' à Receita Federal. O processamento é assíncrono: primeiro volta um protocolo (em processamento) e, quando a Receita conclui, o recibo. Enquanto processa, o evento não pode ser alterado.','Transmitir '+nm],
+      template:['Baixar template de importação', 'O template traz as colunas no formato do leiaute da movimentação mensal (conta, saldos, movimento, ajustes e a base por conta). Preencha com os dados do mês e importe de volta pela opção "Importar planilha".','Baixar template'],
+      erp:['Integração com ERP', 'A conexão direta com o ERP ou sistema contábil, para importar a movimentação automaticamente, está em desenvolvimento. Por enquanto, use a importação por planilha.','Entendi'] };
+    var c=C[kind]; if(!c) return;
+    document.getElementById('confirmTitle').textContent=c[0];
+    document.getElementById('confirmGo').textContent=c[2];
+    if(kind==='fechar'){ document.getElementById('confirmBody').innerHTML=fecharFormHTML(evKey); return; }
+    document.getElementById('confirmBody').innerHTML='<p style="margin:0">'+esc(c[1])+'</p>';
+  }
+  /* Formulário do fechamento (D-1199): as DECISÕES declaratórias antes de transmitir —
+     "sem deduções no mês" (indInexistDedu) e aproveitar/como a base negativa (usarBCNAcum + metodoAproveit). */
+  var BCN_ACUM='R$ 80.000,00';
+  function fecharFormHTML(){
+    return '<p style="margin:0 0 var(--space-1)">Ao fechar, o D-1199 é transmitido à Receita como a confissão dos valores do mês. Depois de aceito, a competência trava; para corrigir, é preciso reabrir (D-1198).</p>'+
+      '<div class="fechform">'+
+        '<div class="fechform__sec"><h4 class="fechform__t">Deduções (D-1121)</h4>'+
+          '<label class="check"><input type="checkbox" id="fdInexistDedu"><span>Não tenho deduções a informar neste mês</span></label>'+
+          '<p class="fechform__hint" style="margin:var(--space-2) 0 0">Marque só se este contribuinte está sujeito ao D-1121, mas não houve deduções na competência. Isso dispensa o envio do D-1121 (indInexistDedu).</p></div>'+
+        '<div class="fechform__sec"><h4 class="fechform__t">Base de cálculo negativa (BCN)</h4>'+
+          '<p class="fechform__hint">Há <strong>'+BCN_ACUM+'</strong> de BCN acumulada de períodos anteriores. Aproveitar reduz a base tributável deste mês.</p>'+
+          '<label class="switch-row"><span>Aproveitar a BCN neste fechamento</span><span class="switch"><input type="checkbox" id="fdUsarBCN"><span class="switch__track"></span></span></label>'+
+          '<div class="fechform__met" id="fdMet" hidden>'+
+            '<label class="choice"><input type="radio" name="fdmet" value="peps" checked><span class="choice__body"><span class="choice__title">PEPS automático</span><span class="choice__desc">A a-DeRE consome primeiro o saldo mais antigo, até o limite da base do mês.</span></span></label>'+
+            '<label class="choice"><input type="radio" name="fdmet" value="manual"><span class="choice__body"><span class="choice__title">Manual</span><span class="choice__desc">Você escolhe quanto usar de cada período de origem da BCN.</span></span></label>'+
+          '</div></div>'+
+      '</div>';
+  }
+  function bindFecharForm(){
+    var u=document.getElementById('fdUsarBCN'), m=document.getElementById('fdMet');
+    if(u&&m){ u.addEventListener('change',function(){ m.hidden=!u.checked; }); }
+  }
+  document.addEventListener('click', function(ev){
+    var cb=ev.target.closest('[data-comprovante]');
+    if(cb){ document.getElementById('compReceipt').innerHTML=receiptInner(cb.getAttribute('data-ev'), MESES[perIdx], cb.getAttribute('data-ver')); openModal('compModal'); return; }
+    var vb=ev.target.closest('[data-versoes]');
+    if(vb){ document.getElementById('versoesBody').innerHTML=versoesInner(vb.getAttribute('data-ev'), MESES[perIdx]); openModal('versoesModal'); return; }
+    var ab=ev.target.closest('[data-alterar]'); if(ab){ fillConfirm('alterar', ab.getAttribute('data-ev')); openModal('confirmModal'); return; }
+    var ib=ev.target.closest('[data-importar]'); if(ib){ fillConfirm('importar', ib.getAttribute('data-ev')); openModal('confirmModal'); return; }
+    var tb=ev.target.closest('[data-transmitir]'); if(tb){ fillConfirm('transmitir', tb.getAttribute('data-ev')); openModal('confirmModal'); return; }
+    var irun=ev.target.closest('[data-import-run]'); if(irun){ runImport(irun.getAttribute('data-ev')); return; }
+    if(ev.target.closest('[data-template]')){ ev.preventDefault(); fillConfirm('template'); openModal('confirmModal'); return; }
+    if(ev.target.closest('[data-erp]')){ fillConfirm('erp'); openModal('confirmModal'); return; }
+    if(ev.target.closest('[data-extrato]')){ document.getElementById('extratoBody').innerHTML=extratoInner(MESES[perIdx]); openModal('extratoModal'); return; }
+    if(ev.target.closest('[data-fechar]')){ fillConfirm('fechar'); openModal('confirmModal'); bindFecharForm(); return; }
+    if(ev.target.closest('[data-reabrir]')){ fillConfirm('reabrir'); openModal('confirmModal'); return; }
+    if(ev.target.id==='confirmGo'){ closeAllModals(); return; }
+    if(ev.target.closest('[data-modal-close]')||ev.target.classList.contains('scrim')){ closeAllModals(); return; }
+  });
+  document.addEventListener('keydown', function(ev){ if(ev.key==='Escape') closeAllModals(); });
+
+  /* ===== render das views (hub + páginas de evento) + navegação ===== */
+  function renderPanels(){
+    var M=MESES[perIdx];
+    var html='';
+    TABS.forEach(function(slug){
+      var isEv=!!SLUG2EV[slug];
+      var body = isEv ? eventPanel(SLUG2EV[slug], M) : visaoPanel(M);
+      var label = isEv ? EV_META[SLUG2EV[slug]].name : 'Fechamento da competência';
+      html+='<section id="panel-'+slug+'" role="region" aria-label="'+esc(label)+'" tabindex="-1"'+(slug===tab?'':' hidden')+'>'+body+'</section>';
+    });
+    document.getElementById('panels').innerHTML=html;
+    bindPanelInteractions();
+  }
+  /* NAV do detalhe: no hub fica vazio; na página do evento mostra "voltar" + atualiza a trilha do topo. */
+  function renderDetnav(slug){
+    var isHub=(slug==='visao'), per=MESES[perIdx].per, M=MESES[perIdx];
+    var bcTail=document.getElementById('bcTail'), dn=document.getElementById('detnav');
+    var title=document.getElementById('pageTitle'), badge=document.getElementById('pageBadge'), meta_=document.getElementById('hdrMeta');
+    var dbar=document.getElementById('decisionbar'), dacts=document.getElementById('decisionActions');
+    function setBar(html){
+      if(!dbar) return;
+      if(html){ dacts.innerHTML=html; dbar.hidden=false; document.body.classList.add('has-decisionbar'); }
+      else { dbar.hidden=true; dacts.innerHTML=''; document.body.classList.remove('has-decisionbar'); }
+    }
+    // Fatos-chave da faixa: separa o subtítulo por "·"; "a corrigir" ganha destaque de aviso.
+    function factsFrom(subtxt){
+      // fatos-chave do cabeçalho; tira o descritor de obrigatoriedade ("Obrigatório todo mês" / "Condicional…") — a PO não quer isso no cabeçalho.
+      return String(subtxt||'').split('·').map(function(s){return s.trim();})
+        .filter(function(s){ return s && !/^obrigat|^condicional/i.test(s); })
+        .map(function(f){
+          var warn=/corrigir/i.test(f);
+          return '<span class="hdrmeta__fact'+(warn?' hdrmeta__fact--warn':'')+'">'+(warn?ICO.alert:'')+esc(f)+'</span>';
+        }).join('');
+    }
+    if(isHub){
+      bcTail.innerHTML='<span>'+esc(CO.nome)+'</span>';
+      title.textContent='Movimentações Mensais';
+      badge.innerHTML='';
+      meta_.innerHTML='<span class="hdrmeta__fact">'+ICO.calendar+esc(MESES[perIdx].txt)+'</span><span class="hdrmeta__fact">os eventos do mês, o que cada um apura e o fechamento da competência</span>';
+      setBar('');
+    } else {
+      var evKey=SLUG2EV[slug], meta=EV_META[evKey], e=M.ev[evKey];
+      bcTail.innerHTML='<a href="?emp='+emp+'&per='+per+'&ev=visao" data-tab="visao">'+esc(CO.nome)+'</a>'+
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg><span>'+esc(meta.name)+'</span>';
+      title.textContent=meta.name;
+      badge.innerHTML='<span class="tag">'+meta.code+'</span>';   // só o código ao lado do título
+      // faixa: status + fatos-chave inline (padrão da Info do Contribuinte). Vazio (nada importado) NÃO é "Em preparação": sem pill.
+      var isEmpty=(e.st==='pendente' && !e.prep);
+      meta_.innerHTML=(isEmpty?'':pill(e.st))+factsFrom(e.sub);
+      setBar(evActions(evKey, M));                               // ações vão pra barra fixa (.decisionbar), não pro cabeçalho
+    }
+    dn.innerHTML='';
+    bcTail.querySelectorAll('[data-tab]').forEach(function(a){ a.addEventListener('click',function(ev){ ev.preventDefault(); navTo(a.getAttribute('data-tab'), true); }); });
+  }
+  function navTo(slug, push){
+    if(TABS.indexOf(slug)<0) slug='visao';
+    tab=slug;
+    document.querySelectorAll('#panels [role=region]').forEach(function(p){ p.hidden=(p.id!=='panel-'+slug); });
+    renderDetnav(slug);
+    if(push) history.pushState({per:MESES[perIdx].per, ev:slug}, '', '?emp='+emp+'&per='+MESES[perIdx].per+'&ev='+slug);
+    var p=document.getElementById('panel-'+slug); if(p){ p.focus({preventScroll:true}); }
+    // ao entrar num evento (ou voltar), sobe pro topo da página (o scroll fica no .content, não na janela)
+    try{ var mc=document.getElementById('conteudo'); if(mc) mc.scrollTop=0; window.scrollTo(0,0); }catch(e){}
+  }
+
+  function bindPanelInteractions(){
+    // Hub: linha/nome/card de um evento leva para a página do evento.
+    document.querySelectorAll('#panel-visao [data-tab]').forEach(function(el){
+      if(el.tagName==='A'){ el.addEventListener('click',function(ev){ ev.preventDefault(); navTo(el.getAttribute('data-tab'),true); }); }
+    });
+    document.querySelectorAll('#panel-visao tr[data-tab]').forEach(function(tr){
+      tr.addEventListener('click',function(ev){ if(ev.target.closest('a,button')) return; navTo(tr.getAttribute('data-tab'),true); });
+    });
+    // Tabelas de conteúdo: ordenação por coluna (mesmo padrão de cabeçalho ordenável do DS).
+    document.querySelectorAll('.dtable').forEach(makeSortable);
+    // Abas do evento (Conteúdo · Versões): alternam os sub-painéis dentro da página do evento.
+    document.querySelectorAll('[data-subtab]').forEach(function(b){
+      b.addEventListener('click', function(){
+        var ev=b.getAttribute('data-ev'), sub=b.getAttribute('data-subtab'), sec=b.closest('section');
+        sec.querySelectorAll('[data-subtab]').forEach(function(t){ var on=(t===b); t.classList.toggle('is-active',on); t.setAttribute('aria-selected',String(on)); });
+        sec.querySelectorAll('.subpanel').forEach(function(p){ p.hidden=(p.id!=='sub-'+sub+'-'+ev); });
+      });
+    });
+  }
+
+  /* ===== competência ===== */
+  function syncComp(){
+    var M=MESES[perIdx];
+    document.getElementById('compVal').textContent=fmtComp(M.per);
+    document.getElementById('compLive').textContent='Competência selecionada: '+cap(M.txt);
+    document.getElementById('compNow').disabled=M.cur;
+    document.getElementById('compPrev').disabled=(perIdx>=MESES.length-1);
+    document.getElementById('compNext').disabled=(perIdx<=0);
+  }
+  function setPer(i, push){
+    if(i<0||i>=MESES.length) return;
+    perIdx=i; syncComp(); renderPanels(); navTo(tab,false);
+    var url='?emp='+emp+'&per='+MESES[perIdx].per+'&ev='+tab;
+    if(push) history.pushState({per:MESES[perIdx].per,ev:tab},'',url); else history.replaceState({per:MESES[perIdx].per,ev:tab},'',url);
+  }
+
+  /* ===== month picker (.mp): mesmo componente do Painel de Monitoramento =====
+     Navegação de ano + grade de meses. Mês futuro ou sem dados fica desabilitado.
+     As setas ‹ › e "Atual" saltam entre competências COM dados (MESES: nova → antiga). */
+  (function buildMonthPicker(){
+    var trig=document.getElementById('compTrig'), pop=document.getElementById('compMP');
+    var prevB=document.getElementById('compPrev'), nextB=document.getElementById('compNext'), nowB=document.getElementById('compNow');
+    var CUR=(MESES.filter(function(m){return m.cur;})[0]||MESES[0]).per;
+    var curY=+CUR.split('-')[0], curM=+CUR.split('-')[1];
+    var years=MESES.map(function(m){return +m.per.split('-')[0];});
+    var minY=Math.min.apply(null,years), maxY=Math.max.apply(null,years);
+    var viewY=+MESES[perIdx].per.split('-')[0];
+    function perOf(y,m){ return y+'-'+String(m).padStart(2,'0'); }
+    function idxOf(per){ return perList().indexOf(per); }
+    function hasData(y,m){ return idxOf(perOf(y,m))>=0; }
+    function isFuture(y,m){ return (y>curY)||(y===curY&&m>curM); }
+    function draw(){
+      var sel=MESES[perIdx].per, selY=+sel.split('-')[0], selM=+sel.split('-')[1];
+      var canPrev=viewY>minY, canNext=viewY<maxY;
+      var head='<div class="mp__head"><button class="mp__nav" type="button" data-mpnav="-1" aria-label="Ano anterior"'+(canPrev?'':' disabled')+'><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><span class="mp__y">'+viewY+'</span><button class="mp__nav" type="button" data-mpnav="1" aria-label="Próximo ano"'+(canNext?'':' disabled')+'><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button></div>';
+      var grid='<div class="mp__grid">'+MES3.map(function(mn,i){ var m=i+1, per=perOf(viewY,m); var dis=isFuture(viewY,m)||!hasData(viewY,m); var s=(viewY===selY&&m===selM); var cur=(viewY===curY&&m===curM); return '<button class="mp__m'+(s?' mp__m--sel':'')+(cur&&!s?' mp__m--cur':'')+'" type="button" data-mpm="'+per+'"'+(dis?' disabled aria-label="'+esc(mn+'/'+viewY+', sem dados')+'"':'')+(s?' aria-current="true"':'')+'>'+mn+'</button>'; }).join('')+'</div>';
+      pop.innerHTML=head+grid;
+      pop.querySelectorAll('[data-mpnav]').forEach(function(b){ b.addEventListener('click',function(e){ e.stopPropagation(); viewY+=+b.getAttribute('data-mpnav'); draw(); var nb=pop.querySelector('[data-mpnav="'+b.getAttribute('data-mpnav')+'"]:not(:disabled)')||pop.querySelector('.mp__m:not(:disabled)'); if(nb) nb.focus(); }); });
+      pop.querySelectorAll('[data-mpm]').forEach(function(b){ b.addEventListener('click',function(e){ e.stopPropagation(); choose(b.getAttribute('data-mpm')); }); });
+    }
+    function open(){ if(!pop.hidden) return; viewY=+MESES[perIdx].per.split('-')[0]; draw(); pop.hidden=false; trig.setAttribute('aria-expanded','true'); var f=pop.querySelector('.mp__m--sel')||pop.querySelector('.mp__m:not(:disabled)'); if(f) f.focus(); }
+    function close(focusTrig){ pop.hidden=true; trig.setAttribute('aria-expanded','false'); if(focusTrig) trig.focus(); }
+    function choose(per){ var i=idxOf(per); if(i<0) return; close(true); setPer(i,false); }
+    trig.addEventListener('click',function(e){ e.stopPropagation(); pop.hidden?open():close(true); });
+    trig.addEventListener('keydown',function(e){ if(pop.hidden&&(e.key==='ArrowDown'||e.key==='Enter'||e.key===' ')){ e.preventDefault(); open(); } });
+    pop.addEventListener('click',function(e){ e.stopPropagation(); });
+    pop.addEventListener('keydown',function(e){ if(e.key==='Escape'){ e.preventDefault(); close(true); } });
+    document.addEventListener('click',function(e){ if(!pop.hidden && !e.target.closest('#wrapComp')) close(false); });
+    prevB.addEventListener('click',function(){ if(perIdx<MESES.length-1) setPer(perIdx+1,false); });
+    nextB.addEventListener('click',function(){ if(perIdx>0) setPer(perIdx-1,false); });
+    nowB.addEventListener('click',function(){ var i=idxOf(CUR); if(i>=0) setPer(i,false); });
+  })();
+
+  /* ===== histórico (Voltar/Avançar do navegador): hub ⇄ evento e troca de competência ===== */
+  window.addEventListener('popstate',function(e){
+    var sp=new URLSearchParams(location.search);
+    var pi=perList().indexOf(sp.get('per')); if(pi<0) pi=0;
+    if(pi!==perIdx){ perIdx=pi; syncComp(); renderPanels(); }
+    navTo(normEv(sp.get('ev')),false);
+  });
+
+  /* ===== init ===== */
+  syncComp(); renderPanels(); navTo(tab,false);
+  history.replaceState({per:MESES[perIdx].per,ev:tab},'','?emp='+emp+'&per='+MESES[perIdx].per+'&ev='+tab);
+
+  document.querySelectorAll('[data-sidenav-toggle]').forEach(function(btn){ var nav=btn.closest('[data-sidenav]'); btn.addEventListener('click',function(){ var c=nav.classList.toggle('is-collapsed'); btn.setAttribute('aria-expanded',String(!c)); }); });
+  </script>
+</body>
+</html>

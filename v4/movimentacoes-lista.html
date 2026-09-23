@@ -348,11 +348,13 @@
     var tb=document.getElementById('rows');
     if(!list.length){ tb.innerHTML='<tr class="emptyrow"><td colspan="6">Nenhum contribuinte nesse filtro.</td></tr>'; document.getElementById('tcount').innerHTML=''; return; }
     tb.innerHTML=list.map(function(e){
-      /* Detalhe GATED: as ações aparecem mas ficam desabilitadas (não navegam). Reativar = devolver href nos botões e data-href na <tr>. */
-      var lbl = e.sit==='naoiniciada' ? 'Importar' : e.sit==='pendente' ? 'Continuar' : e.sit==='rejeitada' ? 'Corrigir' : 'Ver detalhe';
-      var variant = (e.sit==='processando'||e.sit==='fechada') ? 'btn--secondary' : 'btn--primary';
-      var btn = '<button type="button" class="btn '+variant+' rowbtn" disabled title="Em breve">'+lbl+'</button>';
-      return '<tr>'+
+      /* ação por estado, abre o detalhe (naoiniciada = fluxo de "nada enviado" / importar) */
+      var href='movimentacoes-empresa.html?emp='+e.id;
+      var btn = e.sit==='naoiniciada' ? '<a class="btn btn--primary rowbtn" href="'+href+'">Preencher</a>'
+              : e.sit==='pendente'   ? '<a class="btn btn--primary rowbtn" href="'+href+'">Continuar</a>'
+              : e.sit==='rejeitada'  ? '<a class="btn btn--primary rowbtn" href="'+href+'">Corrigir</a>'
+              : '<a class="btn btn--secondary rowbtn" href="'+href+'">Ver detalhe</a>';
+      return '<tr data-href="'+href+'">'+
         '<td><div class="evemp">'+logoHtml(e)+'<div><div class="celltitle">'+esc(e.nome)+'</div><div class="cellcnpj">'+esc(e.cnpj)+'</div></div></div></td>'+
         '<td>'+sitPill(e.sit)+'</td>'+
         '<td>'+evBar(e.ev)+'</td>'+
