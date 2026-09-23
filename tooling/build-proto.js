@@ -26,8 +26,8 @@ const GATE = fs.readFileSync(path.join(__dirname, 'gate.html'), 'utf8').trim();
 const dsPath = path.join(ROOT, 'design-system', 'ds.css');
 const ver = crypto.createHash('sha1').update(fs.readFileSync(dsPath)).digest('hex').slice(0, 8);
 
-// páginas do APP que o build gerencia: index.html da raiz + tudo em v4/
-const appPages = [path.join(ROOT, 'index.html')]
+// páginas que o build gerencia: index.html da raiz + a vitrine + tudo em v4/
+const appPages = [path.join(ROOT, 'index.html'), path.join(ROOT, 'design-system', 'index.html')]
   .concat(fs.readdirSync(path.join(ROOT, 'v4'))
     .filter(f => f.endsWith('.html'))
     .map(f => path.join(ROOT, 'v4', f)))
@@ -68,13 +68,8 @@ for (const file of appPages) {
     problems.push(path.relative(ROOT, file) + ': SEM GATE após o build');
   }
 }
-// aviso (não erro) sobre a vitrine, que segue fluxo próprio
-const vit = path.join(ROOT, 'design-system', 'index.html');
-const vitUngated = fs.existsSync(vit) && !/id="dere-gate"/.test(fs.readFileSync(vit, 'utf8'));
-
 console.log('build-proto — versão (hash do ds.css): ' + ver);
-console.log('  ' + appPages.length + ' páginas do app · gate injetado em ' + injected + ' · ds.css re-versionado em ' + rebusted);
-if (vitUngated) console.log('  aviso: design-system/index.html (vitrine) está SEM gate — fluxo próprio, não mexi.');
+console.log('  ' + appPages.length + ' páginas (app + vitrine) · gate injetado em ' + injected + ' · ds.css re-versionado em ' + rebusted);
 if (problems.length) {
   console.log('\nPROBLEMAS (build falhou):');
   problems.forEach(p => console.log('  - ' + p));
