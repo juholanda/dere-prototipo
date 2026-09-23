@@ -73,7 +73,9 @@
     .hdrmeta__fact svg{width:15px;height:15px;flex:0 0 auto}
     .hdrmeta__fact--warn{color:var(--color-warning-fg);font-weight:600}
     /* competência: usa .filterf--comp do ds.css (rótulo em cima), igual ao Painel; alinha ao topo do título */
-    .page-h__act{align-items:flex-start}
+    /* quebra a competência p/ baixo do título quando não couber (evita sobrepor o título), sempre à direita */
+    .page-h__row{flex-wrap:wrap;row-gap:var(--space-3)}
+    .page-h__act{align-items:flex-start;margin-left:auto}
     /* ações do evento vivem na .decisionbar fixa (padrão do detalhe D-1001/D-1011); o cabeçalho fica só com a competência */
     /* motivo de trava ao lado do botão bloqueado (ex.: "corrija N contas antes de transmitir") */
     .decisionbar__note{display:inline-flex;align-items:center;gap:var(--space-2);color:var(--color-text-muted);font-size:var(--text-sm);max-width:34rem}
@@ -85,7 +87,11 @@
     .cardhd__toprow{display:flex;align-items:center;justify-content:space-between;gap:var(--space-3) var(--space-6);flex-wrap:wrap}
     .cardhd__side{flex:0 0 auto}
     .cardhd__side .prazoline{margin:0}
-    .cardhd__t{font-size:var(--text-xl);font-weight:700;color:var(--color-heading);margin:0;line-height:1.25}
+    .cardhd__t{font-size:var(--text-xl)!important;font-weight:700!important;color:var(--color-heading);margin:0;line-height:1.25}
+    /* header com ícone, coerente com o Plano de Contas (.card__ic 34px primary-subtle) */
+    .cardhd--ic{display:flex;align-items:flex-start;gap:var(--space-3)}
+    .card__ic{width:34px;height:34px;border-radius:var(--radius-lg);background:var(--color-primary-subtle);color:var(--color-primary);display:grid;place-items:center;flex:0 0 auto}
+    .card__ic svg{width:18px;height:18px}
     .cardhd__x{font-size:var(--text-sm);color:var(--color-text-onmuted);margin:var(--space-1) 0 0;line-height:1.5}
     .totgrid .stat{box-shadow:none}   /* caixinhas dentro do card: sem sombra (a moldura já é o card) */
     /* total = valor principal, no TOPO do card da apuração (antes das caixinhas), com divisória embaixo */
@@ -177,7 +183,7 @@
     .emptyev__t{font-size:var(--text-lg);font-weight:700;color:var(--color-heading);margin:0}
     .emptyev__x{font-size:var(--text-sm);color:var(--color-text-onmuted);margin:0 0 var(--space-3);max-width:46ch;line-height:1.5}
     /* estado vazio = dois cartões de importação (padrão do Plano de Contas): planilha × ERP */
-    .create-opts{display:grid;grid-template-columns:repeat(2,minmax(0,480px));gap:var(--space-6);justify-content:center}
+    .create-opts{display:grid;grid-template-columns:repeat(2,minmax(0,480px));gap:var(--space-6);justify-content:center;margin-top:var(--space-8)}
     @media(max-width:680px){.create-opts{grid-template-columns:minmax(0,480px)}}
     .create-opt{border:1px solid var(--color-border);border-radius:var(--radius-2xl);padding:var(--space-6);background:var(--color-surface);text-align:center;display:flex;flex-direction:column;align-items:center;transition:border-color .14s,box-shadow .14s}
     .create-opt:hover{border-color:var(--color-primary);box-shadow:var(--shadow-sm)}
@@ -908,8 +914,8 @@
       '</div>'+
     '</div>';
     return '<section class="sec" style="margin-top:0"><article class="card"><div class="card__body">'+
-      '<div class="cardhd"><h2 class="cardhd__t">Importar a movimentação de '+esc(M.txt)+'</h2>'+
-      '<p class="cardhd__x">Uma planilha traz todos os eventos do mês. A a-DeRE lê, confere as contas contra o PGCC vigente e prepara cada evento; depois você revisa e atualiza um por um, alterando só o que precisar.</p></div>'+
+      '<div class="cardhd cardhd--ic"><span class="card__ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span><div><h2 class="cardhd__t">Importar a movimentação de '+esc(M.txt)+'</h2>'+
+      '<p class="cardhd__x">Uma planilha traz todos os eventos do mês. A a-DeRE lê, confere as contas contra o PGCC vigente e prepara cada evento; depois você revisa e atualiza um por um, alterando só o que precisar.</p></div></div>'+
       cards+'</div></article></section>';
   }
   function visaoPanel(M){
