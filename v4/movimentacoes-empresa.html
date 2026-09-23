@@ -134,6 +134,7 @@
     .fechstage{margin:0;font-size:var(--text-base);font-weight:700;color:var(--color-heading)}
     .fechrow{display:flex;align-items:center;justify-content:space-between;gap:var(--space-3) var(--space-4);flex-wrap:wrap;margin-bottom:var(--space-6)}
     .fechrow__act{display:flex;gap:var(--space-2);flex:0 0 auto;flex-wrap:wrap;margin-left:auto}
+    .evna{font-size:var(--text-sm);color:var(--color-text-muted)} /* "Não se aplica" é texto apagado, não pill (a PO: status de verdade é só o do vocabulário) */
 
     /* ===== prazo do balancete: linha simples (tratamento visual a definir) ===== */
     .prazoline{display:inline-flex;align-items:center;gap:var(--space-2);margin:var(--space-4) 0 0;font-size:var(--text-sm);color:var(--color-text-onmuted)}
@@ -358,6 +359,7 @@
             <div class="page-h__row">
               <div class="page-h__main">
                 <div class="page-h__title"><h1 id="pageTitle">Movimentações Mensais</h1><span id="pageBadge" class="dethead__title"></span></div>
+                <p class="page-h__desc" id="pageSub"></p>
               </div>
               <!-- seletor de competência: a competência PRECISA existir nas Movimentações Mensais (define o período do fechamento). -->
               <div class="page-h__act">
@@ -861,37 +863,43 @@
     }).join('')+'</div>';
   }
 
-  /* Prazo do balancete: linha simples (ícone + data + dias), cor só quando aperta. Tratamento a definir com a designer. */
-  function prazoChip(M){
-    var info=daysToStr(M.prazo), cls=(info.tone==='warn')?' prazoline--warn':'';
-    return '<p class="prazoline'+cls+'"><span class="prazoline__ic" aria-hidden="true">'+ICO.calendar+'</span>Prazo do balancete <strong>'+M.prazo.slice(0,5)+'</strong> · '+esc(info.txt)+'</p>';
+  /* Prazo da competência: MESMO cartão de alerta da lista (.dalert--warning), abaixo do card da empresa.
+     Some quando a competência fecha (prazo cumprido não é mais alerta). */
+  function prazoBanner(M){
+    var info=daysToStr(M.prazo), mm=M.per.slice(5,7)+'/'+M.per.slice(0,4);
+    return '<section class="sec" style="margin-top:0"><div class="dalert dalert--warning" role="status">'+
+      '<span class="dalert__ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>'+
+      '<div class="dalert__body"><p class="dalert__title">Prazo da competência '+esc(mm)+'</p>'+
+      '<p class="dalert__text">Entrega do fechamento até <strong>'+esc(M.prazo)+'</strong>. O prazo é improrrogável; recomendamos concluir o envio com antecedência.</p></div>'+
+      '<div class="dalert__act"><span class="tag">'+esc(info.txt)+'</span></div></div></section>';
   }
   /* Faixa "situação do mês": estágio + checkpoints + o que falta + ação. Estados: não iniciado · em preparação · pronto · fechado. */
   /* Faixa do fechamento (layout: estágio · prazo / divisória / checkpoints · ação). */
   function fechBand(M, applicable, s, listaView){
-    var stageTxt, stageSub, aside='', action, mod='';
+    var stageTxt, stageSub, action, mod='';
     if(s.closed){
       stageTxt='Competência fechada'; mod=' fechinner--closed';
       stageSub='O balancete e os eventos do mês, e o fechamento da competência (D-1199).';
       action='<button class="btn btn--ghost" type="button" data-reabrir title="Confirmação de reabertura (D-1198)">'+ICO.lock+'Reabrir</button>'+
              '<a class="btn btn--secondary" href="movimentacoes-extrato.html?emp='+emp+'&per='+M.per+'">'+ICO.receipt+'Ver extrato (D-9199)</a>';
     } else if(!s.started){
-      stageTxt='Nada preparado ainda neste mês'; aside=prazoChip(M);
+      stageTxt='Nada preparado ainda neste mês';
       stageSub='Comece pelo balancete (D-1101); depois os eventos condicionais e o fechamento (D-1199).';
       var fs=EV_META[applicable[0]].slug, fk=applicable[0];
       action='<a class="btn btn--primary" href="?emp='+emp+'&per='+M.per+'&ev='+fs+'" data-tab="'+fs+'" data-importar data-ev="'+fk+'">'+ICO.upload+'Importar balancete</a>';
     } else {
-      aside=prazoChip(M); mod=s.ready?' fechinner--ready':'';
+      mod=s.ready?' fechinner--ready':'';
       stageTxt=s.ready?'Pronto para fechar':('Em preparação · '+s.comRecibo+' de '+applicable.length+' concluídos');
       stageSub='O fechamento (D-1199) só é aceito quando todos os eventos exigidos têm recibo.';
       action='<button class="btn btn--primary" type="button"'+(s.ready?' data-fechar':' aria-disabled="true" aria-describedby="fechHint" data-blocked="1"')+'>'+ICO.lock+'Fechar competência</button>';
     }
     var readyHint=(!s.closed && s.started && !s.ready)?'<span id="fechHint" class="sr-only">O fechamento fica disponível quando todos os eventos tiverem recibo.</span>':'';
-    // layout (pedido da PO): estágio + botão Fechar numa linha; abaixo, a LISTA dos eventos (no lugar dos checkpoints, sem repetir num card à parte).
+    // layout (pedido da PO 23/set): a AÇÃO fica na linha do título ("Fechamento do mês" à esq., botão à dir.);
+    // o prazo SAIU do card — virou o banner .dalert--warning no topo (abaixo do card da empresa), igual à lista.
     var inner='<div class="fechinner'+mod+'">'+
-      '<div class="fechrow"><p class="fechstage">'+stageTxt+'</p><div class="fechrow__act">'+action+'</div></div>'+
+      '<div class="fechrow"><p class="fechstage">'+stageTxt+'</p></div>'+
       (listaView||'')+readyHint+'</div>';
-    return cardSection('Fechamento do mês', stageSub, inner, {divider:true, aside:aside});
+    return cardSection('Fechamento do mês', stageSub, inner, {divider:true, aside:'<div class="fechrow__act">'+action+'</div>'});
   }
   /* EVENTOS EM CARDS: mesma navegação da lista, em cards (para comparar list × cards). Cada card leva à página do evento. */
   function eventCards(M){
@@ -943,7 +951,7 @@
     var started=applicable.some(function(k){return M.ev[k].st!=='pendente' || M.ev[k].prep;});
     var ready=(applicable.length>0 && comRecibo===applicable.length);
     // Nada importado ainda → a competência inteira mostra a importação (padrão do Plano de Contas). Sem "importar" por evento.
-    if(!started && !closed) return importCTA(M);
+    if(!started && !closed) return prazoBanner(M)+importCTA(M);
 
     // EVENTOS: lista única (tabela). "Não se aplica" (na) sempre no fim da lista.
     var evOrder=ORDER.filter(function(k){return M.ev[k].st!=='na';}).concat(ORDER.filter(function(k){return M.ev[k].st==='na';}));
@@ -953,7 +961,7 @@
         (na?'<span class="evname__t">'+esc(meta.name)+'</span>':'<a class="evname__link" href="?emp='+emp+'&per='+M.per+'&ev='+meta.slug+'" data-tab="'+meta.slug+'">'+esc(meta.name)+'</a>')+
         '<span class="tag">'+meta.code+'</span></div><div class="evname__sub">'+esc(e.sub)+'</div></div>';
       var valCell=hasVal?'<span class="evval">'+e.val+'</span><span class="evval__cap">'+esc(e.valLbl)+'</span>':'<span class="evval evval--na">—</span>';
-      if(na) return '<tr class="evrow--na"><td><div class="evname">'+nameInner+'</div></td><td>'+pill(e.st)+'</td><td class="evcol-num">'+valCell+'</td><td class="evcol-act"></td></tr>';
+      if(na) return '<tr class="evrow--na"><td><div class="evname">'+nameInner+'</div></td><td><span class="evna">Não se aplica</span></td><td class="evcol-num">'+valCell+'</td><td class="evcol-act"></td></tr>';
       // a lista só aparece com a competência já importada → a linha abre o detalhe (sem "Importar" por evento).
       var actCell='<span class="rowchev" aria-hidden="true">'+ICO.chev+'</span>';
       return '<tr data-tab="'+meta.slug+'"><td><div class="evname">'+nameInner+'</div></td><td>'+pill(e.st)+'</td><td class="evcol-num">'+valCell+'</td><td class="evcol-act">'+actCell+'</td></tr>';
@@ -962,7 +970,7 @@
 
     // A lista de eventos mora DENTRO do card de Fechamento (no lugar dos antigos checkpoints); não há mais um card "Eventos da competência" repetido embaixo.
     var band=fechBand(M, applicable, {closed:closed, started:started, ready:ready, comRecibo:comRecibo}, listaView);
-    return band + ((started||closed)?apuracaoSection(M, closed):'');
+    return (closed?'':prazoBanner(M)) + band + ((started||closed)?apuracaoSection(M, closed):'');
   }
 
   /* ===== ABA DE EVENTO ===== */
@@ -1284,6 +1292,12 @@
             if(ev.st==='pendente' && !ev.prep){ ev.prep=true;
               ev.sub=(k==='d1101')?'57 contas · 2 a corrigir antes de transmitir':(EV_META[k].name+' importado · pronto para conferir'); }
           });
+          // A planilha traz o balancete → a base apurada (estimada) já existe antes de transmitir (mesmo shape do MAG).
+          if(emp==='s2u'){
+            M.ev.d1101.valLbl='Base apurada (estimada)'; M.ev.d1101.val='R$ 6.420.000,00';
+            M.total=M.total||{}; M.total.base='R$ 6.420.000,00'; M.total.baseFull='R$ 6.420.000,00';
+            M.total.codtrib=[{cod:'110112003', desc:'Valores recebidos em operações de TVM', base:'R$ 6.420.000,00'}];
+          }
           renderPanels(); navTo(tab, false);
         }, 520);
       }, 760);
@@ -1394,10 +1408,13 @@
         }).join('');
     }
     if(isHub){
+      // Cabeçalho canônico do nível empresa (igual à Info do Contribuinte e ao Plano):
+      // título + tag do evento + frase em .page-h__desc. A faixa .hdrmeta é só das abas de evento.
       bcTail.innerHTML='<span>'+esc(CO.nome)+'</span>';
       title.textContent='Movimentações Mensais';
-      badge.innerHTML='';
-      meta_.innerHTML='<span class="hdrmeta__fact">'+ICO.calendar+esc(MESES[perIdx].txt)+'</span><span class="hdrmeta__fact">os eventos do mês, o que cada um apura e o fechamento da competência</span>';
+      badge.innerHTML='<span class="tag">D-1199</span>';
+      document.getElementById('pageSub').textContent='Acompanhe os eventos da competência e o fechamento do mês.';
+      meta_.innerHTML='';
       setBar('');
     } else {
       var evKey=SLUG2EV[slug], meta=EV_META[evKey], e=M.ev[evKey];
@@ -1405,6 +1422,7 @@
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg><span>'+esc(meta.name)+'</span>';
       title.textContent=meta.name;
       badge.innerHTML='<span class="tag">'+meta.code+'</span>';   // só o código ao lado do título
+      document.getElementById('pageSub').textContent='';          // a frase do hub não aparece no evento (lá a faixa .hdrmeta assume)
       // faixa: status + fatos-chave inline (padrão da Info do Contribuinte). Vazio (nada importado) NÃO é "Em preparação": sem pill.
       var isEmpty=(e.st==='pendente' && !e.prep);
       meta_.innerHTML=(isEmpty?'':pill(e.st))+factsFrom(e.sub);
