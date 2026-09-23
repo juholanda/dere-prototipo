@@ -888,28 +888,29 @@
   /* Faixa "situação do mês": estágio + checkpoints + o que falta + ação. Estados: não iniciado · em preparação · pronto · fechado. */
   /* Faixa do fechamento (layout: estágio · prazo / divisória / checkpoints · ação). */
   function fechBand(M, applicable, s, listaView){
-    var stageTxt, stageSub, action, mod='';
+    // Subtítulo = o CONTADOR (pedido da PO 23/set): "X de Y concluídos · quantos faltam".
+    // A linha "Em preparação · X de Y" e o texto explicativo do recibo saíram (o contador diz tudo).
+    var stageSub, action, mod='';
     if(s.closed){
-      stageTxt='Competência fechada'; mod=' fechinner--closed';
-      stageSub='O balancete e os eventos do mês, e o fechamento da competência (D-1199).';
+      mod=' fechinner--closed';
+      stageSub='Competência fechada · todos os eventos do mês com recibo.';
       action='<button class="btn btn--ghost" type="button" data-reabrir title="Confirmação de reabertura (D-1198)">'+ICO.lock+'Reabrir</button>'+
              '<a class="btn btn--secondary" href="movimentacoes-extrato.html?emp='+emp+'&per='+M.per+'">'+ICO.receipt+'Ver extrato (D-9199)</a>';
     } else if(!s.started){
-      stageTxt='Nada preparado ainda neste mês';
-      stageSub='Comece pelo balancete (D-1101); depois os eventos condicionais e o fechamento (D-1199).';
+      stageSub='Nada preparado ainda neste mês. Comece pelo balancete (D-1101).';
       var fs=EV_META[applicable[0]].slug, fk=applicable[0];
       action='<a class="btn btn--primary" href="?emp='+emp+'&per='+M.per+'&ev='+fs+'" data-tab="'+fs+'" data-importar data-ev="'+fk+'">'+ICO.upload+'Importar balancete</a>';
     } else {
       mod=s.ready?' fechinner--ready':'';
-      stageTxt=s.ready?'Pronto para fechar':('Em preparação · '+s.comRecibo+' de '+applicable.length+' concluídos');
-      stageSub='O fechamento (D-1199) só é aceito quando todos os eventos exigidos têm recibo.';
+      var faltam=applicable.length-s.comRecibo;
+      stageSub=s.ready
+        ? (applicable.length+' de '+applicable.length+' concluídos · pronto para fechar.')
+        : (s.comRecibo+' de '+applicable.length+' concluídos · '+(faltam===1?'falta 1 evento':'faltam '+faltam+' eventos')+' com recibo para fechar.');
       action='<button class="btn btn--primary" type="button"'+(s.ready?' data-fechar':' aria-disabled="true" aria-describedby="fechHint" data-blocked="1"')+'>'+ICO.lock+'Fechar competência</button>';
     }
     var readyHint=(!s.closed && s.started && !s.ready)?'<span id="fechHint" class="sr-only">O fechamento fica disponível quando todos os eventos tiverem recibo.</span>':'';
-    // layout (pedido da PO 23/set): a AÇÃO fica na linha do título ("Fechamento do mês" à esq., botão à dir.);
-    // o prazo SAIU do card — virou o banner .dalert--warning no topo (abaixo do card da empresa), igual à lista.
+    // layout: ação na linha do título ("Fechamento do mês" à esq., botão à dir.); prazo é o banner no topo.
     var inner='<div class="fechinner'+mod+'">'+
-      '<div class="fechrow"><p class="fechstage">'+stageTxt+'</p></div>'+
       (listaView||'')+readyHint+'</div>';
     return cardSection('Fechamento do mês', stageSub, inner, {divider:true, aside:'<div class="fechrow__act">'+action+'</div>'});
   }
