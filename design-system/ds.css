@@ -407,6 +407,14 @@ textarea.input--compact{min-height:64px}   /* editores inline (linha de conta, t
 
 /* Card */
 .card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-2xl);box-shadow:var(--shadow-sm)}
+/* Cabeçalho de card — título, hint e ferramentas são IGUAIS em toda tela e moram AQUI (fonte única).
+   NUNCA redeclarar .card__h h2 / .card__hint / .card__h-tools no <style> local de uma página: a base
+   h1..h6{font-weight:600!important} do ds captura títulos sem !important e o peso diverge (o título fica 600 em vez de 700).
+   A página só define, no .card__h, o espaçamento/divisória do contexto (banda com divisória vs. topo de lista). */
+.card__h{display:flex;align-items:center;gap:var(--space-3)}
+.card__h h2{font-size:var(--text-xl)!important;font-weight:700!important;margin:0;color:var(--color-heading)}
+.card__hint{font-size:var(--text-sm);color:var(--color-text-muted);margin:var(--space-2) 0 0}
+.card__h-tools{display:flex;align-items:center;gap:var(--space-3);flex-wrap:wrap;justify-content:flex-end;margin-left:auto}
 /* Corpo com respiro para cards de conteúdo/formulário (o .card puro é sem padding de propósito) */
 .card__body{padding:var(--space-6)}
 .card__body + .card__body{border-top:1px solid var(--color-border)}
