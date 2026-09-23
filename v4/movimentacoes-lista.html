@@ -146,7 +146,7 @@
 </script>
   <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
   <div class="shell">
-    <nav class="sidenav sidenav--navy" data-sidenav aria-label="Navegação principal">
+    <nav class="sidenav sidenav--navy" data-sidenav aria-label="Navegação principal"><script>try{if(localStorage.getItem('adere.nav.collapsed')==='1'){var _n=document.querySelector('[data-sidenav]');if(_n)_n.classList.add('is-collapsed');}}catch(e){}</script>
       <div class="brandrow"><span class="avatar">a</span><span class="sidenav__label wm">a-DeRE</span></div>
       <div class="navlist">
         <p class="sidenav__group">Principal</p>
@@ -377,7 +377,7 @@
   document.getElementById('q').addEventListener('input',function(){ query=this.value; renderRows(); });
 
   document.querySelectorAll('[data-menu]').forEach(function(m){ var b=m.querySelector('button'), p=m.querySelector('.menu__panel'); if(!b||!p)return; b.addEventListener('click',function(){ if(p.hasAttribute('hidden')){p.removeAttribute('hidden');b.setAttribute('aria-expanded','true');}else{p.setAttribute('hidden','');b.setAttribute('aria-expanded','false');} }); document.addEventListener('click',function(ev){ if(!m.contains(ev.target)){p.setAttribute('hidden','');b.setAttribute('aria-expanded','false');} }); });
-  document.querySelectorAll('[data-sidenav-toggle]').forEach(function(btn){ var nav=btn.closest('[data-sidenav]'); btn.addEventListener('click',function(){ var c=nav.classList.toggle('is-collapsed'); btn.setAttribute('aria-expanded',String(!c)); }); });
+  document.querySelectorAll('[data-sidenav-toggle]').forEach(function(btn){ var nav=btn.closest('[data-sidenav]'); btn.addEventListener('click',function(){ var c=nav.classList.toggle('is-collapsed'); try{localStorage.setItem('adere.nav.collapsed',c?'1':'0');}catch(e){} btn.setAttribute('aria-expanded',String(!c)); }); });
   </script>
 </body>
 </html>
