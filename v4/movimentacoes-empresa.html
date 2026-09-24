@@ -931,10 +931,26 @@
       action='<button class="btn btn--primary" type="button"'+(s.ready?' data-fechar':' aria-disabled="true" aria-describedby="fechHint" data-blocked="1"')+'>'+ICO.lock+'Fechar competência</button>';
     }
     var readyHint=(!s.closed && s.started && !s.ready)?'<span id="fechHint" class="sr-only">O fechamento fica disponível quando todos os eventos tiverem recibo.</span>':'';
-    // layout: ação na linha do título ("Fechamento do mês" à esq., botão à dir.); prazo é o banner no topo.
-    var inner='<div class="fechinner'+mod+'">'+
-      (listaView||'')+readyHint+'</div>';
-    return cardSection('Fechamento do mês', stageSub, inner, {divider:true, aside:'<div class="fechrow__act">'+action+'</div>'});
+    // BLOCO SÓ DO FECHAMENTO acima dos eventos (a PO): situação + contador + AÇÃO (Fechar/Reabrir) +
+    // recibo/protocolo. Os eventos ficam num card próprio embaixo. (O pill saiu do cabeçalho da página.)
+    var _ms=s.closed?['status--success','Fechada']
+          : s.fproc?['status--info','Em processamento']
+          : s.started?['status--neutral','Em preparação']
+          : ['status--idle','Não iniciada'];
+    var _mk=s.closed
+      ? '<svg class="status__check" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>'
+      : '<span class="status__dot"></span>';
+    var statusRow='<div class="hdrmeta" style="margin-top:0"><span class="hdrmeta__fact"><span class="hmk">Situação do fechamento</span><span class="status status--sm '+_ms[0]+'">'+_mk+_ms[1]+'</span></span>';
+    if(s.closed){ var _rn=rec31(1199,M.per,1);
+      statusRow+='<span class="hdrmeta__fact">'+ICO.receipt+'<span class="hmk">Recibo</span><span class="hdr-recibo__n">'+esc(_rn.slice(0,10)+'…'+_rn.slice(-4))+'</span>'+
+        '<button class="icon-btn" type="button" data-copy-recibo="'+esc(_rn)+'" aria-label="Copiar número do recibo do fechamento" title="Copiar recibo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg></button></span>';
+    } else if(s.fproc){ var _pn=prot28(M.per,1);
+      statusRow+='<span class="hdrmeta__fact">'+ICO.receipt+'<span class="hmk">Protocolo</span><span class="hdr-recibo__n">'+esc(_pn.slice(0,10)+'…'+_pn.slice(-4))+'</span></span>';
+    }
+    statusRow+=readyHint+'</div>';
+    var fechCard=cardSection('Fechamento do mês', stageSub, statusRow, {divider:true, aside:'<div class="fechrow__act">'+action+'</div>'});
+    var evCard=cardSection('Eventos da competência', 'Cada evento é transmitido separadamente; o fechamento (D-1199) exige recibo em todos os exigidos.', '<div class="fechinner'+mod+'">'+(listaView||'')+'</div>', {divider:true});
+    return fechCard+evCard;
   }
   /* EVENTOS EM CARDS: mesma navegação da lista, em cards (para comparar list × cards). Cada card leva à página do evento. */
   function eventCards(M){
@@ -1603,23 +1619,8 @@
       title.textContent='Movimentações Mensais';
       badge.innerHTML='<span class="tag">D-1199</span>';
       document.getElementById('pageSub').textContent='Acompanhe os eventos da competência e o fechamento do mês.';
-      // STATUS DO FECHAMENTO no cabeçalho da competência (mesmo vocabulário da coluna "Situação" da lista);
-      // fechada → também o recibo do D-1199 (truncado + copiar), como nos eventos.
-      var _app=ORDER.filter(function(k){ return M.ev[k].st!=='na'; });
-      var _started=_app.some(function(k){ return M.ev[k].st!=='pendente' || M.ev[k].prep; });
-      var _ms=(M.fech==='fechado')?['status--success','Fechada']
-            : M.fechProc?['status--info','Em processamento']
-            : _started?['status--neutral','Em preparação']
-            : ['status--idle','Não iniciada'];
-      var _mk=(M.fech==='fechado')
-        ? '<svg class="status__check" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>'
-        : '<span class="status__dot"></span>';
-      // rótulo explícito (a PO: sem ele não fica claro que o status é DO FECHAMENTO); mesmo nome da coluna da lista
-      var _hub='<span class="hdrmeta__fact"><span class="hmk">Situação do fechamento</span><span class="status status--sm '+_ms[0]+'">'+_mk+_ms[1]+'</span></span>';
-      if(M.fech==='fechado'){ var _rn=rec31(1199,M.per,1);
-        _hub+='<span class="hdrmeta__fact">'+ICO.receipt+'<span class="hmk">Recibo do fechamento</span><span class="hdr-recibo__n">'+esc(_rn.slice(0,10)+'…'+_rn.slice(-4))+'</span>'+
-          '<button class="icon-btn" type="button" data-copy-recibo="'+esc(_rn)+'" aria-label="Copiar número do recibo do fechamento" title="Copiar recibo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg></button></span>'; }
-      meta_.innerHTML=_hub;
+      // O status do fechamento tem BLOCO PRÓPRIO no corpo (card "Fechamento do mês"); o cabeçalho fica só título+descrição.
+      meta_.innerHTML='';
       setBar('');
     } else {
       var evKey=SLUG2EV[slug], meta=EV_META[evKey], e=M.ev[evKey];
