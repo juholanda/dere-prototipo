@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Movimentações Mensais · MAG Seguros</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=0611fc68">
+  <link rel="stylesheet" href="../design-system/ds.css?v=5c9fe065">
   <script src="../design-system/ds-tailwind.js"></script>
   <style>
     /* ===== app-shell ===== */
@@ -142,6 +142,9 @@
     .fechrow{display:flex;align-items:center;justify-content:space-between;gap:var(--space-3) var(--space-4);flex-wrap:wrap;margin-bottom:var(--space-6)}
     .fechrow__act{display:flex;gap:var(--space-2);flex:0 0 auto;flex-wrap:wrap;margin-left:auto}
     .evna{font-size:var(--text-sm);color:var(--color-text-muted)} /* "Não se aplica" é texto apagado, não pill (a PO: status de verdade é só o do vocabulário) */
+    /* linha de evento é clicável (abre a aba): mãozinha + hover, igual às listas */
+    .evtbl tbody tr[data-tab]{cursor:pointer}
+    .evtbl tbody tr[data-tab]:hover{background:var(--color-primary-subtle)}
     .subwarn{display:inline-flex;align-items:center;gap:var(--space-1);color:var(--color-warning-fg);font-weight:600}
     .subwarn svg{width:13px;height:13px;flex:0 0 auto}
     /* barra de demonstração (mesmo padrão da Info do Contribuinte) */

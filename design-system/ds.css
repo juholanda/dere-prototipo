@@ -229,7 +229,7 @@ a{color:var(--color-primary);text-decoration:none}
 @media (prefers-reduced-motion:reduce){.btn.is-loading::after{animation:none}}
 
 /* Botão de ícone (só ícone) — regra do DS: SEMPRE com aria-label + tooltip */
-.icon-btn{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;
+.icon-btn{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;cursor:pointer;
   width:var(--control-h);height:var(--control-h);padding:0;border:1px solid transparent;
   border-radius:var(--radius-base);background:transparent;color:var(--color-text-muted);cursor:pointer;
   transition:background-color .12s,color .12s,box-shadow .12s}
