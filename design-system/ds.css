@@ -1396,7 +1396,7 @@ body.has-decisionbar .content{scroll-padding-bottom:96px}
 
 /* Checklist de carregamento (popup de processamento: import do PGCC, import da movimentação…).
    Passo concluído = check verde + negrito; ativo = spinner azul; pendente = ponto vazado.
-   Fonte única — NUNCA redeclarar .ldstep*/.ldspin/.ldproc* no <style> local (guard: tooling/check-ds.js). */
+   Fonte única — NUNCA redeclarar .ldstep* / .ldspin / .ldproc* no <style> local (guard: tooling/check-ds.js). */
 .ldsteps{display:flex;flex-direction:column;gap:var(--space-1);background:var(--color-surface-2);border-radius:var(--radius-xl);padding:var(--space-4) var(--space-6)}
 .ldstep{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-2) 0;font-size:var(--text-sm);color:var(--color-text-onmuted)}
 .ldstep__ic{width:22px;height:22px;flex:0 0 auto;display:grid;place-items:center;color:var(--color-text-muted)}
