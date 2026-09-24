@@ -275,9 +275,12 @@
     {id:'sic', nome:'Sicoob Seguradora', cnpj:'26.314.512/0001-16', regime:'Serviços Financeiros', sit:'pendente',
       ev:{d1101:'ok',d1106:'ok',d1121:'na',d2101:'na',d1199:'prep'}, ibs:153000, cbs:102000, is:0,
       recibo:'', reciboData:'', ocorr:null},
-    {id:'cap', nome:'MAG Capitalização', cnpj:'52.780.551/0001-19', regime:'Serviços Financeiros', sit:'rejeitada',
-      ev:{d1101:'ok',d1106:'ok',d1121:'na',d2101:'na',d1199:'rej'}, ibs:15640, cbs:40760, is:0,
-      recibo:'', reciboData:'11/10/2026 18:03', ocorr:{n:2,t:'err'}},
+    /* caminho feliz (a PO tirou os estados de erro da demo): cap = mês ainda não iniciado,
+       coerente com o detalhe (EMPEV.cap = nada importado). O rejeitado volta quando formos
+       desenhar os casos de erro (spec dos revisores já pronta). */
+    {id:'cap', nome:'MAG Capitalização', cnpj:'52.780.551/0001-19', regime:'Serviços Financeiros', sit:'naoiniciada',
+      ev:{d1101:'none',d1106:'none',d1121:'na',d2101:'na',d1199:'na'}, ibs:null, cbs:null, is:null,
+      recibo:'', reciboData:'', ocorr:null},
     {id:'s2u', nome:'Simple2u', cnpj:'40.997.879/0001-02', regime:'Serviços Financeiros', sit:'naoiniciada',
       ev:{d1101:'none',d1106:'none',d1121:'none',d2101:'none',d1199:'na'}, ibs:null, cbs:null, is:null,
       recibo:'', reciboData:'', ocorr:null}

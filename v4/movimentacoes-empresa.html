@@ -609,7 +609,7 @@
     { per:'2026-09', txt:'setembro 2026', cur:true, prazo:'15/10/2026',
       total:{ base:'R$ 4,25 mi', baseFull:'R$ 4.250.000,00', ibs:'R$ 210.000,00', ibsUF:'R$ 126.000,00', ibsMun:'R$ 84.000,00', cbs:'R$ 141.000,00', is:'—', bcn:'R$ 0,00', codtrib:CT_SEG['2026-09'] }, fech:'bloqueado',
       ev:{
-        d1101:{st:'pendente', prep:true, sub:'Obrigatório todo mês · 57 contas · 2 a corrigir antes de transmitir', valLbl:'Base apurada (estimada)', val:'R$ 4.250.000,00'},
+        d1101:{st:'pendente', prep:true, sub:'Obrigatório todo mês · 57 contas analíticas', valLbl:'Base apurada (estimada)', val:'R$ 4.250.000,00'},
         d1106:{st:'recibo',   sub:'Condicional (seguradora) · 12 ativos de reserva técnica', valLbl:'Base (vApur)', val:'R$ 102.000,00'},
         d1121:{st:'protocolo',sub:'Condicional · 8 documentos · aguardando recibo', valLbl:'Deduzido no mês', val:'R$ 117.000,00'},
         d2101:{st:'na',       sub:'Sem codTrib de títulos no PGCC deste contribuinte', valLbl:'', val:'—'}
@@ -674,8 +674,7 @@
           {cCta:'4.1.01.001',desc:'Sinistros retidos',ini:'D 96.000,00',deb:'128.900,00',cred:'0,00',aj:'D 2.900,00',fim:'D 224.900,00',vApur:'D 126.000,00'},
           {cCta:'4.2.01.003',desc:'Despesas de comercialização',ini:'D 51.000,00',deb:'74.300,00',cred:'0,00',fim:'D 125.300,00',vApur:'D 74.300,00'},
           {cCta:'4.4.09.010',desc:'Outras despesas administrativas',ini:'D 33.500,00',deb:'41.750,00',cred:'0,00',fim:'D 75.250,00',vApur:'D 41.750,00'},
-          {cCta:'4.9.99.999',desc:'Conta a classificar',ini:'D 0,00',deb:'100,00',cred:'0,00',fim:'D 100,00',vApur:'D 100,00',vst:'pgcc',msg:'A conta não existe no plano de contas (PGCC) vigente desta competência, então a a-DeRE não sabe a que tributo ela pertence.'},
-          {cCta:'4.4.09.011',desc:'Provisões diversas',ini:'D 12.000,00',deb:'8.000,00',cred:'0,00',fim:'D 22.000,00',vApur:'D 8.000,00',vst:'saldo',msg:'O saldo final informado (D 22.000,00) não bate com o saldo inicial mais o movimento do mês (12.000 + 8.000 = 20.000,00).'}
+          {cCta:'4.4.09.011',desc:'Provisões diversas',ini:'D 12.000,00',deb:'8.000,00',cred:'0,00',fim:'D 20.000,00',vApur:'D 8.000,00'}
         ]},
       d1106:{ subtotal:'R$ 102 mil', count:'12 ativos', contas:[
           {cCta:'1.1.01.01',desc:'Reserva técnica · Títulos públicos',subtotal:'R$ 59.800,00',ativos:[
