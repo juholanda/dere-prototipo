@@ -20,6 +20,11 @@
     .col{flex:1;display:flex;flex-direction:column;min-width:0;min-height:0}
     .topbar{height:64px;flex:0 0 auto;background:var(--color-surface);border-bottom:1px solid var(--color-border);display:flex;align-items:center;gap:var(--space-4);padding:0 var(--space-6)}
     .content{flex:1;overflow:auto;min-height:0;background:var(--slate-100);scrollbar-gutter:stable}
+    /* barra de ação SEMPRE no rodapé da janela: o conteúdo vira coluna flex e a barra é empurrada
+       pro fim — sem isto, com conteúdo curto (ex.: aba Versões) a barra sticky ficava no meio da tela */
+    .content{display:flex;flex-direction:column}
+    .content > *{flex:0 0 auto}
+    #decisionbar{margin-top:auto}
     :root[data-theme="dark"] .content{background:var(--color-bg)}
     .wrap{padding:var(--space-8) var(--space-10);max-width:1600px;width:100%;margin:0 auto;box-sizing:border-box;container-type:inline-size}
     .bc{display:flex;align-items:center;gap:var(--space-2);font-size:var(--text-sm);min-width:0;overflow:hidden}
@@ -1183,19 +1188,27 @@
   /* Tem envio (comprovante/versões) quando a PRÓPRIA situação do evento implica uma transmissão:
      recibo/advertência/em processamento/rejeitado. "A preparar" (pendente) e "Não se aplica" (na) não têm. */
   function hasEnvio(evKey, M){ var st=M.ev[evKey].st; return st==='recibo'||st==='advertencia'||st==='protocolo'||st==='rejeitado'; }
-  /* versoesInner: lista de versões (atual em destaque + anteriores) para o MODAL. Nunca misturada com o conteúdo. */
+  /* versoesInner: versões separadas por PAPEL, como nas outras telas (Info/Plano):
+     Versão vigente (aceita pela Receita; estado vazio explícito quando não há) · Em preparação · Anteriores. */
   function versoesInner(evKey, M){
     var v=VERS[M.per][evKey]||{atual:[],prep:[],ant:[]};
     var allv=v.atual.concat(v.prep, v.ant);
-    if(!allv.length) return '<div class="versec__empty">'+ICO.info+'<span>Nenhuma versão nesta competência.</span></div>';
-    var cur=allv[0], prev=allv.slice(1);
-    var curBlock='<div class="dtblock"><h3 class="dtsub">Versão atual</h3>'+
-      '<p class="dtsub__x">A versão que está valendo nesta competência: a que já foi aceita pela Receita ou a que será transmitida.</p>'+
-      '<div class="verlist">'+verrow(cur, true, {evKey:evKey})+'</div></div>';
-    var prevBlock=prev.length?'<div class="dtblock"><h3 class="dtsub">Versões anteriores</h3>'+
+    var vig=allv.filter(function(x){return x.sit==='recibo'||x.sit==='advertencia';});
+    var emprep=allv.filter(function(x){return x.sit==='pendente'||x.sit==='protocolo'||x.sit==='rejeitado';});
+    var ant=allv.filter(function(x){return x.sit==='substituida';});
+    var vigBlock='<div class="dtblock"><h3 class="dtsub">Versão vigente</h3>'+
+      (vig.length
+        ? '<p class="dtsub__x">A versão aceita pela Receita, valendo nesta competência.</p><div class="verlist">'+verrow(vig[0], true, {evKey:evKey})+'</div>'
+        : '<p class="dtsub__x">A versão passa a valer quando a Receita a aceita e devolve o recibo.</p>'+
+          '<div class="versec__empty">'+ICO.info+'<span>Nenhuma versão vigente ainda nesta competência.</span></div>')+
+      '</div>';
+    var prepBlock=emprep.length?'<div class="dtblock"><h3 class="dtsub">Em preparação</h3>'+
+      '<p class="dtsub__x">A versão sendo trabalhada ou aguardando o processamento da Receita.</p>'+
+      '<div class="verlist">'+emprep.map(function(x){return verrow(x, !vig.length, {evKey:evKey});}).join('')+'</div></div>':'';
+    var prevBlock=ant.length?'<div class="dtblock"><h3 class="dtsub">Versões anteriores</h3>'+
       '<p class="dtsub__x">Substituídas por uma versão mais nova. Ficam registradas para histórico; a seta abre o comprovante de cada uma.</p>'+
-      '<div class="verlist">'+prev.map(function(x){return verrow(x, false, {evKey:evKey});}).join('')+'</div></div>':'';
-    return curBlock+prevBlock;
+      '<div class="verlist">'+ant.map(function(x){return verrow(x, false, {evKey:evKey});}).join('')+'</div></div>':'';
+    return vigBlock+prepBlock+prevBlock;
   }
   /* Motivo que impede transmitir o evento (gate); null = liberado. Hoje só o balancete tem trava (contas a corrigir). */
   function evBlocker(evKey, M){
@@ -1214,15 +1227,14 @@
     // nada importado ainda → o estado vazio já traz o "Importar"; a barra fixa não aparece.
     if(e.st==='pendente' && !e.prep) return '';
     var back='', primary='';
-    if(hasEnvio(evKey,M)){
-      back='<button class="btn btn--ghost btn--lg decisionbar__back" type="button" data-comprovante data-ev="'+evKey+'">'+ICO.receipt+'Ver comprovante</button>';
-    }
+    // "Ver comprovante" fica AO LADO do Alterar, à direita (a PO: a esquerda é convenção de cancelar/voltar).
+    var comp=hasEnvio(evKey,M)?'<button class="btn btn--secondary btn--lg" type="button" data-comprovante data-ev="'+evKey+'">'+ICO.receipt+'Ver comprovante</button>':'';
     if(e.st==='rejeitado'){
-      primary='<button class="btn btn--primary btn--lg" type="button" data-alterar data-ev="'+evKey+'">'+ICO.upload+'Corrigir e reenviar</button>';
+      primary=comp+'<button class="btn btn--primary btn--lg" type="button" data-alterar data-ev="'+evKey+'">'+ICO.upload+'Corrigir e reenviar</button>';
     } else if(e.st==='protocolo'){
-      primary='<span class="decisionbar__note">'+ICO.clock+'Em processamento na Receita. Aguarde o recibo para alterar.</span>';
+      primary='<span class="decisionbar__note">'+ICO.clock+'Em processamento na Receita. Aguarde o recibo para alterar.</span>'+comp;
     } else if(e.st==='recibo'||e.st==='advertencia'){
-      primary='<button class="btn btn--primary btn--lg" type="button" data-alterar data-ev="'+evKey+'">'+ICO.doc+'Alterar</button>';
+      primary=comp+'<button class="btn btn--primary btn--lg" type="button" data-alterar data-ev="'+evKey+'">'+ICO.doc+'Alterar</button>';
     } else if(e.st==='pendente'){
       // rascunho já importado → transmitir (travado enquanto houver conta a corrigir).
       back='<button class="btn btn--ghost btn--lg decisionbar__back" type="button" data-importar data-ev="'+evKey+'">'+ICO.upload+'Importar novamente</button>';
@@ -1260,12 +1272,12 @@
     var tabic=function(ic){ return '<span style="display:inline-flex;width:16px;height:16px" aria-hidden="true">'+ic+'</span>'; };
     // Balancete já traz seus próprios subtítulos (Contas a corrigir · Todas as contas); os outros levam o chint como subtítulo.
     var contentHead=(evKey==='d1101')?'':'<p class="sec__hint" style="margin:0 0 var(--space-4)">'+chint+'</p>';
-    var pConteudo='<div class="subpanel" id="sub-conteudo-'+evKey+'" role="tabpanel" tabindex="0" aria-label="Conteúdo">'+
+    var pConteudo='<div class="subpanel" id="sub-conteudo-'+evKey+'" role="tabpanel" tabindex="0" aria-label="Dados do mês">'+
       (alert?'<div style="margin-bottom:var(--space-4)">'+alert+'</div>':'')+
       '<article class="card"><div class="card__body">'+contentHead+content+'</div></article></div>';
     var pVersoes='<div class="subpanel" id="sub-versoes-'+evKey+'" role="tabpanel" tabindex="0" aria-label="Versões" hidden><article class="card"><div class="card__body">'+versoesInner(evKey,M)+'</div></article></div>';
     var subtabs='<div class="tabs" role="tablist" aria-label="Seções de '+esc(meta.name)+'">'+
-      '<button class="tab is-active" type="button" role="tab" data-subtab="conteudo" data-ev="'+evKey+'" aria-selected="true">'+tabic(ICO.doc)+'Conteúdo</button>'+
+      '<button class="tab is-active" type="button" role="tab" data-subtab="conteudo" data-ev="'+evKey+'" aria-selected="true">'+tabic(ICO.doc)+'Dados do mês</button>'+
       '<button class="tab" type="button" role="tab" data-subtab="versoes" data-ev="'+evKey+'" aria-selected="false">'+tabic(ICO.clock)+'Versões</button>'+
       '</div>';
     return '<section class="sec" style="margin-top:0">'+subtabs+'<div class="subpanels">'+pConteudo+pVersoes+'</div></section>';
@@ -1302,8 +1314,9 @@
         M.ev[k].sub=d.sub+' · pronto para transmitir'; M.ev[k].valLbl=d.valLbl; M.ev[k].val=d.val; });
       M.total=M.total||{}; M.total.base=S2U_TOT.base; M.total.baseFull=S2U_TOT.base;
       M.total.codtrib=[{cod:'110112003', desc:'Valores recebidos em operações de TVM', base:S2U_TOT.base}];
-      // o VERS default conta a história do MAG — a jornada do s2u começa com o histórico zerado
-      VERS[M.per]={d1101:{atual:[],prep:[],ant:[]},d1106:{atual:[],prep:[],ant:[]},d1121:{atual:[],prep:[],ant:[]},d2101:{atual:[],prep:[],ant:[]}};
+      // o VERS default conta a história do MAG — a jornada do s2u começa com a Versão 1 EM PREPARAÇÃO em cada evento
+      var mkPrep=function(){ return {atual:[], prep:[{n:1,titulo:'Versão 1',sit:'pendente',transm:'—',proc:'—',protocolo:'',recibo:''}], ant:[]}; };
+      VERS[M.per]={d1101:mkPrep(),d1106:mkPrep(),d1121:mkPrep(),d2101:mkPrep()};
     }
   }
   /* Aplica ao mês o estado de transmissão de UM evento (protocolo ou recibo) + a entrada no histórico de versões. */
@@ -1562,9 +1575,19 @@
       title.textContent=meta.name;
       badge.innerHTML='<span class="tag">'+meta.code+'</span>';   // só o código ao lado do título
       document.getElementById('pageSub').textContent='';          // a frase do hub não aparece no evento (lá a faixa .hdrmeta assume)
-      // faixa: SÓ fatos-chave (a PO 23/set: sem o pill "Em preparação" no cabeçalho do evento —
-      // a situação já está na lista de eventos do hub e no conteúdo/decisionbar).
-      meta_.innerHTML=factsFrom(e.sub);
+      // faixa: pill SÓ para estados de TRANSMISSÃO (a PO: "Em preparação" não aparece no cabeçalho,
+      // mas Em processamento / Processado com sucesso / Rejeitada aparecem, como nos outros detalhes).
+      // E, transmitido, a faixa traz os MESMOS fatos da Info: tipo de operação + recibo (ou protocolo).
+      var extra='';
+      if(hasEnvio(evKey,M)){
+        var vv=VERS[per] && VERS[per][evKey] || {atual:[],prep:[],ant:[]};
+        var a0=(vv.atual||[]).concat(vv.prep||[],vv.ant||[])[0];
+        var tipo=(a0 && /Retifica/i.test(a0.titulo||''))?'Retificação':'Inclusão';
+        extra='<span class="hdrmeta__fact">'+ICO.doc+'Tipo de operação <strong>'+tipo+'</strong></span>';
+        if(a0 && a0.recibo) extra+='<span class="hdrmeta__fact">'+ICO.receipt+'Recibo <strong class="mono">'+esc(a0.recibo)+'</strong></span>';
+        else if(a0 && a0.protocolo) extra+='<span class="hdrmeta__fact">'+ICO.receipt+'Protocolo <strong class="mono">'+esc(a0.protocolo)+'</strong></span>';
+      }
+      meta_.innerHTML=(hasEnvio(evKey,M)?pill(e.st):'')+factsFrom(e.sub)+extra;
       setBar(evActions(evKey, M));                               // ações vão pra barra fixa (.decisionbar), não pro cabeçalho
     }
     dn.innerHTML='';
