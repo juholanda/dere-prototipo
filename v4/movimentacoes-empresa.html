@@ -1374,6 +1374,7 @@
     if(VERS[M.per] && VERS[M.per][k]) VERS[M.per][k]= rec.st==='recibo' ? {atual:[entry],prep:[],ant:[]} : {atual:[],prep:[entry],ant:[]};
   }
   function applyFechado(M){ M.fech='fechado'; M.fechProc=false; M.total=M.total||{};
+    if(emp!=='s2u') return; // números do retorno (memória, BCN, recibos) são da jornada do s2u; outras empresas mantêm os próprios totais
     M.total.cbs=S2U_TOT.cbs; M.total.ibs=S2U_TOT.ibs; M.total.is='—'; M.total.bcn='R$ 0,00';
     M.total.ibsUF='R$ 3.112,50'; M.total.ibsMun='R$ 3.112,50'; M.total.seq='00';
     M.total.memoria='Receitas de serviços financeiros (operações de TVM) R$ 6.000.000,00 + aplicações financeiras R$ 102.000,00 + juros de títulos com oferta pública (limitados à variação da Selic) R$ 240.000,00 − deduções utilizadas (D-1121) R$ 117.000,00 = base de cálculo R$ 6.225.000,00. CBS: R$ 6.225.000,00 × 0,9% = R$ 56.025,00. IBS: R$ 6.225.000,00 × 0,1% = R$ 6.225,00 (metade estadual, metade municipal).';
@@ -1582,8 +1583,8 @@
       return; }
     if(ev.target.id==='confirmGo'){
       var p=PENDING; PENDING=null; closeAllModals();
-      // Jornada feliz (s2u): o confirmar EXECUTA (transmite/fecha/reabre) com protocolo → recibo coreografado.
-      if(p && emp==='s2u'){
+      // O confirmar EXECUTA (transmite/fecha/reabre) com protocolo → recibo coreografado — em QUALQUER empresa.
+      if(p){
         if(p.kind==='transmitir' && p.ev) doTransmit(p.ev);
         else if(p.kind==='fechar') doFechar();
         else if(p.kind==='reabrir') doReabrir();
@@ -1755,8 +1756,9 @@
   });
 
   /* ===== init ===== */
-  /* Demo persistida: restaura importação + transmissões + fechamento na carga (jornada sobrevive a reload). */
-  try{ MESES.forEach(function(M){ if(localStorage.getItem('adere.mov.imp.'+emp+'.'+M.per)==='1'){ applyImported(M); applyJourney(M); } }); }catch(e){}
+  /* Demo persistida: restaura importação + transmissões + fechamento na carga (jornada sobrevive a reload).
+     applyJourney roda pra QUALQUER empresa (as chaves tx/fech são por emp+per; sem chave, é no-op). */
+  try{ MESES.forEach(function(M){ if(localStorage.getItem('adere.mov.imp.'+emp+'.'+M.per)==='1') applyImported(M); applyJourney(M); }); }catch(e){}
   syncComp(); renderPanels(); navTo(tab,false);
   history.replaceState({per:MESES[perIdx].per,ev:tab},'','?emp='+emp+'&per='+MESES[perIdx].per+'&ev='+tab);
 
