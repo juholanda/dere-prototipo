@@ -1248,13 +1248,14 @@
       primary=comp+'<button class="btn btn--primary btn--lg" type="button" data-alterar data-ev="'+evKey+'">'+ICO.doc+'Alterar</button>';
     } else if(e.st==='pendente'){
       // rascunho já importado → transmitir (travado enquanto houver conta a corrigir).
-      back='<button class="btn btn--ghost btn--lg decisionbar__back" type="button" data-importar data-ev="'+evKey+'">'+ICO.upload+'Importar novamente</button>';
+      // "Importar novamente" fica AO LADO do Transmitir (a PO: a esquerda é convenção de cancelar/voltar).
+      var reimp='<button class="btn btn--secondary btn--lg" type="button" data-importar data-ev="'+evKey+'">'+ICO.upload+'Importar novamente</button>';
       var blk=evBlocker(evKey,M);
       if(blk){
-        primary='<span class="decisionbar__note decisionbar__note--warn">'+ICO.alert+esc(blk)+'</span>'+
+        primary='<span class="decisionbar__note decisionbar__note--warn">'+ICO.alert+esc(blk)+'</span>'+reimp+
           '<button class="btn btn--primary btn--lg" type="button" disabled aria-disabled="true">'+ICO.send+'Transmitir '+esc(meta.short)+'</button>';
       } else {
-        primary='<button class="btn btn--primary btn--lg" type="button" data-transmitir data-ev="'+evKey+'">'+ICO.send+'Transmitir '+esc(meta.short)+'</button>';
+        primary=reimp+'<button class="btn btn--primary btn--lg" type="button" data-transmitir data-ev="'+evKey+'">'+ICO.send+'Transmitir '+esc(meta.short)+'</button>';
       }
     }
     return back+primary;
