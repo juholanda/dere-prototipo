@@ -89,6 +89,7 @@
     .decisionbar__note--warn{color:var(--color-warning-fg)}
     /* card de seção: título + subtítulo dentro do card (padrão das outras telas) */
     .cardhd{margin-bottom:var(--space-6)}
+    .cardhd--flush{margin-bottom:0} /* card sem corpo (ex.: Fechamento antes do envio): sem margem extra embaixo */
     .cardhd--div{padding-bottom:var(--space-6);border-bottom:1px solid var(--color-border)}
     .cardhd__toprow{display:flex;align-items:center;justify-content:space-between;gap:var(--space-3) var(--space-6);flex-wrap:wrap}
     .cardhd__side{flex:0 0 auto}
@@ -814,7 +815,8 @@
     var titleHtml=opts.aside
       ? '<div class="cardhd__toprow">'+tHtml+'<div class="cardhd__side">'+opts.aside+'</div></div>'
       : tHtml;
-    var head='<div class="cardhd'+(opts.divider?' cardhd--div':'')+'">'+titleHtml+(hint?'<p class="cardhd__x">'+hint+'</p>':'')+'</div>';
+    var noBody=!body||!String(body).replace(/<span[^>]*class="sr-only"[\s\S]*?<\/span>/,'').trim();
+    var head='<div class="cardhd'+(opts.divider?' cardhd--div':'')+(noBody?' cardhd--flush':'')+'">'+titleHtml+(hint?'<p class="cardhd__x">'+hint+'</p>':'')+'</div>';
     return '<section class="sec"><section class="card"><div class="card__body">'+head+body+'</div></section></section>';
   }
   /* Base por codTrib: a base vApur do mês agrupada por código de tributação (= gTotalCodTrib do retorno D-9101).
