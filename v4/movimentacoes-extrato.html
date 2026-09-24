@@ -225,7 +225,7 @@
   var esc=function(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');};
   var q=new URLSearchParams(location.search); var emp=q.get('emp')||'seg', per=q.get('per')||'2026-08';
   var LOGOS={seg:'../Logos/MAG%20seguros.png', fin:'../Logos/mag%20financas.jpeg', cap:'../Logos/mag%20capitalizacoes.jpeg', sic:'../Logos/sicooboficial_logo.jpeg', s2u:'../Logos/logo_simple-2u_j7QQ4s.png'};
-  var CO={ seg:{nome:'MAG Seguros', cnpj:'33.608.308/0001-73'}, sic:{nome:'Sicoob Seguradora', cnpj:'26.314.512/0001-16'}, fin:{nome:'MAG Finanças', cnpj:'21.995.256/0001-56'} }[emp]||{nome:'MAG Seguros', cnpj:'33.608.308/0001-73'};
+  var CO={ seg:{nome:'MAG Seguros', cnpj:'33.608.308/0001-73'}, sic:{nome:'Sicoob Seguradora', cnpj:'26.314.512/0001-16'}, fin:{nome:'MAG Finanças', cnpj:'21.995.256/0001-56'}, s2u:{nome:'Simple2u', cnpj:'40.997.879/0001-02'} }[emp]||{nome:'MAG Seguros', cnpj:'33.608.308/0001-73'};
 
   function rec31(evNum, seq){ var c=per.replace('-',''); return String(evNum).padStart(5,'0')+c+String(seq||1).padStart(20,'0'); }
 

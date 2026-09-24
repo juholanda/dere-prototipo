@@ -627,11 +627,12 @@
       d1106:{st:'pendente', sub:'Condicional (capitalização) · ainda não importado', valLbl:'', val:'—'},
       d1121:{st:'na',       sub:'Sem deduções a utilizar neste período', valLbl:'', val:'—'},
       d2101:{st:'na',       sub:NAtit, valLbl:'', val:'—'} },
-    s2u:{ /* tudo certo no D-1001 e D-1011, mas NADA IMPORTADO no mês → tela de importar (create-opts) */
+    s2u:{ /* JORNADA FELIZ (demo oficial): D-1001 e D-1011 ok, nada importado, os 4 EVENTOS MENSAIS aplicáveis.
+            importar → transmitir cada evento (protocolo → recibo) → fechar (D-1199) → extrato (D-9199). */
       d1101:{st:'pendente', sub:'Obrigatório todo mês · ainda não importado', valLbl:'', val:'—'},
-      d1106:{st:'na',       sub:'Sem reserva técnica no PGCC deste contribuinte', valLbl:'', val:'—'},
-      d1121:{st:'na',       sub:'Sem deduções a utilizar neste período', valLbl:'', val:'—'},
-      d2101:{st:'na',       sub:NAtit, valLbl:'', val:'—'} }
+      d1106:{st:'pendente', sub:'Condicional (aplicações financeiras) · ainda não importado', valLbl:'', val:'—'},
+      d1121:{st:'pendente', sub:'Condicional (deduções) · ainda não importado', valLbl:'', val:'—'},
+      d2101:{st:'pendente', sub:'Condicional (títulos com oferta pública) · ainda não importado', valLbl:'', val:'—'} }
   };
   /* Débito consolidado por contribuinte (bases apuradas → IBS/CBS/IS calculados pela Receita no fechamento). */
   var EMPTOTAL={
@@ -844,7 +845,9 @@
       '<div class="apurhero__txt"><span class="apurhero__lbl">Imposto '+sfx+' no mês (CBS + IBS + IS)</span>'+
       '<span class="apurhero__sub">é o imposto que este mês declara à Receita no fechamento. O valor a pagar, já descontados seus créditos, sai depois na apuração da Receita.</span></div>'+
       '<span class="apurhero__val">'+totalStr+'</span>'+
-      (closed?'<a class="btn btn--secondary btn--sm apurhero__act" href="movimentacoes-extrato.html?emp='+emp+'&per='+M.per+'"><span class="rowchev" aria-hidden="true">'+ICO.receipt+'</span>Ver extrato (D-9199)</a>':'')+'</div>';
+      (closed?(emp==='s2u'
+        ?'<button class="btn btn--secondary btn--sm apurhero__act" type="button" data-extrato><span class="rowchev" aria-hidden="true">'+ICO.receipt+'</span>Ver extrato (D-9199)</button>'
+        :'<a class="btn btn--secondary btn--sm apurhero__act" href="movimentacoes-extrato.html?emp='+emp+'&per='+M.per+'"><span class="rowchev" aria-hidden="true">'+ICO.receipt+'</span>Ver extrato (D-9199)</a>'):'')+'</div>';
     return cardSection('Apuração do mês', hint, hero+tiles+codtribBlock(M, est), {divider:true});
   }
 
@@ -897,7 +900,12 @@
       mod=' fechinner--closed';
       stageSub='Competência fechada · todos os eventos do mês com recibo.';
       action='<button class="btn btn--ghost" type="button" data-reabrir title="Confirmação de reabertura (D-1198)">'+ICO.lock+'Reabrir</button>'+
-             '<a class="btn btn--secondary" href="movimentacoes-extrato.html?emp='+emp+'&per='+M.per+'">'+ICO.receipt+'Ver extrato (D-9199)</a>';
+             (emp==='s2u'
+               ? '<button class="btn btn--secondary" type="button" data-extrato>'+ICO.receipt+'Ver extrato (D-9199)</button>'
+               : '<a class="btn btn--secondary" href="movimentacoes-extrato.html?emp='+emp+'&per='+M.per+'">'+ICO.receipt+'Ver extrato (D-9199)</a>');
+    } else if(s.fproc){
+      stageSub='Fechamento (D-1199) transmitido · aguardando o recibo da Receita.';
+      action='<button class="btn btn--primary" type="button" disabled>'+ICO.lock+'Aguardando recibo</button>';
     } else if(!s.started){
       stageSub='Nada preparado ainda neste mês. Comece pelo balancete (D-1101).';
       var fs=EV_META[applicable[0]].slug, fk=applicable[0];
@@ -986,7 +994,7 @@
     var listaView='<div class="table-wrap"><table class="table evtbl"><thead><tr><th scope="col">Evento</th><th scope="col">Situação</th><th scope="col" class="evcol-num">Base apurada</th><th scope="col" class="evcol-act"><span class="sr-only">Abrir</span></th></tr></thead><tbody>'+rows+'</tbody></table></div>';
 
     // A lista de eventos mora DENTRO do card de Fechamento (no lugar dos antigos checkpoints); não há mais um card "Eventos da competência" repetido embaixo.
-    var band=fechBand(M, applicable, {closed:closed, started:started, ready:ready, comRecibo:comRecibo}, listaView);
+    var band=fechBand(M, applicable, {closed:closed, started:started, ready:ready, comRecibo:comRecibo, fproc:!!M.fechProc}, listaView);
     return (closed?'':prazoBanner(M)) + band + ((started||closed)?apuracaoSection(M, closed):'');
   }
 
@@ -1047,8 +1055,10 @@
   }
   function balanceteContent(M){
     var d=DETAIL[M.per].d1101;
-    var flagged=d.rows.filter(function(r){return r.vst;});
-    var total=parseInt(d.count)||d.rows.length;
+    // Jornada feliz (s2u): a planilha vem SEM erros → nenhuma conta sinalizada (limpa os vst do DETAIL compartilhado).
+    var rowsAll=(emp==='s2u')?d.rows.map(function(r){ var c=Object.assign({},r); delete c.vst; delete c.msg; return c; }):d.rows;
+    var flagged=rowsAll.filter(function(r){return r.vst;});
+    var total=parseInt(d.count)||rowsAll.length;
     // Em cima: só as contas com pendência, cada uma dizendo o problema e como corrigir (.dalert).
     var errBlock='';
     if(flagged.length){
@@ -1059,7 +1069,7 @@
         '<div class="fixlist">'+groups+'</div></div>';
     }
     // Embaixo: a lista de TODAS as contas analíticas (as com pendência aparecem sinalizadas).
-    var okTbl=contentTable(BAL_HEADERS, d.rows.map(balanceteRow).join(''), d.rows.length, total, 'contas analíticas');
+    var okTbl=contentTable(BAL_HEADERS, rowsAll.map(balanceteRow).join(''), rowsAll.length, total, 'contas analíticas');
     var okBlock='<div class="dtblock"><h3 class="dtsub">'+(flagged.length?'Todas as contas':'Contas analíticas')+'</h3>'+
       '<p class="dtsub__x">Contas analíticas do balancete (infoConta): saldos, movimento e a base apurada (vApur) por conta.'+(flagged.length?' As que precisam de correção aparecem sinalizadas na coluna Validação.':'')+'</p>'+okTbl+'</div>';
     return errBlock+okBlock;
@@ -1189,6 +1199,7 @@
   }
   /* Motivo que impede transmitir o evento (gate); null = liberado. Hoje só o balancete tem trava (contas a corrigir). */
   function evBlocker(evKey, M){
+    if(emp==='s2u') return null; // jornada feliz: a planilha do s2u vem SEM erros (a PO tirou o cenário de erro)
     if(evKey==='d1101'){
       var d=DETAIL[M.per]&&DETAIL[M.per].d1101;
       if(d){ var flagged=d.rows.filter(function(r){return r.vst;});
@@ -1264,19 +1275,88 @@
   function openModal(id){ var m=document.getElementById(id); if(!m) return; m.hidden=false; document.body.style.overflow='hidden'; }
   function closeAllModals(){ ['compModal','versoesModal','confirmModal','extratoModal','impModal'].forEach(function(id){var m=document.getElementById(id); if(m) m.hidden=true;}); document.body.style.overflow=''; }
   /* Importar planilha: mostra o modal "lendo…" com os passos, e ao terminar revela o evento preparado. */
+  /* ===== JORNADA FELIZ do Simple2u (demo oficial, caminho sem erros) =====
+     importar → transmitir cada evento (protocolo → recibo, ~4s) → fechar (D-1199) → extrato (D-9199).
+     Tudo persistido em localStorage (adere.mov.imp/tx/fech.<emp>.<per>) para sobreviver a reload/navegação.
+     Alíquotas do ano-teste 2026: CBS 0,9% e IBS 0,1% sobre a base. Base = 6.000.000 (balancete)
+     + 102.000 (aplicações) + 240.000 (títulos) − 117.000 (deduções) = R$ 6.225.000,00. */
+  var S2U_EV={
+    d1101:{sub:'57 contas analíticas', valLbl:'Base apurada (estimada)', val:'R$ 6.000.000,00'},
+    d1106:{sub:'12 ativos de aplicações financeiras', valLbl:'Base (vApur)', val:'R$ 102.000,00'},
+    d1121:{sub:'8 documentos de dedução', valLbl:'Deduzido no mês', val:'R$ 117.000,00'},
+    d2101:{sub:'8 títulos de dívida com oferta pública', valLbl:'Base (juros × Selic)', val:'R$ 240.000,00'}
+  };
+  var S2U_TOT={ base:'R$ 6.225.000,00', cbs:'R$ 56.025,00', ibs:'R$ 6.225,00' };
+  function jGet(name, per){ try{ return JSON.parse(localStorage.getItem('adere.mov.'+name+'.'+emp+'.'+per)||'null'); }catch(e){ return null; } }
+  function jSet(name, per, v){ try{ localStorage.setItem('adere.mov.'+name+'.'+emp+'.'+per, JSON.stringify(v)); }catch(e){} }
+  function nowStr(){ var d=new Date(); function p(n){return String(n).padStart(2,'0');} return p(d.getDate())+'/'+p(d.getMonth()+1)+'/'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes()); }
+
   /* Estado "competência importada": usado pelo runImport E na carga (demo persistida via localStorage). */
   function applyImported(M){
     ORDER.forEach(function(k){ var ev=M.ev[k];
       if(ev.st==='pendente' && !ev.prep){ ev.prep=true;
-        ev.sub=(k==='d1101')?'57 contas · 2 a corrigir antes de transmitir':(EV_META[k].name+' importado · pronto para conferir'); }
+        ev.sub=(k==='d1101')?'57 contas analíticas · pronto para conferir':(EV_META[k].name+' importado · pronto para conferir'); }
     });
-    // A planilha traz o balancete → a base apurada (estimada) já existe antes de transmitir (mesmo shape do MAG).
     if(emp==='s2u'){
-      M.ev.d1101.valLbl='Base apurada (estimada)'; M.ev.d1101.val='R$ 6.420.000,00';
-      M.total=M.total||{}; M.total.base='R$ 6.420.000,00'; M.total.baseFull='R$ 6.420.000,00';
-      M.total.codtrib=[{cod:'110112003', desc:'Valores recebidos em operações de TVM', base:'R$ 6.420.000,00'}];
+      ORDER.forEach(function(k){ var d=S2U_EV[k]; if(!d||M.ev[k].st==='na') return;
+        M.ev[k].sub=d.sub+' · pronto para transmitir'; M.ev[k].valLbl=d.valLbl; M.ev[k].val=d.val; });
+      M.total=M.total||{}; M.total.base=S2U_TOT.base; M.total.baseFull=S2U_TOT.base;
+      M.total.codtrib=[{cod:'110112003', desc:'Valores recebidos em operações de TVM', base:S2U_TOT.base}];
+      // o VERS default conta a história do MAG — a jornada do s2u começa com o histórico zerado
+      VERS[M.per]={d1101:{atual:[],prep:[],ant:[]},d1106:{atual:[],prep:[],ant:[]},d1121:{atual:[],prep:[],ant:[]},d2101:{atual:[],prep:[],ant:[]}};
     }
   }
+  /* Aplica ao mês o estado de transmissão de UM evento (protocolo ou recibo) + a entrada no histórico de versões. */
+  function applyTxState(M, k, rec){
+    var e=M.ev[k], d=S2U_EV[k]||{}, num=k.replace('d','');
+    if(rec.st==='protocolo'){ e.st='protocolo'; e.sub=(d.sub||'')+' · aguardando o recibo'; }
+    else { e.st='recibo'; e.sub=d.sub||e.sub; }
+    e.prep=false;
+    var entry={n:1, titulo:'Versão 1', sit:(rec.st==='recibo'?'recibo':'protocolo'), transm:rec.transm||nowStr(),
+      proc:(rec.st==='recibo'?(rec.proc||nowStr()):'—'), protocolo:prot28(M.per,1), recibo:(rec.st==='recibo'?rec31(num,M.per,1):'')};
+    if(VERS[M.per] && VERS[M.per][k]) VERS[M.per][k]= rec.st==='recibo' ? {atual:[entry],prep:[],ant:[]} : {atual:[],prep:[entry],ant:[]};
+  }
+  function applyFechado(M){ M.fech='fechado'; M.fechProc=false; M.total=M.total||{};
+    M.total.cbs=S2U_TOT.cbs; M.total.ibs=S2U_TOT.ibs; M.total.is='—'; M.total.bcn='R$ 0,00';
+    M.total.ibsUF='R$ 3.112,50'; M.total.ibsMun='R$ 3.112,50'; M.total.seq='00';
+    M.total.memoria='Receitas de serviços financeiros (operações de TVM) R$ 6.000.000,00 + aplicações financeiras R$ 102.000,00 + juros de títulos com oferta pública (limitados à variação da Selic) R$ 240.000,00 − deduções utilizadas (D-1121) R$ 117.000,00 = base de cálculo R$ 6.225.000,00. CBS: R$ 6.225.000,00 × 0,9% = R$ 56.025,00. IBS: R$ 6.225.000,00 × 0,1% = R$ 6.225,00 (metade estadual, metade municipal).';
+    M.total.bcnDet={cod:'1010C · CBS', saldoAnt:'R$ 80.000,00', usado:'R$ 0,00', gerada:'R$ 0,00', saldoFim:'R$ 80.000,00'};
+    M.total.recVinc=[
+      ['Balancete (D-1101)', rec31(1101,M.per,1)],
+      ['Aplicações Financeiras (D-1106)', rec31(1106,M.per,1)],
+      ['Deduções (D-1121)', rec31(1121,M.per,1)],
+      ['Títulos com oferta pública (D-2101)', rec31(2101,M.per,1)]
+    ]; }
+  /* Restaura a jornada persistida (chamado na carga, depois do applyImported). Promove protocolo→recibo se já passou o tempo. */
+  function applyJourney(M){
+    var tx=jGet('tx',M.per)||{}, changed=false;
+    ORDER.forEach(function(k){ var r=tx[k]; if(!r) return;
+      if(r.st==='protocolo' && Date.now()-r.t>4200){ r.st='recibo'; r.proc=nowStr(); changed=true; }
+      applyTxState(M,k,r); });
+    if(changed) jSet('tx',M.per,tx);
+    var f=jGet('fech',M.per);
+    if(f){ if(f.st==='protocolo' && Date.now()-f.t>4200){ f.st='fechado'; f.proc=nowStr(); jSet('fech',M.per,f); }
+      if(f.st==='fechado') applyFechado(M); else M.fechProc=true; }
+  }
+  /* Ações da jornada (disparadas pelo confirmGo do modal de confirmação). */
+  function doTransmit(k){ var M=MESES[perIdx], tx=jGet('tx',M.per)||{};
+    tx[k]={st:'protocolo', t:Date.now(), transm:nowStr()}; jSet('tx',M.per,tx);
+    applyTxState(M,k,tx[k]); renderPanels(); navTo(tab,false);
+    setTimeout(function(){ var t2=jGet('tx',M.per)||{}; if(!t2[k]||t2[k].st!=='protocolo') return;
+      t2[k].st='recibo'; t2[k].proc=nowStr(); jSet('tx',M.per,t2);
+      applyTxState(MESES[perIdx],k,t2[k]); renderPanels(); navTo(tab,false); }, 4200);
+  }
+  function doFechar(){ var M=MESES[perIdx];
+    jSet('fech',M.per,{st:'protocolo', t:Date.now(), transm:nowStr()});
+    M.fechProc=true; renderPanels(); navTo('visao',false);
+    setTimeout(function(){ var f=jGet('fech',MESES[perIdx].per); if(!f||f.st!=='protocolo') return;
+      f.st='fechado'; f.proc=nowStr(); jSet('fech',MESES[perIdx].per,f);
+      var M2=MESES[perIdx]; M2.fechProc=false; applyFechado(M2); renderPanels(); navTo('visao',false); }, 4200);
+  }
+  function doReabrir(){ var M=MESES[perIdx];
+    try{ localStorage.removeItem('adere.mov.fech.'+emp+'.'+M.per); }catch(e){}
+    M.fech=''; M.fechProc=false; M.total.cbs='—'; M.total.ibs='—'; M.total.is='—';
+    renderPanels(); navTo('visao',false); }
   function runImport(evKey){
     var M=MESES[perIdx];
     // Uma planilha alimenta TODOS os eventos aplicáveis do mês (não só um).
@@ -1328,21 +1408,40 @@
       }, 760);
     })();
   }
-  /* Extrato D-9199: memória de cálculo (bases + débito IBS/CBS/IS) devolvida no fechamento. */
+  /* Extrato D-9199: o retorno do fechamento — impostos, memória de cálculo, recibos dos eventos que o
+     alimentaram (infoAdic, obrigatório no leiaute) e o conta-corrente da BCN. IS só existe no regime de
+     prognósticos, então para financeiro/saúde não mostramos linha de IS (auditoria 24/09 vs leiaute 1.2.0). */
   function extratoInner(M){
     var t=M.total||{}, base=t.baseFull||t.base||'—';
-    return '<div class="receipt"><div class="receipt__state receipt__state--success"><span class="receipt__state-ic">'+ICO.check+'</span><div><p class="receipt__state-tt">Competência fechada com recibo</p><p class="receipt__state-tx">Memória de cálculo devolvida pela Receita no fechamento: as bases apuradas e o débito de CBS, IBS e IS. A a-DeRE declara as bases; o imposto é apurado pela Receita e o pagamento é feito fora dela.</p></div></div></div>'+
-      '<div class="table-wrap table-wrap--boxed" style="margin-top:var(--space-4)"><table class="table kvtable"><thead><tr><th scope="col">Apuração da competência</th><th scope="col" class="col--num">Valor</th></tr></thead><tbody>'+
+    var head='<div class="receipt"><div class="receipt__state receipt__state--success"><span class="receipt__state-ic">'+ICO.check+'</span><div><p class="receipt__state-tt">Competência fechada com recibo</p><p class="receipt__state-tx">Retorno do fechamento (D-9199): a base apurada, o débito de CBS e IBS e a memória de cálculo. A a-DeRE declara as bases; o imposto é apurado pela Receita e o pagamento é feito fora dela.</p></div></div></div>';
+    var kv='<div class="table-wrap table-wrap--boxed" style="margin-top:var(--space-4)"><table class="table kvtable"><thead><tr><th scope="col">Apuração da competência</th><th scope="col" class="col--num">Valor</th></tr></thead><tbody>'+
         '<tr><th scope="row">Base tributável apurada</th><td class="col--num strong">'+esc(base)+'</td></tr>'+
         '<tr><th scope="row">Débito de CBS</th><td class="col--num mono">'+esc(t.cbs||'—')+'</td></tr>'+
         '<tr><th scope="row">Débito de IBS</th><td class="col--num mono">'+esc(t.ibs||'—')+'</td></tr>'+
         (t.ibsMun?'<tr class="kvsub"><th scope="row">IBS Estadual (UF)</th><td class="col--num mono">'+esc(t.ibsUF)+'</td></tr><tr class="kvsub"><th scope="row">IBS Municipal</th><td class="col--num mono">'+esc(t.ibsMun)+'</td></tr>':'')+
-        '<tr><th scope="row">Imposto Seletivo (IS)</th><td class="col--num mono">'+esc(t.is||'—')+'</td></tr>'+
-        '<tr><th scope="row">Saldo de BCN utilizado</th><td class="col--num mono">'+esc(t.bcn||'R$ 0,00')+'</td></tr>'+
+        ((t.is&&t.is!=='—')?'<tr><th scope="row">Imposto Seletivo (IS)</th><td class="col--num mono">'+esc(t.is)+'</td></tr>':'')+
       '</tbody></table></div>'+
-      '<p class="tnote">Recibo do fechamento: '+rec31(1199,M.per,1)+'.</p>';
+      ((!t.is||t.is==='—')?'<p class="tnote">Imposto Seletivo (IS): não se aplica a este regime (só prognósticos).</p>':'');
+    var mem=t.memoria?('<h4 class="dtsub" style="margin-top:var(--space-6)">Memória de cálculo</h4>'+
+      '<p class="tnote" style="margin-top:var(--space-2);line-height:1.6">'+esc(t.memoria)+'</p>'):'';
+    var rv=(t.recVinc&&t.recVinc.length)?('<h4 class="dtsub" style="margin-top:var(--space-6)">Eventos que alimentaram o fechamento</h4>'+
+      '<div class="table-wrap table-wrap--boxed" style="margin-top:var(--space-2)"><table class="table kvtable"><tbody>'+
+      t.recVinc.map(function(r){ return '<tr><th scope="row">'+esc(r[0])+'</th><td class="col--num mono">'+esc(r[1])+'</td></tr>'; }).join('')+
+      '</tbody></table></div>'):'';
+    var bd=t.bcnDet?('<h4 class="dtsub" style="margin-top:var(--space-6)">Base de cálculo negativa (BCN) · '+esc(t.bcnDet.cod)+'</h4>'+
+      '<div class="table-wrap table-wrap--boxed" style="margin-top:var(--space-2)"><table class="table kvtable"><tbody>'+
+        '<tr><th scope="row">Saldo anterior</th><td class="col--num mono">'+esc(t.bcnDet.saldoAnt)+'</td></tr>'+
+        '<tr><th scope="row">Utilizado neste fechamento</th><td class="col--num mono">'+esc(t.bcnDet.usado)+'</td></tr>'+
+        '<tr><th scope="row">Nova BCN gerada no mês</th><td class="col--num mono">'+esc(t.bcnDet.gerada)+'</td></tr>'+
+        '<tr><th scope="row">Saldo final (vale por 5 anos)</th><td class="col--num strong">'+esc(t.bcnDet.saldoFim)+'</td></tr>'+
+      '</tbody></table></div>'):
+      '<p class="tnote">Saldo de BCN utilizado: '+esc(t.bcn||'R$ 0,00')+'.</p>';
+    return head+kv+mem+rv+bd+
+      '<p class="tnote" style="margin-top:var(--space-4)">Recibo do fechamento: '+rec31(1199,M.per,1)+(t.seq?' · versão do fechamento (seqEvento): '+esc(t.seq):'')+'.</p>';
   }
+  var PENDING=null; /* ação armada pelo modal de confirmação; o confirmGo executa (jornada do s2u) */
   function fillConfirm(kind, evKey){
+    PENDING={kind:kind, ev:evKey||null};
     var nm=evKey&&EV_META[evKey]?EV_META[evKey].name:'o evento';
     var C={ fechar:['Fechar a competência?','Ao fechar, o evento D-1199 é transmitido à Receita como uma confissão dos valores do mês. Depois de aceito, a competência fica travada; para corrigir, é preciso reabri-la.','Transmitir fechamento'],
       reabrir:['Reabrir a competência?','A reabertura (D-1198) destrava o mês para novas transmissões e exige um novo fechamento (D-1199) depois. Faça só se precisar corrigir algo já fechado.','Transmitir reabertura'],
@@ -1361,13 +1460,20 @@
      "sem deduções no mês" (indInexistDedu) e aproveitar/como a base negativa (usarBCNAcum + metodoAproveit). */
   var BCN_ACUM='R$ 80.000,00';
   function fecharFormHTML(){
+    // indInexistDedu é CONDICIONAL (leiaute 1.2.0): só cabe quando o contribuinte é sujeito ao D-1121 e
+    // NÃO o transmitiu no período. Com o D-1121 já com recibo, o campo é omitido (declarar seria indevido).
+    var M=MESES[perIdx], dedOk=(M.ev.d1121 && (M.ev.d1121.st==='recibo'||M.ev.d1121.st==='advertencia'));
+    var dedSec=dedOk
+      ? '<div class="fechform__sec"><h4 class="fechform__t">Deduções (D-1121)</h4>'+
+          '<p class="fechform__hint">O D-1121 desta competência já foi transmitido e tem recibo. Não há o que declarar aqui (a dispensa por inexistência de deduções só vale quando o evento não foi enviado).</p></div>'
+      : '<div class="fechform__sec"><h4 class="fechform__t">Deduções (D-1121)</h4>'+
+          '<label class="check"><input type="checkbox" id="fdInexistDedu"><span>Não tenho deduções a informar neste mês</span></label>'+
+          '<p class="fechform__hint" style="margin:var(--space-2) 0 0">Marque só se este contribuinte está sujeito ao D-1121, mas não houve deduções na competência. Isso dispensa o envio do D-1121 (indInexistDedu).</p></div>';
     return '<p style="margin:0 0 var(--space-1)">Ao fechar, o D-1199 é transmitido à Receita como a confissão dos valores do mês. Depois de aceito, a competência trava; para corrigir, é preciso reabrir (D-1198).</p>'+
       '<div class="fechform">'+
-        '<div class="fechform__sec"><h4 class="fechform__t">Deduções (D-1121)</h4>'+
-          '<label class="check"><input type="checkbox" id="fdInexistDedu"><span>Não tenho deduções a informar neste mês</span></label>'+
-          '<p class="fechform__hint" style="margin:var(--space-2) 0 0">Marque só se este contribuinte está sujeito ao D-1121, mas não houve deduções na competência. Isso dispensa o envio do D-1121 (indInexistDedu).</p></div>'+
+        dedSec+
         '<div class="fechform__sec"><h4 class="fechform__t">Base de cálculo negativa (BCN)</h4>'+
-          '<p class="fechform__hint">Há <strong>'+BCN_ACUM+'</strong> de BCN acumulada de períodos anteriores. Aproveitar reduz a base tributável deste mês.</p>'+
+          '<p class="fechform__hint">Há <strong>'+BCN_ACUM+'</strong> de BCN acumulada de períodos anteriores (código <strong>1010C · CBS</strong>). Aproveitar reduz a base tributável deste mês. A decisão vale por código de base negativa.</p>'+
           '<label class="switch-row"><span>Aproveitar a BCN neste fechamento</span><span class="switch"><input type="checkbox" id="fdUsarBCN"><span class="switch__track"></span></span></label>'+
           '<div class="fechform__met" id="fdMet" hidden>'+
             '<label class="choice"><input type="radio" name="fdmet" value="peps" checked><span class="choice__body"><span class="choice__title">PEPS automático</span><span class="choice__desc">A a-DeRE consome primeiro o saldo mais antigo, até o limite da base do mês.</span></span></label>'+
@@ -1393,7 +1499,15 @@
     if(ev.target.closest('[data-extrato]')){ document.getElementById('extratoBody').innerHTML=extratoInner(MESES[perIdx]); openModal('extratoModal'); return; }
     if(ev.target.closest('[data-fechar]')){ fillConfirm('fechar'); openModal('confirmModal'); bindFecharForm(); return; }
     if(ev.target.closest('[data-reabrir]')){ fillConfirm('reabrir'); openModal('confirmModal'); return; }
-    if(ev.target.id==='confirmGo'){ closeAllModals(); return; }
+    if(ev.target.id==='confirmGo'){
+      var p=PENDING; PENDING=null; closeAllModals();
+      // Jornada feliz (s2u): o confirmar EXECUTA (transmite/fecha/reabre) com protocolo → recibo coreografado.
+      if(p && emp==='s2u'){
+        if(p.kind==='transmitir' && p.ev) doTransmit(p.ev);
+        else if(p.kind==='fechar') doFechar();
+        else if(p.kind==='reabrir') doReabrir();
+      }
+      return; }
     if(ev.target.closest('[data-modal-close]')||ev.target.classList.contains('scrim')){ closeAllModals(); return; }
   });
   document.addEventListener('keydown', function(ev){ if(ev.key==='Escape') closeAllModals(); });
@@ -1549,8 +1663,8 @@
   });
 
   /* ===== init ===== */
-  /* Demo persistida: se a importação já foi feita nesta demo, restaura o estado importado na carga. */
-  try{ MESES.forEach(function(M){ if(localStorage.getItem('adere.mov.imp.'+emp+'.'+M.per)==='1') applyImported(M); }); }catch(e){}
+  /* Demo persistida: restaura importação + transmissões + fechamento na carga (jornada sobrevive a reload). */
+  try{ MESES.forEach(function(M){ if(localStorage.getItem('adere.mov.imp.'+emp+'.'+M.per)==='1'){ applyImported(M); applyJourney(M); } }); }catch(e){}
   syncComp(); renderPanels(); navTo(tab,false);
   history.replaceState({per:MESES[perIdx].per,ev:tab},'','?emp='+emp+'&per='+MESES[perIdx].per+'&ev='+tab);
 
@@ -1564,15 +1678,29 @@
     <span class="demobar__body">
       <button type="button" data-demo-imp="0" title="Simple2u volta ao zero (nada importado)">Sem nada</button>
       <button type="button" data-demo-imp="1" title="Simple2u com a movimentação importada">Populado</button>
+      <button type="button" data-demo-imp="2" title="Jornada completa: 4 eventos com recibo e competência fechada">Fechada</button>
     </span>
   </div>
   <script>(function(){ var bar=document.getElementById('demobar'); if(!bar) return; var tog=bar.querySelector('[data-demo-toggle]');
     function set(open){ bar.classList.toggle('is-collapsed', !open); tog.setAttribute('aria-expanded', String(open)); tog.setAttribute('aria-label', open?'Recolher ferramenta de demonstração':'Abrir ferramenta de demonstração de cenários'); try{ localStorage.setItem('adere.demo.open', open?'1':'0'); }catch(e){} }
     var open=false; try{ open=localStorage.getItem('adere.demo.open')==='1'; }catch(e){} set(open);
     tog.addEventListener('click',function(){ set(bar.classList.contains('is-collapsed')); });
-    var KEY='adere.mov.imp.s2u.2026-09', cur='0'; try{ cur=(localStorage.getItem(KEY)==='1')?'1':'0'; }catch(e){}
+    var KEY='adere.mov.imp.s2u.2026-09', TXK='adere.mov.tx.s2u.2026-09', FEK='adere.mov.fech.s2u.2026-09';
+    var cur='0'; try{ cur=localStorage.getItem(FEK)?'2':(localStorage.getItem(KEY)==='1'?'1':'0'); }catch(e){}
     bar.querySelectorAll('[data-demo-imp]').forEach(function(b){ if(b.getAttribute('data-demo-imp')===cur) b.classList.add('on');
-      b.addEventListener('click',function(){ try{ if(b.getAttribute('data-demo-imp')==='1'){ localStorage.setItem(KEY,'1'); } else { Object.keys(localStorage).forEach(function(k){ if(k.indexOf('adere.mov.imp.')===0) localStorage.removeItem(k); }); } }catch(e){} location.href='?emp=s2u&per=2026-09&ev=visao'; });
+      b.addEventListener('click',function(){ try{
+        Object.keys(localStorage).forEach(function(k){ if(k.indexOf('adere.mov.')===0) localStorage.removeItem(k); });
+        var m=b.getAttribute('data-demo-imp');
+        if(m==='1'){ localStorage.setItem(KEY,'1'); }
+        else if(m==='2'){
+          var d=new Date(); var p=function(n){return String(n).padStart(2,'0');};
+          var tr=p(d.getDate())+'/'+p(d.getMonth()+1)+'/'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes());
+          var mk=function(){ return {st:'recibo', t:Date.now()-600000, transm:tr, proc:tr}; };
+          localStorage.setItem(KEY,'1');
+          localStorage.setItem(TXK, JSON.stringify({d1101:mk(),d1106:mk(),d1121:mk(),d2101:mk()}));
+          localStorage.setItem(FEK, JSON.stringify({st:'fechado', t:Date.now()-600000, transm:tr, proc:tr}));
+        }
+      }catch(e){} location.href='?emp=s2u&per=2026-09&ev=visao'; });
     });
   })();</script>
 </body>
