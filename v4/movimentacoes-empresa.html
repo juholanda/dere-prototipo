@@ -229,6 +229,8 @@
     @media (prefers-reduced-motion:reduce){.impproc__ic svg{animation:none}}
     .impproc__t{font-size:var(--text-lg);font-weight:700;color:var(--color-heading);margin:0 0 var(--space-1)}
     .impproc__lead{font-size:var(--text-sm);color:var(--color-text-onmuted);margin:0 0 var(--space-6)}
+    /* extrato: respiro embaixo do último item do modal (estava colado na borda) */
+    #extratoModal .modal__body{padding-bottom:var(--space-8)}
     .evimport{display:inline-flex;align-items:center;gap:var(--space-1);font-size:var(--text-sm);font-weight:600;color:var(--color-primary);text-decoration:none;white-space:nowrap}
     .evimport svg{width:15px;height:15px}
     .evimport:hover{text-decoration:underline}
@@ -290,6 +292,9 @@
     .fechform__hint{font-size:var(--text-sm);color:var(--color-text-onmuted);margin:0 0 var(--space-3);line-height:1.5}
     .switch-row{display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);cursor:pointer;font-size:var(--text-sm);font-weight:600;color:var(--color-heading)}
     .fechform__met{display:flex;flex-direction:column;gap:var(--space-3);margin-top:var(--space-4)}
+    /* BCN por código (infoBCN 1-99 do leiaute): cada código com saldo + decisão própria */
+    .fechform__cod{margin-top:var(--space-3);padding:var(--space-4);border:1px solid var(--color-border);border-radius:var(--radius-lg)}
+    .fechform__bcnnone{font-size:var(--text-sm);color:var(--color-text-muted);white-space:nowrap}
     /* detBCNeg (método manual): origem da BCN + valor a utilizar */
     .fechform__det{margin-top:var(--space-3);padding:var(--space-4);border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-surface-2)}
     .fechform__bcnrow{display:flex;align-items:flex-end;justify-content:space-between;gap:var(--space-4);flex-wrap:wrap}
@@ -945,17 +950,15 @@
     var _mk=s.closed
       ? '<svg class="status__check" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>'
       : '<span class="status__dot"></span>';
-    // pill AO LADO do título (a PO) — dispensa o rótulo; o corpo só existe quando há recibo/protocolo.
+    // pill AO LADO do título; recibo/protocolo INLINE no subtítulo (a PO: sem linha só pra ele).
     var _pill='<span class="status status--sm '+_ms[0]+'">'+_mk+_ms[1]+'</span>';
-    var facts='';
     if(s.closed){ var _rn=rec31(1199,M.per,1);
-      facts='<span class="hdrmeta__fact">'+ICO.receipt+'<span class="hmk">Recibo</span><span class="hdr-recibo__n">'+esc(_rn.slice(0,10)+'…'+_rn.slice(-4))+'</span>'+
-        '<button class="icon-btn" type="button" data-copy-recibo="'+esc(_rn)+'" aria-label="Copiar número do recibo do fechamento" title="Copiar recibo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg></button></span>';
+      stageSub='Competência fechada · Recibo <span class="hdr-recibo__n">'+esc(_rn.slice(0,10)+'…'+_rn.slice(-4))+'</span> '+
+        '<button class="icon-btn" type="button" data-copy-recibo="'+esc(_rn)+'" aria-label="Copiar número do recibo do fechamento" title="Copiar recibo" style="vertical-align:middle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg></button>';
     } else if(s.fproc){ var _pn=prot28(M.per,1);
-      facts='<span class="hdrmeta__fact">'+ICO.receipt+'<span class="hmk">Protocolo</span><span class="hdr-recibo__n">'+esc(_pn.slice(0,10)+'…'+_pn.slice(-4))+'</span></span>';
+      stageSub='Fechamento (D-1199) transmitido · aguardando o recibo · Protocolo <span class="hdr-recibo__n">'+esc(_pn.slice(0,10)+'…'+_pn.slice(-4))+'</span>';
     }
-    var body=facts?('<div class="hdrmeta" style="margin-top:0">'+facts+readyHint+'</div>'):readyHint;
-    var fechCard=cardSection('Fechamento do mês', stageSub, body, {divider:!!facts, beside:_pill, aside:'<div class="fechrow__act">'+action+'</div>'});
+    var fechCard=cardSection('Fechamento do mês', stageSub, readyHint, {divider:false, beside:_pill, aside:'<div class="fechrow__act">'+action+'</div>'});
     var evCard=cardSection('Eventos da competência', 'Cada evento é transmitido separadamente; o fechamento (D-1199) exige recibo em todos os exigidos.', '<div class="fechinner'+mod+'">'+(listaView||'')+'</div>', {divider:true});
     return fechCard+evCard;
   }
@@ -1531,8 +1534,11 @@
       '<div class="fechform">'+
         dedSec+
         '<div class="fechform__sec"><h4 class="fechform__t">Base de cálculo negativa (BCN)</h4>'+
-          '<p class="fechform__hint">Há <strong>'+BCN_ACUM+'</strong> de BCN acumulada de períodos anteriores (código <strong>1010C · CBS</strong>). Aproveitar reduz a base tributável deste mês. A decisão vale por código de base negativa.</p>'+
-          '<label class="switch-row"><span>Aproveitar a BCN neste fechamento</span><span class="switch"><input type="checkbox" id="fdUsarBCN"><span class="switch__track"></span></span></label>'+
+          // leiaute 1.2.0: infoBCN é 1-99 — a decisão de aproveitamento é POR código (CBS e IBS separadas)
+          '<p class="fechform__hint">A decisão de aproveitamento é por código de base negativa: a BCN de CBS e a de IBS são controladas separadamente. Aproveitar reduz a base do tributo neste mês.</p>'+
+          '<div class="fechform__cod">'+
+          '<div class="fechform__bcnrow"><div class="fechform__bcninfo"><span class="hmk">1010C · CBS</span><span class="fechform__bcnsub">saldo acumulado '+BCN_ACUM+'</span></div>'+
+          '<label class="switch-row" style="margin:0"><span>Aproveitar neste fechamento</span><span class="switch"><input type="checkbox" id="fdUsarBCN"><span class="switch__track"></span></span></label></div>'+
           '<div class="fechform__met" id="fdMet" hidden>'+
             '<label class="choice"><input type="radio" name="fdmet" value="peps" checked><span class="choice__body"><span class="choice__title">PEPS automático</span><span class="choice__desc">A a-DeRE consome primeiro o saldo mais antigo, até o limite da base do mês.</span></span></label>'+
             '<label class="choice"><input type="radio" name="fdmet" value="manual"><span class="choice__body"><span class="choice__title">Manual</span><span class="choice__desc">Você escolhe quanto usar de cada período de origem da BCN.</span></span></label>'+
@@ -1544,7 +1550,10 @@
               '<div class="field-affix field-affix--pre"><span class="field-affix__pre">R$</span><input class="input input--num" id="fdVUsar" inputmode="decimal" placeholder="Ex.: 80.000,00"></div></div></div>'+
               '<p class="fechform__hint" style="margin:var(--space-2) 0 0">Deixe vazio para usar todo o saldo deste código. Valor acima do saldo é limitado ao disponível (a Receita devolve um aviso).</p>'+
             '</div>'+
-          '</div></div>'+
+          '</div>'+
+          '</div>'+
+          '<div class="fechform__cod"><div class="fechform__bcnrow"><div class="fechform__bcninfo"><span class="hmk">1010I · IBS</span><span class="fechform__bcnsub">sem saldo acumulado de períodos anteriores</span></div><span class="fechform__bcnnone">Nada a decidir</span></div></div>'+
+        '</div>'+
       '</div>';
   }
   function bindFecharForm(){
