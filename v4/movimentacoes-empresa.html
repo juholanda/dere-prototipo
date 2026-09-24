@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Movimentações Mensais · MAG Seguros</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=d1e51d3e">
+  <link rel="stylesheet" href="../design-system/ds.css?v=0611fc68">
   <script src="../design-system/ds-tailwind.js"></script>
   <style>
     /* ===== app-shell ===== */
@@ -75,6 +75,7 @@
     .hdrmeta:empty{display:none}
     .hdrmeta .status{font-size:var(--text-xs)}
     .hdrmeta__fact{display:inline-flex;align-items:center;gap:var(--space-2)}
+    .hdrmeta__fact .hmk{font-weight:600} /* rótulo do fato (anatomia do .hm da Info) */
     .hdrmeta__fact svg{width:15px;height:15px;flex:0 0 auto}
     .hdrmeta__fact--warn{color:var(--color-warning-fg);font-weight:600}
     /* competência: usa .filterf--comp do ds.css (rótulo em cima), igual ao Painel; alinha ao topo do título */
@@ -139,6 +140,21 @@
     .fechstage{margin:0;font-size:var(--text-base);font-weight:700;color:var(--color-heading)}
     .fechrow{display:flex;align-items:center;justify-content:space-between;gap:var(--space-3) var(--space-4);flex-wrap:wrap;margin-bottom:var(--space-6)}
     .fechrow__act{display:flex;gap:var(--space-2);flex:0 0 auto;flex-wrap:wrap;margin-left:auto}
+    /* mini-fechamento no topo do detalhe do evento: estado do mês + checkzinhos por evento */
+    .fechmini{display:flex;align-items:center;gap:var(--space-3) var(--space-4);padding:var(--space-3) var(--space-4);border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-surface-2);font-size:var(--text-sm);flex-wrap:wrap;margin-bottom:var(--space-4)}
+    .fechmini__st{display:inline-flex;align-items:center;gap:var(--space-2);font-weight:600;color:var(--color-heading)}
+    .fechmini__st svg{width:15px;height:15px;flex:0 0 auto}
+    .fechmini--ok .fechmini__st svg{color:var(--color-success-fg)}
+    .fechmini--proc .fechmini__st svg{color:var(--color-info-fg,var(--color-primary))}
+    .fechmini__list{display:inline-flex;align-items:center;gap:var(--space-3);flex-wrap:wrap}
+    .fechmini__it{display:inline-flex;align-items:center;gap:var(--space-1);color:var(--color-text-muted)}
+    .fechmini__it svg{width:12px;height:12px;flex:0 0 auto}
+    .fechmini__it--ok{color:var(--color-success-fg)}
+    .fechmini__it--proc{color:var(--color-primary)}
+    .fechmini__it--err{color:var(--color-danger-fg)}
+    .fechmini__dot{width:8px;height:8px;border-radius:50%;border:2px solid var(--color-border-strong);display:inline-block}
+    .fechmini__link{margin-left:auto;font-size:var(--text-sm);font-weight:600;color:var(--color-primary);text-decoration:none;white-space:nowrap}
+    .fechmini__link:hover{text-decoration:underline}
     .evna{font-size:var(--text-sm);color:var(--color-text-muted)} /* "Não se aplica" é texto apagado, não pill (a PO: status de verdade é só o do vocabulário) */
     .subwarn{display:inline-flex;align-items:center;gap:var(--space-1);color:var(--color-warning-fg);font-weight:600}
     .subwarn svg{width:13px;height:13px;flex:0 0 auto}
@@ -288,6 +304,12 @@
     .fechform__hint{font-size:var(--text-sm);color:var(--color-text-onmuted);margin:0 0 var(--space-3);line-height:1.5}
     .switch-row{display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);cursor:pointer;font-size:var(--text-sm);font-weight:600;color:var(--color-heading)}
     .fechform__met{display:flex;flex-direction:column;gap:var(--space-3);margin-top:var(--space-4)}
+    /* detBCNeg (método manual): origem da BCN + valor a utilizar */
+    .fechform__det{margin-top:var(--space-3);padding:var(--space-4);border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-surface-2)}
+    .fechform__bcnrow{display:flex;align-items:flex-end;justify-content:space-between;gap:var(--space-4);flex-wrap:wrap}
+    .fechform__bcninfo{display:flex;flex-direction:column;gap:2px;font-size:var(--text-sm)}
+    .fechform__bcninfo .hmk{font-weight:600}
+    .fechform__bcnsub{color:var(--color-text-muted);font-size:var(--text-xs)}
     .fechform__met[hidden]{display:none}
     @media (max-width:640px){ .fixlist .dalert{flex-wrap:wrap} .fixlist .dalert__act{align-self:stretch;width:100%} .fixlist .dalert__act .btn{width:100%} }
     /* sub-linha da apuração (IBS Municipal/Estadual), recuada e discreta */
@@ -557,7 +579,7 @@
   /* Vocabulário de status único (mesmo estado, mesma palavra em toda a tela): pílula do evento, da versão e título do comprovante. */
   /* Nível 1 (card / competência): situação SIMPLES do evento no mês. O detalhe (sucesso/advertência) é do nível 2 (versão), dentro do evento. */
   /* Situação = ESTADO DA VERSÃO do evento (mesmo vocabulário do modal de versões e do Painel). */
-  var STMAP={recibo:['success','Processado com sucesso'], advertencia:['warning','Processado com advertência'], protocolo:['info','Em processamento'], rejeitado:['danger','Rejeitado'], pendente:['neutral','Em preparação'], na:['neutral','Não se aplica']};
+  var STMAP={recibo:['success','Processada com sucesso'], advertencia:['warning','Processada com advertências'], protocolo:['info','Em processamento'], rejeitado:['danger','Rejeitada pela Receita'], pendente:['neutral','Em preparação'], na:['neutral','Não se aplica']};
   function stMark(st){return (st==='recibo')?'<svg class="status__check" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>':'<span class="status__dot"></span>';}
   function pill(st){var m=STMAP[st]||['neutral',st];return '<span class="status status--sm status--'+m[0]+'">'+stMark(st)+m[1]+'</span>';}
 
@@ -730,7 +752,7 @@
     }
   };
   /* Nível 2 (versão, dentro do evento): resultado detalhado do que a Receita devolveu. */
-  var SITV={ recibo:['status--success','Processado com sucesso'], advertencia:['status--warning','Processado com advertência'], protocolo:['status--info','Em processamento'], rejeitado:['status--danger','Rejeitado'], substituida:['status--neutral','Substituída'], pendente:['status--neutral','Em preparação'] };
+  var SITV={ recibo:['status--success','Processada com sucesso'], advertencia:['status--warning','Processada com advertências'], protocolo:['status--info','Em processamento'], rejeitado:['status--danger','Rejeitada pela Receita'], substituida:['status--neutral','Substituída'], pendente:['status--neutral','Em preparação'] };
 
   /* ===== estado ===== */
   function perList(){ return MESES.map(function(m){return m.per;}); }
@@ -1179,7 +1201,7 @@
     var adv=(active.sit==='advertencia');
     var hasRec=(active.recibo&&(active.sit==='recibo'||adv||active.sit==='substituida'));
     var st=hasRec?(adv?'warning':'success'):'info';
-    var tt=adv?'Processado com advertência':(hasRec?'Processado com sucesso':'Protocolo recebido, em processamento');
+    var tt=adv?'Processada com advertências':(hasRec?'Processada com sucesso':'Protocolo recebido, em processamento');
     var tx=adv?'A Receita aceitou o evento e devolveu o recibo, com uma advertência a revisar. Ele compõe o fechamento do mês.':(hasRec?'A Receita processou o evento e devolveu o recibo. Ele compõe o fechamento do mês.':'O envio foi protocolado e aguarda o processamento da Receita. O recibo aparece aqui quando concluir.');
     var rows=[['Protocolo do envio',active.protocolo,'receipt__v--mono'],['Transmitido em',active.transm,''],['Recibo',hasRec?active.recibo:'aguardando processamento',hasRec?'receipt__v--mono receipt__v--strong':'receipt__v--wait'],['Processado em',hasRec?active.proc:'—','']];
     var rowsHtml=rows.map(function(r){return '<div class="receipt__row"><span class="receipt__k">'+r[0]+'</span><span class="receipt__v'+(r[2]?' '+r[2]:'')+'">'+esc(r[1])+'</span></div>';}).join('');
@@ -1188,8 +1210,9 @@
   /* Tem envio (comprovante/versões) quando a PRÓPRIA situação do evento implica uma transmissão:
      recibo/advertência/em processamento/rejeitado. "A preparar" (pendente) e "Não se aplica" (na) não têm. */
   function hasEnvio(evKey, M){ var st=M.ev[evKey].st; return st==='recibo'||st==='advertencia'||st==='protocolo'||st==='rejeitado'; }
-  /* versoesInner: versões separadas por PAPEL, como nas outras telas (Info/Plano):
-     Versão vigente (aceita pela Receita; estado vazio explícito quando não há) · Em preparação · Anteriores. */
+  /* versoesInner: PADRÃO do D-1001 (info-contribuinte-empresa) — mesmas seções, hints e estados vazios
+     (emptyBox com título em negrito + subtítulo). "Em preparação" SEMPRE aparece; "Anteriores" só com histórico. */
+  function emptyBox(title, sub){ return '<div class="versec__empty">'+ICO.info+'<span><b>'+esc(title)+'</b><span class="versec__empty-sub">'+esc(sub)+'</span></span></div>'; }
   function versoesInner(evKey, M){
     var v=VERS[M.per][evKey]||{atual:[],prep:[],ant:[]};
     var allv=v.atual.concat(v.prep, v.ant);
@@ -1197,16 +1220,19 @@
     var emprep=allv.filter(function(x){return x.sit==='pendente'||x.sit==='protocolo'||x.sit==='rejeitado';});
     var ant=allv.filter(function(x){return x.sit==='substituida';});
     var vigBlock='<div class="dtblock"><h3 class="dtsub">Versão vigente</h3>'+
+      '<p class="dtsub__x">Versão válida hoje na Receita Federal nesta competência.</p>'+
       (vig.length
-        ? '<p class="dtsub__x">A versão aceita pela Receita, valendo nesta competência.</p><div class="verlist">'+verrow(vig[0], true, {evKey:evKey})+'</div>'
-        : '<p class="dtsub__x">A versão passa a valer quando a Receita a aceita e devolve o recibo.</p>'+
-          '<div class="versec__empty">'+ICO.info+'<span>Nenhuma versão vigente ainda nesta competência.</span></div>')+
+        ? '<div class="verlist">'+verrow(vig[0], true, {evKey:evKey})+'</div>'
+        : emptyBox('Nenhuma versão vigente.', 'A primeira versão processada com sucesso pela Receita aparece aqui.'))+
       '</div>';
-    var prepBlock=emprep.length?'<div class="dtblock"><h3 class="dtsub">Em preparação</h3>'+
-      '<p class="dtsub__x">A versão sendo trabalhada ou aguardando o processamento da Receita.</p>'+
-      '<div class="verlist">'+emprep.map(function(x){return verrow(x, !vig.length, {evKey:evKey});}).join('')+'</div></div>':'';
+    var prepBlock='<div class="dtblock"><h3 class="dtsub">Em preparação</h3>'+
+      '<p class="dtsub__x">Versão em criação ou em processamento na Receita Federal. Ainda não é a versão vigente.</p>'+
+      (emprep.length
+        ? '<div class="verlist">'+emprep.map(function(x){return verrow(x, !vig.length, {evKey:evKey});}).join('')+'</div>'
+        : emptyBox('Nenhuma versão em preparação.', 'Você pode registrar uma nova versão quando necessário.'))+
+      '</div>';
     var prevBlock=ant.length?'<div class="dtblock"><h3 class="dtsub">Versões anteriores</h3>'+
-      '<p class="dtsub__x">Substituídas por uma versão mais nova. Ficam registradas para histórico; a seta abre o comprovante de cada uma.</p>'+
+      '<p class="dtsub__x">Versões que já não estão vigentes, mantidas para consulta.</p>'+
       '<div class="verlist">'+ant.map(function(x){return verrow(x, false, {evKey:evKey});}).join('')+'</div></div>':'';
     return vigBlock+prepBlock+prevBlock;
   }
@@ -1252,10 +1278,32 @@
   function evAlert(evKey, M){
     var e=M.ev[evKey];
     var A={ rejeitado:['danger', ICO.alert, 'Rejeitada pela Receita', 'A Receita rejeitou o evento no processamento; nada ficou concluído nesta competência. Corrija o apontamento e reenvie.'],
-      advertencia:['warning', ICO.alert, 'Processado com advertência', 'A Receita aceitou o evento e devolveu o recibo, com ressalvas que não impedem a aceitação. Revise na próxima alteração.'],
+      advertencia:['warning', ICO.alert, 'Processada com advertências', 'A Receita aceitou o evento e devolveu o recibo, com ressalvas que não impedem a aceitação. Revise na próxima alteração.'],
       protocolo:['info', ICO.clock, 'Em processamento', 'O envio foi protocolado e aguarda o processamento da Receita. O recibo aparece no comprovante quando concluir.'] };
-    var a=A[e.st]; if(!a) return '';
-    return '<div class="statusbar statusbar--'+a[0]+'" role="status"><span class="statusbar__ic" aria-hidden="true">'+a[1]+'</span><div class="statusbar__b"><p class="statusbar__title">'+a[2]+'</p><p class="statusbar__desc">'+a[3]+'</p></div></div>';
+    // Bloco COMPACTO do fechamento, SEMPRE visível no detalhe do evento (a PO): estado do mês +
+    // mini-checks do que precisa ser enviado, com atalho pro fechamento.
+    var fechBar=fechMini(M);
+    var a=A[e.st]; if(!a) return fechBar;
+    return fechBar+'<div class="statusbar statusbar--'+a[0]+'" role="status"><span class="statusbar__ic" aria-hidden="true">'+a[1]+'</span><div class="statusbar__b"><p class="statusbar__title">'+a[2]+'</p><p class="statusbar__desc">'+a[3]+'</p></div></div>';
+  }
+  /* Mini-fechamento: estado do D-1199 do mês + checkzinho por evento exigido. */
+  function fechMini(M){
+    var applicable=ORDER.filter(function(k){ return M.ev[k].st!=='na'; });
+    var okN=applicable.filter(function(k){ return M.ev[k].st==='recibo'||M.ev[k].st==='advertencia'; }).length;
+    var st, tone;
+    if(M.fech==='fechado'){ st='Competência fechada'; tone='ok'; }
+    else if(M.fechProc){ st='Fechamento em processamento'; tone='proc'; }
+    else { st='Fechamento · '+okN+' de '+applicable.length+' eventos concluídos'; tone='wait'; }
+    var CHECK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
+    var its=applicable.map(function(k){ var s=M.ev[k].st, m=EV_META[k];
+      var cls=(s==='recibo'||s==='advertencia')?'ok':(s==='protocolo')?'proc':(s==='rejeitado')?'err':'wait';
+      var mk=(cls==='ok')?CHECK:(cls==='proc')?ICO.clock:(cls==='err')?ICO.alert:'<span class="fechmini__dot"></span>';
+      return '<span class="fechmini__it fechmini__it--'+cls+'">'+mk+esc(m.short||m.name)+'</span>'; }).join('');
+    var icon=(tone==='ok')?ICO.lock:(tone==='proc')?ICO.clock:ICO.calendar;
+    return '<div class="fechmini fechmini--'+tone+'" role="status">'+
+      '<span class="fechmini__st">'+icon+esc(st)+'</span>'+
+      '<span class="fechmini__list">'+its+'</span>'+
+      '<a class="fechmini__link" href="?emp='+emp+'&per='+M.per+'&ev=visao" data-tab="visao">Ver fechamento</a></div>';
   }
   /* Aba do evento = UM card só (título + ações no topo, conteúdo dentro do mesmo bloco). */
   function eventPanel(evKey, M){
@@ -1272,12 +1320,12 @@
     var tabic=function(ic){ return '<span style="display:inline-flex;width:16px;height:16px" aria-hidden="true">'+ic+'</span>'; };
     // Balancete já traz seus próprios subtítulos (Contas a corrigir · Todas as contas); os outros levam o chint como subtítulo.
     var contentHead=(evKey==='d1101')?'':'<p class="sec__hint" style="margin:0 0 var(--space-4)">'+chint+'</p>';
-    var pConteudo='<div class="subpanel" id="sub-conteudo-'+evKey+'" role="tabpanel" tabindex="0" aria-label="Dados do mês">'+
+    var pConteudo='<div class="subpanel" id="sub-conteudo-'+evKey+'" role="tabpanel" tabindex="0" aria-label="Detalhe">'+
       (alert?'<div style="margin-bottom:var(--space-4)">'+alert+'</div>':'')+
       '<article class="card"><div class="card__body">'+contentHead+content+'</div></article></div>';
     var pVersoes='<div class="subpanel" id="sub-versoes-'+evKey+'" role="tabpanel" tabindex="0" aria-label="Versões" hidden><article class="card"><div class="card__body">'+versoesInner(evKey,M)+'</div></article></div>';
     var subtabs='<div class="tabs" role="tablist" aria-label="Seções de '+esc(meta.name)+'">'+
-      '<button class="tab is-active" type="button" role="tab" data-subtab="conteudo" data-ev="'+evKey+'" aria-selected="true">'+tabic(ICO.doc)+'Dados do mês</button>'+
+      '<button class="tab is-active" type="button" role="tab" data-subtab="conteudo" data-ev="'+evKey+'" aria-selected="true">'+tabic(ICO.doc)+'Detalhe</button>'+
       '<button class="tab" type="button" role="tab" data-subtab="versoes" data-ev="'+evKey+'" aria-selected="false">'+tabic(ICO.clock)+'Versões</button>'+
       '</div>';
     return '<section class="sec" style="margin-top:0">'+subtabs+'<div class="subpanels">'+pConteudo+pVersoes+'</div></section>';
@@ -1302,6 +1350,11 @@
   function jGet(name, per){ try{ return JSON.parse(localStorage.getItem('adere.mov.'+name+'.'+emp+'.'+per)||'null'); }catch(e){ return null; } }
   function jSet(name, per, v){ try{ localStorage.setItem('adere.mov.'+name+'.'+emp+'.'+per, JSON.stringify(v)); }catch(e){} }
   function nowStr(){ var d=new Date(); function p(n){return String(n).padStart(2,'0');} return p(d.getDate())+'/'+p(d.getMonth()+1)+'/'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes()); }
+  /* toast curto (DS .toast), mesmo feedback do copiar da Info */
+  function movToast(msg){ var t=document.createElement('div'); t.className='toast toast--success'; t.setAttribute('role','status');
+    t.style.position='fixed'; t.style.bottom='24px'; t.style.right='24px'; t.style.zIndex='400';
+    t.innerHTML='<p class="toast__title">'+esc(msg)+'</p>'; document.body.appendChild(t);
+    setTimeout(function(){ try{ t.remove(); }catch(_){}}, 2600); }
 
   /* Estado "competência importada": usado pelo runImport E na carga (demo persistida via localStorage). */
   function applyImported(M){
@@ -1464,6 +1517,9 @@
       template:['Baixar template de importação', 'O template traz as colunas no formato do leiaute da movimentação mensal (conta, saldos, movimento, ajustes e a base por conta). Preencha com os dados do mês e importe de volta pela opção "Importar planilha".','Baixar template'],
       erp:['Integração com ERP', 'A conexão direta com o ERP ou sistema contábil, para importar a movimentação automaticamente, está em desenvolvimento. Por enquanto, use a importação por planilha.','Entendi'] };
     var c=C[kind]; if(!c) return;
+    // ícone do modal por tipo de ação (o slot .modal__ic ficava vazio — a PO: "está sem icon")
+    var CICO={fechar:ICO.lock, reabrir:ICO.lock, importar:ICO.upload, alterar:ICO.doc, transmitir:ICO.send, template:ICO.download, erp:ICO.erp};
+    var icEl=document.getElementById('confirmIc'); if(icEl) icEl.innerHTML=CICO[kind]||ICO.doc;
     document.getElementById('confirmTitle').textContent=c[0];
     document.getElementById('confirmGo').textContent=c[2];
     if(kind==='fechar'){ document.getElementById('confirmBody').innerHTML=fecharFormHTML(evKey); return; }
@@ -1491,12 +1547,21 @@
           '<div class="fechform__met" id="fdMet" hidden>'+
             '<label class="choice"><input type="radio" name="fdmet" value="peps" checked><span class="choice__body"><span class="choice__title">PEPS automático</span><span class="choice__desc">A a-DeRE consome primeiro o saldo mais antigo, até o limite da base do mês.</span></span></label>'+
             '<label class="choice"><input type="radio" name="fdmet" value="manual"><span class="choice__body"><span class="choice__title">Manual</span><span class="choice__desc">Você escolhe quanto usar de cada período de origem da BCN.</span></span></label>'+
+            // detBCNeg: obrigatório no método manual (regra VERIFICAR_DETBCNEG do leiaute) — o código vem do extrato D-9199 dos meses anteriores
+            '<div class="fechform__det" id="fdDet" hidden>'+
+              '<p class="fechform__hint" style="margin:0 0 var(--space-3)">Origens disponíveis da BCN (o código vem do extrato D-9199 de cada mês de origem):</p>'+
+              '<div class="fechform__bcnrow"><div class="fechform__bcninfo"><span class="hmk">Código (codBCN)</span> <span class="hdr-recibo__n">1010C20260600</span><span class="fechform__bcnsub">origem jun/2026 · saldo R$ 80.000,00</span></div>'+
+              '<div class="field" style="margin:0"><label class="field__label" for="fdVUsar">Valor a utilizar</label>'+
+              '<div class="field-affix field-affix--pre"><span class="field-affix__pre">R$</span><input class="input input--num" id="fdVUsar" inputmode="decimal" placeholder="Ex.: 80.000,00"></div></div></div>'+
+              '<p class="fechform__hint" style="margin:var(--space-2) 0 0">Deixe vazio para usar todo o saldo deste código. Valor acima do saldo é limitado ao disponível (a Receita devolve um aviso).</p>'+
+            '</div>'+
           '</div></div>'+
       '</div>';
   }
   function bindFecharForm(){
-    var u=document.getElementById('fdUsarBCN'), m=document.getElementById('fdMet');
-    if(u&&m){ u.addEventListener('change',function(){ m.hidden=!u.checked; }); }
+    var u=document.getElementById('fdUsarBCN'), m=document.getElementById('fdMet'), d=document.getElementById('fdDet');
+    if(u&&m){ u.addEventListener('change',function(){ m.hidden=!u.checked; if(!u.checked&&d) d.hidden=true; if(u.checked&&d){ var mr=document.querySelector('input[name=fdmet]:checked'); d.hidden=!(mr&&mr.value==='manual'); } }); }
+    document.querySelectorAll('input[name=fdmet]').forEach(function(r){ r.addEventListener('change',function(){ if(d) d.hidden=(r.value!=='manual'); }); });
   }
   document.addEventListener('click', function(ev){
     var cb=ev.target.closest('[data-comprovante]');
@@ -1512,6 +1577,12 @@
     if(ev.target.closest('[data-extrato]')){ document.getElementById('extratoBody').innerHTML=extratoInner(MESES[perIdx]); openModal('extratoModal'); return; }
     if(ev.target.closest('[data-fechar]')){ fillConfirm('fechar'); openModal('confirmModal'); bindFecharForm(); return; }
     if(ev.target.closest('[data-reabrir]')){ fillConfirm('reabrir'); openModal('confirmModal'); return; }
+    var cp=ev.target.closest('[data-copy-recibo]');
+    if(cp){ var num=cp.getAttribute('data-copy-recibo');
+      var ok=function(){ movToast('Número do recibo copiado'); };
+      var legacy=function(){ try{ var ta=document.createElement('textarea'); ta.value=num; ta.setAttribute('readonly',''); ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); var done=document.execCommand('copy'); document.body.removeChild(ta); if(done) ok(); }catch(_){} };
+      if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(num).then(ok, legacy); } else { legacy(); }
+      return; }
     if(ev.target.id==='confirmGo'){
       var p=PENDING; PENDING=null; closeAllModals();
       // Jornada feliz (s2u): o confirmar EXECUTA (transmite/fecha/reabre) com protocolo → recibo coreografado.
@@ -1575,19 +1646,19 @@
       title.textContent=meta.name;
       badge.innerHTML='<span class="tag">'+meta.code+'</span>';   // só o código ao lado do título
       document.getElementById('pageSub').textContent='';          // a frase do hub não aparece no evento (lá a faixa .hdrmeta assume)
-      // faixa: pill SÓ para estados de TRANSMISSÃO (a PO: "Em preparação" não aparece no cabeçalho,
-      // mas Em processamento / Processado com sucesso / Rejeitada aparecem, como nos outros detalhes).
-      // E, transmitido, a faixa traz os MESMOS fatos da Info: tipo de operação + recibo (ou protocolo).
+      // faixa: pill SÓ para estados de TRANSMISSÃO + os MESMOS fatos da Info (tipo de operação e recibo
+      // truncado com botão de copiar). SEM os fatos de conteúdo ("57 contas...") — a PO tirou do cabeçalho.
       var extra='';
       if(hasEnvio(evKey,M)){
         var vv=VERS[per] && VERS[per][evKey] || {atual:[],prep:[],ant:[]};
         var a0=(vv.atual||[]).concat(vv.prep||[],vv.ant||[])[0];
         var tipo=(a0 && /Retifica/i.test(a0.titulo||''))?'Retificação':'Inclusão';
-        extra='<span class="hdrmeta__fact">'+ICO.doc+'Tipo de operação <strong>'+tipo+'</strong></span>';
-        if(a0 && a0.recibo) extra+='<span class="hdrmeta__fact">'+ICO.receipt+'Recibo <strong class="mono">'+esc(a0.recibo)+'</strong></span>';
-        else if(a0 && a0.protocolo) extra+='<span class="hdrmeta__fact">'+ICO.receipt+'Protocolo <strong class="mono">'+esc(a0.protocolo)+'</strong></span>';
+        extra='<span class="hdrmeta__fact">'+ICO.doc+'<span class="hmk">Tipo de operação</span><span class="hdr-recibo__n">'+tipo+'</span></span>';
+        var num=(a0&&(a0.recibo||a0.protocolo))||''; var lbl=(a0&&a0.recibo)?'Recibo':'Protocolo';
+        if(num) extra+='<span class="hdrmeta__fact">'+ICO.receipt+'<span class="hmk">'+lbl+'</span><span class="hdr-recibo__n">'+esc(num.slice(0,10)+'…'+num.slice(-4))+'</span>'+
+          '<button class="icon-btn" type="button" data-copy-recibo="'+esc(num)+'" aria-label="Copiar número do '+(lbl==='Recibo'?'recibo':'protocolo')+'" title="Copiar '+lbl.toLowerCase()+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg></button></span>';
       }
-      meta_.innerHTML=(hasEnvio(evKey,M)?pill(e.st):'')+factsFrom(e.sub)+extra;
+      meta_.innerHTML=(hasEnvio(evKey,M)?pill(e.st):'')+extra;
       setBar(evActions(evKey, M));                               // ações vão pra barra fixa (.decisionbar), não pro cabeçalho
     }
     dn.innerHTML='';
