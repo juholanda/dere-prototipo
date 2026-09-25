@@ -1220,7 +1220,24 @@
     var tx=adv?'A Receita aceitou o evento e devolveu o recibo, com uma advertência a revisar. Ele compõe o fechamento do mês.':(hasRec?'A Receita processou o evento e devolveu o recibo. Ele compõe o fechamento do mês.':'O envio foi protocolado e aguarda o processamento da Receita. O recibo aparece aqui quando concluir.');
     var rows=[['Protocolo do envio',active.protocolo,'receipt__v--mono'],['Transmitido em',active.transm,''],['Recibo',hasRec?active.recibo:'aguardando processamento',hasRec?'receipt__v--mono receipt__v--strong':'receipt__v--wait'],['Processado em',hasRec?active.proc:'—','']];
     var rowsHtml=rows.map(function(r){return '<div class="receipt__row"><span class="receipt__k">'+r[0]+'</span><span class="receipt__v'+(r[2]?' '+r[2]:'')+'">'+esc(r[1])+'</span></div>';}).join('');
-    return '<div class="receipt__state receipt__state--'+st+'"><span class="receipt__state-ic">'+(hasRec?ICO.check:ICO.clock)+'</span><div><p class="receipt__state-tt">'+tt+'</p><p class="receipt__state-tx">'+tx+'</p></div></div><div class="receipt__rows">'+rowsHtml+'</div>';
+    // Totalizador do retorno (evtRetornoBalan/AplicFin/RDed/TitPub): a base apurada que o evento devolve
+    // e compõe o fechamento. Só depois do recibo — antes disso o valor ainda não foi confirmado pela Receita.
+    var evd=M.ev[evKey]||{}, totBlock='';
+    if(hasRec && evd.val && evd.val!=='—'){
+      var isBal=(evKey==='d1101'), cts=(isBal&&M.total&&M.total.codtrib)||[];
+      var ctRow=isBal
+        ? '<tr class="kvsub"><th scope="row">'+(cts[0]?esc(cts[0].cod)+' · '+esc(cts[0].desc):'Classificação (Tabela 11)')+'</th><td class="col--num mono">'+esc(evd.val)+'</td></tr>'
+        : '';
+      // no retorno (pós-recibo) a base está confirmada pela Receita: "(estimada)" não cabe aqui.
+      var vlbl=(evd.valLbl||'Base apurada').replace(/\s*\(estimada\)/i,'');
+      totBlock='<h4 class="dtsub" style="margin-top:var(--space-5)">Totalizador do retorno</h4>'+
+        '<div class="table-wrap table-wrap--boxed" style="margin-top:var(--space-2)"><table class="table kvtable"><tbody>'+
+          '<tr><th scope="row">'+esc(vlbl)+' (vApur)</th><td class="col--num strong">'+esc(evd.val)+'</td></tr>'+
+          ctRow+
+        '</tbody></table></div>'+
+        (isBal?'<p class="tnote" style="margin-top:var(--space-2)">Detalhe conta a conta (saldo inicial, movimento, ajustes, saldo final e vApur por conta) na aba <b>Detalhe</b> do evento.</p>':'');
+    }
+    return '<div class="receipt__state receipt__state--'+st+'"><span class="receipt__state-ic">'+(hasRec?ICO.check:ICO.clock)+'</span><div><p class="receipt__state-tt">'+tt+'</p><p class="receipt__state-tx">'+tx+'</p></div></div><div class="receipt__rows">'+rowsHtml+'</div>'+totBlock;
   }
   /* Tem envio (comprovante/versões) quando a PRÓPRIA situação do evento implica uma transmissão:
      recibo/advertência/em processamento/rejeitado. "A preparar" (pendente) e "Não se aplica" (na) não têm. */
