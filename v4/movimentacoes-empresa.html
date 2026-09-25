@@ -234,6 +234,8 @@
     .impproc__lead{font-size:var(--text-sm);color:var(--color-text-onmuted);margin:0 0 var(--space-6)}
     /* extrato: respiro embaixo do último item do modal (estava colado na borda) */
     #extratoModal .modal__body{padding-bottom:var(--space-8)}
+    /* memória de cálculo: 2ª linha (o que o evento traz), fina e apagada abaixo do nome do evento */
+    .memln__d{display:block;font-weight:400;font-size:var(--text-xs);color:var(--color-text-muted);margin-top:2px}
     .evimport{display:inline-flex;align-items:center;gap:var(--space-1);font-size:var(--text-sm);font-weight:600;color:var(--color-primary);text-decoration:none;white-space:nowrap}
     .evimport svg{width:15px;height:15px}
     .evimport:hover{text-decoration:underline}
@@ -1380,7 +1382,23 @@
     if(emp!=='s2u') return; // números do retorno (memória, BCN, recibos) são da jornada do s2u; outras empresas mantêm os próprios totais
     M.total.cbs=S2U_TOT.cbs; M.total.ibs=S2U_TOT.ibs; M.total.is='—'; M.total.bcn='R$ 0,00';
     M.total.ibsUF='R$ 3.112,50'; M.total.ibsMun='R$ 3.112,50'; M.total.seq='00';
-    M.total.memoria='Receitas de serviços financeiros (operações de TVM) R$ 6.000.000,00 + aplicações financeiras R$ 102.000,00 + juros de títulos com oferta pública (limitados à variação da Selic) R$ 240.000,00 − deduções utilizadas (D-1121) R$ 117.000,00 = base de cálculo R$ 6.225.000,00. CBS: R$ 6.225.000,00 × 0,9% = R$ 56.025,00. IBS: R$ 6.225.000,00 × 0,1% = R$ 6.225,00 (metade estadual, metade municipal).';
+    /* Memória de cálculo ESTRUTURADA (retorno do fechamento, evtRetornoMensal): a composição da base
+       (os 4 eventos que somam a base) + a cadeia por tributo base → BCN aproveitada → base apurada
+       → alíquota → imposto, exatamente como o XSD documenta (vBCIBS − vDedBCN = vBCApurIBS × pIBS). */
+    M.total.memcalc={
+      base:[
+        {ev:'Balancete (D-1101)', desc:'Receitas de serviços financeiros (operações de TVM)', val:'R$ 6.000.000,00', op:'+'},
+        {ev:'Aplicações Financeiras (D-1106)', desc:'Base das aplicações no mês (vApur)', val:'R$ 102.000,00', op:'+'},
+        {ev:'Títulos com oferta pública (D-2101)', desc:'Juros limitados à variação da Selic', val:'R$ 240.000,00', op:'+'},
+        {ev:'Deduções (D-1121)', desc:'Deduções utilizadas no mês', val:'R$ 117.000,00', op:'−'}
+      ],
+      baseTot:'R$ 6.225.000,00',
+      trib:[
+        {nome:'CBS', base:'R$ 6.225.000,00', ded:'R$ 0,00', apur:'R$ 6.225.000,00', aliq:'0,9%', val:'R$ 56.025,00'},
+        {nome:'IBS', base:'R$ 6.225.000,00', ded:'R$ 0,00', apur:'R$ 6.225.000,00', aliq:'0,1%', val:'R$ 6.225,00',
+          sub:[{nome:'IBS Estadual (UF)', aliq:'0,05%', val:'R$ 3.112,50'},{nome:'IBS Municipal', aliq:'0,05%', val:'R$ 3.112,50'}]}
+      ]
+    };
     M.total.bcnDet={cod:'1010C · CBS', saldoAnt:'R$ 80.000,00', usado:'R$ 0,00', gerada:'R$ 0,00', saldoFim:'R$ 80.000,00'};
     M.total.recVinc=[
       ['Balancete (D-1101)', rec31(1101,M.per,1)],
@@ -1483,8 +1501,31 @@
         ((t.is&&t.is!=='—')?'<tr><th scope="row">Imposto Seletivo (IS)</th><td class="col--num mono">'+esc(t.is)+'</td></tr>':'')+
       '</tbody></table></div>'+
       ((!t.is||t.is==='—')?'<p class="tnote">Imposto Seletivo (IS): não se aplica a este regime (só prognósticos).</p>':'');
-    var mem=t.memoria?('<h4 class="dtsub" style="margin-top:var(--space-6)">Memória de cálculo</h4>'+
-      '<p class="tnote" style="margin-top:var(--space-2);line-height:1.6">'+esc(t.memoria)+'</p>'):'';
+    var mem='';
+    if(t.memcalc){
+      var mc=t.memcalc;
+      var comp='<div class="table-wrap table-wrap--boxed" style="margin-top:var(--space-2)"><table class="table kvtable"><thead><tr><th scope="col">Composição da base de cálculo</th><th scope="col" class="col--num">Valor</th></tr></thead><tbody>'+
+        mc.base.map(function(b){ return '<tr><th scope="row">'+esc(b.op)+' '+esc(b.ev)+'<span class="memln__d">'+esc(b.desc)+'</span></th><td class="col--num mono">'+esc(b.val)+'</td></tr>'; }).join('')+
+        '<tr><th scope="row" class="strong">= Base de cálculo apurada</th><td class="col--num strong">'+esc(mc.baseTot)+'</td></tr>'+
+        '</tbody></table></div>';
+      var chains=mc.trib.map(function(tr){
+        var subRows=(tr.sub&&tr.sub.length)?tr.sub.map(function(s){ return '<tr class="kvsub"><th scope="row">'+esc(s.nome)+' · '+esc(s.aliq)+'</th><td class="col--num mono">'+esc(s.val)+'</td></tr>'; }).join(''):'';
+        return '<div class="table-wrap table-wrap--boxed" style="margin-top:var(--space-3)"><table class="table kvtable"><thead><tr><th scope="col">'+esc(tr.nome)+'</th><th scope="col" class="col--num">'+esc(tr.val)+'</th></tr></thead><tbody>'+
+          '<tr><th scope="row">Base de cálculo</th><td class="col--num mono">'+esc(tr.base)+'</td></tr>'+
+          '<tr><th scope="row">− Base negativa aproveitada (BCN)</th><td class="col--num mono">'+esc(tr.ded)+'</td></tr>'+
+          '<tr><th scope="row" class="strong">= Base apurada</th><td class="col--num mono strong">'+esc(tr.apur)+'</td></tr>'+
+          '<tr><th scope="row">× Alíquota</th><td class="col--num mono">'+esc(tr.aliq)+'</td></tr>'+
+          '<tr><th scope="row" class="strong">= '+esc(tr.nome)+' do mês</th><td class="col--num strong">'+esc(tr.val)+'</td></tr>'+
+          subRows+
+        '</tbody></table></div>';
+      }).join('');
+      mem='<h4 class="dtsub" style="margin-top:var(--space-6)">Memória de cálculo</h4>'+
+        '<p class="tnote" style="margin:var(--space-1) 0 0;line-height:1.6">Como a Receita chega ao imposto: a base vem dos quatro eventos do mês; para cada tributo, a base apurada (depois de aproveitar base negativa) é multiplicada pela alíquota.</p>'+
+        comp+chains;
+    } else if(t.memoria){
+      mem='<h4 class="dtsub" style="margin-top:var(--space-6)">Memória de cálculo</h4>'+
+        '<p class="tnote" style="margin-top:var(--space-2);line-height:1.6">'+esc(t.memoria)+'</p>';
+    }
     var rv=(t.recVinc&&t.recVinc.length)?('<h4 class="dtsub" style="margin-top:var(--space-6)">Eventos que alimentaram o fechamento</h4>'+
       '<div class="table-wrap table-wrap--boxed" style="margin-top:var(--space-2)"><table class="table kvtable"><tbody>'+
       t.recVinc.map(function(r){ return '<tr><th scope="row">'+esc(r[0])+'</th><td class="col--num mono">'+esc(r[1])+'</td></tr>'; }).join('')+
