@@ -1230,12 +1230,20 @@
         : '';
       // no retorno (pós-recibo) a base está confirmada pela Receita: "(estimada)" não cabe aqui.
       var vlbl=(evd.valLbl||'Base apurada').replace(/\s*\(estimada\)/i,'');
+      // cada evento aponta para o SEU próprio detalhe (a aba Detalhe já traz a tabela linha a linha).
+      var DNOTE={
+        d1101:'conta a conta (saldo inicial, movimento, ajustes, saldo final e vApur por conta)',
+        d1106:'ativo a ativo (saldo inicial, rendimento do período, variação, saldo final e base por ativo)',
+        d1121:'documento a documento (operação, teto, valor deduzido no mês e saldo, com os itens de cada documento)',
+        d2101:'título a título (saldos, juros recebidos e apropriados, Selic e a base por título)'
+      };
+      var note=DNOTE[evKey];
       totBlock='<h4 class="dtsub" style="margin-top:var(--space-5)">Totalizador do retorno</h4>'+
         '<div class="table-wrap table-wrap--boxed" style="margin-top:var(--space-2)"><table class="table kvtable"><tbody>'+
-          '<tr><th scope="row">'+esc(vlbl)+' (vApur)</th><td class="col--num strong">'+esc(evd.val)+'</td></tr>'+
+          '<tr><th scope="row">'+esc(vlbl)+'</th><td class="col--num strong">'+esc(evd.val)+'</td></tr>'+
           ctRow+
         '</tbody></table></div>'+
-        (isBal?'<p class="tnote" style="margin-top:var(--space-2)">Detalhe conta a conta (saldo inicial, movimento, ajustes, saldo final e vApur por conta) na aba <b>Detalhe</b> do evento.</p>':'');
+        (note?'<p class="tnote" style="margin-top:var(--space-2)">Detalhe '+note+' na aba <b>Detalhe</b> do evento.</p>':'');
     }
     return '<div class="receipt__state receipt__state--'+st+'"><span class="receipt__state-ic">'+(hasRec?ICO.check:ICO.clock)+'</span><div><p class="receipt__state-tt">'+tt+'</p><p class="receipt__state-tx">'+tx+'</p></div></div><div class="receipt__rows">'+rowsHtml+'</div>'+totBlock;
   }
