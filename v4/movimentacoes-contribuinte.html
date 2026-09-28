@@ -1,23 +1,20 @@
-<!DOCTYPE html>
-<html lang="pt-BR" data-theme="light">
+<!doctype html>
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>a-DeRE · v5 · Solicitações</title>
-  <link rel="stylesheet" href="../design-system/ds.css?v=481e2896">
-  <style>
-    body{margin:0;background:var(--color-bg);font-family:var(--font-sans);color:var(--color-text);font-size:var(--text-base)}
-    .wrap{max-width:760px;margin:0 auto;padding:var(--space-12) var(--space-6)}
-    .eyebrow{font-size:var(--text-xs);font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--color-primary)}
-    h1{font-size:var(--text-3xl);margin:var(--space-2) 0 var(--space-2);color:var(--color-heading)}
-    .lead{color:var(--color-text-muted);margin:0 0 var(--space-8);line-height:1.6}
-    .card{display:block;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-2xl);padding:var(--space-6);margin-bottom:var(--space-4);text-decoration:none;color:inherit;box-shadow:var(--shadow-sm);transition:border-color .15s,box-shadow .15s}
-    .card:hover{border-color:var(--color-primary);box-shadow:var(--shadow-md)}
-    .card h2{font-size:var(--text-lg);margin:0 0 var(--space-1);color:var(--color-heading)}
-    .card p{margin:0;color:var(--color-text-muted);font-size:var(--text-sm);line-height:1.5}
-    .soon{opacity:.55;pointer-events:none}
-    .tag{display:inline-block;font-size:var(--text-2xs);font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--color-text-muted);border:1px solid var(--color-border);border-radius:var(--radius-pill);padding:2px 10px;margin-top:var(--space-3)}
-  </style>
+<meta charset="utf-8">
+<title>a-DeRE · Movimentações Mensais</title>
+<!--
+  Tela unificada: a antiga "movimentacoes-contribuinte" (casca rasa) foi aposentada.
+  A tela canônica é a COMPLETA (movimentacoes-empresa.html), com régua de meses + cabeçalho anual.
+  Este stub só redireciona, preservando os parâmetros (emp/per/ev), pra não quebrar links antigos.
+  Roda no <head>, antes do gate, então o redirect acontece na hora.
+-->
+<script>
+  (function(){
+    try{ location.replace('movimentacoes-empresa.html' + (location.search || '')); }
+    catch(e){ location.href = 'movimentacoes-empresa.html'; }
+  })();
+</script>
 </head>
 <body>
 <style id="dere-gate-css">
@@ -53,21 +50,7 @@
     else{e.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg> Senha incorreta. Tente novamente.';i.select();}
     return false;}
 </script>
-  <div class="wrap">
-    <p class="eyebrow">a-DeRE · protótipo v5</p>
-    <h1>Ideia das solicitações</h1>
-    <p class="lead">Versão separada para trabalhar o modelo de <strong>solicitações</strong> (Inclusão, Alteração, Exclusão), com o layout de dois painéis: à esquerda o que está em vigor, à direita as solicitações. O v4 (que trata tudo como versão) fica intocado.</p>
-
-    <a class="card" href="info-contribuinte-solicitacoes.html?sc=vig">
-      <h2>Informações do contribuinte (D-1001)</h2>
-      <p>Cadastro no formato de solicitações. Nove cenários pelo seletor no rodapé, incluindo alteração e exclusão.</p>
-    </a>
-
-    <div class="card soon">
-      <h2>Movimentações mensais</h2>
-      <p>Mesmo modelo, com abas por evento, totalizadores e o extrato como página.</p>
-      <span class="tag">Em construção</span>
-    </div>
-  </div>
+<p style="font:14px system-ui;margin:24px">Esta tela foi unificada. Redirecionando para as Movimentações Mensais…
+<a href="movimentacoes-empresa.html">Continuar</a>.</p>
 </body>
 </html>
