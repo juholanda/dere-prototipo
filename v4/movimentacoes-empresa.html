@@ -1050,7 +1050,7 @@
 
     // A lista de eventos mora DENTRO do card de Fechamento (no lugar dos antigos checkpoints); não há mais um card "Eventos da competência" repetido embaixo.
     var band=fechBand(M, applicable, {closed:closed, started:started, ready:ready, comRecibo:comRecibo, fproc:!!M.fechProc}, listaView);
-    return (closed?'':prazoBanner(M)) + band + ((started||closed)?apuracaoSection(M, closed):'');
+    return (closed?'':prazoBanner(M)) + band + ((started||closed)?apuracaoSection(M, closed):'') + ((started||closed)?historicoSection(M):'');
   }
 
   /* ===== ABA DE EVENTO ===== */
@@ -1665,6 +1665,9 @@
         if(p.kind==='transmitir' && p.ev) doTransmit(p.ev);
         else if(p.kind==='fechar') doFechar();
         else if(p.kind==='reabrir') doReabrir();
+        else if((p.kind==='alterar'||p.kind==='importar') && p.ev) runImport(p.ev);   // retificação/reimport = importar nova versão
+        else if(p.kind==='template') movToast('Template da planilha baixado (exemplo).');
+        else if(p.kind==='erp') movToast('Integração com ERP em desenvolvimento.');
       }
       return; }
     if(ev.target.closest('[data-modal-close]')||ev.target.classList.contains('scrim')){ closeAllModals(); return; }
