@@ -56,7 +56,7 @@
     .card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-2xl);box-shadow:var(--shadow-sm);overflow:hidden}
     .table{margin:0}
     .table--fixed{table-layout:fixed;min-width:1120px}
-    .table--fixed td,.table--fixed th{overflow:hidden;text-overflow:ellipsis}
+    .table--fixed td:not(.col-act):not(.col-num){overflow:hidden;text-overflow:ellipsis}
     .table--fixed .evemp .celltitle,.table--fixed .evemp .cellcnpj{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .table td{padding-top:var(--space-4);padding-bottom:var(--space-4);font-size:var(--text-base);vertical-align:middle}
     .table th:first-child,.table td:first-child{padding-left:var(--space-6)}
@@ -187,8 +187,8 @@
           <div class="wrap">
             <div class="page-h__row">
               <div class="page-h__main">
-                <div class="page-h__title"><h1>Movimentações Mensais</h1><span class="tag page-h__code">D-1199</span></div>
-                <p class="page-h__desc">Situação do fechamento e a CBS apurada por contribuinte na competência (D-1199).</p>
+                <div class="page-h__title"><h1>Movimentações Mensais</h1></div>
+                <p class="page-h__desc">Acompanhe os eventos da competência e o fechamento do mês.</p>
               </div>
               <div class="page-h__act">
                 <div class="filterf filterf--comp">
@@ -224,25 +224,23 @@
             <div class="card__h">
               <div>
                 <h2 id="lst-h">Contribuintes</h2>
-                <p class="card__hint">Situação do fechamento por contribuinte.</p>
+                <p class="card__hint">Situação da informação de cada contribuinte.</p>
               </div>
               <div class="card__h-tools">
-                <a class="btn btn--secondary" href="#" id="btnExport"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>Exportar</a>
                 <label class="search"><span class="sr-only">Buscar por razão social ou CNPJ</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><input type="search" id="q" placeholder="Ex.: MAG Seguros ou 33.608.308" autocomplete="off"></label>
               </div>
             </div>
             <div class="table-wrap">
-              <table class="table table--fixed" aria-labelledby="lst-h">
+              <table class="table table--fixed table--stickyactions" aria-labelledby="lst-h">
                 <colgroup>
-                  <col style="width:22%"><col style="width:16%"><col style="width:20%"><col style="width:13%"><col style="width:16%"><col style="width:13%">
+                  <col style="width:28%"><col style="width:16%"><col style="width:22%"><col style="width:18%"><col style="width:16%">
                 </colgroup>
                 <thead>
                   <tr>
-                    <th scope="col">Contribuinte</th>
-                    <th scope="col">Situação do fechamento</th>
-                    <th scope="col">Eventos da competência</th>
-                    <th scope="col" class="col-num">CBS apurada</th>
-                    <th scope="col">Recibo D-1199</th>
+                    <th scope="col" class="sortable is-sorted" data-sort="emp" aria-sort="ascending"><button type="button" class="th-btn">Contribuinte <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
+                    <th scope="col" class="sortable" data-sort="sit" aria-sort="none"><button type="button" class="th-btn">Situação <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
+                    <th scope="col" class="sortable" data-sort="ev" aria-sort="none"><button type="button" class="th-btn">Eventos da competência <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
+                    <th scope="col" class="sortable col-num" data-sort="cbs" aria-sort="none"><button type="button" class="th-btn">CBS apurada <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
                     <th scope="col"><span class="sr-only">Abrir</span></th>
                   </tr>
                 </thead>
@@ -368,25 +366,37 @@
     document.querySelectorAll('#kpis [data-filt]').forEach(function(b){ b.addEventListener('click',function(){ filter=b.getAttribute('data-filt'); kpis(); renderRows(); }); });
   }
 
+  /* Ordenação da tabela (chevron .th-sort vem do DS; mesmo padrão da lista de Informações do Contribuinte) */
+  var listSort={key:'emp', dir:'asc'};
+  var SIT_RANK={rejeitada:0, naoiniciada:1, pendente:2, processando:3, fechada:4};
+  function evDone(ev){ var ap=EV_ORDER.filter(function(k){ return k!=='d1199' && ev[k]!=='na'; }); return ap.filter(function(k){ return ev[k]==='ok'; }).length; }
+  function sortVal(e){
+    switch(listSort.key){
+      case 'sit': return SIT_RANK[e.sit]!=null?SIT_RANK[e.sit]:9;
+      case 'ev':  return evDone(e.ev);
+      case 'cbs': return e.cbs==null?-1:e.cbs;
+      default:    return e.nome.toLowerCase();
+    }
+  }
   function renderRows(){
     var f=FILTERS[filter]||FILTERS.todas;
     var q=query.trim().toLowerCase();
     var list=EMP.filter(f).filter(function(e){ return !q || e.nome.toLowerCase().indexOf(q)>=0 || e.cnpj.replace(/\D/g,'').indexOf(q.replace(/\D/g,''))>=0; });
+    var dir=listSort.dir==='asc'?1:-1; list.sort(function(a,b){ var va=sortVal(a),vb=sortVal(b); if(va<vb)return -1*dir; if(va>vb)return 1*dir; return a.nome<b.nome?-1:1; });
     var tb=document.getElementById('rows');
-    if(!list.length){ tb.innerHTML='<tr class="emptyrow"><td colspan="6">Nenhum contribuinte nesse filtro.</td></tr>'; document.getElementById('tcount').innerHTML=''; return; }
+    if(!list.length){ tb.innerHTML='<tr class="emptyrow"><td colspan="5">Nenhum contribuinte nesse filtro.</td></tr>'; document.getElementById('tcount').innerHTML=''; return; }
     tb.innerHTML=list.map(function(e){
       /* ação por estado, abre o detalhe (naoiniciada = fluxo de "nada enviado" / importar) */
       var href='movimentacoes-empresa.html?emp='+e.id;
       var btn = e.sit==='naoiniciada' ? '<a class="btn btn--primary rowbtn" href="'+href+'">Preencher</a>'
               : e.sit==='pendente'   ? '<a class="btn btn--primary rowbtn" href="'+href+'">Continuar</a>'
               : e.sit==='rejeitada'  ? '<a class="btn btn--primary rowbtn" href="'+href+'">Corrigir</a>'
-              : '<a class="btn btn--secondary rowbtn" href="'+href+'">Ver detalhe</a>';
+              : '<a class="btn btn--secondary rowbtn" href="'+href+'">Ver detalhes</a>';
       return '<tr data-href="'+href+'">'+
         '<td><div class="evemp">'+logoHtml(e)+'<div><div class="celltitle">'+esc(e.nome)+'</div><div class="cellcnpj">'+esc(e.cnpj)+'</div></div></div></td>'+
         '<td>'+sitPill(e.sit)+'</td>'+
         '<td>'+evBar(e.ev)+'</td>'+
         '<td class="col-num">'+numCell(e.cbs)+'</td>'+
-        '<td>'+reciboCell(e)+'</td>'+
         '<td class="col-act">'+btn+'</td>'+
       '</tr>';
     }).join('');
@@ -402,6 +412,13 @@
 
   setPrazo(); kpis(); renderRows();
   document.getElementById('q').addEventListener('input',function(){ query=this.value; renderRows(); });
+  /* ordenação por cabeçalho (mesmo comportamento da lista de Informações do Contribuinte) */
+  (function(){
+    var ths=document.querySelectorAll('th.sortable');
+    function updateHeaders(){ ths.forEach(function(th){ var on=th.getAttribute('data-sort')===listSort.key; th.setAttribute('aria-sort', on?(listSort.dir==='asc'?'ascending':'descending'):'none'); th.classList.toggle('is-sorted', on); }); }
+    ths.forEach(function(th){ (th.querySelector('.th-btn')||th).addEventListener('click', function(){ var k=th.getAttribute('data-sort'); if(listSort.key===k){ listSort.dir=listSort.dir==='asc'?'desc':'asc'; } else { listSort.key=k; listSort.dir='asc'; } renderRows(); updateHeaders(); }); });
+    updateHeaders();
+  })();
 
   document.querySelectorAll('[data-menu]').forEach(function(m){ var b=m.querySelector('button'), p=m.querySelector('.menu__panel'); if(!b||!p)return; b.addEventListener('click',function(){ if(p.hasAttribute('hidden')){p.removeAttribute('hidden');b.setAttribute('aria-expanded','true');}else{p.setAttribute('hidden','');b.setAttribute('aria-expanded','false');} }); document.addEventListener('click',function(ev){ if(!m.contains(ev.target)){p.setAttribute('hidden','');b.setAttribute('aria-expanded','false');} }); });
   document.querySelectorAll('[data-sidenav-toggle]').forEach(function(btn){ var nav=btn.closest('[data-sidenav]'); btn.addEventListener('click',function(){ var c=nav.classList.toggle('is-collapsed'); try{localStorage.setItem('adere.nav.collapsed',c?'1':'0');}catch(e){} btn.setAttribute('aria-expanded',String(!c)); }); });
