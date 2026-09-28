@@ -6,7 +6,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>a-DeRE · Versões · MAG Seguros</title>
+  <title>a-DeRE · Solicitações · MAG Seguros</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="../design-system/ds.css?v=e43eb51c">
   <script src="../design-system/ds-tailwind.js"></script>
@@ -335,8 +335,8 @@
           <div class="wrap">
             <div class="page-h__row">
               <div class="page-h__main">
-                <div class="page-h__title"><h1>Informações do contribuinte · versões</h1><span class="tag page-h__code">D-1001</span></div>
-                <p class="page-h__desc" id="pageSub">Acompanhe e gerencie as versões das informações do contribuinte.</p>
+                <div class="page-h__title"><h1>Informações do contribuinte · solicitações</h1><span class="tag page-h__code">D-1001</span></div>
+                <p class="page-h__desc" id="pageSub">Acompanhe e gerencie as solicitações das informações do contribuinte.</p>
               </div>
               <div class="page-h__act" id="headerActSlot"></div>
             </div>
@@ -356,7 +356,7 @@
               </div>
               <div class="cometa">
                 <div class="kv"><p class="kv__k">Regime principal</p><p class="kv__v" id="coRegime">Serviços Financeiros</p></div>
-                <div class="kv"><p class="kv__k">Versão vigente</p><p class="kv__v" id="coVig">—</p></div>
+                <div class="kv"><p class="kv__k">Vigente</p><p class="kv__v" id="coVig">—</p></div>
                 <div class="kv"><p class="kv__k">Última atualização</p><p class="kv__v" id="coAt">—</p></div>
               </div>
             </div>
@@ -365,27 +365,27 @@
           <!-- Pendência que exige ação (ajustes solicitados ou rejeição) -->
           <div id="alertSlot"></div>
 
-          <!-- Versões -->
-          <section class="card" aria-label="Versões das informações do contribuinte">
-            <div class="tabs" id="vertabs" role="tablist" aria-label="Como ver as versões">
-              <button class="tab is-active" type="button" role="tab" id="vt-tab" aria-selected="true" aria-controls="vp-tab" data-vtab="tab"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m2 12 8.58 3.91a2 2 0 0 0 1.66 0L22 12"/><path d="m2 17 8.58 3.91a2 2 0 0 0 1.66 0L22 17"/></svg>Versões</button>
+          <!-- Solicitações -->
+          <section class="card" aria-label="Solicitações das informações do contribuinte">
+            <div class="tabs" id="vertabs" role="tablist" aria-label="Como ver as solicitações">
+              <button class="tab is-active" type="button" role="tab" id="vt-tab" aria-selected="true" aria-controls="vp-tab" data-vtab="tab"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m2 12 8.58 3.91a2 2 0 0 0 1.66 0L22 12"/><path d="m2 17 8.58 3.91a2 2 0 0 0 1.66 0L22 17"/></svg>Solicitações</button>
               <button class="tab" type="button" role="tab" id="vt-tl" aria-selected="false" aria-controls="vp-tl" data-vtab="tl"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><rect width="4" height="7" x="7" y="10" rx="1"/><rect width="4" height="12" x="15" y="5" rx="1"/></svg>Linha do tempo</button>
             </div>
 
             <div class="tabs__panel" id="vp-tab" role="tabpanel" aria-labelledby="vt-tab" tabindex="0">
               <section class="versec" aria-labelledby="h-vig">
-                <div class="versec__h"><h2 id="h-vig">Versão vigente</h2></div>
-                <p class="versec__hint">Versão válida hoje na Receita Federal e, quando houver, a próxima já aceita para vigência futura.</p>
+                <div class="versec__h"><h2 id="h-vig">Vigente</h2></div>
+                <p class="versec__hint">A solicitação válida hoje na Receita Federal e, quando houver, a próxima já aceita para vigência futura.</p>
                 <div id="secVig"></div>
               </section>
               <section class="versec" aria-labelledby="h-prog">
                 <div class="versec__h"><h2 id="h-prog">Em preparação</h2></div>
-                <p class="versec__hint">Versão em criação, revisão ou processamento na Receita Federal. Ainda não é a versão vigente.</p>
+                <p class="versec__hint">A solicitação em criação, revisão ou processamento na Receita Federal. Ainda não é a vigente.</p>
                 <div id="secProg"></div>
               </section>
               <section class="versec" aria-labelledby="h-enc" id="secEncSection">
-                <div class="versec__h"><h2 id="h-enc">Versões anteriores</h2></div>
-                <p class="versec__hint">Versões que já não estão vigentes, mantidas para consulta.</p>
+                <div class="versec__h"><h2 id="h-enc">Anteriores</h2></div>
+                <p class="versec__hint">Solicitações que já não estão vigentes (encerradas ou excluídas), mantidas para consulta.</p>
                 <div id="secEnc"></div>
               </section>
             </div>
@@ -396,8 +396,8 @@
 
             <div class="empty" id="verempty" hidden>
               <div class="empty__icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M9 15h6M12 12v6"/></svg></div>
-              <p class="empty__title">Nenhuma versão ainda</p>
-              <p class="empty__text">Este contribuinte ainda não teve as informações preenchidas. Crie a primeira versão para enviar à Receita.</p>
+              <p class="empty__title">Nenhuma solicitação ainda</p>
+              <p class="empty__text">Este contribuinte ainda não teve as informações preenchidas. Crie a primeira solicitação para enviar à Receita.</p>
               <a class="btn btn--primary" id="emptyAct" href="info-contribuinte.html?modo=nova" style="margin-top:var(--space-2)">Preencher informações do contribuinte</a>
             </div>
           </section>
@@ -409,9 +409,9 @@
   <!-- Bloqueio: já existe uma versão em preparação -->
   <div class="scrim" id="blockModal" hidden>
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="blockTitle" aria-describedby="blockDesc">
-      <div class="modal__header modal__header--icon"><span class="modal__ic modal__ic--warning" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span><h2 class="modal__title" id="blockTitle">Já existe uma versão em preparação</h2><button class="icon-btn" type="button" data-block-close aria-label="Fechar" style="flex:0 0 auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg></button></div>
+      <div class="modal__header modal__header--icon"><span class="modal__ic modal__ic--warning" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span><h2 class="modal__title" id="blockTitle">Já existe uma solicitação em preparação</h2><button class="icon-btn" type="button" data-block-close aria-label="Fechar" style="flex:0 0 auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg></button></div>
       <div class="modal__body" id="blockDesc"><p id="blockText" style="margin:0"></p></div>
-      <div class="modal__footer"><button class="btn btn--ghost" type="button" data-block-close>Fechar</button><a class="btn btn--primary" id="blockGo" href="#">Ver a versão em preparação</a></div>
+      <div class="modal__footer"><button class="btn btn--ghost" type="button" data-block-close>Fechar</button><a class="btn btn--primary" id="blockGo" href="#">Ver a solicitação em preparação</a></div>
     </div>
   </div>
 
@@ -480,12 +480,12 @@
   /* entrada nova pelo flows/handoff (fresh=1): zera o estado de demo DESTA empresa antes de ler, para o link abrir sempre no cenário certo (sem resíduo de exclusão/rascunho de outro cenário). Depois tira o fresh da URL, para "voltar" não recarregar sujo. */
   try{ if(param('fresh')==='1'){ Object.keys(localStorage).forEach(function(k){ if(k.indexOf('adere.sent.d1001')===0 || (k.indexOf('adere.d1001.')===0 && k.slice(-(EMP.length+1))==='.'+EMP)) localStorage.removeItem(k); }); var _pf=new URLSearchParams(location.search); _pf.delete('fresh'); history.replaceState(null,'','?'+_pf.toString()); } }catch(e){}
   var Q=function(first){ return (SCN?((first?'?':'&')+'scn='+SCN):''); };
-  document.title='a-DeRE · Versões · '+CO.nome;
+  document.title='a-DeRE · Solicitações · '+CO.nome;
 
   /* trilha, menu lateral e subtítulo levam a empresa e o cenário */
   $('bcNome').textContent=CO.nome;
   document.querySelectorAll('.bc a, .sidenav a[href^="info-contribuinte-lista.html"]').forEach(function(a){ a.setAttribute('href','info-contribuinte-lista.html'+Q(true)); });
-  $('pageSub').innerHTML='Acompanhe e gerencie as <strong>versões</strong> do D-1001 de <strong>'+esc(CO.nome)+'</strong>.';
+  $('pageSub').innerHTML='Acompanhe e gerencie as <strong>solicitações</strong> do D-1001 de <strong>'+esc(CO.nome)+'</strong>.';
 
   /* cenário: primeiro acesso mostra só o que foi criado nesta sessão; populado traz o histórico */
   var _d1Sent=false; try{ _d1Sent=localStorage.getItem('adere.sent.d1001')===EMP; }catch(e){}
@@ -557,6 +557,14 @@
     if(v.vigrole==='future'){ var pf=parseVig(v.vig); if(!pf||!pf.from) return ''; var fd=Math.round((pf.from-new Date(2026,8,4))/86400000); if(fd<0) return ''; var ft=(fd===0?'Começa hoje':('Começa em '+fd+' dia'+(fd===1?'':'s'))); return '<div class="cd cd--future">'+esc(ft)+'</div>'; }
     if(v.vigrole!=='now') return ''; var end=endOf(v.vig), ed=pdate(end); if(!ed) return ''; var d=Math.round((ed-new Date(2026,8,4))/86400000); var warn=nearEndVig(v); var cls=d<0?'cd--over':(d<=60?'cd--warn':'cd--ok'); var txt=d<0?'Vigência expirada':(d===0?'Termina hoje':('Termina em '+d+' dia'+(d===1?'':'s'))); var msg='Não há versão futura aprovada. Crie uma nova versão antes do fim desta vigência.'; if(warn){ return '<div class="cd '+cls+'"><span class="tooltip tooltip--top cdtip" tabindex="0" role="note" aria-label="'+esc(txt)+'. '+esc(msg)+'">'+esc(txt)+'<span class="tooltip__bubble tooltip__bubble--stack" role="tooltip">'+esc(msg)+'</span></span></div>'; } return '<div class="cd '+cls+'">'+esc(txt)+'</div>'; }
   function vigKv(v){ var period=(v.vig&&v.vig!=='—')?v.vig:'—'; return '<div class="kv"><p class="kv__k">Vigência</p><p class="kv__v" title="'+esc(period)+'">'+esc(period)+'</p>'+vigCd(v)+'</div>'; }
+  /* Nome da solicitação = TIPO (não "Versão N"). Regra de exibição: a mais antiga = Inclusão (1ª declaração);
+     as seguintes = Alteração; excluída/exclusão em processamento = Exclusão. (Heurística de rótulo — a confirmar
+     contra tpOper: no leiaute, "nova vigência" é tecnicamente uma inclusão; aqui rotulamos como Alteração por clareza.) */
+  function tipoOf(v){
+    if(v.vigrole==='excluded' || v.exclProc) return 'Exclusão';
+    var minN=Math.min.apply(null, VERSIONS.map(function(x){ return x.n; }));
+    return (v.n===minN) ? 'Inclusão' : 'Alteração';
+  }
   function row(v, opts){
     opts=opts||{};
     var s=(v.vigrole==='past')?ENC:(SIT[v.sit]||{label:v.sit,pill:''});
@@ -564,28 +572,28 @@
       ? '<span class="verrow__badge verrow__badge--success" aria-hidden="true">'+I.check+'</span>'
       : (v.vigrole==='future'
         ? '<span class="verrow__badge verrow__badge--future" aria-hidden="true">'+I.calendar+'</span>'
-        : '<span class="verrow__badge" aria-hidden="true">v'+v.n+'</span>');
+        : '<span class="verrow__badge" aria-hidden="true">'+((SIT[v.sit]||{}).ic||I.info)+'</span>');
     /* o que importa numa lista de versões: quando vale, o que diz, quando foi e a prova da Receita (quem fez fica no detalhe) */
     var day=function(d){ return d?String(d).split(',')[0]:d; };
     var kvs=[['Regime principal',v.regime||regimeOf(v)],['Vigência',v.vig],['Processada em',day(v.proc)],['Recibo',recOf(v)]]
       .map(function(p){ if(p[0]==='Vigência') return vigKv(v); return kv(p[0],(p[1]&&p[1]!=='—')?p[1]:'—'); }).join('');
     return '<div class="verrow'+(opts.current?' verrow--current':'')+'" data-href="'+hrefOf(v)+'">'+badge+
-      '<div class="verrow__main"><div class="verrow__top"><span class="verrow__titlewrap"><span class="verrow__title">Versão '+v.n+'</span></span><span class="status status--sm '+s.pill+'"><span class="status__dot"></span>'+esc(s.label)+'</span>'+(v.exclProc?'<span class="status status--sm status--info verrow__flag"><span class="status__dot"></span>Exclusão em processamento</span>':'')+'</div>'+
+      '<div class="verrow__main"><div class="verrow__top"><span class="verrow__titlewrap"><span class="verrow__title">'+esc(tipoOf(v))+'</span></span><span class="status status--sm '+s.pill+'"><span class="status__dot"></span>'+esc(s.label)+'</span>'+(v.exclProc?'<span class="status status--sm status--info verrow__flag"><span class="status__dot"></span>Exclusão em processamento</span>':'')+'</div>'+
       '<div class="verrow__kvs">'+kvs+'</div></div>'+
       '<span class="verrow__sep" aria-hidden="true"></span>'+
       /* só consultar = botão-ícone com seta (nome acessível no aria-label); agir (Continuar, Ver ajustes) = botão com texto */
       '<div class="verrow__act">'+(opts.cta
         ? '<a class="btn '+(opts.primary?'btn--primary':'btn--secondary')+'" href="'+(opts.href||hrefOf(v))+'">'+esc(opts.cta)+I.chev+'</a>'
-        : '<a class="icon-btn" href="'+hrefOf(v)+'" aria-label="Ver Versão '+v.n+'">'+I.chev+'</a>')+'</div>'+
+        : '<a class="icon-btn" href="'+hrefOf(v)+'" aria-label="Ver solicitação: '+esc(tipoOf(v))+'">'+I.chev+'</a>')+'</div>'+
     '</div>';
   }
   /* encerradas: mesma linha, da mais recente para a mais antiga, com o rodapé padrão de contagem e paginação */
   function renderEnc(enc){
     var box=$('secEnc');
-    if(!enc.length){ box.innerHTML=emptyBox('Nenhuma versão anterior.', 'Quando uma versão deixa de vigorar, ela passa para cá.'); return; }
+    if(!enc.length){ box.innerHTML=emptyBox('Nenhuma solicitação anterior.', 'Quando uma solicitação deixa de vigorar, ela passa para cá.'); return; }
     var rows=enc.slice().sort(function(a,b){ return b.n-a.n; });
     box.innerHTML='<div class="verlist">'+rows.map(function(v){ return row(v,{}); }).join('')+'</div>'+
-      '<div class="tablefoot"><span><b>'+enc.length+'</b> de <b>'+enc.length+'</b> '+(enc.length===1?'versão anterior':'versões anteriores')+'</span>'+
+      '<div class="tablefoot"><span><b>'+enc.length+'</b> de <b>'+enc.length+'</b> '+(enc.length===1?'solicitação anterior':'solicitações anteriores')+'</span>'+
       '<span class="tpager"><button class="icon-btn icon-btn--sm" type="button" aria-label="Página anterior" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><span>Página 1 de 1</span><button class="icon-btn icon-btn--sm" type="button" aria-label="Próxima página" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button></span></div>';
   }
   function bindRows(){
@@ -608,7 +616,7 @@
     $('coLogo').innerHTML=CO.logo?'<img src="'+CO.logo+'" alt="Logo '+esc(CO.nome)+'">':'<span class="co-code">'+code(CO.nome)+'</span>';
     /* primeiro acesso: o regime só existe depois que alguém escolheu no formulário (rascunho ou envio) */
     $('coRegime').textContent=(SCN==='new')?((_d1Sent&&_sentRegime)||(_draft&&_draftRegime)||'—'):(CO.regime||'—');
-    $('coVig').textContent=vig?('Versão '+vig.n):(exc?'Sem versão vigente':'—');
+    $('coVig').textContent=vig?((SIT[vig.sit]||{}).label||'Vigente'):(exc?'Sem solicitação vigente':'—');
     var _q=(prog||vig||VERSIONS[0]||{}).quando||'—'; $('coAt').textContent=_q.replace('hoje,','03/09/2026').replace('ontem,','02/09/2026').replace(/,\s+/,' ');
 
     /* ação principal: só cabe UMA versão em preparação; com uma aberta o botão fica desabilitado e explica */
@@ -616,29 +624,29 @@
     if(!has){ slot.innerHTML=''; }
     else if(prog){
       /* botão habilitado: ao clicar, a modal explica por que não dá pra criar outra agora */
-      slot.innerHTML='<button class="btn btn--primary btn--lg" type="button" id="headerAct">'+I.plus+'Nova versão D-1001</button>';
-      var lbl='Ir para a versão em preparação';
+      slot.innerHTML='<button class="btn btn--primary btn--lg" type="button" id="headerAct">'+I.plus+'Nova solicitação D-1001</button>';
+      var lbl='Ir para a solicitação em preparação';
       var pill=(SIT[prog.sit]||{}).label||'em preparação';
       $('headerAct').addEventListener('click',function(){
-        $('blockText').textContent='A Versão '+prog.n+' está \u201c'+pill+'\u201d e ainda não foi concluída. Só pode haver uma versão em preparação por vez. Conclua ou cancele essa versão antes de registrar uma nova.';
+        $('blockText').textContent='A solicitação em preparação está\u201c'+pill+'\u201d e ainda não foi concluída. Só pode haver uma solicitação em preparação por vez. Conclua ou cancele essa solicitação antes de registrar uma nova.';
         var go=$('blockGo'); go.textContent=lbl; go.setAttribute('href',goOf(prog));
         dsDialog.open($('blockModal'));
       });
     } else {
-      slot.innerHTML='<a class="btn btn--primary btn--lg" id="headerAct" href="'+hrefNova()+'">'+I.plus+'Nova versão D-1001</a>';
+      slot.innerHTML='<a class="btn btn--primary btn--lg" id="headerAct" href="'+hrefNova()+'">'+I.plus+'Nova solicitação D-1001</a>';
     }
     $('emptyAct').setAttribute('href',hrefNova());
 
     /* pendência que exige ação */
     var al='';
     if(prog && prog.sit==='ajustes'){
-      al='<div class="dalert dalert--danger" role="status"><span class="dalert__ic">'+I.alert+'</span><div class="dalert__body"><p class="dalert__title">Ajustes solicitados na Versão '+prog.n+'</p><p class="dalert__text">O revisor devolveu a versão com pedidos de ajuste. Faça as correções e reenvie para revisão. Nada foi transmitido à Receita.</p></div><a class="btn btn--secondary dalert__act" href="'+hrefOf(prog)+'">Ver ajustes'+I.chev+'</a></div>';
+      al='<div class="dalert dalert--danger" role="status"><span class="dalert__ic">'+I.alert+'</span><div class="dalert__body"><p class="dalert__title">Ajustes solicitados na solicitação em preparação</p><p class="dalert__text">O revisor devolveu a versão com pedidos de ajuste. Faça as correções e reenvie para revisão. Nada foi transmitido à Receita.</p></div><a class="btn btn--secondary dalert__act" href="'+hrefOf(prog)+'">Ver ajustes'+I.chev+'</a></div>';
     } else if(prog && prog.sit==='rejeitado'){
-      al='<div class="dalert dalert--danger" role="status"><span class="dalert__ic">'+I.x+'</span><div class="dalert__body"><p class="dalert__title">Versão '+prog.n+' rejeitada pela Receita</p><p class="dalert__text">A transmissão foi rejeitada. Consulte o motivo, corrija as informações e reenvie. A versão vigente continua valendo.</p></div><a class="btn btn--secondary dalert__act" href="'+hrefOf(prog)+'">Ver motivo'+I.chev+'</a></div>';
+      al='<div class="dalert dalert--danger" role="status"><span class="dalert__ic">'+I.x+'</span><div class="dalert__body"><p class="dalert__title">Solicitação rejeitada pela Receita</p><p class="dalert__text">A transmissão foi rejeitada. Consulte o motivo, corrija as informações e reenvie. A versão vigente continua valendo.</p></div><a class="btn btn--secondary dalert__act" href="'+hrefOf(prog)+'">Ver motivo'+I.chev+'</a></div>';
     } else if(exc){
       al='<div class="dalert dalert--warning" role="status"><span class="dalert__ic">'+I.alert+'</span><div class="dalert__body"><p class="dalert__title">Vigência excluída na Receita Federal</p><p class="dalert__text">'+(exc.exclMotivo?('Motivo: <strong>'+esc(exc.exclMotivo)+'</strong>. '):'')+'Não há uma versão vigente para este período. Por isso, as <strong>declarações mensais</strong> ficam bloqueadas até que uma nova vigência seja registrada.</p></div><a class="btn btn--secondary dalert__act" href="'+hrefNova()+'">'+I.plus+'Nova versão D-1001</a></div>';
     } else if(vig && vig.exclProc){
-      al='<div class="dalert dalert--info" role="status"><span class="dalert__ic">'+I.info+'</span><div class="dalert__body"><p class="dalert__title">Exclusão em processamento na Receita Federal</p><p class="dalert__text">A exclusão da Versão '+vig.n+' foi transmitida e está em processamento. A vigência <strong>continua valendo</strong> até a Receita concluir; uma transmissão em andamento não pode ser cancelada.</p></div><a class="btn btn--secondary dalert__act" href="info-contribuinte-detalhe.html?emp='+EMP+'&v='+vig.n+'&st=aprovado&sit=processando&op=exclusao'+Q(false)+'">Acompanhar'+I.chev+'</a></div>';
+      al='<div class="dalert dalert--info" role="status"><span class="dalert__ic">'+I.info+'</span><div class="dalert__body"><p class="dalert__title">Exclusão em processamento na Receita Federal</p><p class="dalert__text">A exclusão foi transmitida e está em processamento. A vigência <strong>continua valendo</strong> até a Receita concluir; uma transmissão em andamento não pode ser cancelada.</p></div><a class="btn btn--secondary dalert__act" href="info-contribuinte-detalhe.html?emp='+EMP+'&v='+vig.n+'&st=aprovado&sit=processando&op=exclusao'+Q(false)+'">Acompanhar'+I.chev+'</a></div>';
     }
     $('alertSlot').innerHTML=al;
 
@@ -648,13 +656,13 @@
 
     /* vigente */
     /* a vigência futura mora DENTRO do bloco de vigente, logo abaixo da atual, marcada como "Vigência futura" (com respiro entre elas) */
-    var _vigHtml = vig ? row(vig,{current:true}) : (exc?emptyBox('Nenhuma versão vigente.', 'A vigência foi excluída na Receita Federal (veja o aviso acima).'):emptyBox('Nenhuma versão vigente.', 'A primeira versão processada com sucesso pela Receita aparece aqui.'));
+    var _vigHtml = vig ? row(vig,{current:true}) : (exc?emptyBox('Nenhuma solicitação vigente.', 'A vigência foi excluída na Receita Federal (veja o aviso acima).'):emptyBox('Nenhuma solicitação vigente.', 'A primeira solicitação processada com sucesso pela Receita aparece aqui.'));
     $('secVig').innerHTML = fut ? '<div class="verlist" style="gap:var(--space-4)">'+_vigHtml+row(fut,{})+'</div>' : _vigHtml;
 
     /* em preparação (0 ou 1): a ação que o usuário precisa tomar é primária; só consultar é secundária */
     $('secProg').innerHTML = prog
       ? row(prog,{cta:(prog.sit==='ajustes')?'Ver ajustes':(prog.sit==='rascunho')?'Continuar':null, href:goOf(prog), primary:(prog.sit==='rascunho'||prog.sit==='ajustes')})
-      : emptyBox('Nenhuma versão em preparação.', 'Você pode registrar uma nova versão quando necessário.');
+      : emptyBox('Nenhuma solicitação em preparação.', 'Você pode registrar uma nova solicitação quando necessário.');
 
     /* encerradas: a seção só aparece quando há histórico */
     $('secEncSection').hidden = !enc.length;
