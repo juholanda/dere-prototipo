@@ -55,7 +55,7 @@
     /* tabela */
     .card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-2xl);box-shadow:var(--shadow-sm);overflow:hidden}
     .table{margin:0}
-    .table--fixed{table-layout:fixed;min-width:1120px}
+    .table--fixed{table-layout:fixed;min-width:1200px}
     .table--fixed td:not(.col-act):not(.col-num){overflow:hidden;text-overflow:ellipsis}
     .table--fixed .evemp .celltitle,.table--fixed .evemp .cellcnpj{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .table td{padding-top:var(--space-4);padding-bottom:var(--space-4);font-size:var(--text-base);vertical-align:middle}
@@ -236,12 +236,13 @@
             <div class="table-wrap">
               <table class="table table--fixed table--stickyactions" aria-labelledby="lst-h">
                 <colgroup>
-                  <col style="width:24%"><col style="width:32%"><col style="width:18%"><col style="width:16%"><col style="width:10%">
+                  <col style="width:22%"><col style="width:13%"><col style="width:20%"><col style="width:16%"><col style="width:16%"><col style="width:13%">
                 </colgroup>
                 <thead>
                   <tr>
                     <th scope="col" class="sortable is-sorted" data-sort="emp" aria-sort="ascending"><button type="button" class="th-btn">Contribuinte <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
                     <th scope="col" class="sortable" data-sort="anosit" aria-sort="none"><button type="button" class="th-btn">Situação <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
+                    <th scope="col" class="sortable" data-sort="andamento" aria-sort="none"><button type="button" class="th-btn">Andamento <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
                     <th scope="col" class="sortable col-num" data-sort="cbsano" aria-sort="none"><button type="button" class="th-btn">CBS anual apurada <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
                     <th scope="col" class="sortable col-num" data-sort="ibsano" aria-sort="none"><button type="button" class="th-btn">IBS anual apurado <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
                     <th scope="col"><span class="sr-only">Abrir</span></th>
@@ -337,7 +338,7 @@
   function fechCount(meses){ return (meses||[]).filter(function(m){return m==='fech';}).length; }
   function yearBar(meses){ return '<div class="evdots evdots--year" aria-hidden="true">'+(meses||[]).map(function(m,i){ return '<span class="evdot '+(MESCLS[m]||'')+'" title="'+MES_ABBR[i]+': '+(MESLBL[m]||m)+'"></span>'; }).join('')+'</div>'; }
   function anoSitPill(s){ var m=ANOSIT[s]||['status--neutral',s]; return '<span class="status status--sm '+m[0]+'"><span class="status__dot"></span>'+esc(m[1])+'</span>'; }
-  function anoSitCell(e){ return '<div class="anocell">'+anoSitPill(e.anoSit)+yearBar(e.meses)+'<div class="anocount">'+fechCount(e.meses)+' de 12 meses fechados</div></div>'; }
+  function andCell(e){ return '<div class="anocell">'+yearBar(e.meses)+'<div class="anocount">'+fechCount(e.meses)+' de 12 meses fechados</div></div>'; }
 
   function evBar(ev){
     /* O D-1199 (fechamento) NÃO conta como evento aqui (decisão V18: "Sicoob = 2 de 2"): ele já tem
@@ -401,8 +402,9 @@
   var ANOSIT_RANK={atraso:0, pendencias:1, emdia:2};   // problema primeiro
   function sortVal(e){
     switch(listSort.key){
-      case 'anosit': return ANOSIT_RANK[e.anoSit]!=null?ANOSIT_RANK[e.anoSit]:9;
-      case 'cbsano': return e.cbsAno==null?-1:e.cbsAno;
+      case 'anosit':    return ANOSIT_RANK[e.anoSit]!=null?ANOSIT_RANK[e.anoSit]:9;
+      case 'andamento': return fechCount(e.meses);
+      case 'cbsano':    return e.cbsAno==null?-1:e.cbsAno;
       case 'ibsano': return e.ibsAno==null?-1:e.ibsAno;
       default:       return e.nome.toLowerCase();
     }
@@ -413,14 +415,15 @@
     var list=EMP.filter(f).filter(function(e){ return !q || e.nome.toLowerCase().indexOf(q)>=0 || e.cnpj.replace(/\D/g,'').indexOf(q.replace(/\D/g,''))>=0; });
     var dir=listSort.dir==='asc'?1:-1; list.sort(function(a,b){ var va=sortVal(a),vb=sortVal(b); if(va<vb)return -1*dir; if(va>vb)return 1*dir; return a.nome<b.nome?-1:1; });
     var tb=document.getElementById('rows');
-    if(!list.length){ tb.innerHTML='<tr class="emptyrow"><td colspan="5">Nenhum contribuinte nesse filtro.</td></tr>'; document.getElementById('tcount').innerHTML=''; return; }
+    if(!list.length){ tb.innerHTML='<tr class="emptyrow"><td colspan="6">Nenhum contribuinte nesse filtro.</td></tr>'; document.getElementById('tcount').innerHTML=''; return; }
     tb.innerHTML=list.map(function(e){
       /* ação por estado, abre o detalhe (naoiniciada = fluxo de "nada enviado" / importar) */
       var href='movimentacoes-empresa.html?emp='+e.id;
       var btn = '<a class="btn btn--secondary rowbtn" href="'+href+'">Ver detalhes</a>';
       return '<tr data-href="'+href+'">'+
         '<td><div class="evemp">'+logoHtml(e)+'<div><div class="celltitle">'+esc(e.nome)+'</div><div class="cellcnpj">'+esc(e.cnpj)+'</div></div></div></td>'+
-        '<td>'+anoSitCell(e)+'</td>'+
+        '<td>'+anoSitPill(e.anoSit)+'</td>'+
+        '<td>'+andCell(e)+'</td>'+
         '<td class="col-num">'+numCell(e.cbsAno)+'</td>'+
         '<td class="col-num">'+numCell(e.ibsAno)+'</td>'+
         '<td class="col-act">'+btn+'</td>'+
