@@ -211,7 +211,7 @@
     .evnav--na .evnav__ic{background:var(--color-surface-2);color:var(--color-text-muted)}
     .evnav__ic svg{width:19px;height:19px}
     /* Indicação MACRO dos eventos na Visão geral: as abas fazem a navegação; aqui é só o panorama do status de cada evento */
-    .evmacro{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:var(--space-3)}
+    .evmacro{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:var(--space-3)}
     .evmacro__it{display:flex;flex-direction:column;gap:var(--space-2);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-4);background:var(--color-surface)}
     .evmacro__it.is-na{opacity:.6}
     .evmacro__hd{display:flex;align-items:center;gap:var(--space-2)}
@@ -510,7 +510,7 @@
   <!-- Modal: Versões do evento -->
   <div class="scrim" id="versoesModal" hidden>
     <div class="modal modal--md" role="dialog" aria-modal="true" aria-labelledby="versoesTitle">
-      <div class="modal__header"><h3 class="modal__title" id="versoesTitle">Versões</h3><button class="icon-btn" type="button" data-modal-close aria-label="Fechar" style="flex:0 0 auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg></button></div>
+      <div class="modal__header"><h3 class="modal__title" id="versoesTitle">Solicitações</h3><button class="icon-btn" type="button" data-modal-close aria-label="Fechar" style="flex:0 0 auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg></button></div>
       <div class="modal__body" id="versoesBody"></div>
     </div>
   </div>
@@ -775,6 +775,13 @@
         prazoSub.textContent=(dias>0?('faltam '+dias+' dias · '+cap(cur.txt)):(dias===0?'vence hoje':('venceu há '+(-dias)+' dias')));
       }
     }
+    // ⚠ no Ano-calendário quando ESTE contribuinte tem pendência no ano (mesmo padrão da lista).
+    if(ANUAL.sit!=='emdia'){
+      var WARN='<svg class="anowarn" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg>';
+      var op=document.querySelector('#anoWrap [role="option"][data-val="2026"]'), val=document.getElementById('anoVal');
+      if(op && !op.querySelector('.anowarn')){ op.setAttribute('data-pend','1'); op.insertAdjacentHTML('beforeend', ' '+WARN+'<span class="sr-only"> com pendências</span>'); }
+      if(val && !val.querySelector('.anowarn')) val.innerHTML='2026 '+WARN;
+    }
   })();
 
   /* ===== Conteúdo dos eventos (campos conforme leiaute v1.2.0) ===== */
@@ -843,16 +850,16 @@
   /* ===== Versões por evento/competência (atual=recibo · em preparação · anteriores) ===== */
   var VERS={
     '2026-09':{
-      d1101:{ atual:[], prep:[{n:1,titulo:'Versão 1',sit:'pendente',transm:'—',proc:'—',protocolo:'',recibo:''}], ant:[] },
-      d1106:{ atual:[{n:1,titulo:'Versão 1',sit:'recibo',transm:'10/09/2026 11:02',proc:'10/09/2026 11:03',protocolo:prot28('2026-09',1),recibo:rec31(1106,'2026-09',1)}], prep:[], ant:[] },
-      d1121:{ atual:[], prep:[{n:1,titulo:'Versão 1',sit:'protocolo',transm:'18/09/2026 16:20',proc:'—',protocolo:prot28('2026-09',1),recibo:''}], ant:[] },
-      d2101:{ atual:[{n:1,titulo:'Versão 1',sit:'recibo',transm:'11/09/2026 10:20',proc:'11/09/2026 10:21',protocolo:prot28('2026-09',1),recibo:rec31(2101,'2026-09',1)}], prep:[], ant:[] }
+      d1101:{ atual:[], prep:[{n:1,titulo:'Solicitação 1',sit:'pendente',transm:'—',proc:'—',protocolo:'',recibo:''}], ant:[] },
+      d1106:{ atual:[{n:1,titulo:'Solicitação 1',sit:'recibo',transm:'10/09/2026 11:02',proc:'10/09/2026 11:03',protocolo:prot28('2026-09',1),recibo:rec31(1106,'2026-09',1)}], prep:[], ant:[] },
+      d1121:{ atual:[], prep:[{n:1,titulo:'Solicitação 1',sit:'protocolo',transm:'18/09/2026 16:20',proc:'—',protocolo:prot28('2026-09',1),recibo:''}], ant:[] },
+      d2101:{ atual:[{n:1,titulo:'Solicitação 1',sit:'recibo',transm:'11/09/2026 10:20',proc:'11/09/2026 10:21',protocolo:prot28('2026-09',1),recibo:rec31(2101,'2026-09',1)}], prep:[], ant:[] }
     },
     '2026-08':{
-      d1101:{ atual:[{n:2,titulo:'Versão 2 · Retificação',sit:'recibo',transm:'12/09/2026 09:40',proc:'12/09/2026 09:41',protocolo:prot28('2026-08',2),recibo:rec31(1101,'2026-08',2)}],
-              prep:[], ant:[{n:1,titulo:'Versão 1',sit:'substituida',transm:'08/09/2026 10:00',proc:'08/09/2026 10:01',protocolo:prot28('2026-08',1),recibo:rec31(1101,'2026-08',1)}] },
-      d1106:{ atual:[{n:1,titulo:'Versão 1',sit:'recibo',transm:'09/09/2026 09:15',proc:'09/09/2026 09:16',protocolo:prot28('2026-08',1),recibo:rec31(1106,'2026-08',1)}], prep:[], ant:[] },
-      d1121:{ atual:[{n:1,titulo:'Versão 1',sit:'recibo',transm:'10/09/2026 15:30',proc:'10/09/2026 15:31',protocolo:prot28('2026-08',1),recibo:rec31(1121,'2026-08',1)}], prep:[], ant:[] }
+      d1101:{ atual:[{n:2,titulo:'Solicitação 2',sit:'recibo',transm:'12/09/2026 09:40',proc:'12/09/2026 09:41',protocolo:prot28('2026-08',2),recibo:rec31(1101,'2026-08',2)}],
+              prep:[], ant:[{n:1,titulo:'Solicitação 1',sit:'substituida',transm:'08/09/2026 10:00',proc:'08/09/2026 10:01',protocolo:prot28('2026-08',1),recibo:rec31(1101,'2026-08',1)}] },
+      d1106:{ atual:[{n:1,titulo:'Solicitação 1',sit:'recibo',transm:'09/09/2026 09:15',proc:'09/09/2026 09:16',protocolo:prot28('2026-08',1),recibo:rec31(1106,'2026-08',1)}], prep:[], ant:[] },
+      d1121:{ atual:[{n:1,titulo:'Solicitação 1',sit:'recibo',transm:'10/09/2026 15:30',proc:'10/09/2026 15:31',protocolo:prot28('2026-08',1),recibo:rec31(1121,'2026-08',1)}], prep:[], ant:[] }
     }
   };
   /* Nível 2 (versão, dentro do evento): resultado detalhado do que a Receita devolveu. */
@@ -991,7 +998,7 @@
   /* HISTÓRICO DO MÊS: linha do tempo do que foi transmitido na competência (agrega as versões de todos
      os eventos, em ordem). Enriquece a visão de fechamento com a "trilha" do mês. Usa .timeline do DS. */
   function parseWhen(s){ var m=(s||'').match(/(\d{2})\/(\d{2})\/(\d{4})\s+(\d{2}):(\d{2})/); return m?(m[3]+m[2]+m[1]+m[4]+m[5])*1:0; }
-  var TLINE={ recibo:['success','Transmitido e processado com recibo.'], advertencia:['warning','Transmitido; processado com advertência.'], protocolo:['info','Transmitido; em processamento na Receita.'], substituida:['muted','Transmitido; depois substituído por uma nova versão.'], rejeitado:['danger','Transmitido; rejeitado pela Receita.'] };
+  var TLINE={ recibo:['success','Transmitido e processado com recibo.'], advertencia:['warning','Transmitido; processado com advertência.'], protocolo:['info','Transmitido; em processamento na Receita.'], substituida:['muted','Transmitido; depois substituído por uma nova solicitação.'], rejeitado:['danger','Transmitido; rejeitado pela Receita.'] };
   function historicoSection(M){
     var V=VERS[M.per]||{}, applicable=ORDER.filter(function(k){ return M.ev[k].st!=='na'; }), items=[];
     applicable.forEach(function(k){ var g=V[k]; if(!g) return;
@@ -1302,7 +1309,7 @@
       : '<div class="verrow__kvs"><div><p class="vkv__k">Situação</p><p class="vkv__v">Ainda não transmitida à Receita</p></div></div>';
     // Seta → abre o comprovante DESTA versão (o registro dela) num modal. Só quando houve transmissão.
     var act=sent
-      ? '<button class="icon-btn" type="button" data-comprovante data-ev="'+(opts.evKey||'')+'" data-ver="'+v.n+'" aria-label="Ver comprovante da Versão '+v.n+'">'+ICO.chev+'</button>'
+      ? '<button class="icon-btn" type="button" data-comprovante data-ev="'+(opts.evKey||'')+'" data-ver="'+v.n+'" aria-label="Ver comprovante da solicitação '+v.n+'">'+ICO.chev+'</button>'
       : '';
     return '<div class="verrow'+(current?' verrow--current':'')+'">'+badge+
       '<div class="verrow__top"><span class="verrow__titlewrap"><span class="verrow__title">'+esc(v.titulo)+'</span></span><span class="status status--sm '+s[0]+'"><span class="status__dot"></span>'+s[1]+'</span></div>'+
@@ -1368,20 +1375,20 @@
     var vig=allv.filter(function(x){return x.sit==='recibo'||x.sit==='advertencia';});
     var emprep=allv.filter(function(x){return x.sit==='pendente'||x.sit==='protocolo'||x.sit==='rejeitado';});
     var ant=allv.filter(function(x){return x.sit==='substituida';});
-    var vigBlock='<div class="dtblock"><h3 class="dtsub">Versão vigente</h3>'+
-      '<p class="dtsub__x">Versão válida hoje na Receita Federal nesta competência.</p>'+
+    var vigBlock='<div class="dtblock"><h3 class="dtsub">Solicitação vigente</h3>'+
+      '<p class="dtsub__x">Solicitação válida hoje na Receita Federal nesta competência.</p>'+
       (vig.length
         ? '<div class="verlist">'+verrow(vig[0], true, {evKey:evKey})+'</div>'
-        : emptyBox('Nenhuma versão vigente.', 'A primeira versão processada com sucesso pela Receita aparece aqui.'))+
+        : emptyBox('Nenhuma solicitação vigente.', 'A primeira solicitação processada com sucesso pela Receita aparece aqui.'))+
       '</div>';
     var prepBlock='<div class="dtblock"><h3 class="dtsub">Em preparação</h3>'+
-      '<p class="dtsub__x">Versão em criação ou em processamento na Receita Federal. Ainda não é a versão vigente.</p>'+
+      '<p class="dtsub__x">Solicitação em criação ou em processamento na Receita Federal. Ainda não é a solicitação vigente.</p>'+
       (emprep.length
         ? '<div class="verlist">'+emprep.map(function(x){return verrow(x, !vig.length, {evKey:evKey});}).join('')+'</div>'
-        : emptyBox('Nenhuma versão em preparação.', 'Você pode registrar uma nova versão quando necessário.'))+
+        : emptyBox('Nenhuma solicitação em preparação.', 'Você pode registrar uma nova solicitação quando necessário.'))+
       '</div>';
-    var prevBlock=ant.length?'<div class="dtblock"><h3 class="dtsub">Versões anteriores</h3>'+
-      '<p class="dtsub__x">Versões que já não estão vigentes, mantidas para consulta.</p>'+
+    var prevBlock=ant.length?'<div class="dtblock"><h3 class="dtsub">Solicitações anteriores</h3>'+
+      '<p class="dtsub__x">Solicitações que já não estão vigentes, mantidas para consulta.</p>'+
       '<div class="verlist">'+ant.map(function(x){return verrow(x, false, {evKey:evKey});}).join('')+'</div></div>':'';
     return vigBlock+prepBlock+prevBlock;
   }
@@ -1452,7 +1459,7 @@
     var contentHead=(evKey==='d1101')?'':'<p class="sec__hint" style="margin:0 0 var(--space-4)">'+chint+'</p>';
     // sem tab-dentro-de-tab: o Detalhe do evento aparece direto; as Versões vêm como SEÇÃO abaixo (não como aba interna).
     var detBody=(alert?'<div style="margin-bottom:var(--space-4)">'+alert+'</div>':'')+'<article class="card"><div class="card__body">'+contentHead+content+'</div></article>';
-    var verBody='<section class="sec" style="margin-top:var(--space-8)"><div class="sec__h"><div class="sec__ht"><h2>Versões</h2><p class="sec__hint">Histórico de versões deste evento na competência.</p></div></div><article class="card"><div class="card__body">'+versoesInner(evKey,M)+'</div></article></section>';
+    var verBody='<section class="sec" style="margin-top:var(--space-8)"><div class="sec__h"><div class="sec__ht"><h2>Solicitações</h2><p class="sec__hint">Solicitações transmitidas deste evento nesta competência.</p></div></div><article class="card"><div class="card__body">'+versoesInner(evKey,M)+'</div></article></section>';
     return '<section class="sec" style="margin-top:0">'+detBody+verBody+'</section>';
   }
 
@@ -1493,7 +1500,7 @@
       M.total=M.total||{}; M.total.base=S2U_TOT.base; M.total.baseFull=S2U_TOT.base;
       M.total.codtrib=[{cod:'110112003', desc:'Valores recebidos em operações de TVM', base:S2U_TOT.base}];
       // o VERS default conta a história do MAG — a jornada do s2u começa com a Versão 1 EM PREPARAÇÃO em cada evento
-      var mkPrep=function(){ return {atual:[], prep:[{n:1,titulo:'Versão 1',sit:'pendente',transm:'—',proc:'—',protocolo:'',recibo:''}], ant:[]}; };
+      var mkPrep=function(){ return {atual:[], prep:[{n:1,titulo:'Solicitação 1',sit:'pendente',transm:'—',proc:'—',protocolo:'',recibo:''}], ant:[]}; };
       VERS[M.per]={d1101:mkPrep(),d1106:mkPrep(),d1121:mkPrep(),d2101:mkPrep()};
     }
   }
@@ -1503,7 +1510,7 @@
     if(rec.st==='protocolo'){ e.st='protocolo'; e.sub=(d.sub||'')+' · aguardando o recibo'; }
     else { e.st='recibo'; e.sub=d.sub||e.sub; }
     e.prep=false;
-    var entry={n:1, titulo:'Versão 1', sit:(rec.st==='recibo'?'recibo':'protocolo'), transm:rec.transm||nowStr(),
+    var entry={n:1, titulo:'Solicitação 1', sit:(rec.st==='recibo'?'recibo':'protocolo'), transm:rec.transm||nowStr(),
       proc:(rec.st==='recibo'?(rec.proc||nowStr()):'—'), protocolo:prot28(M.per,1), recibo:(rec.st==='recibo'?rec31(num,M.per,1):'')};
     if(VERS[M.per] && VERS[M.per][k]) VERS[M.per][k]= rec.st==='recibo' ? {atual:[entry],prep:[],ant:[]} : {atual:[],prep:[entry],ant:[]};
   }
@@ -1677,7 +1684,7 @@
     var C={ fechar:['Fechar a competência?','Ao fechar, o evento D-1199 é transmitido à Receita como uma confissão dos valores do mês. Depois de aceito, a competência fica travada; para corrigir, é preciso reabri-la.','Transmitir fechamento'],
       reabrir:['Reabrir a competência?','A reabertura (D-1198) destrava o mês para novas transmissões e exige um novo fechamento (D-1199) depois. Faça só se precisar corrigir algo já fechado.','Transmitir reabertura'],
       importar:['Importar '+nm, 'Envie a planilha de '+nm+' (ou o arquivo do seu ERP). A a-DeRE valida os dados e prepara o evento; depois você transmite à Receita. Isso cria a Versão 1 nesta competência.','Selecionar arquivo'],
-      alterar:['Alterar cria uma nova versão', 'Alterar reabre '+nm+' para importar ou editar os dados, criando uma NOVA versão. Ela segue o fluxo: preparação → aprovação → transmissão à Receita. A versão vigente continua valendo até a nova ser aceita.','Importar nova versão'],
+      alterar:['Alterar cria uma nova solicitação', 'Alterar reabre '+nm+' para importar ou editar os dados, criando uma NOVA solicitação. Ela segue o fluxo: preparação → aprovação → transmissão à Receita. A solicitação vigente continua valendo até a nova ser aceita.','Importar nova solicitação'],
       transmitir:['Transmitir '+nm+' à Receita?', 'A a-DeRE envia '+nm+' à Receita Federal. O processamento é assíncrono: primeiro volta um protocolo (em processamento) e, quando a Receita conclui, o recibo. Enquanto processa, o evento não pode ser alterado.','Transmitir '+nm],
       template:['Baixar template de importação', 'O template traz as colunas no formato do leiaute da movimentação mensal (conta, saldos, movimento, ajustes e a base por conta). Preencha com os dados do mês e importe de volta pela opção "Importar planilha".','Baixar template'],
       erp:['Integração com ERP', 'A conexão direta com o ERP ou sistema contábil, para importar a movimentação automaticamente, está em desenvolvimento. Por enquanto, use a importação por planilha.','Entendi'] };
@@ -1979,7 +1986,7 @@
     var btn=cs.querySelector('[data-cselect-btn]'), panel=cs.querySelector('[data-cselect-panel]'), lbl=cs.querySelector('[data-cselect-label]');
     if(!btn||!panel) return;
     btn.addEventListener('click',function(){ var open=!panel.hasAttribute('hidden'); if(open){panel.setAttribute('hidden','');btn.setAttribute('aria-expanded','false');}else{panel.removeAttribute('hidden');btn.setAttribute('aria-expanded','true');} });
-    panel.querySelectorAll('[role="option"]').forEach(function(op){ op.addEventListener('click',function(){ if(op.disabled) return; panel.querySelectorAll('[role="option"]').forEach(function(o){o.classList.remove('is-selected');}); op.classList.add('is-selected'); if(lbl) lbl.textContent=op.textContent; panel.setAttribute('hidden','');btn.setAttribute('aria-expanded','false'); }); });
+    panel.querySelectorAll('[role="option"]').forEach(function(op){ op.addEventListener('click',function(){ if(op.disabled) return; panel.querySelectorAll('[role="option"]').forEach(function(o){o.classList.remove('is-selected');}); op.classList.add('is-selected'); if(lbl) lbl.innerHTML=op.innerHTML; panel.setAttribute('hidden','');btn.setAttribute('aria-expanded','false'); }); });
     document.addEventListener('click',function(ev){ if(!cs.contains(ev.target)){panel.setAttribute('hidden','');btn.setAttribute('aria-expanded','false');} });
   });
   </script>

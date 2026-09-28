@@ -8,6 +8,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="../design-system/ds.css?v=12b8d439">
   <script src="../design-system/ds-tailwind.js"></script>
+  <script src="../design-system/ds-dialog.js"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
     .shell{display:flex;height:100vh;overflow:hidden}
@@ -91,6 +92,13 @@
     /* célula de situação anual: pílula + barra dos 12 meses + contagem, empilhados */
     .anocell{display:flex;flex-direction:column;align-items:flex-start;gap:var(--space-1-5)}
     .anocount{font-size:var(--text-xs);color:var(--color-text-muted)}
+    /* situação clicável (Com pendências / Em atraso) + modal de pendências */
+    .pendbtn{font-family:inherit;cursor:pointer}
+    .pendlead{margin:0 0 var(--space-4);font-size:var(--text-sm);color:var(--color-text)}
+    .pendlist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:var(--space-2)}
+    .pendrow{display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);padding:var(--space-3) var(--space-4);border:1px solid var(--color-border);border-radius:var(--radius-base);background:var(--color-surface)}
+    .pendrow__m{font-size:var(--text-sm);font-weight:600;color:var(--color-heading)}
+    .pendfoot{margin-top:var(--space-6);display:flex;justify-content:flex-end}
     /* barra dos 12 meses: discreta e fina (segmentos baixos) */
     .evdots--year{gap:2px}
     .evdots--year .evdot{width:12px;height:4px;border-radius:2px}
@@ -339,7 +347,19 @@
   var MESLBL={ fech:'fechado', proc:'em processamento', prep:'em preparação', atraso:'em atraso', avencer:'a vencer', none:'não iniciado' };
   function fechCount(meses){ return (meses||[]).filter(function(m){return m==='fech';}).length; }
   function yearBar(meses){ return '<div class="evdots evdots--year" aria-hidden="true">'+(meses||[]).map(function(m,i){ return '<span class="evdot '+(MESCLS[m]||'')+'" title="'+MES_ABBR[i]+': '+(MESLBL[m]||m)+'"></span>'; }).join('')+'</div>'; }
-  function anoSitPill(s){ var m=ANOSIT[s]||['status--neutral',s]; return '<span class="status status--sm '+m[0]+'"><span class="status__dot"></span>'+esc(m[1])+'</span>'; }
+  function anoSitPill(e){ var s=e.anoSit, m=ANOSIT[s]||['status--neutral',s]; var inner='<span class="status__dot"></span>'+esc(m[1]);
+    if(s==='emdia') return '<span class="status status--sm '+m[0]+'">'+inner+'</span>';
+    // Com pendências / Em atraso: clicável, abre modal com as competências pendentes.
+    return '<button type="button" class="status status--sm '+m[0]+' pendbtn" data-pend-open="'+esc(e.id)+'" aria-haspopup="dialog" title="Ver competências pendentes">'+inner+'</button>'; }
+  var MES_FULL=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  var PENDMAP={ atraso:['status--danger','Em atraso'], proc:['status--warning','Em processamento'], prep:['status--warning','Em preparação'] };
+  function pendModalInner(e){
+    var pend=[]; (e.meses||[]).forEach(function(st,i){ if(PENDMAP[st]) pend.push({mes:MES_FULL[i], st:st}); });
+    var rows=pend.map(function(p){ var m=PENDMAP[p.st]; return '<li class="pendrow"><span class="pendrow__m">'+p.mes+' de '+anoSel+'</span><span class="status status--sm '+m[0]+'"><span class="status__dot"></span>'+m[1]+'</span></li>'; }).join('');
+    return '<p class="pendlead"><strong>'+esc(e.nome)+'</strong> tem '+pend.length+' competência'+(pend.length!==1?'s':'')+' pendente'+(pend.length!==1?'s':'')+' em '+anoSel+'.</p>'+
+      '<ul class="pendlist">'+rows+'</ul>'+
+      '<div class="pendfoot"><a class="btn btn--primary" href="movimentacoes-empresa.html?emp='+esc(e.id)+'">Ver detalhes do contribuinte</a></div>';
+  }
   function andCell(e){ return '<div class="anocell">'+yearBar(e.meses)+'<div class="anocount">'+fechCount(e.meses)+' de 12 meses fechados</div></div>'; }
 
   function evBar(ev){
@@ -424,7 +444,7 @@
       var btn = '<a class="btn btn--secondary rowbtn" href="'+href+'">Ver detalhes</a>';
       return '<tr data-href="'+href+'">'+
         '<td><div class="evemp">'+logoHtml(e)+'<div><div class="celltitle">'+esc(e.nome)+'</div><div class="cellcnpj">'+esc(e.cnpj)+'</div></div></div></td>'+
-        '<td>'+anoSitPill(e.anoSit)+'</td>'+
+        '<td>'+anoSitPill(e)+'</td>'+
         '<td>'+andCell(e)+'</td>'+
         '<td class="col-num">'+numCell(e.cbsAno)+'</td>'+
         '<td class="col-num">'+numCell(e.ibsAno)+'</td>'+
@@ -471,6 +491,19 @@
 
   document.querySelectorAll('[data-menu]').forEach(function(m){ var b=m.querySelector('button'), p=m.querySelector('.menu__panel'); if(!b||!p)return; b.addEventListener('click',function(){ if(p.hasAttribute('hidden')){p.removeAttribute('hidden');b.setAttribute('aria-expanded','true');}else{p.setAttribute('hidden','');b.setAttribute('aria-expanded','false');} }); document.addEventListener('click',function(ev){ if(!m.contains(ev.target)){p.setAttribute('hidden','');b.setAttribute('aria-expanded','false');} }); });
   document.querySelectorAll('[data-sidenav-toggle]').forEach(function(btn){ var nav=btn.closest('[data-sidenav]'); btn.addEventListener('click',function(){ var c=nav.classList.toggle('is-collapsed'); try{localStorage.setItem('adere.nav.collapsed',c?'1':'0');}catch(e){} btn.setAttribute('aria-expanded',String(!c)); }); });
+  /* Modal de pendências: clicar em "Com pendências"/"Em atraso" lista as competências pendentes do contribuinte.
+     O #pendModal fica DEPOIS deste script no DOM, então busco o elemento no clique (não no load). */
+  document.addEventListener('click',function(ev){
+    var scrim=document.getElementById('pendModal'); if(!scrim) return;
+    function close(){ if(window.dsDialog) dsDialog.close(); else scrim.hidden=true; }
+    var op=ev.target.closest('[data-pend-open]');
+    if(op){ ev.preventDefault(); ev.stopPropagation(); var id=op.getAttribute('data-pend-open'); var e=EMP.filter(function(x){return x.id===id;})[0]; if(!e) return;
+      document.getElementById('pendTitle').textContent='Pendências · '+e.nome;
+      document.getElementById('pendBody').innerHTML=pendModalInner(e);
+      if(window.dsDialog) dsDialog.open(scrim, {focus: scrim.querySelector('[data-pend-close]')}); else scrim.hidden=false; return; }
+    if(ev.target.closest('[data-pend-close]')){ close(); return; }
+    if(ev.target===scrim){ close(); }
+  });
   /* barra de demo (mesmo padrão da Info): jornada do Simple2u — Sem nada → Importar planilha (popup) → Populado */
   (function(){ var bar=document.createElement('div'); bar.className='demobar is-collapsed'; bar.id='demobar'; bar.setAttribute('role','group'); bar.setAttribute('aria-label','Demonstração: alternar cenário');
     bar.innerHTML='<button type="button" class="demobar__toggle" data-demo-toggle aria-expanded="false" aria-label="Abrir ferramenta de demonstração de cenários">'+
@@ -503,5 +536,12 @@
     });
   })();
   </script>
+  <!-- Modal: competências pendentes do contribuinte (aberto ao clicar na situação "Com pendências"/"Em atraso") -->
+  <div class="scrim" id="pendModal" hidden>
+    <div class="modal modal--sm" role="dialog" aria-modal="true" aria-labelledby="pendTitle">
+      <div class="modal__header"><h3 class="modal__title" id="pendTitle">Competências pendentes</h3><button class="icon-btn" type="button" data-pend-close aria-label="Fechar" style="flex:0 0 auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg></button></div>
+      <div class="modal__body" id="pendBody"></div>
+    </div>
+  </div>
 </body>
 </html>
