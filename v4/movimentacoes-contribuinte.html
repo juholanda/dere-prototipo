@@ -396,14 +396,28 @@
     var btn=fi.ready?'<button class="btn btn--primary" type="button">Fechar competência</button>':'<button class="btn btn--primary" type="button" disabled>Fechar competência</button>';
     return '<div class="fechbar'+(late?' fechbar--late':'')+'"><div class="fechbar__l"><span class="fechbar__ic">'+(late?MICO.alert:MICO.lock)+'</span><div class="fechbar__tx"><strong>'+(late?'Fechamento em atraso':'Fechamento do mês (D-1199)')+'</strong><span class="fechbar__sub">'+sub+'</span></div></div><div class="fechbar__act">'+btn+'</div></div>';
   }
+  var EVAP={
+    d1101:{lbl:'Base apurada',         val:4250000},
+    d1106:{lbl:'Base (vApur)',         val:102000},
+    d1121:{lbl:'Deduzido no mês',      val:117000},
+    d2101:{lbl:'Base (juros × Selic)', val:240000}
+  };
+  function evCheck(s){
+    if(s==='recibo') return '<span class="evcheck evcheck--ok" title="processado com recibo">'+MICO.check+'</span>';
+    var cls=(s==='atraso'||s==='rejeitado')?'evcheck--late':(s==='protocolo'?'evcheck--wait':'evcheck--todo');
+    return '<span class="evcheck '+cls+'" title="ainda sem recibo"></span>';
+  }
   function visaoPanel(st){
-    var live=(sel===CUR_M && anoSel===ANO_ATUAL)||st==='aberto';
     var rows=APP.filter(function(k){return k!=='d1199';}).map(function(k){
-      var m=EVMETA[k], val=(st==='fech'&&k==='d1101')?brl(C.mMed):(live&&k==='d1101'?brl(4250000):'—');
-      return '<div class="evrow evrow--link" data-evtab="'+k+'"><div class="evrow__id"><span class="evrow__nm">'+esc(m[1])+'</span><span class="evrow__code">'+m[0]+'</span></div><div class="evrow__r"><span class="evrow__val">'+val+'</span>'+evPill(evStFor(k,st))+'</div></div>';
+      var m=EVMETA[k], ap=EVAP[k]||{lbl:'Valor',val:null}, s=evStFor(k,st);
+      var val=(st==='avencer'||ap.val==null)?'—':brl(ap.val);
+      var act=(s==='recibo'||s==='avencer')?'':'<button class="btn btn--primary btn--sm" type="button" data-evtab="'+k+'">Transmitir</button>';
+      return '<div class="evrow2 evrow--link" data-evtab="'+k+'"><div class="evrow2__l">'+evCheck(s)+'<div class="evrow2__id"><span class="evrow2__nm">'+esc(m[1])+'</span><span class="evrow2__code">'+m[0]+'</span></div></div>'+
+        '<div class="evrow2__r"><div class="evrow2__val"><span class="evrow2__vlbl">'+esc(ap.lbl)+'</span><span class="evrow2__vnum">'+val+'</span></div>'+act+'</div></div>';
     }).join('');
-    var listTitle='<div class="sech"><h3>Eventos da competência</h3><p>Clique num evento para transmitir ou conferir.</p></div>';
-    return fechBar(st)+mvalsHtml(st)+listTitle+'<div class="evlist">'+rows+'</div>'+importSection(st);
+    var listTitle='<div class="sech"><h3>Eventos deste mês</h3><p>Cada evento precisa ser transmitido e ter recibo (✓) para você poder fechar o mês.</p></div>';
+    var apurTitle='<div class="sech"><h3>Apuração do mês</h3><p>O que este mês declara à Receita. CBS, IBS e IS são apurados no fechamento (D-1199).</p></div>';
+    return fechBar(st)+listTitle+'<div class="evlist">'+rows+'</div>'+apurTitle+mvalsHtml(st)+importSection(st);
   }
   function eventoPanel(k, st){
     var info=EVINFO[k]||{vlbl:'Valor',desc:''}, live=(sel===CUR_M && anoSel===ANO_ATUAL)||st==='aberto';

@@ -417,7 +417,7 @@
     if(!list.length){ tb.innerHTML='<tr class="emptyrow"><td colspan="6">Nenhum contribuinte nesse filtro.</td></tr>'; document.getElementById('tcount').innerHTML=''; return; }
     tb.innerHTML=list.map(function(e){
       /* ação por estado, abre o detalhe (naoiniciada = fluxo de "nada enviado" / importar) */
-      var href='movimentacoes-contribuinte.html?emp='+e.id;
+      var href='movimentacoes-empresa.html?emp='+e.id;
       var btn = '<a class="btn btn--secondary rowbtn" href="'+href+'">Ver detalhes</a>';
       return '<tr data-href="'+href+'">'+
         '<td><div class="evemp">'+logoHtml(e)+'<div><div class="celltitle">'+esc(e.nome)+'</div><div class="cellcnpj">'+esc(e.cnpj)+'</div></div></div></td>'+
