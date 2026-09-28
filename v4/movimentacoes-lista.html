@@ -89,8 +89,11 @@
     .evdot--rej{background:var(--color-danger)}
     .evdot--prep{background:var(--color-border-strong)}
     /* célula de situação anual: pílula + barra dos 12 meses + contagem, empilhados */
-    .anocell{display:flex;flex-direction:column;align-items:flex-start;gap:var(--space-2)}
+    .anocell{display:flex;flex-direction:column;align-items:flex-start;gap:var(--space-1-5)}
     .anocount{font-size:var(--text-xs);color:var(--color-text-muted)}
+    /* barra dos 12 meses: discreta e fina (segmentos baixos) */
+    .evdots--year{gap:2px}
+    .evdots--year .evdot{width:12px;height:4px;border-radius:2px}
     .evcount{font-size:var(--text-sm);color:var(--color-text-muted);font-variant-numeric:tabular-nums;white-space:nowrap}
 
     /* recibo do D-1199 */
@@ -332,7 +335,7 @@
   var MESCLS={ fech:'evdot--ok', proc:'evdot--wait', prep:'evdot--wait', atraso:'evdot--rej', avencer:'', none:'' };
   var MESLBL={ fech:'fechado', proc:'em processamento', prep:'em preparação', atraso:'em atraso', avencer:'a vencer', none:'não iniciado' };
   function fechCount(meses){ return (meses||[]).filter(function(m){return m==='fech';}).length; }
-  function yearBar(meses){ return '<div class="evdots" aria-hidden="true">'+(meses||[]).map(function(m,i){ return '<span class="evdot '+(MESCLS[m]||'')+'" title="'+MES_ABBR[i]+': '+(MESLBL[m]||m)+'"></span>'; }).join('')+'</div>'; }
+  function yearBar(meses){ return '<div class="evdots evdots--year" aria-hidden="true">'+(meses||[]).map(function(m,i){ return '<span class="evdot '+(MESCLS[m]||'')+'" title="'+MES_ABBR[i]+': '+(MESLBL[m]||m)+'"></span>'; }).join('')+'</div>'; }
   function anoSitPill(s){ var m=ANOSIT[s]||['status--neutral',s]; return '<span class="status status--sm '+m[0]+'"><span class="status__dot"></span>'+esc(m[1])+'</span>'; }
   function anoSitCell(e){ return '<div class="anocell">'+anoSitPill(e.anoSit)+yearBar(e.meses)+'<div class="anocount">'+fechCount(e.meses)+' de 12 meses fechados</div></div>'; }
 
