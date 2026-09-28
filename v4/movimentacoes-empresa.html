@@ -184,6 +184,17 @@
     .evnav__ic{display:inline-flex;width:var(--space-10);height:var(--space-10);flex:0 0 auto;align-items:center;justify-content:center;border-radius:var(--radius-lg);background:var(--color-primary-subtle);color:var(--color-primary)}
     .evnav--na .evnav__ic{background:var(--color-surface-2);color:var(--color-text-muted)}
     .evnav__ic svg{width:19px;height:19px}
+    /* Indicação MACRO dos eventos na Visão geral: as abas fazem a navegação; aqui é só o panorama do status de cada evento */
+    .evmacro{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:var(--space-3)}
+    .evmacro__it{display:flex;flex-direction:column;gap:var(--space-2);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-4);background:var(--color-surface)}
+    .evmacro__it.is-na{opacity:.6}
+    .evmacro__hd{display:flex;align-items:center;gap:var(--space-2)}
+    .evmacro__ic{display:inline-flex;width:var(--space-8);height:var(--space-8);flex:0 0 auto;align-items:center;justify-content:center;border-radius:var(--radius-lg);background:var(--color-primary-subtle);color:var(--color-primary)}
+    .evmacro__it.is-na .evmacro__ic{background:var(--color-surface-2);color:var(--color-text-muted)}
+    .evmacro__ic svg{width:17px;height:17px}
+    .evmacro__nm{font-weight:600;color:var(--color-heading);font-size:var(--text-sm)}
+    .evmacro__vl{font-size:var(--text-base);font-weight:600;color:var(--color-heading);font-variant-numeric:tabular-nums;display:flex;flex-direction:column;gap:2px}
+    .evmacro__cap{font-size:var(--text-xs);font-weight:400;color:var(--color-text-muted)}
     .evnav__b{min-width:0;flex:1 1 auto;display:flex;flex-direction:column;gap:var(--space-1)}
     .evnav__top{display:flex;align-items:center;gap:var(--space-2);flex-wrap:wrap}
     .evnav__n{font-weight:700;color:var(--color-heading)}
@@ -1025,20 +1036,18 @@
 
     // EVENTOS: lista única (tabela). "Não se aplica" (na) sempre no fim da lista.
     var evOrder=ORDER.filter(function(k){return M.ev[k].st!=='na';}).concat(ORDER.filter(function(k){return M.ev[k].st==='na';}));
-    var rows=evOrder.map(function(kk){
+    // Indicação MACRO: as ABAS navegam; aqui é só o panorama do status de cada evento (não é mais lista clicável).
+    var tiles=evOrder.map(function(kk){
       var e=M.ev[kk], meta=EV_META[kk], na=(e.st==='na'), hasVal=(!na&&e.val&&e.val!=='—');
-      // "N a corrigir…" ganha ícone + cor de aviso NA LISTA (a PO se sentiu perdida: o sinal do que falta aparece sem entrar no evento)
-      var subH=esc(e.sub||'').replace(/(\d+ a corrigir[^·]*)/, '<span class="subwarn">'+ICO.alert+'$1</span>');
-      var nameInner='<span class="evname__ic">'+meta.ic+'</span><div class="evname__b"><div class="evname__row">'+
-        (na?'<span class="evname__t">'+esc(meta.name)+'</span>':'<a class="evname__link" href="?emp='+emp+'&per='+M.per+'&ev='+meta.slug+'" data-tab="'+meta.slug+'">'+esc(meta.name)+'</a>')+
-        '<span class="tag">'+meta.code+'</span></div><div class="evname__sub">'+subH+'</div></div>';
-      var valCell=hasVal?'<span class="evval">'+e.val+'</span><span class="evval__cap">'+esc(e.valLbl)+'</span>':'<span class="evval evval--na">—</span>';
-      if(na) return '<tr class="evrow--na"><td><div class="evname">'+nameInner+'</div></td><td><span class="evna">Não se aplica</span></td><td class="evcol-num">'+valCell+'</td><td class="evcol-act"></td></tr>';
-      // a lista só aparece com a competência já importada → a linha abre o detalhe (sem "Importar" por evento).
-      var actCell='<span class="rowchev" aria-hidden="true">'+ICO.chev+'</span>';
-      return '<tr data-tab="'+meta.slug+'"><td><div class="evname">'+nameInner+'</div></td><td>'+pill(e.st)+'</td><td class="evcol-num">'+valCell+'</td><td class="evcol-act">'+actCell+'</td></tr>';
+      var corr=(e.sub||'').match(/\d+ a corrigir[^·]*/);
+      return '<div class="evmacro__it'+(na?' is-na':'')+'">'+
+        '<div class="evmacro__hd"><span class="evmacro__ic">'+meta.ic+'</span><span class="evmacro__nm">'+esc(meta.name)+'</span><span class="tag">'+meta.code+'</span></div>'+
+        '<div>'+(na?'<span class="evna">Não se aplica</span>':pill(e.st))+'</div>'+
+        (hasVal?'<div class="evmacro__vl">'+e.val+'<span class="evmacro__cap">'+esc(e.valLbl)+'</span></div>':'')+
+        (corr?'<div class="evmacro__cap"><span class="subwarn">'+ICO.alert+esc(corr[0])+'</span></div>':'')+
+        '</div>';
     }).join('');
-    var listaView='<div class="table-wrap"><table class="table evtbl"><thead><tr><th scope="col">Evento</th><th scope="col">Situação</th><th scope="col" class="evcol-num">Base apurada</th><th scope="col" class="evcol-act"><span class="sr-only">Abrir</span></th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+    var listaView='<div class="evmacro">'+tiles+'</div>';
 
     // A lista de eventos mora DENTRO do card de Fechamento (no lugar dos antigos checkpoints); não há mais um card "Eventos da competência" repetido embaixo.
     var band=fechBand(M, applicable, {closed:closed, started:started, ready:ready, comRecibo:comRecibo, fproc:!!M.fechProc}, listaView);
@@ -1346,15 +1355,10 @@
     var tabic=function(ic){ return '<span style="display:inline-flex;width:16px;height:16px" aria-hidden="true">'+ic+'</span>'; };
     // Balancete já traz seus próprios subtítulos (Contas a corrigir · Todas as contas); os outros levam o chint como subtítulo.
     var contentHead=(evKey==='d1101')?'':'<p class="sec__hint" style="margin:0 0 var(--space-4)">'+chint+'</p>';
-    var pConteudo='<div class="subpanel" id="sub-conteudo-'+evKey+'" role="tabpanel" tabindex="0" aria-label="Detalhe">'+
-      (alert?'<div style="margin-bottom:var(--space-4)">'+alert+'</div>':'')+
-      '<article class="card"><div class="card__body">'+contentHead+content+'</div></article></div>';
-    var pVersoes='<div class="subpanel" id="sub-versoes-'+evKey+'" role="tabpanel" tabindex="0" aria-label="Versões" hidden><article class="card"><div class="card__body">'+versoesInner(evKey,M)+'</div></article></div>';
-    var subtabs='<div class="tabs" role="tablist" aria-label="Seções de '+esc(meta.name)+'">'+
-      '<button class="tab is-active" type="button" role="tab" data-subtab="conteudo" data-ev="'+evKey+'" aria-selected="true">'+tabic(ICO.doc)+'Detalhe</button>'+
-      '<button class="tab" type="button" role="tab" data-subtab="versoes" data-ev="'+evKey+'" aria-selected="false">'+tabic(ICO.clock)+'Versões</button>'+
-      '</div>';
-    return '<section class="sec" style="margin-top:0">'+subtabs+'<div class="subpanels">'+pConteudo+pVersoes+'</div></section>';
+    // sem tab-dentro-de-tab: o Detalhe do evento aparece direto; as Versões vêm como SEÇÃO abaixo (não como aba interna).
+    var detBody=(alert?'<div style="margin-bottom:var(--space-4)">'+alert+'</div>':'')+'<article class="card"><div class="card__body">'+contentHead+content+'</div></article>';
+    var verBody='<section class="sec" style="margin-top:var(--space-8)"><div class="sec__h"><div class="sec__ht"><h2>Versões</h2><p class="sec__hint">Histórico de versões deste evento na competência.</p></div></div><article class="card"><div class="card__body">'+versoesInner(evKey,M)+'</div></article></section>';
+    return '<section class="sec" style="margin-top:0">'+detBody+verBody+'</section>';
   }
 
   /* ===== modais: comprovante · versões · confirmação (fechar/reabrir) ===== */
