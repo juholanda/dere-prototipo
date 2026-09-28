@@ -70,6 +70,7 @@
     .mhead{display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);flex-wrap:wrap;padding:var(--space-6);border-bottom:1px solid var(--color-border)}
     .mhead__l{display:flex;align-items:center;gap:var(--space-3);flex-wrap:wrap}
     .mhead h2{margin:0;font-size:var(--text-xl)}
+    .mhead__r{display:flex;align-items:center;gap:var(--space-4);flex-wrap:wrap}
     .mhead__due{display:inline-flex;align-items:center;gap:var(--space-1-5);font-size:var(--text-sm);color:var(--color-warning-fg);font-weight:600}
     .mhead__due svg{width:15px;height:15px}
     .mvals{display:flex;gap:var(--space-8);padding:var(--space-6);flex-wrap:wrap;border-bottom:1px solid var(--color-border)}
@@ -390,11 +391,10 @@
   }
   /* bloco do fechamento D-1199: situação + contador + ação (travado até todos os eventos com recibo) */
   function fechBar(st){
-    if(st==='fech') return '<div class="fechbar fechbar--ok"><div class="fechbar__l"><span class="fechbar__ic">'+MICO.check+'</span><div class="fechbar__tx"><strong>Competência fechada</strong><span class="fechbar__sub">D-1199 aceito · extrato D-9199 recebido</span></div></div><div class="fechbar__act"><button class="btn btn--secondary" type="button" data-evtab="d1199">Ver extrato</button><button class="btn btn--ghost" type="button">Reabrir período (D-1198)</button></div></div>';
+    if(st==='fech') return '<div class="fechbar fechbar--ok"><div class="fechbar__l"><span class="fechbar__ic">'+MICO.check+'</span><div class="fechbar__tx"><strong>Competência fechada</strong><span class="fechbar__sub">D-1199 aceito · extrato D-9199 recebido</span></div></div></div>';
     var fi=fechInfo(st), late=(st==='atraso');
-    var sub=fi.ready?'Todos os eventos com recibo — pronto para fechar.':(fi.ok+' de '+fi.total+' eventos com recibo · falta'+((fi.total-fi.ok)>1?'m':'')+' '+(fi.total-fi.ok)+' para poder fechar.');
-    var btn=fi.ready?'<button class="btn btn--primary" type="button">Fechar competência</button>':'<button class="btn btn--primary" type="button" disabled>Fechar competência</button>';
-    return '<div class="fechbar'+(late?' fechbar--late':'')+'"><div class="fechbar__l"><span class="fechbar__ic">'+(late?MICO.alert:MICO.lock)+'</span><div class="fechbar__tx"><strong>'+(late?'Fechamento em atraso':'Fechamento do mês (D-1199)')+'</strong><span class="fechbar__sub">'+sub+'</span></div></div><div class="fechbar__act">'+btn+'</div></div>';
+    var sub=fi.ready?'Todos os eventos com recibo — pronto para fechar (botão acima).':(fi.ok+' de '+fi.total+' eventos com recibo · falta'+((fi.total-fi.ok)>1?'m':'')+' '+(fi.total-fi.ok)+' para poder fechar.');
+    return '<div class="fechbar'+(late?' fechbar--late':'')+'"><div class="fechbar__l"><span class="fechbar__ic">'+(late?MICO.alert:MICO.lock)+'</span><div class="fechbar__tx"><strong>'+(late?'Fechamento em atraso':'Fechamento do mês (D-1199)')+'</strong><span class="fechbar__sub">'+sub+'</span></div></div></div>';
   }
   var EVAP={
     d1101:{lbl:'Base apurada',         val:4250000},
@@ -442,7 +442,11 @@
     var st=meses[sel], card=document.getElementById('mescard');
     var dueTxt=(st==='atraso')?('balancete venceu em '+prazo(sel).slice(0,5)):('balancete vence '+prazo(sel).slice(0,5));
     var due=(st==='fech')? '' : '<span class="mhead__due"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>'+dueTxt+'</span>';
-    var head='<div class="mhead"><div class="mhead__l"><h2>'+MESF[sel]+' '+anoSel+'</h2>'+stPill(st)+'</div>'+due+'</div>';
+    var fiH=fechInfo(st);
+    var headAct=(st==='fech')?'<button class="btn btn--secondary" type="button" data-evtab="d1199">Ver extrato (D-9199)</button>'
+      :(st==='avencer')?''
+      :'<button class="btn btn--primary" type="button"'+(fiH.ready?'':' disabled')+' data-evtab="d1199">Fechar competência</button>';
+    var head='<div class="mhead"><div class="mhead__l"><h2>'+MESF[sel]+' '+anoSel+'</h2>'+stPill(st)+'</div><div class="mhead__r">'+due+headAct+'</div></div>';
     if(st==='avencer'){ card.innerHTML=head+'<div class="memptynote">Competência ainda não venceu. O balancete (D-1101) vence em <strong>'+prazo(sel)+'</strong>.</div>'; return; }
     var tabs=['visao'].concat(APP);
     if(tabs.indexOf(evtab)<0) evtab='visao';
