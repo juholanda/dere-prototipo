@@ -38,6 +38,17 @@
     .akpi__value{font-size:var(--text-2xl);font-weight:700;color:var(--color-heading);margin-top:var(--space-1);font-variant-numeric:tabular-nums}
     .akpi__value--money{color:var(--color-primary-darker);font-size:var(--text-xl)}
     .akpi__foot{font-size:var(--text-xs);color:var(--color-text-muted);margin-top:var(--space-1)}
+    .akpi__top{display:flex;align-items:center;gap:var(--space-2);margin-bottom:var(--space-1)}
+    .akpi__ic{display:inline-flex;color:var(--color-text-muted)}
+    .akpi__ic svg{width:16px;height:16px}
+    .yico{display:inline-flex;color:var(--color-danger)}
+    .yico svg{width:15px;height:15px}
+    .andtext{font-size:var(--text-sm);color:var(--color-text-muted);font-variant-numeric:tabular-nums}
+    .demobar{position:fixed;bottom:var(--space-4);left:50%;transform:translateX(-50%);z-index:200;display:flex;align-items:center;gap:var(--space-1);background:var(--slate-900);border:1px solid rgba(255,255,255,.14);border-radius:var(--radius-pill);padding:2px var(--space-2);box-shadow:var(--shadow-md)}
+    .demobar__lbl{color:rgba(255,255,255,.55);font-size:var(--text-2xs);font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:0 var(--space-2)}
+    .demobar button{background:none;border:0;color:rgba(255,255,255,.72);font-family:inherit;font-size:var(--text-xs);cursor:pointer;padding:var(--space-1) var(--space-3);border-radius:var(--radius-pill)}
+    .demobar button:hover{color:#fff}
+    .demobar button.on{background:rgba(255,255,255,.16);color:#fff;font-weight:600}
 
     /* régua dos 12 meses */
     .mesesbar{display:flex;gap:var(--space-3);flex-wrap:wrap;padding:0 var(--space-6) var(--space-6)}
@@ -167,13 +178,13 @@
 
         <div class="wrap">
           <div style="display:flex;align-items:center;gap:var(--space-3);margin-bottom:var(--space-6)">
-            <label id="lblAno" for="anoSel" style="font-size:var(--text-xl);font-weight:700;color:var(--color-heading)">Ano-calendário</label>
-            <select class="select" id="anoSel" aria-labelledby="lblAno" style="width:150px;flex:0 0 auto">
-              <option value="2026" selected>2026</option>
-              <option value="2025">2025</option>
-              <option value="2024">2024</option>
-            </select>
+            <span id="lblAno" style="font-size:var(--text-xl);font-weight:700;color:var(--color-heading)">Ano-calendário</span>
+            <div class="cselect" id="anoWrap" style="width:180px;flex:0 0 auto">
+              <button class="cselect__trigger" id="anoTrig" type="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="lblAno anoVal"><span class="cselect__value" id="anoVal">2026</span><span class="cselect__chev"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button>
+              <div class="cselect__panel" role="listbox" id="anoPanel" hidden aria-label="Escolher ano-calendário"></div>
+            </div>
           </div>
+          <div id="pendbanner"></div>
           <div class="akpis" id="akpis"></div>
 
           <section class="card" aria-labelledby="mesesH" style="margin-bottom:var(--space-6)">
@@ -218,18 +229,35 @@
   C.pgcc=(emp==='seg'?'2':'1');
   var anoSel=2026;
 
+  /* DEMO: alterna "com" e "sem" pendência de anos anteriores (toggle no rodapé).
+     openComp = competências VENCIDAS ainda em aberto (em atraso), por ano. */
+  var DEMO={
+    pendencia:{ sit:'atraso', openComp:{ 2026:[5,6], 2025:[10,11] } },
+    limpo:{     sit:'emdia',  openComp:{} }
+  };
+  var demoMode='pendencia';
+  function OPEN(){ return DEMO[demoMode].openComp; }
+  function SIT(){ return DEMO[demoMode].sit; }
+  /* competências em atraso de anos DIFERENTES do selecionado (o "furo" do ano) */
+  function pendOutros(){ var o=OPEN(), out=[]; Object.keys(o).forEach(function(y){ if(+y!==anoSel){ (o[y]||[]).forEach(function(m){ out.push({y:+y,m:m}); }); } }); out.sort(function(a,b){ return a.y-b.y||a.m-b.m; }); return out; }
+  function anosComPend(){ var o=OPEN(), s={}; Object.keys(o).forEach(function(y){ if((o[y]||[]).length) s[+y]=true; }); return s; }
+
   var ANOSIT={ emdia:['status--success','Em dia'], pendencias:['status--warning','Com pendências'], atraso:['status--danger','Em atraso'] };
   function anoPill(s){ var m=ANOSIT[s]||['status--neutral',s]; return '<span class="status status--sm '+m[0]+'"><span class="status__dot"></span>'+esc(m[1])+'</span>'; }
 
-  /* gera os 12 meses do ano a partir do perfil do contribuinte */
+  /* gera os 12 meses do ano; competência vencida em aberto = atraso (openComp da demo) */
   function buildMeses(year){
-    var arr=[];
+    var open=(OPEN()[year])||[], arr=[];
     for(var i=0;i<12;i++){
       var st;
-      if(year<ANO_ATUAL){ st='fech'; }
-      else if(i>CUR_M){ st='avencer'; }
-      else if(i===CUR_M){ st=(C.cur==='aberto'?'aberto':C.cur); }
-      else { st=(i<C.fech)?'fech':'atraso'; }
+      if(year>ANO_ATUAL){ st='avencer'; }
+      else if(year===ANO_ATUAL){
+        if(i>CUR_M) st='avencer';
+        else if(i===CUR_M) st='aberto';
+        else st=(open.indexOf(i)>=0)?'atraso':'fech';
+      } else {
+        st=(open.indexOf(i)>=0)?'atraso':'fech';
+      }
       arr.push(st);
     }
     return arr;
@@ -252,11 +280,14 @@
     var cbs=(anoSel<ANO_ATUAL)?(C.mMed*12):C.cbsAno;
     var ibs=(anoSel<ANO_ATUAL)?(C.iMed*12):C.ibsAno;
     var next='—', nextFoot='';
-    if(anoSel===ANO_ATUAL){ next=prazo(CUR_M).slice(0,5); nextFoot='fechamento '+MES3[CUR_M]+'/2026'; }
+    if(anoSel===ANO_ATUAL){ next=prazo(CUR_M).slice(0,5); nextFoot='balancete '+MES3[CUR_M]+'/'+anoSel; }
+    var IC_CBS='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg>';
+    var IC_IBS='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" x2="21" y1="22" y2="22"/><line x1="6" x2="6" y1="18" y2="11"/><line x1="10" x2="10" y1="18" y2="11"/><line x1="14" x2="14" y1="18" y2="11"/><line x1="18" x2="18" y1="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg>';
+    var IC_DUE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4M16 2v4M3 10h18"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M12 15v2M12 17h.01"/></svg>';
     var html=''+
-      '<div class="akpi"><div class="akpi__label">CBS anual apurada</div><div class="akpi__value akpi__value--money">'+(cbs==null?'—':brl(cbs))+'</div><div class="akpi__foot">contribuição federal</div></div>'+
-      '<div class="akpi"><div class="akpi__label">IBS anual apurado</div><div class="akpi__value akpi__value--money">'+(ibs==null?'—':brl(ibs))+'</div><div class="akpi__foot">estadual + municipal</div></div>'+
-      '<div class="akpi"><div class="akpi__label">Próximo vencimento</div><div class="akpi__value">'+esc(next)+'</div><div class="akpi__foot">'+esc(nextFoot||'sem competência a vencer')+'</div></div>';
+      '<div class="akpi"><div class="akpi__top"><span class="akpi__ic">'+IC_CBS+'</span><span class="akpi__label">CBS acumulada em '+anoSel+'</span></div><div class="akpi__value akpi__value--money">'+(cbs==null?'—':brl(cbs))+'</div><div class="akpi__foot">soma das competências · contribuição federal</div></div>'+
+      '<div class="akpi"><div class="akpi__top"><span class="akpi__ic">'+IC_IBS+'</span><span class="akpi__label">IBS acumulado em '+anoSel+'</span></div><div class="akpi__value akpi__value--money">'+(ibs==null?'—':brl(ibs))+'</div><div class="akpi__foot">soma das competências · estadual + municipal</div></div>'+
+      '<div class="akpi"><div class="akpi__top"><span class="akpi__ic">'+IC_DUE+'</span><span class="akpi__label">Próximo vencimento</span></div><div class="akpi__value">'+esc(next)+'</div><div class="akpi__foot">'+esc(nextFoot||'sem competência a vencer')+'</div></div>';
     document.getElementById('akpis').innerHTML=html;
   }
 
@@ -272,8 +303,7 @@
     }).join('');
     bar.querySelectorAll('[data-m]').forEach(function(b){ b.addEventListener('click',function(){ sel=+b.getAttribute('data-m'); renderStrip(); renderMonth(); }); });
     var fc=fechCount();
-    var ap=document.getElementById('andPill'); var s=ANOSIT[C.sit]||['status--neutral','']; if(anoSel<ANO_ATUAL) s=ANOSIT.emdia;
-    ap.className='status status--sm '+s[0]; ap.innerHTML='<span class="status__dot"></span>'+fc+' de 12 meses fechados';
+    var ap=document.getElementById('andPill'); ap.className='andtext'; ap.textContent=fc+' de 12 meses fechados';
   }
 
   /* eventos aplicáveis do mês, com status derivado do estado do mês */
@@ -298,13 +328,14 @@
   function renderMonth(){
     var st=meses[sel], card=document.getElementById('mescard');
     var isCur=(sel===CUR_M && anoSel===ANO_ATUAL);
-    var due=(st==='fech')? '' : '<span class="mhead__due"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>vence '+prazo(sel).slice(0,5)+'</span>';
+    var dueTxt=(st==='atraso')?('balancete venceu em '+prazo(sel).slice(0,5)):('balancete vence '+prazo(sel).slice(0,5));
+    var due=(st==='fech')? '' : '<span class="mhead__due"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>'+dueTxt+'</span>';
     var head='<div class="mhead"><div class="mhead__l"><h2>'+MESF[sel]+' '+anoSel+'</h2>'+stPill(st)+(isCur?'':'')+'</div>'+due+'</div>';
 
     var evUrl='movimentacoes-empresa.html?emp='+emp+'&per='+anoSel+'-'+(sel+1<10?'0'+(sel+1):(sel+1))+'&ev=visao';
 
     if(st==='avencer'){
-      card.innerHTML=head+'<div class="memptynote">Competência ainda não venceu. A entrega do fechamento vai até <strong>'+prazo(sel)+'</strong>.</div>';
+      card.innerHTML=head+'<div class="memptynote">Competência ainda não venceu. O balancete (D-1101) vence em <strong>'+prazo(sel)+'</strong>.</div>';
       return;
     }
 
@@ -343,16 +374,55 @@
     document.getElementById('coRegime').textContent=C.regime;
     var pg=document.getElementById('coPgcc'); pg.innerHTML='Versão '+C.pgcc+EXT_ICON; pg.setAttribute('href','plano-contas-empresa.html?emp='+emp);
     document.getElementById('idLogo').textContent=C.logo;
-    document.getElementById('coSit').innerHTML=anoPill(C.sit);   // situação é do CONTRIBUINTE (geral), não muda com o ano selecionado
+    document.getElementById('coSit').innerHTML=anoPill(SIT());   // situação é do CONTRIBUINTE (geral, todos os anos), não muda com o ano selecionado
     document.getElementById('anoLbl').textContent=anoSel;
+    document.getElementById('anoVal').textContent=anoSel;
     document.title='a-DeRE · Movimentações Mensais · '+C.nome;
     meses=buildMeses(anoSel);
-    if(anoSel<ANO_ATUAL) sel=11; else sel=CUR_M;
-    renderKpis(); renderStrip(); renderMonth();
+    sel=(anoSel===ANO_ATUAL)?CUR_M:(function(){ for(var i=0;i<12;i++) if(meses[i]==='atraso') return i; return 11; })();
+    renderKpis(); renderStrip(); renderMonth(); renderBanner(); buildYearPanel();
   }
-  apply();
 
-  document.getElementById('anoSel').addEventListener('change',function(){ anoSel=+this.value; apply(); });
+  /* faixa de pendências que "furam" o ano selecionado (competências em atraso de OUTROS anos) */
+  var IC_WARN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg>';
+  function renderBanner(){
+    var box=document.getElementById('pendbanner'), p=pendOutros();
+    if(!p.length){ box.innerHTML=''; return; }
+    var goY=p[0].y;
+    var lista=p.map(function(c){ return '<strong>'+MES3[c.m]+'/'+c.y+'</strong>'; }).join(', ');
+    box.innerHTML='<div class="dalert dalert--danger" role="status">'+
+      '<span class="dalert__ic">'+IC_WARN+'</span>'+
+      '<div class="dalert__body"><p class="dalert__title">'+p.length+' competência'+(p.length>1?'s':'')+' em atraso de anos anteriores</p>'+
+      '<p class="dalert__text">'+lista+' — fora do ano que você está vendo. Regularize para ficar em dia.</p></div>'+
+      '<div class="dalert__act"><button class="btn btn--secondary" type="button" data-goano="'+goY+'">Ver '+goY+'</button></div></div>';
+    var b=box.querySelector('[data-goano]'); if(b) b.addEventListener('click',function(){ anoSel=goY; apply(); });
+  }
+
+  /* dropdown custom de ano (.cselect do DS) com ícone Lucide nos anos com pendência */
+  function buildYearPanel(){
+    var panel=document.getElementById('anoPanel'), marks=anosComPend(), anos=[2026,2025,2024];
+    panel.innerHTML=anos.map(function(y){
+      var mk=marks[y]?'<span class="yico" title="tem competência em atraso">'+IC_WARN+'</span>':'';
+      return '<button role="option" type="button" data-y="'+y+'" aria-selected="'+(y===anoSel)+'"'+(y===anoSel?' class="is-selected"':'')+'><span style="display:flex;align-items:center;justify-content:space-between;gap:var(--space-3)"><span>'+y+'</span>'+mk+'</span></button>';
+    }).join('');
+    panel.querySelectorAll('[data-y]').forEach(function(o){ o.addEventListener('click',function(){ anoSel=+o.getAttribute('data-y'); closeYear(); apply(); }); });
+  }
+  function openYear(){ document.getElementById('anoPanel').hidden=false; document.getElementById('anoTrig').setAttribute('aria-expanded','true'); }
+  function closeYear(){ document.getElementById('anoPanel').hidden=true; document.getElementById('anoTrig').setAttribute('aria-expanded','false'); }
+  document.getElementById('anoTrig').addEventListener('click',function(e){ e.stopPropagation(); if(document.getElementById('anoPanel').hidden) openYear(); else closeYear(); });
+  document.addEventListener('click',function(e){ if(!document.getElementById('anoWrap').contains(e.target)) closeYear(); });
+
+  /* demobar: alterna com/sem pendência de anos anteriores */
+  (function(){
+    var bar=document.createElement('div'); bar.className='demobar'; bar.setAttribute('role','group'); bar.setAttribute('aria-label','Demonstração: pendência de anos anteriores');
+    bar.innerHTML='<span class="demobar__lbl">Demo</span><button type="button" data-demo="pendencia">Com pendência</button><button type="button" data-demo="limpo">Sem pendência</button>';
+    document.body.appendChild(bar);
+    function sync(){ bar.querySelectorAll('[data-demo]').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-demo')===demoMode); }); }
+    bar.querySelectorAll('[data-demo]').forEach(function(b){ b.addEventListener('click',function(){ demoMode=b.getAttribute('data-demo'); anoSel=ANO_ATUAL; apply(); sync(); }); });
+    sync();
+  })();
+
+  apply();
 
   document.querySelectorAll('[data-menu]').forEach(function(m){ var b=m.querySelector('button'), p=m.querySelector('.menu__panel'); if(!b||!p)return; b.addEventListener('click',function(){ if(p.hasAttribute('hidden')){p.removeAttribute('hidden');b.setAttribute('aria-expanded','true');}else{p.setAttribute('hidden','');b.setAttribute('aria-expanded','false');} }); document.addEventListener('click',function(ev){ if(!m.contains(ev.target)){p.setAttribute('hidden','');b.setAttribute('aria-expanded','false');} }); });
   document.querySelectorAll('[data-sidenav-toggle]').forEach(function(btn){ var nav=btn.closest('[data-sidenav]'); btn.addEventListener('click',function(){ var c=nav.classList.toggle('is-collapsed'); try{localStorage.setItem('adere.nav.collapsed',c?'1':'0');}catch(e){} btn.setAttribute('aria-expanded',String(!c)); }); });
