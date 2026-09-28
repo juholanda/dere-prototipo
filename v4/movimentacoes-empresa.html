@@ -49,6 +49,8 @@
     /* ===== barra de abas (.tabs do DS) com scroll em tela estreita ===== */
     .tabscroll{overflow-x:auto;scrollbar-width:thin;margin-top:var(--space-2);padding-bottom:2px}   /* padding evita que o overflow corte o sublinhado de 2px da aba ativa */
     .tabscroll .tabs{min-width:max-content}
+    /* o painel recebe foco programático (navTo) só para leitor de tela; sem anel visual envolvendo o conteúdo */
+    #panels>[role="region"]:focus{outline:none;box-shadow:none}
     .panels{margin-top:var(--space-6)}
 
     /* ===== seção (título + hint, ritmo do detalhe do Plano) ===== */
@@ -1735,7 +1737,7 @@
     dn.innerHTML='';
     bcTail.querySelectorAll('[data-tab]').forEach(function(a){ a.addEventListener('click',function(ev){ ev.preventDefault(); navTo(a.getAttribute('data-tab'), true); }); });
   }
-  function tabLabel(slug){ if(slug==='visao') return 'Visão geral'; var k=SLUG2EV[slug]; return k?EV_META[k].short:slug; }
+  function tabLabel(slug){ if(slug==='visao') return 'Visão geral'; var k=SLUG2EV[slug]; return k?EV_META[k].name:slug; }
   function renderTabBar(){
     var wrap=document.getElementById('evtabsWrap'), bar=document.getElementById('evtabs'); if(!bar) return;
     if(TABS.length<=1){ if(wrap) wrap.hidden=true; bar.innerHTML=''; return; }
