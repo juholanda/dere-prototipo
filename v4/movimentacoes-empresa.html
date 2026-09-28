@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Movimentações Mensais · MAG Seguros</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=481e2896">
+  <link rel="stylesheet" href="../design-system/ds.css?v=12b8d439">
   <script src="../design-system/ds-tailwind.js"></script>
   <style>
     /* ===== app-shell ===== */
@@ -441,12 +441,14 @@
               </div>
               <!-- Ano-calendário: define o ano das Movimentações Mensais; a régua de meses (abaixo) escolhe a competência. -->
               <div class="page-h__act">
-                <div class="filterf">
-                  <label class="flbl" id="lblAno" for="anoSel">Ano-calendário</label>
-                  <select class="select" id="anoSel" aria-labelledby="lblAno" style="min-width:132px">
-                    <option value="2026" selected>2026</option>
-                    <option value="2025" disabled>2025 &middot; sem movimentações</option>
-                  </select>
+                <div class="fano">
+                  <label class="field__label" id="lblAno">Ano-calendário</label>
+                  <div class="cselect" data-cselect id="anoWrap" style="min-width:150px">
+                    <button class="cselect__trigger" type="button" data-cselect-btn aria-haspopup="listbox" aria-expanded="false" aria-labelledby="lblAno anoVal"><span class="cselect__value" data-cselect-label id="anoVal">2026</span><span class="cselect__chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span></button>
+                    <div class="cselect__panel" data-cselect-panel hidden role="listbox" aria-label="Ano-calendário">
+                      <button type="button" role="option" data-val="2026" class="is-selected">2026</button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1837,9 +1839,9 @@
     var locked=!monthStarted(MESES[perIdx]);   // mês sem nada importado: trava as abas de evento
     bar.innerHTML=TABS.map(function(s){ var a=(s===tab), dis=(locked && s!=='visao');
       return '<button class="tab'+(a?' is-active':'')+'" type="button" role="tab" aria-selected="'+(a?'true':'false')+'"'
-        +(dis?' disabled title="Importe a movimentação do mês para ver este evento."':'')
+        +(dis?' aria-disabled="true" title="Importe a movimentação do mês para habilitar este evento."':'')
         +' data-tab="'+s+'">'+esc(tabLabel(s))+'</button>'; }).join('');
-    bar.querySelectorAll('[data-tab]:not([disabled])').forEach(function(b){ b.addEventListener('click',function(){ navTo(b.getAttribute('data-tab'), true); }); });
+    bar.querySelectorAll('[data-tab]').forEach(function(b){ b.addEventListener('click',function(){ if(b.getAttribute('aria-disabled')==='true') return; navTo(b.getAttribute('data-tab'), true); }); });
   }
   function navTo(slug, push){
     if(TABS.indexOf(slug)<0) slug='visao';
@@ -1972,6 +1974,14 @@
   history.replaceState({per:MESES[perIdx].per,ev:tab},'','?emp='+emp+'&per='+MESES[perIdx].per+'&ev='+tab);
 
   document.querySelectorAll('[data-sidenav-toggle]').forEach(function(btn){ var nav=btn.closest('[data-sidenav]'); btn.addEventListener('click',function(){ var c=nav.classList.toggle('is-collapsed'); try{localStorage.setItem('adere.nav.collapsed',c?'1':'0');}catch(e){} btn.setAttribute('aria-expanded',String(!c)); }); });
+  /* Dropdown custom do DS (mesmo controller do Plano de Contas): abre/fecha, seleciona, fecha ao clicar fora. */
+  document.querySelectorAll('[data-cselect]').forEach(function(cs){
+    var btn=cs.querySelector('[data-cselect-btn]'), panel=cs.querySelector('[data-cselect-panel]'), lbl=cs.querySelector('[data-cselect-label]');
+    if(!btn||!panel) return;
+    btn.addEventListener('click',function(){ var open=!panel.hasAttribute('hidden'); if(open){panel.setAttribute('hidden','');btn.setAttribute('aria-expanded','false');}else{panel.removeAttribute('hidden');btn.setAttribute('aria-expanded','true');} });
+    panel.querySelectorAll('[role="option"]').forEach(function(op){ op.addEventListener('click',function(){ if(op.disabled) return; panel.querySelectorAll('[role="option"]').forEach(function(o){o.classList.remove('is-selected');}); op.classList.add('is-selected'); if(lbl) lbl.textContent=op.textContent; panel.setAttribute('hidden','');btn.setAttribute('aria-expanded','false'); }); });
+    document.addEventListener('click',function(ev){ if(!cs.contains(ev.target)){panel.setAttribute('hidden','');btn.setAttribute('aria-expanded','false');} });
+  });
   </script>
   <!-- barra de demo (mesmo padrão da Info): jornada do Simple2u — Sem nada → Importar planilha (popup) → Populado -->
   <div class="demobar is-collapsed" id="demobar" role="group" aria-label="Demonstração: alternar cenário">

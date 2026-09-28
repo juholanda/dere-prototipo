@@ -778,6 +778,9 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 .combo__empty{padding:var(--space-4) var(--space-2);text-align:center;color:var(--color-text-muted);font-size:var(--text-sm)}
 /* Select custom: gatilho estilizado + dropdown com opções formatadas (o <select> nativo não estiliza <option>) */
 .cselect{position:relative}
+.cselect__value{display:inline-flex;align-items:center;gap:var(--space-1)}
+.cselect__panel [role="option"]{gap:var(--space-2)}
+.anowarn{color:var(--color-warning-fg);flex:0 0 auto}   /* ⚠ de ano com pendência no seletor de Ano-calendário */
 .cselect__trigger{width:100%;height:var(--control-h);display:flex;align-items:center;gap:var(--space-2);padding:0 var(--space-3);background:var(--color-surface);color:var(--color-text);border:1px solid var(--color-field-border);border-radius:var(--radius-base);font-family:var(--font-sans);font-size:var(--text-base);cursor:pointer;text-align:left;transition:border-color .12s,box-shadow .12s}
 .cselect__trigger:hover:not(:disabled){border-color:var(--color-text-muted)}
 .cselect__trigger:focus-visible,.cselect__trigger[aria-expanded="true"]{outline:none;border-color:var(--color-primary);box-shadow:0 0 0 3px color-mix(in srgb, var(--color-primary) 22%, transparent)}
@@ -1190,9 +1193,10 @@ body.has-decisionbar .content{scroll-padding-bottom:96px}
 .tab:hover{color:var(--color-heading)}
 /* Estado selecionado: a fonte da verdade é aria-selected (APG); .is-active mantém compat */
 .tab.is-active,.tab[aria-selected="true"]{color:var(--color-primary);border-bottom-color:var(--color-primary)}
-/* Aba indisponível (ex.: evento sem dado ainda): fica visível mas não clicável, sem cair pra outra tela vazia */
-.tab:disabled{color:var(--color-text-muted);cursor:not-allowed;opacity:.55}
-.tab:disabled:hover{color:var(--color-text-muted)}
+/* Aba indisponível (ex.: evento sem dado ainda): fica visível mas não clicável, sem cair pra outra tela vazia.
+   Usa aria-disabled (não disabled) pra o title/tooltip ainda aparecer no hover explicando o porquê. */
+.tab:disabled,.tab[aria-disabled="true"]{color:var(--color-text-muted);cursor:not-allowed;opacity:.55}
+.tab:disabled:hover,.tab[aria-disabled="true"]:hover{color:var(--color-text-muted)}
 .tab:focus-visible{outline:none;box-shadow:var(--ring);border-radius:var(--radius-sm)}
 /* números tabulares para recibos, protocolos e códigos alinharem coluna a coluna */
 .mono{font-variant-numeric:tabular-nums}
@@ -1561,6 +1565,9 @@ body.has-decisionbar .content{scroll-padding-bottom:96px}
    seletor de competência. Modificadores de largura fixa por papel. */
 .filterf{display:flex;flex-direction:column;gap:var(--space-1-5);min-width:0}
 .filterf > .flbl{font-size:var(--text-xs);color:var(--color-text-muted);font-weight:600}
+/* Campo rotulado (rótulo padrão .field__label em cima + controle). Rótulo maior/escuro que o .flbl do filtro;
+   usado no seletor de Ano-calendário (lista + detalhe), pra ambos ficarem idênticos. */
+.fano{display:flex;flex-direction:column;gap:var(--space-2);min-width:0}
 .filterf .select,.filterf .input{min-width:0}
 .filterf.is-disabled .flbl{color:var(--color-text-muted)}
 .filterf--esc{flex:0 0 auto;width:240px;max-width:100%}

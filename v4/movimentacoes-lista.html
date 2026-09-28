@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Movimentações Mensais</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=481e2896">
+  <link rel="stylesheet" href="../design-system/ds.css?v=12b8d439">
   <script src="../design-system/ds-tailwind.js"></script>
   <style>
     body{margin:0;background:var(--color-bg)}
@@ -197,13 +197,16 @@
                 <p class="page-h__desc">Acompanhe os eventos da competência e o fechamento do mês.</p>
               </div>
               <div class="page-h__act">
-                <div class="filterf">
-                  <label class="flbl" id="lblAno" for="anoSel">Ano</label>
-                  <select class="select" id="anoSel" aria-labelledby="lblAno" style="min-width:132px">
-                    <option value="2026" selected>2026</option>
-                    <option value="2025">2025</option>
-                    <option value="2024">2024</option>
-                  </select>
+                <div class="fano">
+                  <label class="field__label" id="lblAno">Ano-calendário</label>
+                  <div class="cselect" id="anoWrap" style="min-width:168px">
+                    <button class="cselect__trigger" type="button" data-cselect-btn aria-haspopup="listbox" aria-expanded="false" aria-labelledby="lblAno anoVal"><span class="cselect__value" id="anoVal">2026</span><span class="cselect__chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span></button>
+                    <div class="cselect__panel" data-cselect-panel hidden role="listbox" aria-label="Ano-calendário">
+                      <button type="button" role="option" data-val="2026" data-pend="1" class="is-selected">2026</button>
+                      <button type="button" role="option" data-val="2025">2025</button>
+                      <button type="button" role="option" data-val="2024">2024</button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -440,13 +443,23 @@
 
   setPrazo(); kpis(); renderRows();
   document.getElementById('q').addEventListener('input',function(){ query=this.value; renderRows(); });
-  /* seletor de ano: troca o ano e habilita "Ano atual" quando não for o corrente */
+  /* seletor de Ano-calendário: dropdown do DS (.cselect), MESMO componente do detalhe.
+     Anos com pendência ganham ⚠. Ao escolher, aplica o ano e re-renderiza a lista. */
   (function(){
-    var sel=document.getElementById('anoSel'), now=document.getElementById('anoNow');
-    if(!sel) return;
-    function apply(){ var y=+sel.value; anoSel=y; if(now) now.disabled=(y===ANO_ATUAL); aplicaAno(y); renderRows(); }
-    sel.addEventListener('change', apply);
-    if(now) now.addEventListener('click', function(){ sel.value=String(ANO_ATUAL); apply(); });
+    var wrap=document.getElementById('anoWrap'); if(!wrap) return;
+    var btn=wrap.querySelector('[data-cselect-btn]'), panel=wrap.querySelector('[data-cselect-panel]'), val=document.getElementById('anoVal');
+    var WARN='<svg class="anowarn" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg>';
+    panel.querySelectorAll('[role="option"]').forEach(function(op){ if(op.getAttribute('data-pend')==='1' && !op.querySelector('.anowarn')){ op.insertAdjacentHTML('beforeend', WARN+'<span class="sr-only"> com pendências</span>'); } });
+    function setTrigger(op){ var pend=op.getAttribute('data-pend')==='1'; val.innerHTML=esc(op.getAttribute('data-val'))+(pend?' '+WARN:''); }
+    function apply(op){
+      panel.querySelectorAll('[role="option"]').forEach(function(o){o.classList.remove('is-selected');}); op.classList.add('is-selected');
+      setTrigger(op); panel.setAttribute('hidden','');btn.setAttribute('aria-expanded','false');
+      var y=+op.getAttribute('data-val'); anoSel=y; aplicaAno(y); renderRows();
+    }
+    btn.addEventListener('click',function(){ var open=!panel.hasAttribute('hidden'); if(open){panel.setAttribute('hidden','');btn.setAttribute('aria-expanded','false');}else{panel.removeAttribute('hidden');btn.setAttribute('aria-expanded','true');} });
+    panel.querySelectorAll('[role="option"]').forEach(function(op){ op.addEventListener('click',function(){ apply(op); }); });
+    document.addEventListener('click',function(ev){ if(!wrap.contains(ev.target)){panel.setAttribute('hidden','');btn.setAttribute('aria-expanded','false');} });
+    var initSel=panel.querySelector('[role="option"].is-selected')||panel.querySelector('[role="option"]'); if(initSel) setTrigger(initSel);
   })();
   /* ordenação por cabeçalho (mesmo comportamento da lista de Informações do Contribuinte) */
   (function(){
