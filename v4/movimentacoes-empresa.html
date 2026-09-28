@@ -440,6 +440,9 @@
             </div>
           </section>
 
+          <!-- Abas da competência: troca instantânea entre a visão geral e cada evento (sem entrar e sair) -->
+          <div class="tabscroll" id="evtabsWrap"><div class="tabs" id="evtabs" role="tablist" aria-label="Seções da competência"></div></div>
+
           <!-- NAV DO DETALHE: vazio no hub da competência; "voltar" na página de um evento -->
           <div id="detnav"></div>
 
@@ -1732,11 +1735,20 @@
     dn.innerHTML='';
     bcTail.querySelectorAll('[data-tab]').forEach(function(a){ a.addEventListener('click',function(ev){ ev.preventDefault(); navTo(a.getAttribute('data-tab'), true); }); });
   }
+  function tabLabel(slug){ if(slug==='visao') return 'Visão geral'; var k=SLUG2EV[slug]; return k?EV_META[k].short:slug; }
+  function renderTabBar(){
+    var wrap=document.getElementById('evtabsWrap'), bar=document.getElementById('evtabs'); if(!bar) return;
+    if(TABS.length<=1){ if(wrap) wrap.hidden=true; bar.innerHTML=''; return; }
+    if(wrap) wrap.hidden=false;
+    bar.innerHTML=TABS.map(function(s){ var a=(s===tab); return '<button class="tab'+(a?' is-active':'')+'" type="button" role="tab" aria-selected="'+(a?'true':'false')+'" data-tab="'+s+'">'+esc(tabLabel(s))+'</button>'; }).join('');
+    bar.querySelectorAll('[data-tab]').forEach(function(b){ b.addEventListener('click',function(){ navTo(b.getAttribute('data-tab'), true); }); });
+  }
   function navTo(slug, push){
     if(TABS.indexOf(slug)<0) slug='visao';
     tab=slug;
     document.querySelectorAll('#panels [role=region]').forEach(function(p){ p.hidden=(p.id!=='panel-'+slug); });
     renderDetnav(slug);
+    renderTabBar();
     if(push) history.pushState({per:MESES[perIdx].per, ev:slug}, '', '?emp='+emp+'&per='+MESES[perIdx].per+'&ev='+slug);
     var p=document.getElementById('panel-'+slug); if(p){ p.focus({preventScroll:true}); }
     // ao entrar num evento (ou voltar), sobe pro topo da página (o scroll fica no .content, não na janela)
