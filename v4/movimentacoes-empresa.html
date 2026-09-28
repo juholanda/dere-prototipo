@@ -681,7 +681,21 @@
   };
   /* Aplica o conjunto do contribuinte ao mês corrente (não-seg mostram só a competência atual). */
   // O balancete (DETAIL) é o mesmo p/ todo cenário, então a apuração e o codTrib também são os do período (MESES[0].total). Só os EVENTOS aplicáveis mudam por contribuinte.
-  if(!SEMPGCC[emp] && EMPEV[emp]){ MESES=[Object.assign({}, MESES[0], {ev:EMPEV[emp]})]; }
+  /* Expande a competência para os meses do ano-calendário (set corrente + passados FECHADOS),
+     pra alimentar a régua de meses. Reaproveita a estrutura do mês base e a aplicabilidade do
+     contribuinte (EMPEV); meses sem DETAIL próprio caem no de um mês fechado (DF). */
+  (function(){
+    var curEv = EMPEV[emp] ? EMPEV[emp] : MESES[0].ev;
+    var MES3f=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro'];
+    function evFech(){ var o={}; ORDER.forEach(function(k){ var na=(curEv[k]&&curEv[k].st==='na'); o[k]=Object.assign({}, curEv[k], {st: na?'na':'recibo'}); }); return o; }
+    var arr=[Object.assign({}, MESES[0], {ev:curEv})];               // set/2026 corrente
+    for(var m=8;m>=1;m--){                                            // ago..jan, fechados
+      var per='2026-'+(m<10?'0'+m:m);
+      arr.push(Object.assign({}, MESES[1]||MESES[0], {per:per, txt:MES3f[m-1]+' 2026', cur:false,
+        prazo:'15/'+((m+1)<10?'0'+(m+1):(m+1))+'/2026', fech:'fechado', ev:evFech()}));
+    }
+    MESES=arr;
+  })();
 
   /* ===== Conteúdo dos eventos (campos conforme leiaute v1.2.0) ===== */
   var DETAIL={
@@ -765,6 +779,8 @@
   var SITV={ recibo:['status--success','Processada com sucesso'], advertencia:['status--warning','Processada com advertências'], protocolo:['status--info','Em processamento'], rejeitado:['status--danger','Rejeitada pela Receita'], substituida:['status--neutral','Substituída'], pendente:['status--neutral','Em preparação'] };
 
   /* ===== estado ===== */
+  /* queda de conteúdo: meses sem DETAIL próprio reaproveitam o de um mês fechado (demo) */
+  function DF(M){ return DETAIL[M.per]||DETAIL['2026-08']; }
   function perList(){ return MESES.map(function(m){return m.per;}); }
   var perIdx=(function(){ var p=q.get('per'); var i=perList().indexOf(p); return i>=0?i:0; })();
   var APPLIES=SEMPGCC[emp] ? [] : ORDER.filter(function(k){ return MESES.some(function(m){ return m.ev[k] && m.ev[k].st!=='na'; }); });
@@ -1109,7 +1125,7 @@
       '<div class="dalert__act">'+f.act(rows)+'</div></div>';
   }
   function balanceteContent(M){
-    var d=DETAIL[M.per].d1101;
+    var d=DF(M).d1101;
     // Jornada feliz (s2u): a planilha vem SEM erros → nenhuma conta sinalizada (limpa os vst do DETAIL compartilhado).
     var rowsAll=(emp==='s2u')?d.rows.map(function(r){ var c=Object.assign({},r); delete c.vst; delete c.msg; return c; }):d.rows;
     var flagged=rowsAll.filter(function(r){return r.vst;});
@@ -1130,7 +1146,7 @@
     return errBlock+okBlock;
   }
   function aplicacoesContent(M){
-    var d=DETAIL[M.per].d1106, rows='', n=0;
+    var d=DF(M).d1106, rows='', n=0;
     d.contas.forEach(function(c){
       c.ativos.forEach(function(a){
         n++;
@@ -1144,7 +1160,7 @@
   function deducoesContent(M){
     // Documento a documento (leiaute D-1121): tipo, emissão, atividade, valor da operação, teto, usado no mês e saldo,
     // com os ITENS do documento (itemDFe) num expandível por linha.
-    var d=DETAIL[M.per].d1121;
+    var d=DF(M).d1121;
     var H=[{label:'Documento (chDFe)'},{label:'Tipo'},{label:'Emissão'},{label:'Atividade (tpAtiv)'},{label:'Operação (vOper)',num:true},{label:'Teto (vDedTotal)',num:true},{label:'Usado no mês (vDed)',num:true},{label:'Saldo',num:true}];
     var thead=H.map(function(h){return '<th scope="col"'+(h.num?' class="col--num"':'')+'>'+esc(h.label)+'</th>';}).join('');
     var body=d.docs.map(function(r){
@@ -1166,7 +1182,7 @@
   function titulosContent(M){
     // Razão completo do título (leiaute D-2101, valores com 4 casas): ISIN, conta, devedor, saldos, entradas/saídas,
     // juros recebidos e apropriados, Selic (teto), PIS/COFINS e a base (menor entre juros apropr. e Selic, menos PIS/COFINS).
-    var d=(DETAIL[M.per]&&DETAIL[M.per].d2101)||{ count:'8 títulos', rows:[
+    var d=(DF(M)&&DF(M).d2101)||{ count:'8 títulos', rows:[
       {isin:'BRSTNCLTN012',cCta:'1.2.03.001',desc:'Debênture Série 3 (2031)',cnpjDev:'12.345.678/0001-90',sIni:'C 1.200.000,0000',ent:'0,0000',sai:'0,0000',jurosRec:'C 41.000,0000',jurosApr:'C 38.500,0000',sFim:'C 1.241.000,0000',selic:'C 42.000,0000',pisCofins:'0,0000',base:'C 38.500,0000'},
       {isin:'BRSTNCLTN020',cCta:'1.2.03.002',desc:'CRA Agronegócio (2029)',cnpjDev:'98.765.432/0001-10',sIni:'C 890.000,0000',ent:'C 120.000,0000',sai:'0,0000',jurosRec:'C 34.000,0000',jurosApr:'C 33.200,0000',sFim:'C 1.043.200,0000',selic:'C 31.000,0000',pisCofins:'0,0000',base:'C 31.000,0000'},
       {isin:'BRSTNCLTN038',cCta:'1.2.03.003',desc:'Nota comercial (2028)',cnpjDev:'11.222.333/0001-44',sIni:'C 610.000,0000',ent:'0,0000',sai:'C 40.000,0000',jurosRec:'C 30.100,0000',jurosApr:'C 29.900,0000',sFim:'C 600.000,0000',selic:'C 30.500,0000',pisCofins:'D 1.200,0000',base:'C 28.700,0000'}
@@ -1222,7 +1238,7 @@
   }
   /* receiptInner: o interior do comprovante (estado + linhas), injetado no MODAL (não fica solto na tela). */
   function receiptInner(evKey, M, verN){
-    var v=VERS[M.per][evKey]||{atual:[],prep:[],ant:[]};
+    var v=(VERS[M.per]||{})[evKey]||{atual:[],prep:[],ant:[]};
     var all=(v.atual||[]).concat(v.prep||[], v.ant||[]);
     var active = verN ? (all.filter(function(x){return String(x.n)===String(verN);})[0]||null) : (v.atual[0]||v.prep[0]||null);
     if(!active) return '<div class="receipt__state"><span class="receipt__state-ic">'+ICO.info+'</span><div><p class="receipt__state-tt">Sem envio nesta competência</p><p class="receipt__state-tx">Nada foi transmitido ainda para este evento.</p></div></div>';
@@ -1267,7 +1283,7 @@
      (emptyBox com título em negrito + subtítulo). "Em preparação" SEMPRE aparece; "Anteriores" só com histórico. */
   function emptyBox(title, sub){ return '<div class="versec__empty">'+ICO.info+'<span><b>'+esc(title)+'</b><span class="versec__empty-sub">'+esc(sub)+'</span></span></div>'; }
   function versoesInner(evKey, M){
-    var v=VERS[M.per][evKey]||{atual:[],prep:[],ant:[]};
+    var v=(VERS[M.per]||{})[evKey]||{atual:[],prep:[],ant:[]};
     var allv=v.atual.concat(v.prep, v.ant);
     var vig=allv.filter(function(x){return x.sit==='recibo'||x.sit==='advertencia';});
     var emprep=allv.filter(function(x){return x.sit==='pendente'||x.sit==='protocolo'||x.sit==='rejeitado';});
@@ -1293,7 +1309,7 @@
   function evBlocker(evKey, M){
     if(emp==='s2u') return null; // jornada feliz: a planilha do s2u vem SEM erros (a PO tirou o cenário de erro)
     if(evKey==='d1101'){
-      var d=DETAIL[M.per]&&DETAIL[M.per].d1101;
+      var d=DF(M)&&DF(M).d1101;
       if(d){ var flagged=d.rows.filter(function(r){return r.vst;});
         if(flagged.length) return 'Corrija '+flagged.length+' conta'+(flagged.length>1?'s':'')+' antes de transmitir.'; }
     }
