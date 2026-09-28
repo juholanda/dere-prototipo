@@ -49,6 +49,9 @@
     /* ===== barra de abas (.tabs do DS) com scroll em tela estreita ===== */
     .tabscroll{overflow-x:auto;scrollbar-width:thin;margin-top:var(--space-2);padding-bottom:2px}   /* padding evita que o overflow corte o sublinhado de 2px da aba ativa */
     .tabscroll .tabs{min-width:max-content}
+    /* barra de abas fixa: ao trocar de aba o conteúdo troca no lugar, sem a página saltar pro topo */
+    #evtabsWrap{position:sticky;top:0;z-index:5;background:var(--slate-100);padding-top:var(--space-2);margin-top:0}
+    :root[data-theme="dark"] #evtabsWrap{background:var(--color-bg)}
     /* o painel recebe foco programático (navTo) só para leitor de tela; sem anel visual envolvendo o conteúdo */
     #panels>[role="region"]:focus{outline:none;box-shadow:none}
     .panels{margin-top:var(--space-6)}
@@ -1757,8 +1760,16 @@
     renderTabBar();
     if(push) history.pushState({per:MESES[perIdx].per, ev:slug}, '', '?emp='+emp+'&per='+MESES[perIdx].per+'&ev='+slug);
     var p=document.getElementById('panel-'+slug); if(p){ p.focus({preventScroll:true}); }
-    // ao entrar num evento (ou voltar), sobe pro topo da página (o scroll fica no .content, não na janela)
-    try{ var mc=document.getElementById('conteudo'); if(mc) mc.scrollTop=0; window.scrollTo(0,0); }catch(e){}
+    // sem "saltar" ao trocar de aba: painel com altura mínima da área visível (evita o scroll colapsar
+    // quando um painel é curto) + barra de abas fixa. Clique de aba fixa a barra no topo; carga/mês começa do topo.
+    try{
+      var mc=document.getElementById('conteudo'), wrap=document.getElementById('evtabsWrap'), pan=document.getElementById('panels');
+      if(mc && pan) pan.style.minHeight = mc.clientHeight + 'px';
+      if(mc){
+        if(!push){ mc.scrollTop=0; window.scrollTo(0,0); }
+        else if(wrap){ var d=wrap.getBoundingClientRect().top - mc.getBoundingClientRect().top; if(Math.abs(d)>1) mc.scrollTop += d; }
+      }
+    }catch(e){}
   }
 
   function bindPanelInteractions(){
