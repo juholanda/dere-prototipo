@@ -40,7 +40,7 @@
     .akpi__foot{font-size:var(--text-xs);color:var(--color-text-muted);margin-top:var(--space-1)}
 
     /* régua dos 12 meses */
-    .mesesbar{display:flex;gap:var(--space-2);flex-wrap:wrap;padding:var(--space-4) var(--space-6) var(--space-6)}
+    .mesesbar{display:flex;gap:var(--space-3);flex-wrap:wrap;padding:var(--space-6)}
     .kv__v a{color:var(--color-primary);text-decoration:none;font-weight:600;display:inline-flex;align-items:center}
     .kv__v a:hover{text-decoration:underline}
     .mchip{display:inline-flex;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-3);border:1px solid var(--color-border);border-radius:var(--radius-base);background:var(--color-surface);font-size:var(--text-sm);color:var(--color-text);cursor:pointer;font-family:inherit;transition:border-color .12s,background .12s,box-shadow .12s}
@@ -148,14 +148,6 @@
               <div class="page-h__main">
                 <div class="page-h__title"><h1>Movimentações Mensais</h1></div>
               </div>
-              <div class="page-h__act">
-                <label class="flbl" id="lblAno" for="anoSel">Ano</label>
-                <select class="select" id="anoSel" aria-labelledby="lblAno" style="min-width:132px">
-                  <option value="2026" selected>2026</option>
-                  <option value="2025">2025</option>
-                  <option value="2024">2024</option>
-                </select>
-              </div>
             </div>
             <div class="cocard" style="padding:0;margin-top:var(--space-6)">
               <div class="cocard__id">
@@ -175,6 +167,14 @@
         </div>
 
         <div class="wrap">
+          <div style="display:flex;align-items:center;gap:var(--space-3);margin-bottom:var(--space-6)">
+            <label class="flbl" id="lblAno" for="anoSel">Ano-calendário</label>
+            <select class="select" id="anoSel" aria-labelledby="lblAno" style="width:150px;flex:0 0 auto">
+              <option value="2026" selected>2026</option>
+              <option value="2025">2025</option>
+              <option value="2024">2024</option>
+            </select>
+          </div>
           <div class="akpis" id="akpis"></div>
 
           <section class="card" aria-labelledby="mesesH" style="margin-bottom:var(--space-6)">
