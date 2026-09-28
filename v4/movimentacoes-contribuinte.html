@@ -85,6 +85,12 @@
     .evrow__val{font-size:var(--text-sm);font-variant-numeric:tabular-nums;color:var(--color-text);white-space:nowrap}
     .mactions{display:flex;gap:var(--space-3);padding:var(--space-6);flex-wrap:wrap}
     .memptynote{padding:var(--space-8) var(--space-6);color:var(--color-text-muted);font-size:var(--text-sm);text-align:center}
+    .tabscroll{overflow-x:auto;scrollbar-width:thin;padding:0 var(--space-6);margin-top:var(--space-2)}
+    .tabscroll .tabs{min-width:max-content}
+    .evpanel{padding-top:var(--space-4)}
+    .evdesc{padding:0 var(--space-6) var(--space-6);color:var(--color-text-muted);font-size:var(--text-sm);margin:0;line-height:1.5}
+    .evrow--link{cursor:pointer}
+    .evrow--link:hover{background:var(--color-primary-subtle)}
     .skip-link{position:absolute;left:-999px;top:0;background:var(--color-surface);padding:var(--space-2) var(--space-4);border-radius:var(--radius-base);z-index:100}
     .skip-link:focus{left:var(--space-4);top:var(--space-4)}
   </style>
@@ -301,69 +307,71 @@
       var now=(i===CUR_M && anoSel===ANO_ATUAL)?'<span class="mchip__now">atual</span>':'';
       return '<button class="mchip '+c[0]+(cur?' is-cur':'')+(future?' mchip--future':'')+'" role="tab" aria-selected="'+cur+'" data-m="'+i+'" title="'+MESF[i]+' · '+c[1]+'">'+MES3[i]+now+'</button>';
     }).join('');
-    bar.querySelectorAll('[data-m]').forEach(function(b){ b.addEventListener('click',function(){ sel=+b.getAttribute('data-m'); renderStrip(); renderMonth(); }); });
+    bar.querySelectorAll('[data-m]').forEach(function(b){ b.addEventListener('click',function(){ sel=+b.getAttribute('data-m'); evtab='visao'; renderStrip(); renderMonth(); }); });
     var fc=fechCount();
     var ap=document.getElementById('andPill'); ap.className='andtext'; ap.textContent=fc+' de 12 meses fechados';
   }
 
-  /* eventos aplicáveis do mês, com status derivado do estado do mês */
-  function eventosDoMes(st){
-    return APP.filter(function(k){ return k!=='d1199'; }).map(function(k){
-      var evst;
-      if(st==='fech') evst='recibo';
-      else if(st==='avencer') evst='avencer';
-      else if(st==='atraso') evst='atraso';
-      else { // mês corrente em trabalho
-        evst = (k==='d1101')?'pendente':(k==='d1106')?'recibo':(k==='d1121')?'protocolo':'pendente';
-      }
-      var val;
-      if(st==='fech') val=brl(C.mMed*(0.9+((k.charCodeAt(4)||50)%9)/30));
-      else if(k==='d1101' && st!=='avencer') val=brl(4250000);
-      else val='—';
-      return {k:k, st:evst, val:val};
-    });
+  /* ======= MÊS SELECIONADO: abas (Visão geral · eventos · Fechamento) INLINE, sem sair da página ======= */
+  var evtab='visao';
+  var EVINFO={
+    d1101:{vlbl:'Base apurada',        desc:'Balancete mensal: contas contábeis do período e a base de cálculo apurada.'},
+    d1106:{vlbl:'Base (vApur)',        desc:'Aplicações financeiras / ativos de reserva técnica do período.'},
+    d1121:{vlbl:'Deduzido no mês',     desc:'Deduções aplicadas na apuração do período.'},
+    d2101:{vlbl:'Base (juros × Selic)',desc:'Títulos de dívida com oferta pública.'}
+  };
+  function evLabel(k){ return k==='visao'?'Visão geral':(EVMETA[k]?EVMETA[k][1]:k); }
+  function evStFor(k, st){
+    if(st==='fech') return 'recibo';
+    if(st==='avencer') return 'avencer';
+    if(st==='atraso') return 'atraso';
+    if(k==='d1199') return 'pendente';
+    return (k==='d1101')?'pendente':(k==='d1106')?'recibo':(k==='d1121')?'protocolo':'pendente';
   }
-
-  /* ---- mês selecionado ---- */
+  function mvalsHtml(st){
+    var live=(sel===CUR_M && anoSel===ANO_ATUAL)||st==='aberto';
+    return '<div class="mvals"><div><div class="mval__k">Base apurada</div><div class="mval__v">'+((st==='fech')?brl(4100000):(live?brl(4250000):'—'))+'</div></div>'+
+      '<div><div class="mval__k">CBS apurada</div><div class="mval__v">'+((st==='fech')?brl(C.mMed):(live?'a apurar':'—'))+'</div></div>'+
+      '<div><div class="mval__k">IBS apurado</div><div class="mval__v">'+((st==='fech')?brl(C.iMed):(live?'a apurar':'—'))+'</div></div></div>';
+  }
+  function visaoPanel(st){
+    var live=(sel===CUR_M && anoSel===ANO_ATUAL)||st==='aberto';
+    var rows=APP.filter(function(k){return k!=='d1199';}).map(function(k){
+      var m=EVMETA[k], val=(st==='fech'&&k==='d1101')?brl(C.mMed):(live&&k==='d1101'?brl(4250000):'—');
+      return '<div class="evrow evrow--link" data-evtab="'+k+'"><div class="evrow__id"><span class="evrow__nm">'+esc(m[1])+'</span><span class="evrow__code">'+m[0]+'</span></div><div class="evrow__r"><span class="evrow__val">'+val+'</span>'+evPill(evStFor(k,st))+'</div></div>';
+    }).join('');
+    rows+='<div class="evrow evrow--link" data-evtab="d1199"><div class="evrow__id"><span class="evrow__nm">Fechamento</span><span class="evrow__code">D-1199</span></div><div class="evrow__r"><span class="evrow__val"></span>'+evPill(evStFor('d1199',st))+'</div></div>';
+    return mvalsHtml(st)+'<div class="evlist">'+rows+'</div>';
+  }
+  function eventoPanel(k, st){
+    var info=EVINFO[k]||{vlbl:'Valor',desc:''}, live=(sel===CUR_M && anoSel===ANO_ATUAL)||st==='aberto';
+    var val=(st==='fech')?brl(Math.round(C.mMed*(0.85+((k.charCodeAt(4)||50)%12)/30))):((live&&k==='d1101')?brl(4250000):'—');
+    return '<div class="mvals"><div><div class="mval__k">'+info.vlbl+'</div><div class="mval__v">'+val+'</div></div>'+
+      '<div><div class="mval__k">Situação</div><div class="mval__v" style="font-weight:400">'+evPill(evStFor(k,st))+'</div></div></div>'+
+      '<p class="evdesc">'+esc(info.desc)+'</p>';
+  }
+  function fechPanel(st){
+    var apur='<div class="mvals"><div><div class="mval__k">CBS</div><div class="mval__v">'+((st==='fech')?brl(C.mMed):'a apurar')+'</div></div>'+
+      '<div><div class="mval__k">IBS</div><div class="mval__v">'+((st==='fech')?brl(C.iMed):'a apurar')+'</div></div>'+
+      '<div><div class="mval__k">IS</div><div class="mval__v">—</div></div></div>';
+    var msg, act;
+    if(st==='fech'){ msg='Competência fechada e aceita — recibo do D-1199 emitido.'; act='<button class="btn btn--secondary" type="button">Ver comprovante</button>'; }
+    else if(st==='atraso'){ msg='Competência vencida e ainda em aberto. Conclua os eventos exigidos e transmita o fechamento.'; act='<button class="btn btn--primary" type="button">Regularizar e fechar</button>'; }
+    else { msg='O fechamento (D-1199) só pode ser transmitido depois que todos os eventos exigidos tiverem recibo.'; act='<button class="btn btn--primary" type="button">Fechar competência</button>'; }
+    return apur+'<p class="evdesc">'+msg+'</p><div class="mactions">'+act+'</div>';
+  }
   function renderMonth(){
     var st=meses[sel], card=document.getElementById('mescard');
-    var isCur=(sel===CUR_M && anoSel===ANO_ATUAL);
     var dueTxt=(st==='atraso')?('balancete venceu em '+prazo(sel).slice(0,5)):('balancete vence '+prazo(sel).slice(0,5));
     var due=(st==='fech')? '' : '<span class="mhead__due"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>'+dueTxt+'</span>';
-    var head='<div class="mhead"><div class="mhead__l"><h2>'+MESF[sel]+' '+anoSel+'</h2>'+stPill(st)+(isCur?'':'')+'</div>'+due+'</div>';
-
-    var evUrl='movimentacoes-empresa.html?emp='+emp+'&per='+anoSel+'-'+(sel+1<10?'0'+(sel+1):(sel+1))+'&ev=visao';
-
-    if(st==='avencer'){
-      card.innerHTML=head+'<div class="memptynote">Competência ainda não venceu. O balancete (D-1101) vence em <strong>'+prazo(sel)+'</strong>.</div>';
-      return;
-    }
-
-    var cbsM=(st==='fech')?brl(C.mMed):((isCur)?'a apurar':'—');
-    var ibsM=(st==='fech')?brl(C.iMed):((isCur)?'a apurar':'—');
-    var vals='<div class="mvals">'+
-      '<div><div class="mval__k">Base apurada</div><div class="mval__v">'+((st==='fech')?brl(4100000):(isCur?brl(4250000):'—'))+'</div></div>'+
-      '<div><div class="mval__k">CBS apurada</div><div class="mval__v">'+cbsM+'</div></div>'+
-      '<div><div class="mval__k">IBS apurado</div><div class="mval__v">'+ibsM+'</div></div>'+
-    '</div>';
-
-    var evs=eventosDoMes(st);
-    var list='<div class="evlist">'+evs.map(function(e){
-      var m=EVMETA[e.k];
-      return '<div class="evrow"><div class="evrow__id"><span class="evrow__nm">'+esc(m[1])+'</span><span class="evrow__code">'+m[0]+'</span></div>'+
-        '<div class="evrow__r"><span class="evrow__val">'+e.val+'</span>'+evPill(e.st)+'</div></div>';
-    }).join('')+
-    /* linha do fechamento */
-    '<div class="evrow"><div class="evrow__id"><span class="evrow__nm">Fechamento</span><span class="evrow__code">D-1199</span></div>'+
-      '<div class="evrow__r"><span class="evrow__val"></span>'+evPill(st==='fech'?'recibo':(st==='atraso'?'atraso':'pendente'))+'</div></div>'+
-    '</div>';
-
-    var actions;
-    if(st==='fech'){ actions='<div class="mactions"><a class="btn btn--secondary" href="'+evUrl+'">Ver comprovante</a><a class="btn btn--secondary" href="'+evUrl+'">Abrir eventos</a></div>'; }
-    else if(st==='atraso'){ actions='<div class="mactions"><a class="btn btn--primary" href="'+evUrl+'">Regularizar mês</a></div>'; }
-    else { actions='<div class="mactions"><a class="btn btn--primary" href="'+evUrl+'">Abrir eventos do mês</a></div>'; }
-
-    card.innerHTML=head+vals+list+actions;
+    var head='<div class="mhead"><div class="mhead__l"><h2>'+MESF[sel]+' '+anoSel+'</h2>'+stPill(st)+'</div>'+due+'</div>';
+    if(st==='avencer'){ card.innerHTML=head+'<div class="memptynote">Competência ainda não venceu. O balancete (D-1101) vence em <strong>'+prazo(sel)+'</strong>.</div>'; return; }
+    var tabs=['visao'].concat(APP);
+    if(tabs.indexOf(evtab)<0) evtab='visao';
+    var tabsHtml='<div class="tabscroll"><div class="tabs" role="tablist" aria-label="Seções do mês">'+tabs.map(function(k){ return '<button class="tab'+(k===evtab?' is-active':'')+'" type="button" role="tab" aria-selected="'+(k===evtab)+'" data-evtab="'+k+'">'+esc(evLabel(k))+'</button>'; }).join('')+'</div></div>';
+    var panelHtml=(evtab==='visao')?visaoPanel(st):(evtab==='d1199'?fechPanel(st):eventoPanel(evtab,st));
+    card.innerHTML=head+tabsHtml+'<div class="evpanel">'+panelHtml+'</div>';
+    card.querySelectorAll('[data-evtab]').forEach(function(b){ b.addEventListener('click',function(){ evtab=b.getAttribute('data-evtab'); renderMonth(); }); });
   }
 
   var EXT_ICON='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-1px;margin-left:3px"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>';
@@ -380,6 +388,7 @@
     document.title='a-DeRE · Movimentações Mensais · '+C.nome;
     meses=buildMeses(anoSel);
     sel=(anoSel===ANO_ATUAL)?CUR_M:(function(){ for(var i=0;i<12;i++) if(meses[i]==='atraso') return i; return 11; })();
+    evtab='visao';
     renderKpis(); renderStrip(); renderMonth(); renderBanner(); buildYearPanel();
   }
 
