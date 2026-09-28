@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>a-DeRE · Solicitações · MAG Seguros</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../design-system/ds.css?v=e43eb51c">
+  <script src="../design-system/ds-tailwind.js"></script>
+  <script src="../design-system/ds-dialog.js"></script>
+  <style>
+    body{margin:0;background:var(--color-bg)}
+    .shell{display:flex;height:100vh;overflow:hidden}
+    .shell > .sidenav{border:0;border-radius:0;padding:0;position:relative!important;transform:none!important;visibility:visible!important;z-index:auto!important;transition:width .18s ease}
+    .brandrow{height:64px;flex:0 0 auto;display:flex;align-items:center;gap:var(--space-3);padding:0 var(--space-4) 0 var(--space-6);border-bottom:1px solid var(--color-border)}
+    .brandrow .wm{font-weight:800;font-size:var(--text-lg);letter-spacing:-.01em;color:var(--color-heading)}
+    .brandrow .avatar{background:color-mix(in srgb, var(--color-on-navy) 14%, transparent);color:var(--color-on-navy);width:34px;height:34px;font-size:var(--text-sm);flex:0 0 auto;font-weight:800}
+    .navlist{flex:1;overflow:auto;min-height:0;padding:var(--space-3) var(--space-3) 0;display:flex;flex-direction:column;gap:2px}
+    .col{flex:1;display:flex;flex-direction:column;min-width:0;min-height:0}
+    .topbar{height:64px;flex:0 0 auto;background:var(--color-surface);border-bottom:1px solid var(--color-border);display:flex;align-items:center;gap:var(--space-4);padding:0 var(--space-6)}
+    .content{flex:1;overflow:auto;min-height:0;background:var(--slate-100);scrollbar-gutter:stable}
+    .dark .content,:root[data-theme="dark"] .content{background:var(--color-bg)}
+    .wrap{padding:var(--space-8) var(--space-10);max-width:1600px;width:100%;margin:0 auto;box-sizing:border-box}
+
+    /* trilha de navegação (topbar) */
+    .bc{display:flex;align-items:center;gap:var(--space-2);font-size:var(--text-sm);min-width:0;overflow:hidden}
+    .bc a{color:var(--color-primary);text-decoration:none;white-space:nowrap;font-weight:500}
+    .bc a:hover{text-decoration:underline}
+    .bc span{color:var(--color-text);font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .bc svg{width:15px;height:15px;color:var(--color-text-muted);flex:0 0 auto}
+
+    .card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-2xl);box-shadow:var(--shadow-sm);overflow:hidden;margin-bottom:var(--space-6)}
+
+    /* contexto do contribuinte (identificação + situação com a Receita) */
+    .cocard{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:var(--space-6) var(--space-10);padding:var(--space-6)}
+    .cometa{display:grid;grid-template-columns:repeat(3,max-content);justify-content:end;gap:var(--space-6) var(--space-10);align-items:start}
+    @media(max-width:1180px){
+      .cocard{grid-template-columns:1fr}
+      .cometa{grid-template-columns:repeat(3,minmax(0,1fr));justify-content:stretch;border-top:1px solid var(--color-divider);padding-top:var(--space-6)}
+    }
+    .cocard__id{display:flex;align-items:center;gap:var(--space-3);min-width:0}
+    .cocard__logo{width:var(--space-12);height:var(--space-12);border-radius:var(--radius-lg);overflow:hidden;background:var(--color-surface);border:1px solid var(--color-border);flex:0 0 auto;display:grid;place-items:center}
+    .cocard__logo img{width:100%;height:100%;object-fit:cover;display:block}
+    .cocard__logo .co-code{font-size:var(--text-sm);font-weight:700;color:var(--color-primary)}
+    .cocard__name{font-size:var(--text-xl);font-weight:700;color:var(--color-heading);margin:0;line-height:1.3}
+    .cocard__cnpj{font-size:var(--text-base);color:var(--color-text-muted);margin:2px 0 0;font-variant-numeric:tabular-nums}
+    .kv{min-width:0}
+    .kv__k{font-size:var(--text-sm);color:var(--color-text-muted);font-weight:600;margin:0 0 var(--space-1);white-space:nowrap}
+    .kv__v{font-size:var(--text-base);color:var(--color-heading);font-weight:500;margin:0;font-variant-numeric:tabular-nums}
+    .kv__v .status{margin-right:var(--space-2)}
+
+    /* banner de estado (ajustes/rejeição/processamento/exclusão) */
+    #alertSlot .dalert{align-items:center}
+
+    /* ===== layout de dois painéis ===== */
+    .dualwrap{container-type:inline-size}
+    .dual{display:grid;grid-template-columns:minmax(0,1fr) 372px;gap:var(--space-6);align-items:start}
+    @container (max-width:1000px){ .dual{grid-template-columns:1fr} }
+
+    /* painel esquerdo: em vigor / linha do tempo / histórico */
+    .lpanel{margin-bottom:0}
+    .lpanel .tabs{margin:var(--space-4) var(--space-6) 0}
+    .lpanel__body{padding:var(--space-8) var(--space-6) var(--space-8)}
+
+    /* aba "Em vigor" */
+    .vigor{display:flex;flex-direction:column;gap:var(--space-6)}
+    .vigor__head{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--space-4)}
+    .vigor__hgroup{min-width:0}
+    .vigor__title{font-size:var(--text-2xl);font-weight:700;color:var(--color-heading);margin:0;line-height:1.25}
+    .vigor__meta{font-size:var(--text-sm);color:var(--color-text-muted);margin:var(--space-1) 0 0}
+    .vigor__prova{border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-surface-2);padding:var(--space-6)}
+    .vigor__provah{display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);margin-bottom:var(--space-4);flex-wrap:wrap}
+    .vigor__provat{display:inline-flex;align-items:center;gap:var(--space-2);font-size:var(--text-sm);font-weight:700;color:var(--color-heading)}
+    .vigor__provat svg{width:18px;height:18px;color:var(--color-success-fg)}
+    .vigor__prova .receipt__row:first-child{border-top:0;padding-top:0}
+
+    /* dados da declaração (mesmo desenho do detalhe) */
+    .acc-ic svg{width:17px;height:17px}
+    .rogrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-6) var(--space-8)}
+    @media(max-width:820px){.rogrid{grid-template-columns:1fr}}
+    .roitem dt{font-size:var(--text-sm);font-weight:600;color:var(--color-text-muted);margin:0 0 var(--space-2)}
+    .roitem dd{margin:0;font-size:var(--text-base);color:var(--color-heading);font-weight:500;line-height:1.4}
+    .rogrid__full{grid-column:1/-1}
+    .ronum{display:inline-grid;place-items:center;width:22px;height:22px;font-size:var(--text-xs);font-weight:700;color:var(--color-primary);background:var(--color-primary-subtle);border-radius:var(--radius-base);font-variant-numeric:tabular-nums;margin-right:var(--space-2);vertical-align:middle}
+    .ropicks{display:flex;flex-direction:column;margin-top:var(--space-2)}
+    .ropick{display:flex;gap:var(--space-3);align-items:baseline;padding:var(--space-2) 0;min-width:0}
+    .ropick:first-child{padding-top:0}
+    .ropick + .ropick{border-top:1px solid var(--color-divider)}
+    .ropick__cod{font-size:var(--text-sm);font-weight:700;color:var(--color-primary);font-variant-numeric:tabular-nums;flex:0 0 auto;min-width:2.8em}
+    .ropick__desc{font-size:var(--text-base);color:var(--color-heading);line-height:1.4}
+    .rotab{font-size:var(--text-sm);font-weight:700;color:var(--color-primary);background:var(--color-primary-subtle);border-radius:var(--radius-pill);padding:2px var(--space-2);margin-left:var(--space-2)}
+
+    /* estado vazio da aba em vigor */
+    .lempty{padding:var(--space-8) var(--space-4)}
+
+    /* ===== painel direito: solicitações (trilho) ===== */
+    .rail{margin-bottom:0;align-self:start}
+    @container (min-width:1001px){ .rail{position:sticky;top:0} }
+    .rail__head{display:flex;flex-direction:column;align-items:stretch;gap:var(--space-3);padding:var(--space-6) var(--space-6) var(--space-4)}
+    .rail__head h2{font-size:var(--text-xl);font-weight:700;color:var(--color-heading);margin:0}
+    .rail__head .btn{width:100%;justify-content:center}
+    .rail__note{margin:0 var(--space-6) var(--space-4);display:flex;align-items:center;gap:var(--space-2);font-size:var(--text-sm);color:var(--color-text-onmuted);background:var(--color-primary-subtle);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-2) var(--space-3)}
+    .rail__note svg{width:16px;height:16px;flex:0 0 auto;color:var(--color-primary)}
+    .rail__sec{padding:0 var(--space-6);margin-bottom:var(--space-6)}
+    .rail__sec:last-child{padding-bottom:var(--space-6)}
+    .rail__sech{display:flex;align-items:center;gap:var(--space-2);font-size:var(--text-xs);font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--color-text-muted);margin:0 0 var(--space-3)}
+    .rail__list{display:flex;flex-direction:column;gap:var(--space-3)}
+    .rail__empty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:var(--space-2);padding:var(--space-8) var(--space-4);color:var(--color-text-muted)}
+    .rail__empty svg{width:24px;height:24px;color:var(--color-border-strong)}
+    .rail__empty p{margin:0;font-size:var(--text-sm)}
+
+    .solitem{border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-surface);padding:var(--space-3) var(--space-4);transition:background-color .14s ease,border-color .14s ease,box-shadow .14s ease}
+    .solitem[data-href]{cursor:pointer}
+    .solitem[data-href]:hover{border-color:var(--color-border-strong);background:color-mix(in srgb,var(--color-primary) 4%,var(--color-surface));box-shadow:var(--shadow-sm)}
+    .solitem--prep{border-color:var(--color-primary);background:var(--color-primary-subtle)}
+    .solitem--prep[data-href]:hover{background:color-mix(in srgb,var(--color-primary) 12%,var(--color-surface))}
+    .solitem__row{display:flex;align-items:center;gap:var(--space-3)}
+    .solitem__ic{width:var(--space-10);height:var(--space-10);border-radius:var(--radius-lg);display:grid;place-items:center;background:var(--color-surface-2);color:var(--color-text-muted);flex:0 0 auto}
+    .solitem--prep .solitem__ic{background:var(--color-surface);color:var(--color-primary)}
+    .solitem__ic svg{width:18px;height:18px}
+    .solitem__body{flex:1;min-width:0}
+    .solitem__top{display:flex;align-items:center;gap:var(--space-2);flex-wrap:wrap}
+    .solitem__type{font-size:var(--text-base);font-weight:600;color:var(--color-heading)}
+    .solitem__meta{font-size:var(--text-xs);color:var(--color-text-muted);margin:2px 0 0;font-variant-numeric:tabular-nums}
+    .solitem__go{flex:0 0 auto;color:var(--color-primary)}
+    .solitem__go svg{width:16px;height:16px}
+    .solitem__cta{width:100%;justify-content:center;margin-top:var(--space-3)}
+
+    /* ===== linha do tempo (vigência, compacta) ===== */
+    .vtl{position:relative;margin-top:var(--space-2)}
+    .vtl__legend{display:flex;flex-wrap:wrap;gap:var(--space-4);font-size:var(--text-xs);color:var(--color-text-muted);margin-bottom:var(--space-6);justify-content:flex-end}
+    .vtl__legend span{display:inline-flex;align-items:center;gap:var(--space-1-5)}
+    .vtl__sw{width:12px;height:12px;border-radius:3px;flex:0 0 auto}
+    .vtl__sw--vig{background:var(--color-success)}
+    .vtl__sw--enc{background:var(--color-border-strong)}
+    .vtl__sw--exc{background:transparent;border:1.5px dashed var(--color-danger)}
+    .vtl__axis{position:relative;height:26px;border-bottom:1px solid var(--color-border-strong);margin-bottom:var(--space-4)}
+    .vtl__tick{position:absolute;top:0;font-size:var(--text-xs);color:var(--color-text-muted);font-variant-numeric:tabular-nums;transform:translateX(-50%);white-space:nowrap}
+    .vtl__tick--start{transform:translateX(0)}
+    .vtl__tick--end{transform:translateX(-100%)}
+    .vtl__tick--now{color:var(--color-primary);font-weight:700}
+    .vtl__row{margin-bottom:var(--space-4)}
+    .vtl__rlab{display:flex;align-items:center;gap:var(--space-2);margin-bottom:var(--space-1-5);font-size:var(--text-sm);color:var(--color-heading);font-weight:600}
+    .vtl__rlab small{font-size:var(--text-2xs);font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--color-text-muted)}
+    .vtl__rlab small.is-vig{color:var(--color-success-fg)}
+    .vtl__rlab small.is-exc{color:var(--color-danger)}
+    .vtl__track{position:relative;height:28px;background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-base);overflow:hidden}
+    .vtl__bar{position:absolute;top:3px;bottom:3px;border-radius:var(--radius-sm);display:flex;align-items:center;padding:0 var(--space-2);font-size:var(--text-2xs);font-weight:700;white-space:nowrap;overflow:hidden;box-sizing:border-box;font-variant-numeric:tabular-nums}
+    .vtl__bar--vig{background:var(--color-success);color:var(--color-primary-contrast)}
+    .vtl__bar--enc{background:var(--color-border);color:var(--color-text-onmuted);border:1px solid var(--color-border-strong)}
+    .vtl__bar--exc{background:var(--color-surface);color:var(--color-danger);border:1.5px dashed var(--color-danger)}
+    .vtl__now{position:absolute;top:0;bottom:0;width:2px;background:var(--color-primary);transform:translateX(-50%);z-index:3}
+    .vtl__open::after{content:"";position:absolute;right:0;top:0;bottom:0;width:22px;background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--color-success) 60%,transparent))}
+    .vtl__note{margin-top:var(--space-4);font-size:var(--text-xs);color:var(--color-text-muted);text-align:center}
+
+    /* histórico (log) */
+    .histhead{display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);margin-bottom:var(--space-6);flex-wrap:wrap}
+    .histhead__desc{font-size:var(--text-sm);color:var(--color-text-muted);margin:0}
+    .timeline__who strong{color:var(--color-heading);font-weight:600}
+
+    /* Overlay de DEMONSTRAÇÃO (dev) */
+    .demobar{position:fixed;bottom:var(--space-4);left:50%;transform:translateX(-50%);z-index:200;display:flex;align-items:center;gap:var(--space-1);background:var(--slate-900);border:1px solid rgba(255,255,255,.14);border-radius:var(--radius-pill);padding:2px var(--space-1-5);box-shadow:var(--shadow-md);font-size:var(--text-xs);opacity:.92;flex-wrap:nowrap;white-space:nowrap;justify-content:center;max-width:calc(100vw - var(--space-8));overflow-x:auto}
+    .demobar:hover{opacity:1}
+    .demobar__toggle{display:inline-flex;align-items:center;gap:var(--space-1);background:none;border:0;color:rgba(255,255,255,.72);font-family:inherit;font-size:var(--text-2xs);font-weight:700;text-transform:uppercase;letter-spacing:.08em;cursor:pointer;padding:var(--space-1) var(--space-1-5);border-radius:var(--radius-pill)}
+    .demobar__toggle:hover{color:#fff;background:rgba(255,255,255,.08)}
+    .demobar__toggle svg{width:14px;height:14px;opacity:.8}
+    .demobar__body{display:flex;align-items:center;gap:var(--space-1);flex-wrap:nowrap;justify-content:center}
+    .demobar.is-collapsed{padding:2px}
+    .demobar.is-collapsed .demobar__body{display:none}
+    .demobar__sep{width:1px;height:16px;background:rgba(255,255,255,.18)}
+    .demobar button{background:none;border:0;color:rgba(255,255,255,.72);font-family:inherit;font-size:var(--text-xs);cursor:pointer;padding:var(--space-1) var(--space-2);border-radius:var(--radius-pill);white-space:nowrap}
+    .demobar button:hover{color:rgba(255,255,255,1);background:rgba(255,255,255,.08)}
+    .demobar button.on{background:rgba(255,255,255,.16);color:rgba(255,255,255,1);font-weight:600}
+
+    #blockModal .modal{width:min(520px,100%)}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  </style>
+</head>
+<body>
+<style id="dere-gate-css">
+  #dere-gate{position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;padding:var(--space-6);background:var(--color-primary-darker);font-family:var(--font-sans)}
+  #dere-gate .dgate__card{width:100%;max-width:360px;background:var(--color-surface);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);padding:var(--space-10) var(--space-8) var(--space-8);text-align:center;animation:dgateIn .38s cubic-bezier(.2,.7,.2,1) both}
+  @media (prefers-reduced-motion:reduce){#dere-gate .dgate__card{animation:none}}
+  @keyframes dgateIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  #dere-gate .dgate__brand{font-size:var(--text-xl);font-weight:800;letter-spacing:-.01em;color:var(--color-heading)}
+  #dere-gate .dgate__sub{display:inline-flex;align-items:center;gap:var(--space-1-5);color:var(--color-text-muted);font-size:var(--text-xs);margin:var(--space-1-5) 0 var(--space-8)}
+  #dere-gate .dgate__sub svg{width:14px;height:14px}
+  #dere-gate .dgate__lbl{display:block;text-align:left;font-size:var(--text-xs);font-weight:600;color:var(--color-text);margin-bottom:var(--space-1-5)}
+  #dere-gate .dgate__err{display:flex;align-items:center;gap:var(--space-1-5);text-align:left;min-height:var(--space-4);margin-top:var(--space-2);color:var(--color-danger);font-size:var(--text-xs)}
+  #dere-gate .dgate__err svg{width:14px;height:14px;flex:0 0 auto}
+  #dere-gate .dgate__foot{margin-top:var(--space-6);font-size:var(--text-2xs);letter-spacing:.02em;color:var(--color-text-muted)}
+  #dere-gate form{margin:0}
+  #dere-gate .btn{width:100%;justify-content:center;margin-top:var(--space-2)}
+</style>
+<div id="dere-gate">
+  <form class="dgate__card" onsubmit="return dereGate(this)">
+    <div class="dgate__brand">a-DeRE</div>
+    <div class="dgate__sub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Protótipo &middot; acesso restrito</div>
+    <label class="dgate__lbl" for="dere-pw">Senha de acesso</label>
+    <input class="input input--lg" id="dere-pw" type="password" placeholder="Digite a senha" autofocus autocomplete="off" aria-label="Senha de acesso">
+    <div class="dgate__err" id="dere-err" role="alert"></div>
+    <button class="btn btn--primary btn--lg" type="submit">Entrar</button>
+    <div class="dgate__foot">uma solução Axians</div>
+  </form>
+</div>
+<script>
+  if(localStorage.getItem('dere_ok')==='1'){var _g=document.getElementById('dere-gate');if(_g)_g.remove();}
+  function dereGate(f){var i=f.querySelector('input'),e=document.getElementById('dere-err');
+    if(i.value==='dere123'){localStorage.setItem('dere_ok','1');document.getElementById('dere-gate').remove();}
+    else{e.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg> Senha incorreta. Tente novamente.';i.select();}
+    return false;}
+</script>
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  <div class="shell">
+    <nav class="sidenav sidenav--navy" data-sidenav aria-label="Navegação principal"><script>try{if(localStorage.getItem('adere.nav.collapsed')==='1'){var _n=document.querySelector('[data-sidenav]');if(_n)_n.classList.add('is-collapsed');}}catch(e){}</script>
+      <div class="brandrow"><span class="avatar">a</span><span class="sidenav__label wm">a-DeRE</span></div>
+      <div class="navlist">
+        <p class="sidenav__group">Principal</p>
+        <a class="sidenav__item" href="painel-monitoramento.html" data-tip="Painel de Monitoramento"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg><span class="sidenav__label">Painel de Monitoramento</span></a>
+        <a class="sidenav__item" href="#" data-tip="Meus contribuintes"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4M10 10h4M10 14h4M10 18h4"/></svg><span class="sidenav__label">Meus contribuintes</span></a>
+        <p class="sidenav__group">Cadastro</p>
+        <a class="sidenav__item is-active" href="info-contribuinte-lista.html" data-tip="Informações do Contribuinte"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg><span class="sidenav__label">Informações do Contribuinte</span></a>
+        <a class="sidenav__item" href="plano-contas-lista.html" data-tip="Plano Geral de Contas Comentado"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M7 12h14M7 18h14M3 12h.01M3 18h.01"/></svg><span class="sidenav__label">Plano Geral de Contas Comentado</span></a>
+        <p class="sidenav__group">Declarações</p>
+        <a class="sidenav__item" href="movimentacoes-lista.html" data-tip="Movimentações Mensais"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span class="sidenav__label">Movimentações Mensais</span></a>
+        <a class="sidenav__item" href="#" data-tip="Recibos e envios"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6M16 12h-6M13 16H10"/></svg><span class="sidenav__label">Recibos e envios</span></a>
+        <p class="sidenav__group">Sistema</p>
+        <a class="sidenav__item" href="#" data-tip="Configurações"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg><span class="sidenav__label">Configurações</span></a>
+      </div>
+      <div class="sidenav__foot"><button class="sidenav__item sidenav__toggle" type="button" aria-label="Colapsar menu" data-tip="Colapsar menu" aria-expanded="true" data-sidenav-toggle><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m11 17-5-5 5-5"/><path d="m18 17-5-5 5-5"/></svg><span class="sidenav__label">Colapsar</span></button></div>
+    </nav>
+
+    <div class="col">
+      <header class="topbar">
+        <nav class="bc" aria-label="Trilha de navegação">
+          <a href="info-contribuinte-lista.html">Informações do Contribuinte</a>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+          <span id="bcNome">MAG Seguros</span>
+        </nav>
+        <div class="flex items-center gap-1" style="margin-left:auto">
+          <span class="tooltip"><button class="icon-btn" type="button" aria-label="Buscar"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></button><span class="tooltip__bubble" role="tooltip">Buscar</span></span>
+          <div class="menu" data-menu>
+            <span class="tooltip"><button class="icon-btn" type="button" id="notifBtn" aria-haspopup="true" aria-expanded="false" aria-label="Notificações" style="position:relative"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="badge badge--danger icon-btn__badge" id="notifBadge" hidden>0</span></button><span class="tooltip__bubble" role="tooltip">Notificações</span></span>
+            <div class="menu__panel notifpanel" hidden role="region" aria-label="Notificações"><div class="notifpanel__head">Notificações</div><div class="notifpanel__list" id="notifList"></div></div>
+          </div>
+        </div>
+        <span aria-hidden="true" style="width:1px;height:22px;background:var(--color-divider);flex:0 0 auto"></span>
+        <div class="menu" data-menu>
+          <span class="tooltip tooltip--end"><button class="avatar" aria-haspopup="true" aria-expanded="false" aria-label="Ricardo Alves, abrir menu do usuário">RA</button><span class="tooltip__bubble tooltip__bubble--stack" role="tooltip"><strong>Ricardo Alves</strong>Administrador da conta</span></span>
+          <div class="menu__panel" hidden><div class="menu__head"><p class="menu__head-name">Ricardo Alves</p><p class="menu__head-mail">Administrador da conta</p></div><div class="menu__sep"></div><button class="menu__item">Perfil</button><button class="menu__item">Preferências</button><button class="menu__item menu__item--danger">Sair</button></div>
+        </div>
+      </header>
+
+      <main id="conteudo" tabindex="-1" class="content skip-target">
+        <div class="page-h">
+          <div class="wrap">
+            <div class="page-h__row">
+              <div class="page-h__main">
+                <div class="page-h__title"><h1>Informações do contribuinte</h1><span class="tag page-h__code">D-1001</span></div>
+                <p class="page-h__desc" id="pageSub">Veja o que está em vigor e acompanhe as solicitações do contribuinte.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="wrap">
+          <!-- Contexto do contribuinte -->
+          <section class="card" aria-label="Contribuinte">
+            <div class="cocard">
+              <div class="cocard__id">
+                <span class="cocard__logo" id="coLogo"></span>
+                <div>
+                  <p class="cocard__name" id="coNome">MAG Seguros</p>
+                  <p class="cocard__cnpj" id="coCnpj">CNPJ 33.608.308/0001-73</p>
+                </div>
+              </div>
+              <div class="cometa">
+                <div class="kv"><p class="kv__k">Regime principal</p><p class="kv__v" id="coRegime">Serviços Financeiros</p></div>
+                <div class="kv"><p class="kv__k">Situação com a Receita</p><p class="kv__v" id="coSit">&mdash;</p></div>
+                <div class="kv"><p class="kv__k">Última movimentação</p><p class="kv__v" id="coAt">&mdash;</p></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Banner de estado (processamento / alteração / exclusão / rejeição) -->
+          <div id="alertSlot"></div>
+
+          <!-- Dois painéis -->
+          <div class="dualwrap">
+            <div class="dual">
+              <!-- ESQUERDA: o que está em vigor -->
+              <section class="card lpanel" aria-label="O que está em vigor">
+                <div class="tabs" id="ltabs" role="tablist" aria-label="Visão da declaração">
+                  <button class="tab is-active" type="button" role="tab" id="lt-vig" aria-selected="true" aria-controls="lp-vig" data-ltab="vig"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.8 10A10 10 0 1 1 17 3.3"/><path d="m9 11 3 3L22 4"/></svg>Em vigor</button>
+                  <button class="tab" type="button" role="tab" id="lt-tl" aria-selected="false" aria-controls="lp-tl" data-ltab="tl"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><rect width="4" height="7" x="7" y="10" rx="1"/><rect width="4" height="12" x="15" y="5" rx="1"/></svg>Linha do tempo</button>
+                  <button class="tab" type="button" role="tab" id="lt-hist" aria-selected="false" aria-controls="lp-hist" data-ltab="hist"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/></svg>Histórico</button>
+                </div>
+                <div class="tabs__panel lpanel__body" id="lp-vig" role="tabpanel" aria-labelledby="lt-vig" tabindex="0"></div>
+                <div class="tabs__panel lpanel__body" id="lp-tl" role="tabpanel" aria-labelledby="lt-tl" tabindex="0" hidden></div>
+                <div class="tabs__panel lpanel__body" id="lp-hist" role="tabpanel" aria-labelledby="lt-hist" tabindex="0" hidden></div>
+              </section>
+
+              <!-- DIREITA: solicitações -->
+              <aside class="card rail" aria-label="Solicitações do contribuinte">
+                <div class="rail__head">
+                  <h2>Solicitações</h2>
+                  <div id="novaSlot"></div>
+                </div>
+                <div id="railNote"></div>
+                <div id="railSecs"></div>
+              </aside>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Bloqueio: já existe uma solicitação em curso -->
+  <div class="scrim" id="blockModal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="blockTitle" aria-describedby="blockDesc">
+      <div class="modal__header modal__header--icon"><span class="modal__ic modal__ic--warning" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span><h2 class="modal__title" id="blockTitle">Não é possível registrar outra solicitação agora</h2><button class="icon-btn" type="button" data-block-close aria-label="Fechar" style="flex:0 0 auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg></button></div>
+      <div class="modal__body" id="blockDesc"><p id="blockText" style="margin:0"></p></div>
+      <div class="modal__footer"><button class="btn btn--ghost" type="button" data-block-close>Fechar</button><a class="btn btn--primary" id="blockGo" href="#">Ver a solicitação</a></div>
+    </div>
+  </div>
+
+<script>
+  var $=function(id){return document.getElementById(id);};
+  function esc(s){return (s==null?'':String(s)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
+  function param(k){ var m=new RegExp('[?&]'+k+'=([^&]+)').exec(location.search); return m?decodeURIComponent(m[1]):''; }
+  function pad(s,n){ s=String(s); while(s.length<n) s='0'+s; return s; }
+  function recibo(comp,seq){ return '1001'+comp+pad(seq,21); }        /* 31 posições: 1001 + AAAAMM + sequencial */
+  function proto(dt,seq){ return '0001'+dt+pad(seq,6); }              /* protocolo do lote (<=28) */
+
+  var I={
+    check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.8 10A10 10 0 1 1 17 3.3"/><path d="m9 11 3 3L22 4"/></svg>',
+    clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>',
+    alert:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg>',
+    calendar:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/></svg>',
+    xcircle:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></svg>',
+    pen:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>',
+    info:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>',
+    chev:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>',
+    chevDown:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>',
+    plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5v14"/></svg>',
+    filePlus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M9 15h6M12 12v6"/></svg>',
+    fileText:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>',
+    fileX:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6"/><path d="m9.5 12.5 5 5m0-5-5 5"/></svg>',
+    trash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M10 11v6M14 11v6"/></svg>',
+    receipt:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6M16 12h-6M13 16H10"/></svg>',
+    download:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/></svg>',
+    id:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>',
+    scale:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10M12 3v18M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg>',
+    list:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8M13 12h8M13 18h8"/></svg>'
+  };
+
+  /* ===== dados fiéis (MAG Seguros) ===== */
+  var CO={ nome:'MAG Seguros', cnpj:'33.608.308/0001-73', logo:'../Logos/MAG%20seguros.png', regime:'Serviços Financeiros' };
+  var ATIV=[
+    ['11A','Operações de seguros de ramos elementares e seguros de pessoas sem cobertura por sobrevivência, com exceção dos seguros de saúde de que trata o Capítulo III do Título V da Lei Complementar nº 214/2025'],
+    ['11B','Operações de seguros de pessoas com cobertura por sobrevivência, com exceção dos seguros de saúde de que trata o Capítulo III do Título V da Lei Complementar nº 214/2025'],
+    ['13A','Previdência privada, composta de operações de administração e gestão da previdência complementar aberta']
+  ];
+  var ATIV_ALT=ATIV.concat([['13B','Previdência privada, composta de operações de administração e gestão da previdência complementar fechada']]);
+
+  var REC_INC=recibo('202601',17), PROTO_INC=proto('20260815154000',128);
+  var REC_ALT=recibo('202601',31), PROTO_ALT=proto('20260903091200',204);
+  var PROTO_EXC=proto('20260903164200',233), REC_EXC=recibo('202601',44);
+  var PROTO_PROC=proto('20260903091200',151);
+
+  /* declaração vigente (inclusão) */
+  var DECL_INC={ tipo:'Inclusão', vig:'01/01/2026 · em aberto', ini:'01/01/2026', fim:'Sem data de fim', recibo:REC_INC, protocolo:PROTO_INC, transmitida:'15/08/2026, 15:40', processada:'16/08/2026, 09:12', ativ:ATIV, comprovante:'info-contribuinte-detalhe.html?emp=seg&st=aprovado&sit=sucesso' };
+  /* declaração vigente após alteração (correção que substitui, mesmo período; muda o conteúdo) */
+  var DECL_ALT={ tipo:'Alteração', vig:'01/01/2026 · em aberto', ini:'01/01/2026', fim:'Sem data de fim', recibo:REC_ALT, protocolo:PROTO_ALT, transmitida:'03/09/2026, 09:12', processada:'03/09/2026, 09:17', ativ:ATIV_ALT, comprovante:'info-contribuinte-detalhe.html?emp=seg&st=aprovado&sit=sucesso' };
+  /* rascunho da 1ª inclusão (pretendido, sem recibo) */
+  var DRAFT_INC={ tipo:'Inclusão', vig:'01/01/2026 · em aberto (pretendida)', ini:'01/01/2026', fim:'Sem data de fim', ativ:ATIV };
+
+  var HREF_NOVA='info-contribuinte.html?modo=nova&emp=seg&from=solicitacoes';
+  var HREF_ALTERAR='info-contribuinte.html?modo=alteracao&emp=seg&from=solicitacoes';
+  var HREF_DET_PROC='info-contribuinte-detalhe.html?emp=seg&st=aprovado&sit=processando';
+  var HREF_DET_EXCPROC='info-contribuinte-detalhe.html?emp=seg&st=aprovado&sit=processando&op=exclusao';
+  var HREF_DET_REJ='info-contribuinte-detalhe.html?emp=seg&st=aprovado&sit=rejeitado&rej=vigencia';
+
+  /* eventos do histórico (log unificado) */
+  function incFull(){ return [
+    {t:'10/08/2026 · 14:20', title:'Solicitação de inclusão criada', pill:['Rascunho','status--neutral'], who:'Ricardo Alves', role:'Elaborador', dot:'muted'},
+    {t:'12/08/2026 · 09:30', title:'Enviada para revisão', pill:['Em revisão','status--warning'], who:'Ricardo Alves', role:'Elaborador', dot:'warning'},
+    {t:'15/08/2026 · 11:00', title:'Aprovada pelo revisor', pill:['Aprovada','status--success'], who:'Ana Prado', role:'Aprovadora', dot:'success'},
+    {t:'15/08/2026 · 15:40', title:'Transmitida à Receita Federal', pill:['Em processamento','status--info'], who:'a-DeRE', role:'Sistema', dot:'info', extras:[['Protocolo',PROTO_INC]]},
+    {t:'16/08/2026 · 09:12', title:'Processada pela Receita Federal', pill:['Processada com sucesso','status--success'], who:'Receita Federal', role:'Sistema', dot:'success', extras:[['Recibo',REC_INC]]}
+  ]; }
+  function incDraftEv(){ return [
+    {t:'02/09/2026 · 10:47', title:'Solicitação de inclusão criada', pill:['Rascunho','status--neutral'], who:'Ricardo Alves', role:'Elaborador', dot:'muted'}
+  ]; }
+  function incProcEv(){ return [
+    {t:'02/09/2026 · 10:47', title:'Solicitação de inclusão criada', pill:['Rascunho','status--neutral'], who:'Ricardo Alves', role:'Elaborador', dot:'muted'},
+    {t:'02/09/2026 · 11:15', title:'Enviada para revisão', pill:['Em revisão','status--warning'], who:'Ricardo Alves', role:'Elaborador', dot:'warning'},
+    {t:'03/09/2026 · 09:10', title:'Aprovada pelo revisor', pill:['Aprovada','status--success'], who:'Ana Prado', role:'Aprovadora', dot:'success'},
+    {t:'03/09/2026 · 09:12', title:'Transmitida à Receita Federal', pill:['Em processamento','status--info'], who:'a-DeRE', role:'Sistema', dot:'info', extras:[['Protocolo',PROTO_PROC]]}
+  ]; }
+  function altDraftEv(){ return [
+    {t:'02/09/2026 · 10:47', title:'Solicitação de alteração criada', pill:['Rascunho','status--neutral'], who:'Ricardo Alves', role:'Elaborador', dot:'muted'}
+  ]; }
+  function altFullEv(){ return [
+    {t:'02/09/2026 · 10:47', title:'Solicitação de alteração criada', pill:['Rascunho','status--neutral'], who:'Ricardo Alves', role:'Elaborador', dot:'muted'},
+    {t:'02/09/2026 · 11:15', title:'Enviada para revisão', pill:['Em revisão','status--warning'], who:'Ricardo Alves', role:'Elaborador', dot:'warning'},
+    {t:'03/09/2026 · 09:10', title:'Aprovada pelo revisor', pill:['Aprovada','status--success'], who:'Ana Prado', role:'Aprovadora', dot:'success'},
+    {t:'03/09/2026 · 09:12', title:'Transmitida à Receita Federal', pill:['Em processamento','status--info'], who:'a-DeRE', role:'Sistema', dot:'info', extras:[['Protocolo',PROTO_ALT]]},
+    {t:'03/09/2026 · 09:17', title:'Processada pela Receita Federal', pill:['Processada com sucesso','status--success'], who:'Receita Federal', role:'Sistema', dot:'success', extras:[['Recibo',REC_ALT]]}
+  ]; }
+  function altRejEv(){ return [
+    {t:'02/09/2026 · 10:47', title:'Solicitação de alteração criada', pill:['Rascunho','status--neutral'], who:'Ricardo Alves', role:'Elaborador', dot:'muted'},
+    {t:'02/09/2026 · 11:15', title:'Enviada para revisão', pill:['Em revisão','status--warning'], who:'Ricardo Alves', role:'Elaborador', dot:'warning'},
+    {t:'03/09/2026 · 09:10', title:'Aprovada pelo revisor', pill:['Aprovada','status--success'], who:'Ana Prado', role:'Aprovadora', dot:'success'},
+    {t:'03/09/2026 · 09:12', title:'Transmitida à Receita Federal', pill:['Em processamento','status--info'], who:'a-DeRE', role:'Sistema', dot:'info', extras:[['Protocolo',PROTO_ALT]]},
+    {t:'03/09/2026 · 09:17', title:'Processada pela Receita Federal', pill:['Rejeitada','status--danger'], who:'Receita Federal', role:'Sistema', dot:'danger', extras:[['Erro','MS1097 · A validade informada se sobrepõe a um período já existente. Ajuste as datas e reenvie.']]}
+  ]; }
+  function exclProcEv(){ return [
+    {t:'03/09/2026 · 16:05', title:'Exclusão enviada para aprovação', pill:['Em revisão','status--warning'], who:'Ricardo Alves', role:'Elaborador', dot:'warning'},
+    {t:'03/09/2026 · 16:40', title:'Exclusão aprovada pelo revisor', pill:['Aprovada','status--success'], who:'Ana Prado', role:'Aprovadora', dot:'success'},
+    {t:'03/09/2026 · 16:42', title:'Exclusão transmitida à Receita Federal', pill:['Em processamento','status--info'], who:'a-DeRE', role:'Sistema', dot:'info', extras:[['Protocolo',PROTO_EXC]]}
+  ]; }
+  function exclFullEv(){ return exclProcEv().concat([
+    {t:'03/09/2026 · 16:47', title:'Declaração excluída na Receita Federal', pill:['Processada com sucesso','status--success'], who:'Receita Federal', role:'Sistema', dot:'success', extras:[['Motivo','Encerramento de atividade'],['Recibo (exclusão)',REC_EXC]]}
+  ]); }
+
+  /* situação de cada solicitação (rótulo + cor canônica) */
+  var RSIT={
+    rascunho:   {label:'Rascunho',               pill:'status--neutral'},
+    revisao:    {label:'Em revisão',             pill:'status--warning'},
+    ajustes:    {label:'Ajustes solicitados',    pill:'status--danger'},
+    processando:{label:'Em processamento',       pill:'status--info'},
+    vigente:    {label:'Vigente',                pill:'status--success'},
+    sucesso:    {label:'Processada com sucesso', pill:'status--success'},
+    rejeitado:  {label:'Rejeitada pela Receita', pill:'status--danger'},
+    encerrada:  {label:'Encerrada',              pill:'status--neutral'},
+    excluida:   {label:'Excluída',               pill:'status--neutral'}
+  };
+  var TYPEIC={ 'Inclusão':I.filePlus, 'Alteração':I.pen, 'Exclusão':I.trash };
+
+  /* estados vazios do painel esquerdo */
+  var LEMPTY={
+    nada:    {ic:I.fileText, title:'Sem declaração em vigor', text:'Este contribuinte ainda não tem uma declaração de informações processada pela Receita. Comece preenchendo a primeira solicitação de inclusão.', cta:{label:'Preencher informações do contribuinte', href:HREF_NOVA, primary:true}},
+    proc:    {ic:I.clock,    title:'Sem declaração em vigor ainda', text:'A primeira solicitação de inclusão está em processamento na Receita Federal. A declaração passa a vigorar quando o processamento for concluído.', cta:null},
+    excluido:{ic:I.fileX,    title:'Excluído · sem declaração em vigor', text:'A declaração foi excluída na Receita Federal. Não há informações em vigor. As declarações mensais ficam bloqueadas até uma nova inclusão.', cta:null}
+  };
+
+  /* ===== cenários ===== */
+  var SCEN={
+    nada:{ label:'Sem declaração', sit:{label:'Sem declaração', pill:'status--idle'}, at:'—',
+      banner:null, left:{mode:'empty', kind:'nada'}, novaEnabled:true,
+      sols:{prep:[], receita:[], anteriores:[]}, note:null, timeline:[], hist:[] },
+
+    rasc:{ label:'Inclusão (rascunho)', sit:{label:'Em preparação', pill:'status--neutral'}, at:'02/09/2026',
+      banner:{tone:'info', ic:I.info, title:'Rascunho em preparação', text:'Esta é a primeira solicitação de inclusão do contribuinte. Ela ainda é um rascunho e não foi enviada à Receita Federal.', cta:{label:'Continuar preenchimento', href:HREF_NOVA, primary:true}},
+      left:{mode:'draft', decl:DRAFT_INC}, novaEnabled:false,
+      block:{text:'A solicitação de inclusão está em preparação (Rascunho) e ainda não foi concluída. Só pode haver uma solicitação em preparação por vez. Conclua ou cancele essa solicitação antes de registrar uma nova.', go:{label:'Continuar preenchimento', href:HREF_NOVA}},
+      sols:{ prep:[{tipo:'Inclusão', sit:'rascunho', meta:'Última alteração 02/09/2026', cta:{label:'Continuar', href:HREF_NOVA, primary:true}}], receita:[], anteriores:[] },
+      note:{icon:I.pen, text:'1 solicitação em preparação'}, timeline:[], hist:incDraftEv() },
+
+    proc:{ label:'Inclusão (processando)', sit:{label:'Em processamento', pill:'status--info'}, at:'03/09/2026',
+      banner:{tone:'info', ic:I.info, title:'Inclusão em processamento na Receita Federal', text:'A primeira solicitação de inclusão foi transmitida e está em processamento. A declaração passa a vigorar quando a Receita concluir. Protocolo de entrega: <strong>'+PROTO_PROC+'</strong>.', cta:{label:'Acompanhar', href:HREF_DET_PROC, primary:false}},
+      left:{mode:'empty', kind:'proc'}, novaEnabled:false,
+      block:{text:'Há uma solicitação de inclusão em processamento na Receita Federal. Aguarde a conclusão do processamento antes de registrar uma nova solicitação.', go:{label:'Acompanhar solicitação', href:HREF_DET_PROC}},
+      sols:{ prep:[], receita:[{tipo:'Inclusão', sit:'processando', meta:'Transmitida em 03/09/2026', href:HREF_DET_PROC, cta:{label:'Acompanhar', href:HREF_DET_PROC, primary:false}}], anteriores:[] },
+      note:null, timeline:[], hist:incProcEv() },
+
+    vig:{ label:'Vigente', sit:{label:'Vigente', pill:'status--success'}, at:'16/08/2026',
+      banner:null, left:{mode:'decl', decl:DECL_INC}, novaEnabled:true,
+      sols:{ prep:[], receita:[{tipo:'Inclusão', sit:'vigente', meta:'Em vigor desde 01/01/2026', href:DECL_INC.comprovante}], anteriores:[] },
+      note:null, timeline:[{tipo:'Inclusão', sit:'vigente', from:'01/01/2026', to:null, open:true}], hist:incFull() },
+
+    alt:{ label:'Alterando', sit:{label:'Vigente', pill:'status--success'}, at:'02/09/2026',
+      banner:{tone:'info', ic:I.info, title:'Alteração em andamento', text:'Há uma alteração em preparação. A declaração atual continua em vigor até a nova solicitação ser transmitida e processada pela Receita Federal.', cta:{label:'Continuar alteração', href:HREF_ALTERAR, primary:true}},
+      left:{mode:'decl', decl:DECL_INC}, novaEnabled:false,
+      block:{text:'Há uma alteração em preparação (Rascunho). Só pode haver uma solicitação em preparação por vez. Conclua ou cancele a alteração antes de registrar uma nova solicitação.', go:{label:'Continuar alteração', href:HREF_ALTERAR}},
+      sols:{ prep:[{tipo:'Alteração', sit:'rascunho', meta:'Última alteração 02/09/2026', cta:{label:'Continuar', href:HREF_ALTERAR, primary:true}}], receita:[{tipo:'Inclusão', sit:'vigente', meta:'Em vigor desde 01/01/2026', href:DECL_INC.comprovante}], anteriores:[] },
+      note:{icon:I.pen, text:'1 solicitação em preparação'}, timeline:[{tipo:'Inclusão', sit:'vigente', from:'01/01/2026', to:null, open:true}], hist:incFull().concat(altDraftEv()) },
+
+    altok:{ label:'Alteração aceita', sit:{label:'Vigente', pill:'status--success'}, at:'03/09/2026',
+      banner:{tone:'success', ic:I.check, title:'Alteração processada com sucesso', text:'A nova declaração está em vigor. A solicitação de inclusão anterior foi encerrada por substituição.', cta:null},
+      left:{mode:'decl', decl:DECL_ALT}, novaEnabled:true,
+      sols:{ prep:[], receita:[{tipo:'Alteração', sit:'vigente', meta:'Em vigor desde 03/09/2026', href:DECL_ALT.comprovante}], anteriores:[{tipo:'Inclusão', sit:'encerrada', meta:'Encerrada em 03/09/2026', href:'info-contribuinte-detalhe.html?emp=seg&sit=encerrada'}] },
+      note:null, timeline:[{tipo:'Alteração', sit:'vigente', from:'01/01/2026', to:null, open:true}], hist:incFull().concat(altFullEv()) },
+
+    excl:{ label:'Excluindo', sit:{label:'Vigente', pill:'status--success'}, sit2:{label:'Exclusão em processamento', pill:'status--info'}, at:'03/09/2026',
+      banner:{tone:'info', ic:I.info, title:'Exclusão em processamento na Receita Federal', text:'A solicitação de exclusão foi transmitida e está em processamento. A declaração continua em vigor até a Receita concluir. Uma transmissão em andamento não pode ser cancelada. Protocolo de entrega: <strong>'+PROTO_EXC+'</strong>.', cta:{label:'Acompanhar', href:HREF_DET_EXCPROC, primary:false}},
+      left:{mode:'decl', decl:DECL_INC}, novaEnabled:false,
+      block:{text:'Há uma solicitação de exclusão em processamento na Receita Federal. Aguarde a conclusão antes de registrar uma nova solicitação.', go:{label:'Acompanhar exclusão', href:HREF_DET_EXCPROC}},
+      sols:{ prep:[], receita:[{tipo:'Exclusão', sit:'processando', meta:'Transmitida em 03/09/2026', href:HREF_DET_EXCPROC, cta:{label:'Acompanhar', href:HREF_DET_EXCPROC, primary:false}}, {tipo:'Inclusão', sit:'vigente', meta:'Em vigor desde 01/01/2026', href:DECL_INC.comprovante}], anteriores:[] },
+      note:null, timeline:[{tipo:'Inclusão', sit:'vigente', from:'01/01/2026', to:null, open:true}], hist:incFull().concat(exclProcEv()) },
+
+    exclok:{ label:'Excluída', sit:{label:'Excluído', pill:'status--neutral', ic:I.xcircle}, at:'03/09/2026',
+      banner:{tone:'warning', ic:I.alert, title:'Declaração excluída na Receita Federal', text:'A declaração de informações foi excluída. Não há informações em vigor para este contribuinte. As declarações mensais ficam bloqueadas até uma nova inclusão. Motivo: <strong>Encerramento de atividade</strong>.', cta:{label:'Nova solicitação D-1001', href:HREF_NOVA, primary:false}},
+      left:{mode:'empty', kind:'excluido'}, novaEnabled:true,
+      sols:{ prep:[], receita:[{tipo:'Exclusão', sit:'sucesso', meta:'Exclusão aceita em 03/09/2026', href:'info-contribuinte-detalhe.html?emp=seg&st=aprovado&sit=excluida&op=exclusao'}], anteriores:[{tipo:'Inclusão', sit:'encerrada', meta:'Encerrada em 03/09/2026', href:'info-contribuinte-detalhe.html?emp=seg&sit=encerrada'}] },
+      note:null, timeline:[{tipo:'Inclusão', sit:'excluida', from:'01/01/2026', to:'03/09/2026', open:false}], hist:incFull().concat(exclFullEv()) },
+
+    rej:{ label:'Rejeitada', sit:{label:'Vigente', pill:'status--success'}, at:'03/09/2026',
+      banner:{tone:'danger', ic:I.xcircle, title:'Solicitação de alteração rejeitada pela Receita Federal', text:'A transmissão foi rejeitada e não foi gravada. A declaração vigente continua valendo. Consulte o motivo, corrija as informações e reenvie.', cta:{label:'Corrigir e reenviar', href:HREF_DET_REJ, primary:false}},
+      left:{mode:'decl', decl:DECL_INC}, novaEnabled:false,
+      block:{text:'Há uma solicitação de alteração rejeitada aguardando correção. Corrija e reenvie antes de registrar uma nova solicitação.', go:{label:'Corrigir solicitação', href:HREF_DET_REJ}},
+      sols:{ prep:[{tipo:'Alteração', sit:'rejeitado', meta:'Rejeitada em 03/09/2026', cta:{label:'Corrigir', href:HREF_DET_REJ, primary:true}}], receita:[{tipo:'Inclusão', sit:'vigente', meta:'Em vigor desde 01/01/2026', href:DECL_INC.comprovante}], anteriores:[] },
+      note:{icon:I.alert, text:'1 solicitação a corrigir'}, timeline:[{tipo:'Inclusão', sit:'vigente', from:'01/01/2026', to:null, open:true}], hist:incFull().concat(altRejEv()) }
+  };
+  var ORDER=['nada','rasc','proc','vig','alt','altok','excl','exclok','rej'];
+
+  var SC=param('sc'); if(!SCEN[SC]) SC='vig';
+  var S=SCEN[SC];
+
+  /* trilha + subtítulo */
+  $('bcNome').textContent=CO.nome;
+  $('pageSub').innerHTML='Veja o que está em vigor e acompanhe as <strong>solicitações</strong> do D-1001 de <strong>'+esc(CO.nome)+'</strong>.';
+
+  /* ===== contexto (cocard) ===== */
+  function renderCo(){
+    $('coNome').textContent=CO.nome;
+    $('coCnpj').textContent='CNPJ '+CO.cnpj;
+    $('coLogo').innerHTML='<img src="'+CO.logo+'" alt="Logo '+esc(CO.nome)+'">';
+    $('coRegime').textContent=(SC==='nada')?'A informar':CO.regime;
+    var sit='<span class="status '+S.sit.pill+'"><span class="status__dot"></span>'+(S.sit.ic?'':'')+esc(S.sit.label)+'</span>';
+    if(S.sit2) sit+='<span class="status status--sm '+S.sit2.pill+'" style="margin-left:var(--space-2)"><span class="status__dot"></span>'+esc(S.sit2.label)+'</span>';
+    $('coSit').innerHTML=sit;
+    $('coAt').textContent=S.at;
+  }
+
+  /* ===== banner ===== */
+  function renderBanner(){
+    var b=S.banner, el=$('alertSlot');
+    if(!b){ el.innerHTML=''; return; }
+    var act=b.cta?('<a class="btn btn--secondary dalert__act" href="'+b.cta.href+'">'+(b.cta.primary?I.plus:'')+esc(b.cta.label)+I.chev+'</a>'):'';
+    el.innerHTML='<div class="dalert dalert--'+b.tone+'" role="status"><span class="dalert__ic">'+b.ic+'</span><div class="dalert__body"><p class="dalert__title">'+esc(b.title)+'</p><p class="dalert__text">'+b.text+'</p></div>'+act+'</div>';
+  }
+
+  /* ===== painel esquerdo: Em vigor ===== */
+  function rogrid(pairs){ return '<dl class="rogrid">'+pairs.map(function(p){ return '<div class="roitem'+(p[2]?' rogrid__full':'')+'"><dt>'+p[0]+'</dt><dd>'+p[1]+'</dd></div>'; }).join('')+'</dl>'; }
+  function accItem(title, ic, body){
+    return '<div class="accordion__item is-open"><button class="accordion__head" type="button" aria-expanded="true"><span class="accordion__label"><span class="accordion__icon">'+ic+'</span>'+esc(title)+'</span><span class="accordion__chev" aria-hidden="true">'+I.chevDown+'</span></button><div class="accordion__panel">'+body+'</div></div>';
+  }
+  function ativBody(ativ){ return '<dl class="rogrid"><div class="roitem rogrid__full"><dt>Serviços Financeiros<span class="rotab">Tabela 21</span></dt><dd><div class="ropicks">'+ativ.map(function(a){ return '<div class="ropick"><span class="ropick__cod">'+esc(a[0])+'</span><span class="ropick__desc">'+esc(a[1])+'</span></div>'; }).join('')+'</div></dd></div></dl>'; }
+  function declAccordion(v){
+    return '<div class="accordion" id="vacc">'
+      + accItem('Identificação', I.id, rogrid([['Nome empresarial','MAG Seguros'],['CNPJ (raiz)','33.608.308'],['Natureza jurídica','Sociedade Anônima']]))
+      + accItem('Validade', I.calendar, rogrid([['Início da validade',esc(v.ini)],['Fim da validade',esc(v.fim)]]))
+      + accItem('Regime tributário', I.scale, rogrid([['CNAE principal','65.11-1/01 · Seguros de vida'],['Regime principal','<span class="ronum">1</span>Serviços Financeiros'],['Regimes secundários','Nenhum'],['Natureza da tributação','Tributação regular']]))
+      + accItem('Atividades', I.list, ativBody(v.ativ))
+      + '</div>';
+  }
+  function provRow(k,val,cls){ return '<div class="receipt__row"><span class="receipt__k">'+esc(k)+'</span><span class="receipt__v'+(cls?' '+cls:'')+'">'+esc(val)+'</span></div>'; }
+  function provaBlock(v){
+    return '<div class="vigor__prova"><div class="vigor__provah"><span class="vigor__provat">'+I.check+'Prova na Receita Federal</span>'
+      +'<a class="btn btn--secondary btn--sm" href="'+v.comprovante+'">'+I.receipt+'Ver comprovante</a></div>'
+      +'<div class="receipt__rows">'
+      + provRow('Vigência', v.vig)
+      + provRow('Recibo (nrRecibo)', v.recibo, 'receipt__v--mono receipt__v--strong')
+      + provRow('Protocolo de entrega', v.protocolo, 'receipt__v--mono')
+      + provRow('Processada em', v.processada)
+      +'</div></div>';
+  }
+  function renderVigor(){
+    var el=$('lp-vig'), L=S.left;
+    if(L.mode==='empty'){
+      var e=LEMPTY[L.kind];
+      el.innerHTML='<div class="empty lempty"><div class="empty__icon">'+e.ic+'</div><p class="empty__title">'+esc(e.title)+'</p><p class="empty__text">'+esc(e.text)+'</p>'
+        +(e.cta?'<a class="btn btn--primary" href="'+e.cta.href+'" style="margin-top:var(--space-2)">'+I.plus+esc(e.cta.label)+'</a>':'')+'</div>';
+      return;
+    }
+    var v=L.decl, isDraft=(L.mode==='draft');
+    var pill=isDraft
+      ? '<span class="status status--neutral status--lg"><span class="status__dot"></span>Rascunho</span>'
+      : '<span class="status status--success status--lg"><span class="status__dot"></span>Vigente</span>';
+    var meta=isDraft ? 'Inclusão em preparação · ainda não enviada à Receita' : (v.tipo+' processada em '+v.processada);
+    el.innerHTML='<div class="vigor"><div class="vigor__head"><div class="vigor__hgroup"><h2 class="vigor__title">'
+      +(isDraft?'Declaração em preparação':'Declaração em vigor')+'</h2><p class="vigor__meta">'+esc(meta)+'</p></div>'+pill+'</div>'
+      +(isDraft?'':provaBlock(v))
+      + declAccordion(v) + '</div>';
+    /* accordion (abre/fecha) */
+    el.querySelectorAll('#vacc .accordion__head').forEach(function(head){
+      head.addEventListener('click',function(){ var it=head.closest('.accordion__item'); var open=it.classList.toggle('is-open'); head.setAttribute('aria-expanded',String(open)); });
+    });
+  }
+
+  /* ===== painel esquerdo: Linha do tempo (vigência) ===== */
+  function pdate(s){ var m=/(\d{2})\/(\d{2})\/(\d{4})/.exec(s||''); return m?new Date(+m[3],+m[2]-1,+m[1]):null; }
+  function fmtd(d){ return ('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2)+'/'+d.getFullYear(); }
+  function renderTimeline(){
+    var el=$('lp-tl'), items=S.timeline;
+    if(!items.length){
+      el.innerHTML='<div class="empty lempty"><div class="empty__icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><rect width="4" height="7" x="7" y="10" rx="1"/><rect width="4" height="12" x="15" y="5" rx="1"/></svg></div><p class="empty__title">Sem vigência ainda</p><p class="empty__text">A linha do tempo aparece quando houver uma solicitação processada com sucesso na Receita Federal.</p></div>';
+      return;
+    }
+    var today=new Date(2026,8,3), DAY=86400000;
+    var parsed=items.map(function(i){ return {tipo:i.tipo, sit:i.sit, fromD:pdate(i.from), toD:i.to?pdate(i.to):null, open:i.open}; });
+    var minT=Math.min.apply(null, parsed.map(function(i){return i.fromD.getTime();}));
+    var maxT=today.getTime();
+    parsed.forEach(function(i){ var e=i.open?(today.getTime()+DAY*120):(i.toD?i.toD.getTime()+DAY:today.getTime()); if(e>maxT)maxT=e; });
+    var span=Math.max(maxT-minT, DAY*60);
+    function pct(t){ return Math.min(100,Math.max(0,((t-minT)/span)*100)); }
+    var showNow=today.getTime()>minT+DAY && today.getTime()<maxT-DAY;
+    var hasVig=parsed.some(function(i){return i.sit==='vigente';}), hasEnc=parsed.some(function(i){return i.sit==='encerrada';}), hasExc=parsed.some(function(i){return i.sit==='excluida';});
+    var legend='<div class="vtl__legend">'+(hasVig?'<span><span class="vtl__sw vtl__sw--vig"></span>Vigente</span>':'')+(hasEnc?'<span><span class="vtl__sw vtl__sw--enc"></span>Encerrada</span>':'')+(hasExc?'<span><span class="vtl__sw vtl__sw--exc"></span>Excluída</span>':'')+'</div>';
+    var axis='<div class="vtl__axis"><span class="vtl__tick vtl__tick--start" style="left:0">'+fmtd(new Date(minT))+'</span>'
+      +(showNow?'<span class="vtl__tick vtl__tick--now" style="left:'+pct(today.getTime()).toFixed(2)+'%">hoje</span>':'')
+      +'<span class="vtl__tick vtl__tick--end" style="left:100%">'+fmtd(new Date(maxT))+'</span></div>';
+    var rows=parsed.map(function(i){
+      var end=i.open?maxT:(i.toD?i.toD.getTime()+DAY:today.getTime());
+      var l=pct(i.fromD.getTime()), w=Math.max(pct(end)-l,4);
+      var cls=i.sit==='vigente'?'vtl__bar--vig':(i.sit==='excluida'?'vtl__bar--exc':'vtl__bar--enc');
+      var open=(i.sit==='vigente'&&i.open)?' vtl__open':'';
+      var sub=i.sit==='vigente'?'<small class="is-vig">vigente</small>':(i.sit==='excluida'?'<small class="is-exc">excluída</small>':'<small>encerrada</small>');
+      var barTxt=i.open?(fmtd(i.fromD)+' · em aberto'):(fmtd(i.fromD)+(i.toD?(i.sit==='excluida'?' · excluída em '+fmtd(i.toD):' a '+fmtd(i.toD)):''));
+      var now=showNow?'<span class="vtl__now" style="left:'+pct(today.getTime()).toFixed(2)+'%"></span>':'';
+      return '<div class="vtl__row"><div class="vtl__rlab">'+esc(i.tipo)+' '+sub+'</div>'
+        +'<div class="vtl__track">'+now+'<span class="vtl__bar '+cls+open+'" style="left:'+l.toFixed(2)+'%;width:'+w.toFixed(2)+'%">'+esc(barTxt)+'</span></div></div>';
+    }).join('');
+    el.innerHTML='<div class="vtl">'+legend+axis+rows+'<p class="vtl__note">A linha do tempo mostra a vigência da declaração perante a Receita Federal. É diferente do Histórico, que registra cada evento do ciclo.</p></div>';
+  }
+
+  /* ===== painel esquerdo: Histórico (log) ===== */
+  function renderHist(){
+    var el=$('lp-hist'), ev=S.hist;
+    if(!ev.length){
+      el.innerHTML='<div class="empty lempty"><div class="empty__icon">'+I.receipt+'</div><p class="empty__title">Sem histórico ainda</p><p class="empty__text">O histórico reúne, em ordem cronológica, cada evento das solicitações deste contribuinte.</p></div>';
+      return;
+    }
+    var count=ev.length;
+    var items=ev.map(function(e){
+      var badge='<span class="status status--sm '+e.pill[1]+'"><span class="status__dot"></span>'+esc(e.pill[0])+'</span>';
+      var who='<span class="timeline__who"><strong>'+esc(e.who)+'</strong> · '+esc(e.role)+'</span>';
+      var extras=(e.extras||[]).map(function(x){ return '<div class="timeline__field"><dt>'+esc(x[0])+'</dt><dd>'+esc(x[1])+'</dd></div>'; }).join('');
+      return '<li class="timeline__item"><span class="timeline__dot timeline__dot--'+(e.dot||'muted')+'"></span><div class="timeline__body">'
+        +'<div class="timeline__head"><p class="timeline__title">'+esc(e.title)+'</p><span class="timeline__time">'+esc(e.t)+'</span></div>'
+        +'<dl class="timeline__fields"><div class="timeline__field"><dt>Status</dt><dd>'+badge+'</dd></div>'
+        +'<div class="timeline__field"><dt>Realizado por</dt><dd>'+who+'</dd></div>'+extras+'</dl></div></li>';
+    }).join('');
+    el.innerHTML='<div class="histhead"><p class="histhead__desc">'+count+' evento'+(count>1?'s':'')+' no histórico do contribuinte.</p><button class="btn btn--secondary" type="button">'+I.download+'Baixar histórico</button></div><ol class="timeline timeline--muted">'+items+'</ol>';
+  }
+
+  /* ===== painel direito: solicitações ===== */
+  function solitem(it, prep){
+    var s=RSIT[it.sit]||{label:it.sit,pill:''};
+    var href=it.href||(it.cta&&it.cta.href)||'';
+    var ic='<span class="solitem__ic">'+(TYPEIC[it.tipo]||I.fileText)+'</span>';
+    var body='<div class="solitem__body"><div class="solitem__top"><span class="solitem__type">'+esc(it.tipo)+'</span>'
+      +'<span class="status status--sm '+s.pill+'"><span class="status__dot"></span>'+esc(s.label)+'</span></div>'
+      +'<p class="solitem__meta">'+esc(it.meta||'')+'</p></div>';
+    var go = it.cta ? '' : '<a class="icon-btn icon-btn--sm solitem__go" href="'+href+'" aria-label="Abrir solicitação: '+esc(it.tipo)+'">'+I.chev+'</a>';
+    var cta = it.cta ? '<a class="btn btn--'+(it.cta.primary?'primary':'secondary')+' btn--sm solitem__cta" href="'+it.cta.href+'">'+esc(it.cta.label)+I.chev+'</a>' : '';
+    return '<div class="solitem'+(prep?' solitem--prep':'')+'"'+(href?' data-href="'+href+'"':'')+'><div class="solitem__row">'+ic+body+go+'</div>'+cta+'</div>';
+  }
+  function railSection(title, ic, list, prep, emptyText){
+    var body;
+    if(list.length){ body='<div class="rail__list">'+list.map(function(it){ return solitem(it, prep); }).join('')+'</div>'; }
+    else if(emptyText){ body='<p class="rail__empty"><span>'+esc(emptyText)+'</span></p>'; }
+    else { return ''; }
+    return '<div class="rail__sec"><p class="rail__sech">'+(ic?ic:'')+esc(title)+'</p>'+body+'</div>';
+  }
+  function renderRail(){
+    /* nota discreta */
+    $('railNote').innerHTML = S.note ? ('<div class="rail__note">'+S.note.icon+'<span>'+esc(S.note.text)+'</span></div>') : '';
+    var secs='';
+    var hasAny=S.sols.prep.length||S.sols.receita.length||S.sols.anteriores.length;
+    if(!hasAny){
+      secs='<div class="rail__sec"><p class="rail__empty">'+I.receipt+'<span>Nenhuma solicitação ainda. Registre a primeira solicitação de inclusão para enviar à Receita Federal.</span></p></div>';
+    } else {
+      /* Em preparação: só aparece quando há item (destaque) */
+      if(S.sols.prep.length) secs+=railSection('Em preparação', '', S.sols.prep, true, null);
+      /* Na Receita: transmitidas (vigente / em processamento / aceita) */
+      if(S.sols.receita.length) secs+=railSection('Na Receita', '', S.sols.receita, false, null);
+      /* Anteriores */
+      if(S.sols.anteriores.length) secs+=railSection('Anteriores', '', S.sols.anteriores, false, null);
+    }
+    $('railSecs').innerHTML=secs;
+    /* botão Nova solicitação */
+    var slot=$('novaSlot');
+    if(S.novaEnabled){
+      slot.innerHTML='<a class="btn btn--primary" href="'+HREF_NOVA+'">'+I.plus+'Nova solicitação D-1001</a>';
+    } else {
+      slot.innerHTML='<button class="btn btn--primary" type="button" id="novaBtn">'+I.plus+'Nova solicitação D-1001</button>';
+      $('novaBtn').addEventListener('click',function(){
+        $('blockText').textContent=S.block.text;
+        var go=$('blockGo'); go.textContent=S.block.go.label; go.setAttribute('href',S.block.go.href);
+        dsDialog.open($('blockModal'));
+      });
+    }
+    bindRows();
+  }
+  function bindRows(){
+    document.querySelectorAll('[data-href]').forEach(function(el){
+      if(el._bound) return; el._bound=true;
+      el.addEventListener('click',function(ev){ if(ev.target.closest('a,button')) return; window.location.href=el.getAttribute('data-href'); });
+    });
+  }
+
+  /* render tudo */
+  renderCo(); renderBanner(); renderVigor(); renderTimeline(); renderHist(); renderRail();
+
+  /* Notificações do sino: reflete o estado do cenário */
+  (function(){
+    var list=$('notifList'), badge=$('notifBadge'), btn=$('notifBtn'); if(!list) return;
+    var items=[];
+    if(SC==='rej') items.push({tone:'danger', ic:I.xcircle, title:'Rejeitada pela Receita', text:'A alteração foi rejeitada. Veja o motivo e reenvie.', href:HREF_DET_REJ});
+    else if(SC==='excl') items.push({tone:'info', ic:I.info, title:'Exclusão em processamento', text:'A exclusão aguarda a Receita concluir.', href:HREF_DET_EXCPROC});
+    else if(SC==='proc') items.push({tone:'info', ic:I.info, title:'Inclusão em processamento', text:'A inclusão aguarda a Receita concluir.', href:HREF_DET_PROC});
+    else if(SC==='exclok') items.push({tone:'info', ic:I.info, title:'Declaração excluída', text:'As declarações mensais ficam bloqueadas até uma nova inclusão.', href:HREF_NOVA});
+    if(!items.length){ list.innerHTML='<p class="notifpanel__empty">Nenhuma notificação nova.</p>'; }
+    else { list.innerHTML=items.map(function(n){ return '<a class="notifitem notifitem--unread" href="'+n.href+'"><span class="notifitem__ic notifitem__ic--'+n.tone+'">'+n.ic+'</span><span class="notifitem__body"><span class="notifitem__title">'+esc(n.title)+'</span><span class="notifitem__text">'+esc(n.text)+'</span></span></a>'; }).join(''); }
+    if(badge){ if(items.length){ badge.textContent=String(items.length); badge.hidden=false; } else { badge.hidden=true; } }
+    if(btn){ btn.setAttribute('aria-label', items.length?('Notificações, '+items.length+' não lida'+(items.length>1?'s':'')):'Notificações'); }
+  })();
+
+  /* ===== Abas do painel esquerdo (APG) ===== */
+  function selectTab(t){
+    var key=t.getAttribute('data-ltab');
+    document.querySelectorAll('[data-ltab]').forEach(function(x){ var on=x===t; x.classList.toggle('is-active',on); x.setAttribute('aria-selected',String(on)); x.tabIndex=on?0:-1; });
+    $('lp-vig').hidden=(key!=='vig'); $('lp-tl').hidden=(key!=='tl'); $('lp-hist').hidden=(key!=='hist');
+  }
+  document.querySelectorAll('[data-ltab]').forEach(function(x){ x.tabIndex=x.getAttribute('aria-selected')==='true'?0:-1; });
+  document.addEventListener('click',function(ev){ var t=ev.target.closest('[data-ltab]'); if(t) selectTab(t); });
+  document.addEventListener('keydown',function(ev){
+    var t=ev.target.closest && ev.target.closest('[data-ltab]'); if(!t) return;
+    var tabs=Array.prototype.slice.call(document.querySelectorAll('[data-ltab]')), i=tabs.indexOf(t), n=null;
+    if(ev.key==='ArrowRight') n=tabs[(i+1)%tabs.length]; else if(ev.key==='ArrowLeft') n=tabs[(i-1+tabs.length)%tabs.length]; else if(ev.key==='Home') n=tabs[0]; else if(ev.key==='End') n=tabs[tabs.length-1];
+    if(n){ ev.preventDefault(); selectTab(n); n.focus(); }
+  });
+
+  /* Modal de bloqueio */
+  (function(){
+    var bm=$('blockModal'); if(!bm) return;
+    bm.querySelectorAll('[data-block-close]').forEach(function(b){ b.addEventListener('click',function(){ dsDialog.close(); }); });
+    bm.addEventListener('click',function(e){ if(e.target===bm) dsDialog.close(); });
+    $('blockGo').addEventListener('click',function(){ dsDialog.close(); });
+  })();
+
+  /* Shell: menus + sidenav */
+  document.querySelectorAll('[data-menu]').forEach(function(menu){
+    var b=menu.querySelector('button'), p=menu.querySelector('.menu__panel'); if(!b||!p) return;
+    b.addEventListener('click',function(e){ e.stopPropagation(); var o=p.hidden; document.querySelectorAll('.menu__panel').forEach(function(x){x.hidden=true;}); p.hidden=!o; b.setAttribute('aria-expanded',String(o)); });
+    document.addEventListener('click',function(e){ if(!menu.contains(e.target)){ p.hidden=true; b.setAttribute('aria-expanded','false'); } });
+  });
+  document.querySelectorAll('[data-sidenav-toggle]').forEach(function(btn){ var nav=btn.closest('[data-sidenav]'); try{ if(localStorage.getItem('adere.nav.collapsed')==='1'){ nav.classList.add('is-collapsed'); btn.setAttribute('aria-expanded','false'); btn.setAttribute('aria-label','Expandir menu'); btn.setAttribute('data-tip','Expandir menu'); } }catch(e){} btn.addEventListener('click',function(){ var c=nav.classList.toggle('is-collapsed'); try{localStorage.setItem('adere.nav.collapsed',c?'1':'0');}catch(e){} btn.setAttribute('aria-expanded',String(!c)); btn.setAttribute('aria-label', c?'Expandir menu':'Colapsar menu'); btn.setAttribute('data-tip', c?'Expandir menu':'Colapsar menu'); }); });
+</script>
+
+  <!-- Overlay de DEMONSTRAÇÃO (dev): cenário acompanha a navegação -->
+  <div class="demobar is-collapsed" role="group" aria-label="Demonstração: cenário">
+    <button type="button" class="demobar__toggle" data-demo-toggle aria-expanded="false" aria-label="Abrir ferramenta de demonstração de cenários">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2v6.5L4.8 17a2 2 0 0 0 1.7 3h11a2 2 0 0 0 1.7-3L14 8.5V2"/><path d="M8.5 2h7"/><path d="M7 14h10"/></svg><span>Demo</span>
+    </button>
+    <span class="demobar__body" id="demoBody"></span>
+  </div>
+  <script>(function(){
+    var body=document.getElementById('demoBody'); if(!body) return;
+    var LBL={nada:'1 · Sem declaração', rasc:'2 · Inclusão (rascunho)', proc:'3 · Inclusão (processando)', vig:'4 · Vigente', alt:'5 · Alterando', altok:'6 · Alteração aceita', excl:'7 · Excluindo', exclok:'8 · Excluída', rej:'9 · Rejeitada'};
+    var html='';
+    ORDER.forEach(function(k,i){ html+='<button type="button" data-sc="'+k+'"'+(k===SC?' class="on"':'')+'>'+LBL[k]+'</button>'; });
+    body.innerHTML=html;
+    body.querySelectorAll('[data-sc]').forEach(function(b){ b.addEventListener('click',function(){ window.location.href='info-contribuinte-solicitacoes.html?sc='+b.getAttribute('data-sc'); }); });
+  })();</script>
+  <script>(function(){ var bar=document.querySelector('.demobar'); if(!bar) return; var tog=bar.querySelector('[data-demo-toggle]'); if(!tog) return; function set(open){ bar.classList.toggle('is-collapsed', !open); tog.setAttribute('aria-expanded', String(open)); tog.setAttribute('aria-label', open?'Recolher ferramenta de demonstração':'Abrir ferramenta de demonstração de cenários'); try{ localStorage.setItem('adere.demo.open', open?'1':'0'); }catch(e){} } var open=false; try{ open=localStorage.getItem('adere.demo.open')==='1'; }catch(e){} set(open); tog.addEventListener('click',function(){ set(bar.classList.contains('is-collapsed')); }); })();</script>
+</body>
+</html>
