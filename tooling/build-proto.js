@@ -26,11 +26,13 @@ const GATE = fs.readFileSync(path.join(__dirname, 'gate.html'), 'utf8').trim();
 const dsPath = path.join(ROOT, 'design-system', 'ds.css');
 const ver = crypto.createHash('sha1').update(fs.readFileSync(dsPath)).digest('hex').slice(0, 8);
 
-// páginas que o build gerencia: index.html da raiz + a vitrine + tudo em v4/
+// páginas que o build gerencia: index.html da raiz + a vitrine + tudo em v4/ e v5/
+const pagesIn = (dir) => fs.existsSync(path.join(ROOT, dir))
+  ? fs.readdirSync(path.join(ROOT, dir)).filter(f => f.endsWith('.html')).map(f => path.join(ROOT, dir, f))
+  : [];
 const appPages = [path.join(ROOT, 'index.html'), path.join(ROOT, 'design-system', 'index.html')]
-  .concat(fs.readdirSync(path.join(ROOT, 'v4'))
-    .filter(f => f.endsWith('.html'))
-    .map(f => path.join(ROOT, 'v4', f)))
+  .concat(pagesIn('v4'))
+  .concat(pagesIn('v5'))
   .filter(fs.existsSync);
 
 let injected = 0, rebusted = 0;
