@@ -88,6 +88,9 @@
     .evdot--wait{background:var(--color-warning)}
     .evdot--rej{background:var(--color-danger)}
     .evdot--prep{background:var(--color-border-strong)}
+    /* célula de situação anual: pílula + barra dos 12 meses + contagem, empilhados */
+    .anocell{display:flex;flex-direction:column;align-items:flex-start;gap:var(--space-2)}
+    .anocount{font-size:var(--text-xs);color:var(--color-text-muted)}
     .evcount{font-size:var(--text-sm);color:var(--color-text-muted);font-variant-numeric:tabular-nums;white-space:nowrap}
 
     /* recibo do D-1199 */
@@ -191,18 +194,14 @@
                 <p class="page-h__desc">Acompanhe os eventos da competência e o fechamento do mês.</p>
               </div>
               <div class="page-h__act">
-                <div class="filterf filterf--comp">
-                  <span class="flbl" id="lblComp">Competência</span>
-                  <div class="compnav">
-                    <button class="compnav__arrow" type="button" id="compPrev" aria-label="Competência anterior"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
-                    <div class="cselect mpwrap" id="wrapComp">
-                      <button class="cselect__trigger" type="button" id="compTrig" aria-haspopup="true" aria-expanded="false" aria-labelledby="lblComp compVal"><span class="cselect__value" id="compVal">set/2026</span><span class="cselect__chev"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button>
-                      <div class="mp" id="compMP" aria-label="Escolher competência" hidden></div>
-                    </div>
-                    <button class="compnav__arrow" type="button" id="compNext" aria-label="Competência seguinte"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
-                    <span class="compnav__sep" aria-hidden="true">·</span>
-                    <button class="compnav__now" type="button" id="compNow">Atual</button>
-                  </div>
+                <div class="filterf">
+                  <label class="flbl" id="lblAno" for="anoSel">Ano</label>
+                  <select class="select" id="anoSel" aria-labelledby="lblAno" style="min-width:96px">
+                    <option value="2026" selected>2026</option>
+                    <option value="2025">2025</option>
+                    <option value="2024">2024</option>
+                  </select>
+                  <button class="btn btn--secondary" type="button" id="anoNow" disabled>Ano atual</button>
                 </div>
               </div>
             </div>
@@ -213,7 +212,7 @@
           <!-- prazo da competência -->
           <div class="dalert dalert--warning" role="status">
             <span class="dalert__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>
-            <div class="dalert__body"><p class="dalert__title">Prazo da competência 09/2026</p><p class="dalert__text">Entrega do fechamento até <strong>15/10/2026</strong>. O prazo é improrrogável; recomendamos concluir o envio com antecedência.</p></div>
+            <div class="dalert__body"><p class="dalert__title">Próximo fechamento · competência 09/2026</p><p class="dalert__text">Entrega do fechamento até <strong>15/10/2026</strong>. O prazo é improrrogável; recomendamos concluir o envio com antecedência.</p></div>
             <div class="dalert__act"><span class="tag" id="prazoChip">faltam — dias</span></div>
           </div>
 
@@ -234,14 +233,14 @@
             <div class="table-wrap">
               <table class="table table--fixed table--stickyactions" aria-labelledby="lst-h">
                 <colgroup>
-                  <col style="width:28%"><col style="width:16%"><col style="width:22%"><col style="width:18%"><col style="width:16%">
+                  <col style="width:24%"><col style="width:32%"><col style="width:18%"><col style="width:16%"><col style="width:10%">
                 </colgroup>
                 <thead>
                   <tr>
                     <th scope="col" class="sortable is-sorted" data-sort="emp" aria-sort="ascending"><button type="button" class="th-btn">Contribuinte <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
-                    <th scope="col" class="sortable" data-sort="sit" aria-sort="none"><button type="button" class="th-btn">Situação <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
-                    <th scope="col" class="sortable" data-sort="ev" aria-sort="none"><button type="button" class="th-btn">Eventos da competência <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
-                    <th scope="col" class="sortable col-num" data-sort="cbs" aria-sort="none"><button type="button" class="th-btn">CBS apurada <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
+                    <th scope="col" class="sortable" data-sort="anosit" aria-sort="none"><button type="button" class="th-btn">Situação <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
+                    <th scope="col" class="sortable col-num" data-sort="cbsano" aria-sort="none"><button type="button" class="th-btn">CBS anual apurada <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
+                    <th scope="col" class="sortable col-num" data-sort="ibsano" aria-sort="none"><button type="button" class="th-btn">IBS anual apurado <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
                     <th scope="col"><span class="sr-only">Abrir</span></th>
                   </tr>
                 </thead>
@@ -284,6 +283,23 @@
       ev:{d1101:'none',d1106:'none',d1121:'none',d2101:'none',d1199:'na'}, ibs:null, cbs:null, is:null,
       recibo:'', reciboData:'', ocorr:null}
   ];
+  /* ===== Visão ANUAL (mock): andamento dos 12 meses + CBS/IBS somados no ano =====
+     estados do mês: fech(verde) · proc/prep(âmbar, em andamento) · atraso(vermelho, vencido em aberto) · avencer/none(cinza, ainda não vencido) */
+  var ANO_ATUAL=2026, anoSel=2026;
+  var ANUAL={
+    seg:{ sit:'emdia',      cbsAno:1269000, ibsAno:1890000, meses:['fech','fech','fech','fech','fech','fech','fech','fech','fech','avencer','avencer','avencer'] },
+    fin:{ sit:'pendencias', cbsAno:1792000, ibsAno:2688000, meses:['fech','fech','fech','fech','fech','fech','fech','fech','proc','avencer','avencer','avencer'] },
+    sic:{ sit:'pendencias', cbsAno:816000,  ibsAno:1224000, meses:['fech','fech','fech','fech','fech','fech','fech','fech','prep','avencer','avencer','avencer'] },
+    cap:{ sit:'atraso',     cbsAno:705000,  ibsAno:1058000, meses:['fech','fech','fech','fech','fech','atraso','atraso','atraso','none','avencer','avencer','avencer'] },
+    s2u:{ sit:'atraso',     cbsAno:null,    ibsAno:null,    meses:['atraso','atraso','atraso','atraso','atraso','atraso','atraso','atraso','none','avencer','avencer','avencer'] }
+  };
+  function aplicaAno(y){
+    EMP.forEach(function(e){ var a=ANUAL[e.id]||{sit:'atraso',cbsAno:null,ibsAno:null,meses:[]};
+      if(y<ANO_ATUAL){ e.anoSit='emdia'; e.cbsAno=a.cbsAno; e.ibsAno=a.ibsAno; e.meses=['fech','fech','fech','fech','fech','fech','fech','fech','fech','fech','fech','fech']; }
+      else { e.anoSit=a.sit; e.cbsAno=a.cbsAno; e.ibsAno=a.ibsAno; e.meses=a.meses; }
+    });
+  }
+  aplicaAno(2026);
   /* JORNADA do Simple2u persistida no detalhe (import → transmissões → fechamento): a lista reflete cada etapa. */
   try{ if(localStorage.getItem('adere.mov.imp.s2u.2026-09')==='1'){
     var _tx={}; try{ _tx=JSON.parse(localStorage.getItem('adere.mov.tx.s2u.2026-09')||'{}')||{}; }catch(_){ _tx={}; }
@@ -309,6 +325,16 @@
   /* Ordem pré-transmissão: Não iniciada (nada, nem rascunho → contorno tracejado, "vazio") → Em preparação (tem rascunho → neutral cinza, igual ao Painel) */
   var SIT={ fechada:['status--success','Fechada'], processando:['status--info','Em processamento'], pendente:['status--neutral','Em preparação'], naoiniciada:['status--idle','Não iniciada'], rejeitada:['status--danger','Rejeitada pela Receita'] };
   function sitPill(s){ var m=SIT[s]||['status--neutral',s]; return '<span class="status status--sm '+m[0]+'"><span class="status__dot"></span>'+esc(m[1])+'</span>'; }
+
+  /* ===== Situação ANUAL: pílula-resumo + barra dos 12 meses + contagem ===== */
+  var ANOSIT={ emdia:['status--success','Em dia'], pendencias:['status--warning','Com pendências'], atraso:['status--danger','Em atraso'] };
+  var MES_ABBR=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  var MESCLS={ fech:'evdot--ok', proc:'evdot--wait', prep:'evdot--wait', atraso:'evdot--rej', avencer:'', none:'' };
+  var MESLBL={ fech:'fechado', proc:'em processamento', prep:'em preparação', atraso:'em atraso', avencer:'a vencer', none:'não iniciado' };
+  function fechCount(meses){ return (meses||[]).filter(function(m){return m==='fech';}).length; }
+  function yearBar(meses){ return '<div class="evdots" aria-hidden="true">'+(meses||[]).map(function(m,i){ return '<span class="evdot '+(MESCLS[m]||'')+'" title="'+MES_ABBR[i]+': '+(MESLBL[m]||m)+'"></span>'; }).join('')+'</div>'; }
+  function anoSitPill(s){ var m=ANOSIT[s]||['status--neutral',s]; return '<span class="status status--sm '+m[0]+'"><span class="status__dot"></span>'+esc(m[1])+'</span>'; }
+  function anoSitCell(e){ return '<div class="anocell">'+anoSitPill(e.anoSit)+yearBar(e.meses)+'<div class="anocount">'+fechCount(e.meses)+' de 12 meses fechados</div></div>'; }
 
   function evBar(ev){
     /* O D-1199 (fechamento) NÃO conta como evento aqui (decisão V18: "Sicoob = 2 de 2"): ele já tem
@@ -369,14 +395,13 @@
 
   /* Ordenação da tabela (chevron .th-sort vem do DS; mesmo padrão da lista de Informações do Contribuinte) */
   var listSort={key:'emp', dir:'asc'};
-  var SIT_RANK={rejeitada:0, naoiniciada:1, pendente:2, processando:3, fechada:4};
-  function evDone(ev){ var ap=EV_ORDER.filter(function(k){ return k!=='d1199' && ev[k]!=='na'; }); return ap.filter(function(k){ return ev[k]==='ok'; }).length; }
+  var ANOSIT_RANK={atraso:0, pendencias:1, emdia:2};   // problema primeiro
   function sortVal(e){
     switch(listSort.key){
-      case 'sit': return SIT_RANK[e.sit]!=null?SIT_RANK[e.sit]:9;
-      case 'ev':  return evDone(e.ev);
-      case 'cbs': return e.cbs==null?-1:e.cbs;
-      default:    return e.nome.toLowerCase();
+      case 'anosit': return ANOSIT_RANK[e.anoSit]!=null?ANOSIT_RANK[e.anoSit]:9;
+      case 'cbsano': return e.cbsAno==null?-1:e.cbsAno;
+      case 'ibsano': return e.ibsAno==null?-1:e.ibsAno;
+      default:       return e.nome.toLowerCase();
     }
   }
   function renderRows(){
@@ -389,19 +414,16 @@
     tb.innerHTML=list.map(function(e){
       /* ação por estado, abre o detalhe (naoiniciada = fluxo de "nada enviado" / importar) */
       var href='movimentacoes-empresa.html?emp='+e.id;
-      var btn = e.sit==='naoiniciada' ? '<a class="btn btn--primary rowbtn" href="'+href+'">Preencher</a>'
-              : e.sit==='pendente'   ? '<a class="btn btn--primary rowbtn" href="'+href+'">Continuar</a>'
-              : e.sit==='rejeitada'  ? '<a class="btn btn--primary rowbtn" href="'+href+'">Corrigir</a>'
-              : '<a class="btn btn--secondary rowbtn" href="'+href+'">Ver detalhes</a>';
+      var btn = '<a class="btn btn--secondary rowbtn" href="'+href+'">Ver detalhes</a>';
       return '<tr data-href="'+href+'">'+
         '<td><div class="evemp">'+logoHtml(e)+'<div><div class="celltitle">'+esc(e.nome)+'</div><div class="cellcnpj">'+esc(e.cnpj)+'</div></div></div></td>'+
-        '<td>'+sitPill(e.sit)+'</td>'+
-        '<td>'+evBar(e.ev)+'</td>'+
-        '<td class="col-num">'+numCell(e.cbs)+'</td>'+
+        '<td>'+anoSitCell(e)+'</td>'+
+        '<td class="col-num">'+numCell(e.cbsAno)+'</td>'+
+        '<td class="col-num">'+numCell(e.ibsAno)+'</td>'+
         '<td class="col-act">'+btn+'</td>'+
       '</tr>';
     }).join('');
-    document.getElementById('tcount').innerHTML='<b>'+list.length+'</b> de <b>'+EMP.length+'</b> contribuintes · competência 09/2026';
+    document.getElementById('tcount').innerHTML='<b>'+list.length+'</b> de <b>'+EMP.length+'</b> contribuintes · ano '+anoSel;
     tb.querySelectorAll('tr[data-href]').forEach(function(tr){ tr.addEventListener('click',function(ev){ if(ev.target.closest('a,button'))return; window.location.href=tr.getAttribute('data-href'); }); });
   }
 
@@ -413,6 +435,14 @@
 
   setPrazo(); kpis(); renderRows();
   document.getElementById('q').addEventListener('input',function(){ query=this.value; renderRows(); });
+  /* seletor de ano: troca o ano e habilita "Ano atual" quando não for o corrente */
+  (function(){
+    var sel=document.getElementById('anoSel'), now=document.getElementById('anoNow');
+    if(!sel) return;
+    function apply(){ var y=+sel.value; anoSel=y; if(now) now.disabled=(y===ANO_ATUAL); aplicaAno(y); renderRows(); }
+    sel.addEventListener('change', apply);
+    if(now) now.addEventListener('click', function(){ sel.value=String(ANO_ATUAL); apply(); });
+  })();
   /* ordenação por cabeçalho (mesmo comportamento da lista de Informações do Contribuinte) */
   (function(){
     var ths=document.querySelectorAll('th.sortable');
