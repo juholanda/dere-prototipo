@@ -40,7 +40,9 @@
     .akpi__foot{font-size:var(--text-xs);color:var(--color-text-muted);margin-top:var(--space-1)}
 
     /* régua dos 12 meses */
-    .mesesbar{display:flex;gap:var(--space-2);flex-wrap:wrap;padding:var(--space-2) var(--space-6) var(--space-6)}
+    .mesesbar{display:flex;gap:var(--space-2);flex-wrap:wrap;padding:var(--space-4) var(--space-6) var(--space-6)}
+    .kv__v a{color:var(--color-primary);text-decoration:none;font-weight:600;display:inline-flex;align-items:center}
+    .kv__v a:hover{text-decoration:underline}
     .mchip{display:inline-flex;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-3);border:1px solid var(--color-border);border-radius:var(--radius-base);background:var(--color-surface);font-size:var(--text-sm);color:var(--color-text);cursor:pointer;font-family:inherit;transition:border-color .12s,background .12s,box-shadow .12s}
     .mchip:hover{border-color:var(--color-primary)}
     .mchip:focus-visible{outline:none;box-shadow:var(--ring)}
@@ -144,13 +146,7 @@
           <div class="wrap">
             <div class="page-h__row">
               <div class="page-h__main">
-                <div class="idtitle">
-                  <span class="idlogo" id="idLogo">C</span>
-                  <div>
-                    <div style="display:flex;align-items:center;gap:var(--space-3);flex-wrap:wrap"><h1 id="coNome">Contribuinte</h1><span id="coSit"></span></div>
-                    <p class="page-h__desc" id="coSub" style="margin:var(--space-1) 0 0"></p>
-                  </div>
-                </div>
+                <div class="page-h__title"><h1>Movimentações Mensais</h1></div>
               </div>
               <div class="page-h__act">
                 <label class="flbl" id="lblAno" for="anoSel">Ano</label>
@@ -165,6 +161,23 @@
         </div>
 
         <div class="wrap">
+          <section class="card" aria-label="Contribuinte" style="margin-bottom:var(--space-6)">
+            <div class="cocard">
+              <div class="cocard__id">
+                <span class="cocard__logo"><span class="co-code" id="idLogo">C</span></span>
+                <div>
+                  <p class="cocard__name" id="coNome">Contribuinte</p>
+                  <p class="cocard__cnpj" id="coCnpj">CNPJ —</p>
+                </div>
+              </div>
+              <div class="cometa">
+                <div><p class="kv__k">Regime principal</p><p class="kv__v" id="coRegime">—</p></div>
+                <div><p class="kv__k">PGCC vigente</p><p class="kv__v"><a id="coPgcc" href="#">Versão 1</a></p></div>
+                <div><p class="kv__k">Situação no ano</p><p class="kv__v" id="coSit"></p></div>
+              </div>
+            </div>
+          </section>
+
           <div class="akpis" id="akpis"></div>
 
           <section class="card" aria-labelledby="mesesH" style="margin-bottom:var(--space-6)">
@@ -206,6 +219,7 @@
   };
   var emp=qp('emp'); if(!CO[emp]) emp='seg';
   var C=CO[emp], APP=APPLIC[emp]||APPLIC.seg;
+  C.pgcc=(emp==='seg'?'2':'1');
   var anoSel=2026;
 
   var ANOSIT={ emdia:['status--success','Em dia'], pendencias:['status--warning','Com pendências'], atraso:['status--danger','Em atraso'] };
@@ -325,10 +339,13 @@
     card.innerHTML=head+vals+list+actions;
   }
 
+  var EXT_ICON='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-1px;margin-left:3px"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>';
   function apply(){
     document.getElementById('coNome').textContent=C.nome;
     document.getElementById('bcNome').textContent=C.nome;
-    document.getElementById('coSub').textContent='CNPJ '+C.cnpj+' · '+C.regime;
+    document.getElementById('coCnpj').textContent='CNPJ '+C.cnpj;
+    document.getElementById('coRegime').textContent=C.regime;
+    var pg=document.getElementById('coPgcc'); pg.innerHTML='Versão '+C.pgcc+EXT_ICON; pg.setAttribute('href','plano-contas-empresa.html?emp='+emp);
     document.getElementById('idLogo').textContent=C.logo;
     document.getElementById('coSit').innerHTML=anoPill(anoSel<ANO_ATUAL?'emdia':C.sit);
     document.getElementById('anoLbl').textContent=anoSel;
