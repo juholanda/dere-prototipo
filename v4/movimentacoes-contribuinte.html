@@ -43,7 +43,7 @@
     .mesesbar{display:flex;gap:var(--space-3);flex-wrap:wrap;padding:var(--space-6)}
     .kv__v a{color:var(--color-primary);text-decoration:none;font-weight:600;display:inline-flex;align-items:center}
     .kv__v a:hover{text-decoration:underline}
-    .mchip{display:inline-flex;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-3);border:1px solid var(--color-border);border-radius:var(--radius-base);background:var(--color-surface);font-size:var(--text-sm);color:var(--color-text);cursor:pointer;font-family:inherit;transition:border-color .12s,background .12s,box-shadow .12s}
+    .mchip{display:inline-flex;align-items:center;gap:var(--space-2);padding:var(--space-3) var(--space-4);border:1px solid var(--color-border);border-radius:var(--radius-base);background:var(--color-surface);font-size:var(--text-base);color:var(--color-text);cursor:pointer;font-family:inherit;transition:border-color .12s,background .12s,box-shadow .12s}
     .mchip:hover{border-color:var(--color-primary)}
     .mchip:focus-visible{outline:none;box-shadow:var(--ring)}
     .mchip__dot{width:7px;height:7px;border-radius:50%;flex:0 0 auto}
@@ -153,14 +153,13 @@
               <div class="cocard__id">
                 <span class="cocard__logo"><span class="co-code" id="idLogo">C</span></span>
                 <div>
-                  <p class="cocard__name" id="coNome">Contribuinte</p>
+                  <div style="display:flex;align-items:center;gap:var(--space-3);flex-wrap:wrap"><p class="cocard__name" id="coNome">Contribuinte</p><span id="coSit"></span></div>
                   <p class="cocard__cnpj" id="coCnpj">CNPJ —</p>
                 </div>
               </div>
               <div class="cometa">
                 <div><p class="kv__k">Regime principal</p><p class="kv__v" id="coRegime">—</p></div>
                 <div><p class="kv__k">PGCC vigente</p><p class="kv__v"><a id="coPgcc" href="#">Versão 1</a></p></div>
-                <div><p class="kv__k">Situação no ano</p><p class="kv__v" id="coSit"></p></div>
               </div>
             </div>
           </div>
@@ -168,7 +167,7 @@
 
         <div class="wrap">
           <div style="display:flex;align-items:center;gap:var(--space-3);margin-bottom:var(--space-6)">
-            <label class="flbl" id="lblAno" for="anoSel">Ano-calendário</label>
+            <label id="lblAno" for="anoSel" style="font-size:var(--text-xl);font-weight:700;color:var(--color-heading)">Ano-calendário</label>
             <select class="select" id="anoSel" aria-labelledby="lblAno" style="width:150px;flex:0 0 auto">
               <option value="2026" selected>2026</option>
               <option value="2025">2025</option>
@@ -344,7 +343,7 @@
     document.getElementById('coRegime').textContent=C.regime;
     var pg=document.getElementById('coPgcc'); pg.innerHTML='Versão '+C.pgcc+EXT_ICON; pg.setAttribute('href','plano-contas-empresa.html?emp='+emp);
     document.getElementById('idLogo').textContent=C.logo;
-    document.getElementById('coSit').innerHTML=anoPill(anoSel<ANO_ATUAL?'emdia':C.sit);
+    document.getElementById('coSit').innerHTML=anoPill(C.sit);   // situação é do CONTRIBUINTE (geral), não muda com o ano selecionado
     document.getElementById('anoLbl').textContent=anoSel;
     document.title='a-DeRE · Movimentações Mensais · '+C.nome;
     meses=buildMeses(anoSel);
