@@ -61,6 +61,10 @@
     .mesescard__h{display:flex;align-items:baseline;justify-content:space-between;gap:var(--space-4);margin-bottom:var(--space-4)}
     .mesesbar__lbl{display:block;font-size:var(--text-xs);font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--color-text-muted);margin:0}
     .mescount{font-size:var(--text-sm);color:var(--color-text-onmuted);font-variant-numeric:tabular-nums;white-space:nowrap}
+    /* barra de fechamento do mês no card dos meses (situação + contador + ação, sempre visível) */
+    .mesfech{display:flex;align-items:center;gap:var(--space-4);flex-wrap:wrap;margin-top:var(--space-6);padding-top:var(--space-6);border-top:1px solid var(--color-divider)}
+    .mesfech__sub{font-size:var(--text-sm);color:var(--color-text-onmuted);flex:1 1 220px;min-width:0}
+    .mesfech__act{display:flex;gap:var(--space-2);flex:0 0 auto;flex-wrap:wrap}
     .mchip{flex:0 0 auto;display:inline-flex;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-4);border:1px solid var(--color-border);border-top:3px solid var(--color-border-strong);border-radius:var(--radius-base);background:var(--color-surface);font-size:var(--text-base);color:var(--color-text);cursor:pointer;font-family:inherit;transition:border-color .12s}
     .mchip__n{font-size:var(--text-xs);font-weight:700;color:var(--color-text-muted);font-variant-numeric:tabular-nums}
     .mchip:hover:not(:disabled){border-color:var(--color-primary)}
@@ -483,6 +487,8 @@
           <section class="card mesescard" aria-labelledby="mesesLbl">
             <div class="mesescard__h"><span class="mesesbar__lbl" id="mesesLbl">Meses de 2026</span><span class="mescount" id="mesesCount"></span></div>
             <div class="mesesbar" id="mesesbar" aria-label="Meses de 2026"></div>
+            <!-- Fechamento do mês SELECIONADO: fica aqui (no bloco dos meses), sempre visível, independente da aba. -->
+            <div id="mesFechBar"></div>
           </section>
           <!-- Abas da competência: troca instantânea entre a visão geral e cada evento (sem entrar e sair) -->
           <div class="tabscroll" id="evtabsWrap"><div class="tabs" id="evtabs" role="tablist" aria-label="Seções da competência"></div></div>
@@ -1080,9 +1086,9 @@
     } else if(s.fproc){ var _pn=prot28(M.per,1);
       stageSub='Fechamento (D-1199) transmitido · aguardando o recibo · Protocolo <span class="hdr-recibo__n">'+esc(_pn.slice(0,10)+'…'+_pn.slice(-4))+'</span>';
     }
-    var fechCard=cardSection('Fechamento do mês', stageSub, readyHint, {divider:false, beside:_pill, aside:'<div class="fechrow__act">'+action+'</div>'});
-    var evCard=cardSection('Eventos da competência', 'Cada evento é transmitido separadamente; o fechamento (D-1199) exige recibo em todos os exigidos.', '<div class="fechinner'+mod+'">'+(listaView||'')+'</div>', {divider:true});
-    return fechCard+evCard;
+    // O card "Fechamento do mês" saiu daqui: agora é a barra no card dos MESES (sempre visível, qualquer aba).
+    var evCard=cardSection('Eventos da competência', 'Cada evento é transmitido separadamente; o fechamento (D-1199) exige recibo em todos os exigidos.', '<div class="fechinner'+mod+'">'+(listaView||'')+'</div>', {divider:false});
+    return evCard;
   }
   /* EVENTOS EM CARDS: mesma navegação da lista, em cards (para comparar list × cards). Cada card leva à página do evento. */
   function eventCards(M){
@@ -1892,6 +1898,43 @@
     var M=MESES[perIdx];
     document.getElementById('compLive').textContent='Competência selecionada: '+cap(M.txt);
     renderMesesStrip();
+    renderFechBar();
+  }
+  /* Estado do fechamento do mês (D-1199) da competência: usado pela barra do card dos meses E pela Visão geral. */
+  function fechState(M){
+    var applicable=ORDER.filter(function(k){ return M.ev[k] && M.ev[k].st!=='na'; });
+    var comRecibo=applicable.filter(function(k){ return M.ev[k].st==='recibo'; }).length;
+    var started=applicable.some(function(k){ return M.ev[k].st!=='pendente' || M.ev[k].prep; });
+    var closed=(M.fech==='fechado');
+    var ready=(applicable.length>0 && !closed && comRecibo===applicable.length);
+    return {applicable:applicable, comRecibo:comRecibo, started:started, closed:closed, ready:ready, fproc:!!M.fechProc};
+  }
+  /* Barra de fechamento no card dos MESES (sempre visível, independe da aba). Reusa os MESMOS data-* das ações
+     (data-fechar/data-reabrir/data-extrato/data-importar) — o handler global já cuida do fluxo/confirmação. */
+  function renderFechBar(){
+    var el=document.getElementById('mesFechBar'); if(!el) return;
+    if(SEMPGCC[emp]){ el.innerHTML=''; return; }
+    var M=MESES[perIdx], s=fechState(M), pill, sub, action;
+    if(s.closed){
+      pill=['status--success','Fechada']; sub='Competência fechada · todos os eventos com recibo.';
+      action='<button class="btn btn--ghost btn--sm" type="button" data-reabrir>'+ICO.lock+'Reabrir</button>'+
+        (emp==='s2u' ? '<button class="btn btn--secondary btn--sm" type="button" data-extrato>'+ICO.receipt+'Ver extrato</button>'
+                     : '<a class="btn btn--secondary btn--sm" href="movimentacoes-extrato.html?emp='+emp+'&per='+M.per+'">'+ICO.receipt+'Ver extrato</a>');
+    } else if(s.fproc){
+      pill=['status--info','Em processamento']; sub='Fechamento transmitido · aguardando o recibo da Receita.';
+      action='<button class="btn btn--primary btn--sm" type="button" disabled>'+ICO.lock+'Aguardando recibo</button>';
+    } else if(!s.started){
+      pill=['status--idle','Não iniciada']; sub='Nada preparado ainda neste mês. Comece pelo balancete.';
+      var fk=s.applicable[0], fs=fk?EV_META[fk].slug:'visao';
+      action='<a class="btn btn--primary btn--sm" href="?emp='+emp+'&per='+M.per+'&ev='+fs+'" data-tab="'+fs+'" data-importar data-ev="'+esc(fk||'')+'">'+ICO.upload+'Importar balancete</a>';
+    } else {
+      pill=['status--neutral','Em preparação']; var faltam=s.applicable.length-s.comRecibo;
+      sub=s.ready ? (s.applicable.length+' de '+s.applicable.length+' eventos com recibo · pronto para fechar.')
+                  : (s.comRecibo+' de '+s.applicable.length+' com recibo · '+(faltam===1?'falta 1 evento':'faltam '+faltam+' eventos')+' para fechar.');
+      action='<button class="btn btn--primary btn--sm" type="button"'+(s.ready?' data-fechar':' aria-disabled="true" data-blocked="1" title="Todos os eventos precisam de recibo para o fechamento."')+'>'+ICO.lock+'Fechar competência</button>';
+    }
+    el.innerHTML='<div class="mesfech"><span class="status status--sm '+pill[0]+'"><span class="status__dot"></span>'+pill[1]+'</span>'+
+      '<span class="mesfech__sub">'+sub+'</span><span class="mesfech__act">'+action+'</span></div>';
   }
   /* Régua de meses: 12 chips 01→12, cor = situação do mês (MESMA fonte da lista, ANUAL.meses):
      verde fechado · âmbar em preparação/processamento · vermelho em atraso · cinza a vencer/não iniciado.
