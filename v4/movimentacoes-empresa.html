@@ -1231,8 +1231,13 @@
       info='Transmitida em '+a0.transm+(num?' · '+num:'');
     } else if(sent){ info='Transmitida à Receita.'; }   // estado indica envio (sem detalhe da solicitação no mock)
     else { info='Ainda não transmitida à Receita.'; }
+    // Cabeçalho mostra o RESULTADO (o que está EM VIGOR), não o status da solicitação — esse vive na tabela de Solicitações.
+    // recibo/advertencia → "Em vigor" (verde); os demais (preparação/processamento/rejeitada/excluído) já são o estado do que está na tela.
+    var hdPill=(e.st==='recibo'||e.st==='advertencia')
+      ? '<span class="status status--sm status--success">'+stMark('recibo')+'Em vigor</span>'
+      : pill(e.st);
     return '<article class="card"><div class="card__body evdetail__head"><div class="sec__h" style="margin:0">'+
-      '<div class="sec__ht"><div class="dethead__title"><h2 style="margin:0">'+esc(meta.name)+'</h2><span class="tag">'+meta.code+'</span>'+pill(e.st)+'</div>'+
+      '<div class="sec__ht"><div class="dethead__title"><h2 style="margin:0">'+esc(meta.name)+'</h2><span class="tag">'+meta.code+'</span>'+hdPill+'</div>'+
       '<p class="sec__hint">'+esc(info)+'</p></div>'+
       (acts?'<div class="sec__act">'+acts+'</div>':'')+
       '</div>'+(alert?'<div class="evdetail__alert">'+alert+'</div>':'')+'</div></article>';
