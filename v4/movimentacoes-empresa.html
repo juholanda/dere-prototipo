@@ -72,6 +72,27 @@
     .tab__ic{display:inline-flex;align-items:center}
     .tab__ic svg{width:16px;height:16px}
     .tab__na{font-size:var(--text-2xs);font-weight:600;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:.03em}
+    /* ÁTOMO de solicitações: esquerda (em vigor) + trilho à direita */
+    .evatom{display:grid;grid-template-columns:minmax(0,1fr) 344px;gap:var(--space-6);align-items:start}
+    @media(max-width:1080px){.evatom{grid-template-columns:1fr}}
+    .evatom__main{min-width:0}
+    .evatom__rail{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-2xl);box-shadow:var(--shadow-sm);padding:var(--space-6);align-self:start}
+    .solrail__h{display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);flex-wrap:wrap}
+    .solrail__h h2{margin:0;font-size:var(--text-lg)}
+    .solrail__hint{font-size:var(--text-sm);color:var(--color-text-muted);margin:var(--space-1) 0 var(--space-6)}
+    .solgrp{margin-bottom:var(--space-6)}
+    .solgrp:last-child{margin-bottom:0}
+    .solgrp__t{font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.04em;color:var(--color-text-muted);font-weight:700;margin:0 0 var(--space-3)}
+    .solcard{border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-4);margin-bottom:var(--space-3);background:var(--color-surface)}
+    .solcard:last-child{margin-bottom:0}
+    .solcard--current{border-color:var(--color-success-fg);box-shadow:inset 0 0 0 1px var(--color-success-bg)}
+    .solcard__top{display:flex;align-items:center;justify-content:space-between;gap:var(--space-2);margin-bottom:var(--space-2)}
+    .soltipo{font-weight:700;color:var(--color-heading);font-size:var(--text-sm)}
+    .solcard__meta{font-size:var(--text-xs);color:var(--color-text-muted);margin:2px 0 0}
+    .solcard__act{margin-top:var(--space-3)}
+    .solempty{display:flex;flex-direction:column;align-items:flex-start;gap:var(--space-2);color:var(--color-text-muted);font-size:var(--text-sm)}
+    .solempty svg{width:20px;height:20px;flex:0 0 auto}
+    .solempty p{margin:0}
     .mchip{flex:0 0 auto;display:inline-flex;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-4);border:1px solid var(--color-border);border-top:3px solid var(--color-border-strong);border-radius:var(--radius-base);background:var(--color-surface);font-size:var(--text-base);color:var(--color-text);cursor:pointer;font-family:inherit;transition:border-color .12s}
     .mchip__n{font-size:var(--text-xs);font-weight:700;color:var(--color-text-muted);font-variant-numeric:tabular-nums}
     .mchip:hover:not(:disabled){border-color:var(--color-primary)}
@@ -1462,6 +1483,43 @@
     return '<div class="statusbar statusbar--'+a[0]+'" role="status"><span class="statusbar__ic" aria-hidden="true">'+a[1]+'</span><div class="statusbar__b"><p class="statusbar__title">'+a[2]+'</p><p class="statusbar__desc">'+a[3]+'</p></div></div>';
   }
   /* Aba do evento = UM card só (título + ações no topo, conteúdo dentro do mesmo bloco). */
+  /* ===== ÁTOMO de dois painéis: esquerda "em vigor" (+ totalizador) · direita = trilho de SOLICITAÇÕES.
+     Solicitação = cada envio do evento à Receita (Inclusão/Alteração), com o seu status e comprovante.
+     Responde "como sei se transmiti / qual o status / cadê minhas alterações". "Versão" não existe aqui. */
+  function solTipo(x){ return x.n===1 ? 'Inclusão' : 'Alteração'; }   // derivado do nº (exclusão viria marcada)
+  function solCard(x, evKey, current){
+    var s=SITV[x.sit]||['status--neutral',x.sit];
+    var sent=!!(x.transm&&x.transm!=='—'&&(x.recibo||x.protocolo));
+    var when = sent ? ('Transmitida em '+x.transm) : 'Ainda não transmitida à Receita';
+    var num = x.recibo ? ('Recibo '+x.recibo.slice(0,9)+'…'+x.recibo.slice(-4)) : (x.protocolo ? ('Protocolo '+x.protocolo.slice(0,9)+'…') : '');
+    var act = sent ? '<button class="btn btn--secondary btn--sm" type="button" data-comprovante data-ev="'+evKey+'" data-ver="'+x.n+'">'+ICO.receipt+'Comprovante</button>' : '';
+    return '<div class="solcard'+(current?' solcard--current':'')+'">'+
+      '<div class="solcard__top"><span class="soltipo">'+solTipo(x)+'</span><span class="status status--sm '+s[0]+'"><span class="status__dot"></span>'+s[1]+'</span></div>'+
+      '<p class="solcard__meta">'+esc(when)+'</p>'+(num?'<p class="solcard__meta mono">'+esc(num)+'</p>':'')+
+      (act?'<div class="solcard__act">'+act+'</div>':'')+'</div>';
+  }
+  function solRail(evKey, M){
+    var v=(VERS[M.per]||{})[evKey]||{atual:[],prep:[],ant:[]};
+    var all=v.atual.concat(v.prep, v.ant);
+    var inprep=all.filter(function(x){return x.sit==='pendente'||x.sit==='protocolo'||x.sit==='rejeitado';});
+    var vig=all.filter(function(x){return x.sit==='recibo'||x.sit==='advertencia';});
+    var ant=all.filter(function(x){return x.sit==='substituida';});
+    var e=M.ev[evKey];
+    var nova = (e.st==='recibo'||e.st==='advertencia')
+      ? '<button class="btn btn--secondary btn--sm" type="button" data-alterar data-ev="'+evKey+'">'+ICO.doc+'Nova solicitação</button>' : '';
+    function grp(title, list, cur){ return list.length ? '<div class="solgrp"><p class="solgrp__t">'+title+'</p>'+list.map(function(x){return solCard(x, evKey, cur);}).join('')+'</div>' : ''; }
+    var body = grp('Em preparação', inprep, false) + grp('Vigente', vig, true) + grp('Anteriores', ant, false);
+    if(!body) body='<div class="solempty">'+ICO.info+'<p>Nenhuma solicitação ainda. Ela nasce quando você transmite o balancete à Receita.</p></div>';
+    return '<aside class="evatom__rail"><div class="solrail__h"><h2>Solicitações</h2>'+nova+'</div>'+
+      '<p class="solrail__hint">Cada envio deste evento à Receita (inclusão, alteração), com o status.</p>'+body+'</aside>';
+  }
+  function evTotalbar(evKey, M){
+    var meta=EV_META[evKey], e=M.ev[evKey];
+    var val=(e.val&&e.val!=='—')?e.val:'—', naVal=(val==='—');
+    return '<div class="totalbar"><span class="totalbar__ic" aria-hidden="true">'+meta.ic+'</span>'+
+      '<div class="totalbar__lead"><p class="totalbar__k">Evento em vigor</p><p class="totalbar__t">'+esc(meta.name)+' · '+meta.code+'</p><p class="totalbar__desc">'+esc(e.sub||'')+'</p></div>'+
+      '<div class="totalbar__num"><span class="totalbar__nk">'+esc(e.valLbl||'Base apurada')+'</span><span class="totalbar__nv'+(naVal?' totalbar__nv--na':'')+'">'+esc(val)+'</span></div></div>';
+  }
   function eventPanel(evKey, M){
     var meta=EV_META[evKey], e=M.ev[evKey];
     var chint = evKey==='d1101'?'Contas analíticas do balancete (infoConta): saldos, movimento e a base apurada (vApur) por conta. A a-DeRE confere cada conta antes de transmitir.'
@@ -1480,6 +1538,11 @@
     var contentHead=(evKey==='d1101')?'':'<p class="sec__hint" style="margin:0 0 var(--space-4)">'+chint+'</p>';
     // sem tab-dentro-de-tab: o Detalhe do evento aparece direto; as Versões vêm como SEÇÃO abaixo (não como aba interna).
     var detBody=(alert?'<div style="margin-bottom:var(--space-4)">'+alert+'</div>':'')+'<article class="card"><div class="card__body">'+contentHead+content+'</div></article>';
+    // Balancete (referência do átomo): esquerda = totalizador + balancete em vigor; direita = trilho de solicitações.
+    if(evKey==='d1101'){
+      var mainCol='<div class="evatom__main">'+evTotalbar(evKey,M)+'<div style="margin-top:var(--space-4)">'+detBody+'</div></div>';
+      return '<section class="sec" style="margin-top:0"><div class="evatom">'+mainCol+solRail(evKey,M)+'</div></section>';
+    }
     var verBody='<section class="sec" style="margin-top:var(--space-8)"><div class="sec__h"><div class="sec__ht"><h2>Solicitações</h2><p class="sec__hint">Solicitações transmitidas deste evento nesta competência.</p></div></div><article class="card"><div class="card__body">'+versoesInner(evKey,M)+'</div></article></section>';
     return '<section class="sec" style="margin-top:0">'+detBody+verBody+'</section>';
   }
