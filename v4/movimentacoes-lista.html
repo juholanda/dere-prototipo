@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Movimentações Mensais</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=e9480be0">
+  <link rel="stylesheet" href="../design-system/ds.css?v=66d28473">
   <script src="../design-system/ds-tailwind.js"></script>
   <script src="../design-system/ds-dialog.js"></script>
   <style>
@@ -78,13 +78,13 @@
     .co-logo--img{background:var(--color-surface);border:1px solid var(--color-border)}
     .co-logo--img img{width:100%;height:100%;object-fit:cover;display:block}
     .muted{color:var(--color-text-muted)}
-    .valnum{font-variant-numeric:tabular-nums;font-weight:600;color:var(--color-heading)}
+    .valnum{font-variant-numeric:tabular-nums;font-weight:400;color:var(--color-text)}
     .valnum--none{color:var(--color-text-muted);font-weight:400}
 
     /* eventos = tracinhos (um por evento aplicável) + contador; sem dizer qual é (isso fica no detalhe) */
     .evbar{display:flex;align-items:center;gap:var(--space-2)}
     .evdots{display:flex;gap:3px}
-    .evdot{width:16px;height:8px;border-radius:3px;background:var(--color-border)}
+    .evdot{width:16px;height:8px;border-radius:3px;background:var(--color-border-strong)}
     .evdot--ok{background:var(--color-success-fg)}
     .evdot--wait{background:var(--color-warning)}
     .evdot--rej{background:var(--color-danger)}
@@ -100,7 +100,7 @@
     .pendrow__m{font-size:var(--text-sm);font-weight:600;color:var(--color-heading)}
     .pendfoot{margin-top:var(--space-6);display:flex;justify-content:flex-end}
     /* barra dos 12 meses: discreta e fina (segmentos baixos) */
-    .evdots--year{gap:2px}
+    .evdots--year{gap:3px}
     .evdots--year .evdot{width:12px;height:4px;border-radius:2px}
     .evcount{font-size:var(--text-sm);color:var(--color-text-muted);font-variant-numeric:tabular-nums;white-space:nowrap}
 
@@ -193,7 +193,7 @@
         <div style="margin-left:auto;display:flex;align-items:center;gap:var(--space-1)">
           <span class="tooltip tooltip--end"><button class="icon-btn" type="button" data-search-toggle aria-label="Buscar contribuinte"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></button><span class="tooltip__bubble" role="tooltip">Buscar</span></span>
           <span class="tooltip tooltip--end"><button class="icon-btn" type="button" aria-label="Notificações"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></svg></button><span class="tooltip__bubble" role="tooltip">Notificações</span></span>
-          <span aria-hidden="true" style="width:1px;align-self:stretch;background:var(--color-border);margin:var(--space-2) var(--space-1)"></span>
+          <span aria-hidden="true" style="width:1px;height:22px;background:var(--color-border);margin:0 var(--space-3)"></span>
           <div class="menu" data-menu style="position:relative">
           <span class="tooltip tooltip--end"><button class="avatar" aria-haspopup="true" aria-expanded="false" aria-label="Ricardo Alves, abrir menu do usuário">RA</button><span class="tooltip__bubble tooltip__bubble--stack" role="tooltip"><strong>Ricardo Alves</strong>Administrador da conta</span></span>
           <div class="menu__panel" hidden><div class="menu__head"><p class="menu__head-name">Ricardo Alves</p><p class="menu__head-mail">Administrador da conta</p></div><div class="menu__sep"></div><button class="menu__item">Perfil</button><button class="menu__item menu__item--danger">Sair</button></div>
@@ -491,7 +491,7 @@
   (function(){
     var wrap=document.getElementById('anoWrap'); if(!wrap) return;
     var btn=wrap.querySelector('[data-cselect-btn]'), panel=wrap.querySelector('[data-cselect-panel]'), val=document.getElementById('anoVal');
-    var WARN='<svg class="anowarn" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg>';
+    var WARN='<svg class="anowarn" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg>';
     panel.querySelectorAll('[role="option"]').forEach(function(op){ if(op.getAttribute('data-pend')==='1' && !op.querySelector('.anowarn')){ op.insertAdjacentHTML('beforeend', WARN+'<span class="sr-only"> com pendências</span>'); } });
     function setTrigger(op){ var pend=op.getAttribute('data-pend')==='1'; val.innerHTML=esc(op.getAttribute('data-val'))+(pend?' '+WARN:''); }
     function apply(op){
