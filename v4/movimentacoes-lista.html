@@ -190,9 +190,13 @@
     <div class="col">
       <header class="topbar">
         <nav class="bc" aria-label="Trilha de navegação"><span>Movimentações Mensais</span></nav>
-        <div class="menu" data-menu style="margin-left:auto">
+        <div style="margin-left:auto;display:flex;align-items:center;gap:var(--space-2)">
+          <span class="tooltip tooltip--end"><button class="icon-btn" type="button" aria-label="Notificações"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></svg></button><span class="tooltip__bubble" role="tooltip">Notificações</span></span>
+          <span aria-hidden="true" style="width:1px;align-self:stretch;background:var(--color-border);margin:var(--space-2) var(--space-1)"></span>
+          <div class="menu" data-menu style="position:relative">
           <span class="tooltip tooltip--end"><button class="avatar" aria-haspopup="true" aria-expanded="false" aria-label="Ricardo Alves, abrir menu do usuário">RA</button><span class="tooltip__bubble tooltip__bubble--stack" role="tooltip"><strong>Ricardo Alves</strong>Administrador da conta</span></span>
           <div class="menu__panel" hidden><div class="menu__head"><p class="menu__head-name">Ricardo Alves</p><p class="menu__head-mail">Administrador da conta</p></div><div class="menu__sep"></div><button class="menu__item">Perfil</button><button class="menu__item menu__item--danger">Sair</button></div>
+          </div>
         </div>
       </header>
 
@@ -301,16 +305,27 @@
      estados do mês: fech(verde) · proc/prep(âmbar, em andamento) · atraso(vermelho, vencido em aberto) · avencer/none(cinza, ainda não vencido) */
   var ANO_ATUAL=2026, anoSel=2026;
   var ANUAL={
-    seg:{ sit:'emdia',      cbsAno:1269000, ibsAno:1890000, meses:['fech','fech','fech','fech','fech','fech','fech','fech','fech','avencer','avencer','avencer'] },
-    fin:{ sit:'pendencias', cbsAno:1792000, ibsAno:2688000, meses:['fech','fech','fech','fech','fech','fech','fech','fech','proc','avencer','avencer','avencer'] },
-    sic:{ sit:'pendencias', cbsAno:816000,  ibsAno:1224000, meses:['fech','fech','fech','fech','fech','fech','fech','fech','prep','avencer','avencer','avencer'] },
-    cap:{ sit:'atraso',     cbsAno:705000,  ibsAno:1058000, meses:['fech','fech','fech','fech','fech','atraso','atraso','atraso','none','avencer','avencer','avencer'] },
-    s2u:{ sit:'atraso',     cbsAno:null,    ibsAno:null,    meses:['atraso','atraso','atraso','atraso','atraso','atraso','atraso','atraso','none','avencer','avencer','avencer'] }
+    seg:{ cbsAno:1269000, ibsAno:1890000, meses:['fech','fech','fech','fech','fech','fech','fech','fech','fech','avencer','avencer','avencer'] },
+    fin:{ cbsAno:1792000, ibsAno:2688000, meses:['fech','fech','fech','fech','fech','fech','fech','fech','proc','avencer','avencer','avencer'] },
+    sic:{ cbsAno:816000,  ibsAno:1224000, meses:['fech','fech','fech','fech','fech','fech','fech','fech','prep','avencer','avencer','avencer'] },
+    cap:{ cbsAno:705000,  ibsAno:1058000, meses:['fech','fech','fech','fech','fech','atraso','atraso','atraso','none','avencer','avencer','avencer'] },
+    s2u:{ cbsAno:null,    ibsAno:null,    meses:['atraso','atraso','atraso','atraso','atraso','atraso','atraso','atraso','none','avencer','avencer','avencer'] }
   };
+  /* Situação anual DERIVADA do andamento dos 12 meses (a regra da informação, NÃO hardcoded), conforme a legenda:
+     · Em atraso      = há mês vencido não enviado (estado 'atraso');
+     · Com pendências = há mês em aberto mas dentro do prazo (mês corrente em processamento/preparação/não iniciado);
+     · Em dia         = todos os meses devidos foram fechados e não há nenhum mês em aberto. */
+  function deriveAnoSit(meses){
+    if(!meses||!meses.length) return 'atraso';
+    if(meses.indexOf('atraso')>=0) return 'atraso';
+    if(meses.indexOf('proc')>=0 || meses.indexOf('prep')>=0 || meses.indexOf('none')>=0) return 'pendencias';
+    return 'emdia';
+  }
+  var MESES_FECH12=['fech','fech','fech','fech','fech','fech','fech','fech','fech','fech','fech','fech'];
   function aplicaAno(y){
-    EMP.forEach(function(e){ var a=ANUAL[e.id]||{sit:'atraso',cbsAno:null,ibsAno:null,meses:[]};
-      if(y<ANO_ATUAL){ e.anoSit='emdia'; e.cbsAno=a.cbsAno; e.ibsAno=a.ibsAno; e.meses=['fech','fech','fech','fech','fech','fech','fech','fech','fech','fech','fech','fech']; }
-      else { e.anoSit=a.sit; e.cbsAno=a.cbsAno; e.ibsAno=a.ibsAno; e.meses=a.meses; }
+    EMP.forEach(function(e){ var a=ANUAL[e.id]||{cbsAno:null,ibsAno:null,meses:[]};
+      var meses=(y<ANO_ATUAL)?MESES_FECH12:(a.meses||[]);
+      e.meses=meses; e.anoSit=deriveAnoSit(meses); e.cbsAno=a.cbsAno; e.ibsAno=a.ibsAno;
     });
   }
   aplicaAno(2026);
@@ -352,7 +367,7 @@
     // Com pendências / Em atraso: clicável, abre modal com as competências pendentes.
     return '<button type="button" class="status status--sm '+m[0]+' pendbtn" data-pend-open="'+esc(e.id)+'" aria-haspopup="dialog" title="Ver competências pendentes">'+inner+'</button>'; }
   var MES_FULL=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-  var PENDMAP={ atraso:['status--danger','Em atraso'], proc:['status--warning','Em processamento'], prep:['status--warning','Em preparação'] };
+  var PENDMAP={ atraso:['status--danger','Em atraso'], proc:['status--warning','Em processamento'], prep:['status--warning','Em preparação'], none:['status--idle','Não iniciada'] };
   function pendModalInner(e){
     var pend=[]; (e.meses||[]).forEach(function(st,i){ if(PENDMAP[st]) pend.push({mes:MES_FULL[i], st:st}); });
     var rows=pend.map(function(p){ var m=PENDMAP[p.st]; return '<li class="pendrow"><span class="pendrow__m">'+p.mes+' de '+anoSel+'</span><span class="status status--sm '+m[0]+'"><span class="status__dot"></span>'+m[1]+'</span></li>'; }).join('');
