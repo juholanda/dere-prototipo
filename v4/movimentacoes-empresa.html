@@ -68,6 +68,10 @@
     .mesfech__row{display:flex;align-items:center;gap:var(--space-3);flex-wrap:wrap}
     .mesfech__sub{font-size:var(--text-sm);color:var(--color-text-onmuted)}
     .mesfech__act{display:flex;gap:var(--space-3);flex:0 0 auto;flex-wrap:wrap}
+    /* abas de evento: ícone por aba + indicação "não se aplica" nas desabilitadas */
+    .tab__ic{display:inline-flex;align-items:center}
+    .tab__ic svg{width:16px;height:16px}
+    .tab__na{font-size:var(--text-2xs);font-weight:600;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:.03em}
     .mchip{flex:0 0 auto;display:inline-flex;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-4);border:1px solid var(--color-border);border-top:3px solid var(--color-border-strong);border-radius:var(--radius-base);background:var(--color-surface);font-size:var(--text-base);color:var(--color-text);cursor:pointer;font-family:inherit;transition:border-color .12s}
     .mchip__n{font-size:var(--text-xs);font-weight:700;color:var(--color-text-muted);font-variant-numeric:tabular-nums}
     .mchip:hover:not(:disabled){border-color:var(--color-primary)}
@@ -883,7 +887,10 @@
   function perList(){ return MESES.map(function(m){return m.per;}); }
   var perIdx=(function(){ var p=q.get('per'); var i=perList().indexOf(p); return i>=0?i:0; })();
   var APPLIES=SEMPGCC[emp] ? [] : ORDER.filter(function(k){ return MESES.some(function(m){ return m.ev[k] && m.ev[k].st!=='na'; }); });
-  var TABS=['visao'].concat(APPLIES.map(function(k){ return EV_META[k].slug; }));
+  // Abas: aplicáveis primeiro, "não se aplica" no fim (desabilitadas). Sempre mostra todas.
+  var NAPPLIES=SEMPGCC[emp] ? [] : ORDER.filter(function(k){ return APPLIES.indexOf(k)<0; });
+  var TABS=['visao'].concat(APPLIES.concat(NAPPLIES).map(function(k){ return EV_META[k].slug; }));
+  var NA_SLUGS={}; NAPPLIES.forEach(function(k){ NA_SLUGS[EV_META[k].slug]=true; });
   function normEv(v){ if(!v) return 'visao'; if(TABS.indexOf(v)>=0) return v; if(EV_META[v]) return EV_META[v].slug; return 'visao'; }
   var tab=normEv(q.get('ev'));
   if(TABS.indexOf(tab)<0) tab='visao';
@@ -1461,6 +1468,8 @@
       : evKey==='d1106'?'Ativos de reserva técnica agrupados por conta. A base (vApur) de cada ativo é rendimentos periódicos mais rendimentos na liquidação.'
       : evKey==='d2101'?'Títulos de dívida com oferta pública: a base do débito por título é o menor valor entre os juros e a Selic no período.'
       : 'Documentos que geraram dedução (infoDeducao), com teto, uso acumulado e saldo da conta-corrente.';
+    // Evento que NÃO se aplica a este contribuinte (aba desabilitada; só via deep-link cairia aqui).
+    if(e.st==='na') return '<div class="empty"><span class="empty__icon" aria-hidden="true">'+ICO.info+'</span><p class="empty__title">'+esc(meta.name)+' não se aplica</p><p class="empty__text">Este contribuinte não tem '+esc(meta.name.toLowerCase())+' no seu Plano de Contas, então este evento não é declarado nesta competência.</p></div>';
     // NADA IMPORTADO AINDA: a importação é da COMPETÊNCIA (uma planilha alimenta tudo), mostrada no hub. Aqui só aponta pra lá.
     if(e.st==='pendente' && !e.prep) return importCTA(M);
     // Detalhe do evento em ABAS (padrão do Plano de Contas): Conteúdo (versão atual) · Versões (histórico).
@@ -1856,15 +1865,19 @@
     if(TABS.length<=1){ if(wrap) wrap.hidden=true; bar.innerHTML=''; return; }
     if(wrap) wrap.hidden=false;
     var locked=!monthStarted(MESES[perIdx]);   // mês sem nada importado: trava as abas de evento
-    bar.innerHTML=TABS.map(function(s){ var a=(s===tab), dis=(locked && s!=='visao');
-      return '<button class="tab'+(a?' is-active':'')+'" type="button" role="tab" aria-selected="'+(a?'true':'false')+'"'
-        +(dis?' aria-disabled="true" title="Importe a movimentação do mês para habilitar este evento."':'')
-        +' data-tab="'+s+'">'+esc(tabLabel(s))+'</button>'; }).join('');
+    bar.innerHTML=TABS.map(function(s){
+      var a=(s===tab), isEv=(s!=='visao'), na=!!NA_SLUGS[s], dis=(na || (locked && isEv));
+      var icHtml = isEv ? '<span class="tab__ic" aria-hidden="true">'+EV_META[SLUG2EV[s]].ic+'</span>' : '';
+      var naHint = na ? '<span class="tab__na">não se aplica</span>' : '';
+      var title = na ? 'Este evento não se aplica a este contribuinte.' : (locked&&isEv ? 'Importe a movimentação do mês para habilitar este evento.' : '');
+      return '<button class="tab'+(a?' is-active':'')+(na?' tab--na':'')+'" type="button" role="tab" aria-selected="'+(a?'true':'false')+'"'
+        +(dis?' aria-disabled="true"'+(title?' title="'+esc(title)+'"':''):'')
+        +' data-tab="'+s+'">'+icHtml+esc(tabLabel(s))+naHint+'</button>'; }).join('');
     bar.querySelectorAll('[data-tab]').forEach(function(b){ b.addEventListener('click',function(){ if(b.getAttribute('aria-disabled')==='true') return; navTo(b.getAttribute('data-tab'), true); }); });
   }
   function navTo(slug, push){
     if(TABS.indexOf(slug)<0) slug='visao';
-    if(slug!=='visao' && !monthStarted(MESES[perIdx])) slug='visao';   // mês vazio: cai na Visão geral
+    if(slug!=='visao' && (NA_SLUGS[slug] || !monthStarted(MESES[perIdx]))) slug='visao';   // não se aplica ou mês vazio → Visão geral
     tab=slug;
     document.querySelectorAll('#panels [role=region]').forEach(function(p){ p.hidden=(p.id!=='panel-'+slug); });
     renderDetnav(slug);
