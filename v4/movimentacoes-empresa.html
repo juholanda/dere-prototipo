@@ -1214,11 +1214,13 @@
     var acts=evActions(evKey,M), alert=evAlert(evKey,M);
     var vv=(VERS[M.per]||{})[evKey]||{atual:[],prep:[],ant:[]};
     var a0=(vv.atual||[]).concat(vv.prep||[],vv.ant||[])[0];
+    var sent=(e.st==='recibo'||e.st==='advertencia'||e.st==='protocolo'||e.st==='rejeitado');
     var info;
     if(a0 && a0.transm && a0.transm!=='—'){
       var num=a0.recibo?('Recibo '+a0.recibo.slice(0,9)+'…'+a0.recibo.slice(-4)):(a0.protocolo?('Protocolo '+a0.protocolo.slice(0,9)+'…'):'');
       info='Transmitida em '+a0.transm+(num?' · '+num:'');
-    } else { info='Ainda não transmitida à Receita.'; }
+    } else if(sent){ info='Transmitida à Receita.'; }   // estado indica envio (sem detalhe da solicitação no mock)
+    else { info='Ainda não transmitida à Receita.'; }
     return '<article class="card"><div class="card__body evdetail__head"><div class="sec__h" style="margin:0">'+
       '<div class="sec__ht"><div class="dethead__title"><h2 style="margin:0">'+esc(meta.name)+'</h2><span class="tag">'+meta.code+'</span>'+pill(e.st)+'</div>'+
       '<p class="sec__hint">'+esc(info)+'</p></div>'+
@@ -1578,22 +1580,15 @@
     if(e.st==='pendente' && !e.prep) return importCTA(M);
     // Detalhe do evento em ABAS (padrão do Plano de Contas): Conteúdo (versão atual) · Versões (histórico).
     var content = evKey==='d1101'?balanceteContent(M) : evKey==='d1106'?aplicacoesContent(M) : evKey==='d2101'?titulosContent(M) : deducoesContent(M);
-    var alert=evAlert(evKey,M);
-    var tabic=function(ic){ return '<span style="display:inline-flex;width:16px;height:16px" aria-hidden="true">'+ic+'</span>'; };
-    // Balancete já traz seus próprios subtítulos (Contas a corrigir · Todas as contas); os outros levam o chint como subtítulo.
+    // Balancete já traz seus próprios subtítulos; os outros levam o chint como subtítulo do conteúdo.
     var contentHead=(evKey==='d1101')?'':'<p class="sec__hint" style="margin:0 0 var(--space-4)">'+chint+'</p>';
-    // sem tab-dentro-de-tab: o Detalhe do evento aparece direto; as Versões vêm como SEÇÃO abaixo (não como aba interna).
-    var detBody=(alert?'<div style="margin-bottom:var(--space-4)">'+alert+'</div>':'')+'<article class="card"><div class="card__body">'+contentHead+content+'</div></article>';
-    // Balancete (REFERÊNCIA): cabeçalho (status+envio+ações) → totalizadores (só com recibo) → contas → Solicitações embaixo.
-    if(evKey==='d1101'){
-      var hasRec=(e.st==='recibo'||e.st==='advertencia');
-      var tot=hasRec?totalizadoresBlock(M):'';
-      return '<section class="sec" style="margin-top:0">'+evHead(evKey,M)+
-        '<div style="margin-top:var(--space-6)"><article class="card"><div class="card__body">'+tot+content+'</div></article></div>'+
-        solSection(evKey,M)+'</section>';
-    }
-    var verBody='<section class="sec" style="margin-top:var(--space-8)"><div class="sec__h"><div class="sec__ht"><h2>Solicitações</h2><p class="sec__hint">Solicitações transmitidas deste evento nesta competência.</p></div></div><article class="card"><div class="card__body">'+versoesInner(evKey,M)+'</div></article></section>';
-    return '<section class="sec" style="margin-top:0">'+detBody+verBody+'</section>';
+    // PADRÃO ÚNICO de todos os eventos (padronizado com o Balancete): cabeçalho (status + info de envio + AÇÕES no topo)
+    // → totalizadores do retorno (só quando há recibo) → conteúdo → Solicitações embaixo. Sem barra fixa.
+    var hasRec=(e.st==='recibo'||e.st==='advertencia');
+    var tot=(hasRec && evKey==='d1101')?totalizadoresBlock(M):'';   // TODO: totalizadores próprios de D-9106 (Aplicações) e D-9121 (Títulos)
+    return '<section class="sec" style="margin-top:0">'+evHead(evKey,M)+
+      '<div style="margin-top:var(--space-6)"><article class="card"><div class="card__body">'+tot+contentHead+content+'</div></article></div>'+
+      solSection(evKey,M)+'</section>';
   }
 
   /* ===== modais: comprovante · versões · confirmação (fechar/reabrir) ===== */
@@ -1959,7 +1954,7 @@
       // Cabeçalho da TELA não carrega status/recibo do evento. O Balancete leva status + ações no CABEÇALHO
       // DO PAINEL (evHead) → sem barra fixa. Os outros eventos ainda usam a barra fixa até serem replicados.
       meta_.innerHTML='';
-      setBar(evKey==='d1101' ? '' : evActions(evKey, M));
+      setBar('');   // ações de TODO evento agora vão no cabeçalho do painel (evHead), não na barra fixa
     }
     dn.innerHTML='';
     bcTail.querySelectorAll('[data-tab]').forEach(function(a){ a.addEventListener('click',function(ev){ ev.preventDefault(); navTo(a.getAttribute('data-tab'), true); }); });
