@@ -190,7 +190,8 @@
     <div class="col">
       <header class="topbar">
         <nav class="bc" aria-label="Trilha de navegação"><span>Movimentações Mensais</span></nav>
-        <div style="margin-left:auto;display:flex;align-items:center;gap:var(--space-2)">
+        <div style="margin-left:auto;display:flex;align-items:center;gap:var(--space-1)">
+          <span class="tooltip tooltip--end"><button class="icon-btn" type="button" data-search-toggle aria-label="Buscar contribuinte"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></button><span class="tooltip__bubble" role="tooltip">Buscar</span></span>
           <span class="tooltip tooltip--end"><button class="icon-btn" type="button" aria-label="Notificações"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></svg></button><span class="tooltip__bubble" role="tooltip">Notificações</span></span>
           <span aria-hidden="true" style="width:1px;align-self:stretch;background:var(--color-border);margin:var(--space-2) var(--space-1)"></span>
           <div class="menu" data-menu style="position:relative">
@@ -243,14 +244,14 @@
                 <h2 id="lst-h">Contribuintes</h2>
                 <p class="card__hint">Situação da informação de cada contribuinte.</p>
               </div>
-              <div class="card__h-tools">
+              <div class="card__h-tools" id="searchWrap" hidden>
                 <label class="search"><span class="sr-only">Buscar por razão social ou CNPJ</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><input type="search" id="q" placeholder="Ex.: MAG Seguros ou 33.608.308" autocomplete="off"></label>
               </div>
             </div>
             <div class="table-wrap">
               <table class="table table--fixed table--stickyactions" aria-labelledby="lst-h">
                 <colgroup>
-                  <col style="width:22%"><col style="width:13%"><col style="width:20%"><col style="width:16%"><col style="width:16%"><col style="width:13%">
+                  <col style="width:28%"><col style="width:16%"><col style="width:24%"><col style="width:22%"><col style="width:10%">
                 </colgroup>
                 <thead>
                   <tr>
@@ -258,14 +259,19 @@
                     <th scope="col" class="sortable" data-sort="anosit" aria-sort="none"><button type="button" class="th-btn">Situação <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
                     <th scope="col" class="sortable" data-sort="andamento" aria-sort="none"><button type="button" class="th-btn">Andamento anual <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
                     <th scope="col" class="sortable col-num" data-sort="cbsano" aria-sort="none"><button type="button" class="th-btn">CBS anual apurada <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
-                    <th scope="col" class="sortable col-num" data-sort="ibsano" aria-sort="none"><button type="button" class="th-btn">IBS anual apurado <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
                     <th scope="col"><span class="sr-only">Abrir</span></th>
                   </tr>
                 </thead>
                 <tbody id="rows"></tbody>
               </table>
             </div>
-            <div class="tablefoot"><span id="tcount"></span></div>
+            <div class="tablefoot" style="display:flex;align-items:center;justify-content:space-between"><span id="tcount"></span>
+              <div class="tpager" style="display:flex;align-items:center;gap:var(--space-2)">
+                <button class="icon-btn icon-btn--sm" type="button" disabled aria-label="Página anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
+                <span class="cellcnpj">Página 1 de 1</span>
+                <button class="icon-btn icon-btn--sm" type="button" disabled aria-label="Próxima página"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+              </div>
+            </div>
           </section>
         </div>
       </main>
@@ -452,21 +458,20 @@
     var list=EMP.filter(f).filter(function(e){ return !q || e.nome.toLowerCase().indexOf(q)>=0 || e.cnpj.replace(/\D/g,'').indexOf(q.replace(/\D/g,''))>=0; });
     var dir=listSort.dir==='asc'?1:-1; list.sort(function(a,b){ var va=sortVal(a),vb=sortVal(b); if(va<vb)return -1*dir; if(va>vb)return 1*dir; return a.nome<b.nome?-1:1; });
     var tb=document.getElementById('rows');
-    if(!list.length){ tb.innerHTML='<tr class="emptyrow"><td colspan="6">Nenhum contribuinte nesse filtro.</td></tr>'; document.getElementById('tcount').innerHTML=''; return; }
+    if(!list.length){ tb.innerHTML='<tr class="emptyrow"><td colspan="5">Nenhum contribuinte nesse filtro.</td></tr>'; document.getElementById('tcount').innerHTML=''; return; }
     tb.innerHTML=list.map(function(e){
       /* ação por estado, abre o detalhe (naoiniciada = fluxo de "nada enviado" / importar) */
       var href='movimentacoes-empresa.html?emp='+e.id;
-      var btn = '<a class="btn btn--secondary rowbtn" href="'+href+'">Ver detalhes</a>';
+      var arrow = '<a class="icon-btn rowarrow" href="'+href+'" aria-label="Abrir '+esc(e.nome)+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>';
       return '<tr data-href="'+href+'">'+
         '<td><div class="evemp">'+logoHtml(e)+'<div><div class="celltitle">'+esc(e.nome)+'</div><div class="cellcnpj">'+esc(e.cnpj)+'</div></div></div></td>'+
         '<td>'+anoSitPill(e)+'</td>'+
         '<td>'+andCell(e)+'</td>'+
         '<td class="col-num">'+numCell(e.cbsAno)+'</td>'+
-        '<td class="col-num">'+numCell(e.ibsAno)+'</td>'+
-        '<td class="col-act">'+btn+'</td>'+
+        '<td class="col-act">'+arrow+'</td>'+
       '</tr>';
     }).join('');
-    document.getElementById('tcount').innerHTML='<b>'+list.length+'</b> de <b>'+EMP.length+'</b> contribuintes · ano '+anoSel;
+    document.getElementById('tcount').innerHTML='<b>'+list.length+'</b> de <b>'+EMP.length+'</b> contribuintes';
     tb.querySelectorAll('tr[data-href]').forEach(function(tr){ tr.addEventListener('click',function(ev){ if(ev.target.closest('a,button'))return; window.location.href=tr.getAttribute('data-href'); }); });
   }
 
@@ -478,6 +483,9 @@
 
   setPrazo(); kpis(); renderRows();
   document.getElementById('q').addEventListener('input',function(){ query=this.value; renderRows(); });
+  /* lupa do topbar revela/esconde a busca do card (frame mostra só o ícone por padrão) e foca o campo */
+  (function(){ var tgl=document.querySelector('[data-search-toggle]'), wrap=document.getElementById('searchWrap');
+    if(tgl&&wrap){ tgl.addEventListener('click',function(){ wrap.hidden=!wrap.hidden; if(!wrap.hidden){ var q=document.getElementById('q'); if(q) q.focus(); } else { query=''; var q=document.getElementById('q'); if(q) q.value=''; renderRows(); } }); } })();
   /* seletor de Ano-calendário: dropdown do DS (.cselect), MESMO componente do detalhe.
      Anos com pendência ganham ⚠. Ao escolher, aplica o ano e re-renderiza a lista. */
   (function(){
