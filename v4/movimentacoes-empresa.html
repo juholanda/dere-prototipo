@@ -100,6 +100,11 @@
     .soltable td.col-act,.soltable th.col-act{text-align:right;white-space:nowrap}
     .soltable .soltipo{font-weight:600;color:var(--color-heading)}
     .tag--vig{background:var(--color-success-bg);color:var(--color-success-fg);margin-left:var(--space-2)}
+    /* menu "mais ações" (⋯) do cabeçalho do evento */
+    .moremenu{position:relative;display:inline-flex}
+    .moremenu__btn{padding-left:var(--space-3);padding-right:var(--space-3)}
+    .moremenu__btn svg{width:20px;height:20px}
+    .moremenu__panel{position:absolute;top:calc(100% + var(--space-2));right:0;z-index:20;min-width:210px;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-base);box-shadow:var(--shadow-lg);padding:var(--space-2);display:flex;flex-direction:column;gap:2px}
     .mchip{flex:0 0 auto;display:inline-flex;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-4);border:1px solid var(--color-border);border-top:3px solid var(--color-border-strong);border-radius:var(--radius-base);background:var(--color-surface);font-size:var(--text-base);color:var(--color-text);cursor:pointer;font-family:inherit;transition:border-color .12s}
     .mchip__n{font-size:var(--text-xs);font-weight:700;color:var(--color-text-muted);font-variant-numeric:tabular-nums}
     .mchip:hover:not(:disabled){border-color:var(--color-primary)}
@@ -663,7 +668,7 @@
   /* Vocabulário de status único (mesmo estado, mesma palavra em toda a tela): pílula do evento, da versão e título do comprovante. */
   /* Nível 1 (card / competência): situação SIMPLES do evento no mês. O detalhe (sucesso/advertência) é do nível 2 (versão), dentro do evento. */
   /* Situação = ESTADO DA VERSÃO do evento (mesmo vocabulário do modal de versões e do Painel). */
-  var STMAP={recibo:['success','Processada com sucesso'], advertencia:['warning','Processada com advertências'], protocolo:['info','Em processamento'], rejeitado:['danger','Rejeitada pela Receita'], pendente:['neutral','Em preparação'], na:['neutral','Não se aplica']};
+  var STMAP={recibo:['success','Processada com sucesso'], advertencia:['warning','Processada com advertências'], protocolo:['info','Em processamento'], rejeitado:['danger','Rejeitada pela Receita'], pendente:['neutral','Em preparação'], na:['neutral','Não se aplica'], excluido:['neutral','Sem balancete']};
   function stMark(st){return (st==='recibo')?'<svg class="status__check" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>':'<span class="status__dot"></span>';}
   function pill(st){var m=STMAP[st]||['neutral',st];return '<span class="status status--sm status--'+m[0]+'">'+stMark(st)+m[1]+'</span>';}
 
@@ -1255,9 +1260,8 @@
   function solSection(evKey, M){
     var v=(VERS[M.per]||{})[evKey]||{atual:[],prep:[],ant:[]};
     var all=v.atual.concat(v.prep, v.ant);
-    var e=M.ev[evKey];
-    var nova=(e.st==='recibo'||e.st==='advertencia')?'<button class="btn btn--secondary" type="button" data-alterar data-ev="'+evKey+'">'+ICO.doc+'Nova solicitação</button>':'';
-    var head='<div class="cardhd"><div class="cardhd__toprow"><h2 class="cardhd__t">Solicitações</h2>'+(nova?'<div class="cardhd__side">'+nova+'</div>':'')+'</div>'+
+    // Sem "Nova solicitação" solta: uma solicitação é sempre SOBRE o balancete (Alterar/Excluir no cabeçalho).
+    var head='<div class="cardhd"><h2 class="cardhd__t">Solicitações</h2>'+
       '<p class="cardhd__x">Cada envio deste evento à Receita, com o status, quem transmitiu, quando e o comprovante.</p></div>';
     var inner;
     if(!all.length){ inner='<div class="solempty">'+ICO.info+'<p>Nenhuma solicitação ainda. Ela nasce quando você transmite o balancete à Receita.</p></div>'; }
@@ -1523,7 +1527,16 @@
     } else if(e.st==='protocolo'){
       primary='<span class="decisionbar__note">'+ICO.clock+'Em processamento na Receita. Aguarde o recibo para alterar.</span>'+comp;
     } else if(e.st==='recibo'||e.st==='advertencia'){
-      primary=comp+'<button class="btn btn--primary btn--lg" type="button" data-alterar data-ev="'+evKey+'">'+ICO.doc+'Alterar</button>';
+      // Alterar (primária) + menu "mais ações" (Ver comprovante · Excluir). Solicitação é sempre SOBRE o balancete.
+      var dots='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>';
+      var trash='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>';
+      primary='<button class="btn btn--primary btn--lg" type="button" data-alterar data-ev="'+evKey+'">'+ICO.doc+'Alterar</button>'+
+        '<div class="moremenu" data-moremenu>'+
+        '<button class="btn btn--secondary btn--lg moremenu__btn" type="button" data-moremenu-btn aria-haspopup="menu" aria-expanded="false" aria-label="Mais ações" title="Mais ações">'+dots+'</button>'+
+        '<div class="moremenu__panel" role="menu" hidden>'+
+          '<button class="menu__item" role="menuitem" type="button" data-comprovante data-ev="'+evKey+'">'+ICO.receipt+'Ver comprovante</button>'+
+          '<button class="menu__item menu__item--danger" role="menuitem" type="button" data-excluir data-ev="'+evKey+'">'+trash+'Excluir '+esc(meta.short.toLowerCase())+'</button>'+
+        '</div></div>';
     } else if(e.st==='pendente'){
       // rascunho já importado → transmitir (travado enquanto houver conta a corrigir).
       // "Importar novamente" fica AO LADO do Transmitir (a PO: a esquerda é convenção de cancelar/voltar).
@@ -1595,6 +1608,13 @@
       : 'Documentos que geraram dedução (infoDeducao), com teto, uso acumulado e saldo da conta-corrente.';
     // Evento que NÃO se aplica a este contribuinte (aba desabilitada; só via deep-link cairia aqui).
     if(e.st==='na') return '<div class="empty"><span class="empty__icon" aria-hidden="true">'+ICO.info+'</span><p class="empty__title">'+esc(meta.name)+' não se aplica</p><p class="empty__text">Este contribuinte não tem '+esc(meta.name.toLowerCase())+' no seu Plano de Contas, então este evento não é declarado nesta competência.</p></div>';
+    // Excluído: sem evento em vigor na competência; cabeçalho + banner "Sem balancete" + Reincluir + histórico de solicitações.
+    if(e.st==='excluido') return '<section class="sec" style="margin-top:0">'+evHead(evKey,M)+
+      '<div style="margin-top:var(--space-6)"><div class="statusbar statusbar--warning" role="status"><span class="statusbar__ic" aria-hidden="true">'+ICO.alert+'</span>'+
+      '<div class="statusbar__b"><p class="statusbar__title">Sem '+esc(meta.name.toLowerCase())+' nesta competência</p>'+
+      '<p class="statusbar__desc">Foi excluído por uma Solicitação de Exclusão aceita pela Receita. Você pode reincluir quando quiser (enquanto a competência não estiver fechada).</p></div>'+
+      '<div class="statusbar__actions"><button class="btn btn--primary" type="button" data-importar data-ev="'+evKey+'">'+ICO.upload+'Reincluir '+esc(meta.short.toLowerCase())+'</button></div></div></div>'+
+      solSection(evKey,M)+'</section>';
     // NADA IMPORTADO AINDA: a importação é da COMPETÊNCIA (uma planilha alimenta tudo), mostrada no hub. Aqui só aponta pra lá.
     if(e.st==='pendente' && !e.prep) return importCTA(M);
     // Detalhe do evento em ABAS (padrão do Plano de Contas): Conteúdo (versão atual) · Versões (histórico).
@@ -1719,6 +1739,12 @@
     try{ localStorage.removeItem('adere.mov.fech.'+emp+'.'+M.per); }catch(e){}
     M.fech=''; M.fechProc=false; M.total.cbs='—'; M.total.ibs='—'; M.total.is='—';
     renderPanels(); navTo('visao',false); }
+  /* Excluir o evento (tpOper=3): vira Solicitação de Exclusão → o evento fica "Sem balancete" na competência;
+     dá pra reincluir depois. Só faz sentido antes do fechamento (a UI já esconde a ação no mês fechado). */
+  function doExcluir(k, mot){ var M=MESES[perIdx];
+    M.ev[k]=Object.assign({}, M.ev[k], {st:'excluido', excMot:mot, sub:'Excluído nesta competência · pode ser reincluído', val:'—', valLbl:''});
+    renderPanels(); navTo(tab,false);
+    movToast('Solicitação de Exclusão transmitida à Receita.'); }
   function runImport(evKey){
     var M=MESES[perIdx];
     // Uma planilha alimenta TODOS os eventos aplicáveis do mês (não só um).
@@ -1834,14 +1860,18 @@
       alterar:['Alterar cria uma nova solicitação', 'Alterar reabre '+nm+' para importar ou editar os dados, criando uma NOVA solicitação. Ela segue o fluxo: preparação → aprovação → transmissão à Receita. A solicitação vigente continua valendo até a nova ser aceita.','Importar nova solicitação'],
       transmitir:['Transmitir '+nm+' à Receita?', 'A a-DeRE envia '+nm+' à Receita Federal. O processamento é assíncrono: primeiro volta um protocolo (em processamento) e, quando a Receita conclui, o recibo. Enquanto processa, o evento não pode ser alterado.','Transmitir '+nm],
       template:['Baixar template de importação', 'O template traz as colunas no formato do leiaute da movimentação mensal (conta, saldos, movimento, ajustes e a base por conta). Preencha com os dados do mês e importe de volta pela opção "Importar planilha".','Baixar template'],
-      erp:['Integração com ERP', 'A conexão direta com o ERP ou sistema contábil, para importar a movimentação automaticamente, está em desenvolvimento. Por enquanto, use a importação por planilha.','Entendi'] };
+      erp:['Integração com ERP', 'A conexão direta com o ERP ou sistema contábil, para importar a movimentação automaticamente, está em desenvolvimento. Por enquanto, use a importação por planilha.','Entendi'],
+      excluir:['Excluir '+nm+'?', 'Excluir cria uma Solicitação de Exclusão à Receita (tpOper 3), tornando '+nm+' sem efeito nesta competência. Depois você pode reincluir. Só é possível enquanto a competência não foi fechada.','Excluir '+nm] };
     var c=C[kind]; if(!c) return;
     // ícone do modal por tipo de ação (o slot .modal__ic ficava vazio — a PO: "está sem icon")
-    var CICO={fechar:ICO.lock, reabrir:ICO.lock, importar:ICO.upload, alterar:ICO.doc, transmitir:ICO.send, template:ICO.download, erp:ICO.erp};
+    var CICO={fechar:ICO.lock, reabrir:ICO.lock, importar:ICO.upload, alterar:ICO.doc, transmitir:ICO.send, template:ICO.download, erp:ICO.erp, excluir:ICO.alert};
     var icEl=document.getElementById('confirmIc'); if(icEl) icEl.innerHTML=CICO[kind]||ICO.doc;
     document.getElementById('confirmTitle').textContent=c[0];
     document.getElementById('confirmGo').textContent=c[2];
     if(kind==='fechar'){ document.getElementById('confirmBody').innerHTML=fecharFormHTML(evKey); return; }
+    if(kind==='excluir'){ document.getElementById('confirmBody').innerHTML='<p style="margin:0 0 var(--space-4)">'+esc(c[1])+'</p>'+
+      '<label class="field__label" for="excMot">Motivo da exclusão</label>'+
+      '<select class="select" id="excMot" style="width:100%;margin-top:var(--space-2)"><option value="2">Envio indevido (fato inexistente)</option><option value="3">Erro na identificação (CNPJ ou período)</option><option value="1">Determinação judicial ou administrativa</option><option value="9">Outro</option></select>'; return; }
     document.getElementById('confirmBody').innerHTML='<p style="margin:0">'+esc(c[1])+'</p>';
   }
   /* Formulário do fechamento (D-1199): as DECISÕES declaratórias antes de transmitir —
@@ -1889,6 +1919,13 @@
     document.querySelectorAll('input[name=fdmet]').forEach(function(r){ r.addEventListener('change',function(){ if(d) d.hidden=(r.value!=='manual'); }); });
   }
   document.addEventListener('click', function(ev){
+    // menu "mais ações" (⋯): abre/fecha; clique fora fecha; Excluir abre o confirm de exclusão.
+    var mmBtn=ev.target.closest('[data-moremenu-btn]');
+    if(mmBtn){ var mm=mmBtn.closest('[data-moremenu]'), pnl=mm.querySelector('.moremenu__panel'), open=!pnl.hidden;
+      document.querySelectorAll('.moremenu__panel').forEach(function(p){p.hidden=true;});
+      pnl.hidden=open; mmBtn.setAttribute('aria-expanded',String(!open)); return; }
+    if(!ev.target.closest('[data-moremenu]')){ document.querySelectorAll('.moremenu__panel').forEach(function(p){p.hidden=true;}); }
+    var xb=ev.target.closest('[data-excluir]'); if(xb){ fillConfirm('excluir', xb.getAttribute('data-ev')); openModal('confirmModal'); return; }
     var cb=ev.target.closest('[data-comprovante]');
     if(cb){ document.getElementById('compReceipt').innerHTML=receiptInner(cb.getAttribute('data-ev'), MESES[perIdx], cb.getAttribute('data-ver')); openModal('compModal'); return; }
     var vb=ev.target.closest('[data-versoes]');
@@ -1909,12 +1946,15 @@
       if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(num).then(ok, legacy); } else { legacy(); }
       return; }
     if(ev.target.id==='confirmGo'){
-      var p=PENDING; PENDING=null; closeAllModals();
-      // O confirmar EXECUTA (transmite/fecha/reabre) com protocolo → recibo coreografado — em QUALQUER empresa.
+      var p=PENDING; PENDING=null;
+      var excMot=null; if(p&&p.kind==='excluir'){ var _ms=document.getElementById('excMot'); excMot=_ms?_ms.value:'9'; }
+      closeAllModals();
+      // O confirmar EXECUTA (transmite/fecha/reabre/exclui) com protocolo → recibo coreografado — em QUALQUER empresa.
       if(p){
         if(p.kind==='transmitir' && p.ev) doTransmit(p.ev);
         else if(p.kind==='fechar') doFechar();
         else if(p.kind==='reabrir') doReabrir();
+        else if(p.kind==='excluir' && p.ev) doExcluir(p.ev, excMot);
         else if((p.kind==='alterar'||p.kind==='importar') && p.ev) runImport(p.ev);   // retificação/reimport = importar nova versão
         else if(p.kind==='template') movToast('Template da planilha baixado (exemplo).');
         else if(p.kind==='erp') movToast('Integração com ERP em desenvolvimento.');
