@@ -506,9 +506,9 @@
         <div class="wrap">
           <!-- Contadores do ano-calendário: apurado (CBS/IBS) + próximo prazo (contador) -->
           <div class="mvstats">
-            <div class="stat"><span class="stat__ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg></span><p class="stat__label">CBS apurada no ano</p><p class="stat__value" id="coCbsAno">&mdash;</p></div>
-            <div class="stat"><span class="stat__ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect width="4" height="7" x="7" y="10" rx="1"/><rect width="4" height="12" x="15" y="5" rx="1"/></svg></span><p class="stat__label">IBS apurado no ano</p><p class="stat__value" id="coIbsAno">&mdash;</p></div>
-            <div class="stat"><span class="stat__ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span><p class="stat__label">Próximo prazo</p><p class="stat__value" id="coPrazo">&mdash;</p><p class="stat__delta" id="coPrazoSub"></p></div>
+            <div class="stat"><span class="stat__ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg></span><p class="stat__label">CBS apurada no ano</p><p class="stat__value" id="coCbsAno">&mdash;</p></div>
+            <div class="stat"><span class="stat__ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect width="4" height="7" x="7" y="10" rx="1"/><rect width="4" height="12" x="15" y="5" rx="1"/></svg></span><p class="stat__label">IBS apurado no ano</p><p class="stat__value" id="coIbsAno">&mdash;</p></div>
+            <div class="stat"><span class="stat__ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span><p class="stat__label">Próximo prazo</p><p class="stat__value" id="coPrazo">&mdash;</p><p class="stat__delta" id="coPrazoSub"></p></div>
           </div>
           <!-- Régua de meses (card próprio, separado da identidade): navega a competência SEM sair da tela.
                Barrinha superior de cada chip = situação do mês (verde fechado, âmbar mês corrente, cinza a vencer). -->
@@ -767,7 +767,9 @@
     var curEv = EMPEV[emp] ? EMPEV[emp] : MESES[0].ev;
     var MES3f=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
     function evAll(st, prep){ var o={}; ORDER.forEach(function(k){ var na=(curEv[k]&&curEv[k].st==='na'); o[k]=Object.assign({}, curEv[k], {st: na?'na':st}, (prep&&!na)?{prep:true}:{}); }); return o; }
-    function evFor(state){ return state==='fech'?evAll('recibo'):state==='proc'?evAll('protocolo'):state==='prep'?evAll('pendente',true):evAll('pendente'); }
+    // 'proc' = competência EM PROCESSAMENTO = fechamento (D-1199) transmitido → os eventos JÁ estão com recibo
+    // (o fechamento só é transmitido depois de todos processados). NÃO é evento em protocolo.
+    function evFor(state){ return (state==='fech'||state==='proc')?evAll('recibo'):state==='prep'?evAll('pendente',true):evAll('pendente'); }
     var S=ANUAL.meses, arr=[];
     for(var m=9;m>=1;m--){                       // set(corrente) → jan, na ordem novo→antigo
       var i=m-1, state=S[i]||'none', cur=(m===9), per='2026-'+(m<10?'0'+m:m);
@@ -777,8 +779,10 @@
       var ev = demo ? curEv : evFor(state);
       var fech = demo ? MESES[0].fech : (state==='fech'?'fechado':'bloqueado');
       var base = cur ? MESES[0] : (MESES[1]||MESES[0]);
-      arr.push(Object.assign({}, base, {per:per, txt:MES3f[i]+' 2026', cur:cur,
-        prazo:'15/'+((m+1)<10?'0'+(m+1):(m+1))+'/2026', fech:fech, ev:ev, anoState:state}));
+      var mObj=Object.assign({}, base, {per:per, txt:MES3f[i]+' 2026', cur:cur,
+        prazo:'15/'+((m+1)<10?'0'+(m+1):(m+1))+'/2026', fech:fech, ev:ev, anoState:state});
+      if(!demo && state==='proc') mObj.fechProc=true;   // fechamento transmitido, aguardando o recibo do D-1199
+      arr.push(mObj);
     }
     MESES=arr;
   })();
@@ -1931,11 +1935,12 @@
     bar.innerHTML=TABS.map(function(s){
       var a=(s===tab), isEv=(s!=='visao'), na=!!NA_SLUGS[s], dis=(na || (locked && isEv));
       var icHtml = isEv ? '<span class="tab__ic" aria-hidden="true">'+EV_META[SLUG2EV[s]].ic+'</span>' : '';
-      var naHint = na ? '<span class="tab__na">não se aplica</span>' : '';
-      var title = na ? 'Este evento não se aplica a este contribuinte.' : (locked&&isEv ? 'Importe a movimentação do mês para habilitar este evento.' : '');
+      // "não se aplica" NÃO vai no título da aba (fica desabilitada + tooltip; a explicação mora no conteúdo do painel).
+      var title = na ? 'Não se aplica a este contribuinte' : (locked&&isEv ? 'Importe a movimentação do mês para habilitar este evento.' : '');
       return '<button class="tab'+(a?' is-active':'')+(na?' tab--na':'')+'" type="button" role="tab" aria-selected="'+(a?'true':'false')+'"'
         +(dis?' aria-disabled="true"'+(title?' title="'+esc(title)+'"':''):'')
-        +' data-tab="'+s+'">'+icHtml+esc(tabLabel(s))+naHint+'</button>'; }).join('');
+        +(na?' aria-label="'+esc(tabLabel(s)+' (não se aplica a este contribuinte)')+'"':'')
+        +' data-tab="'+s+'">'+icHtml+esc(tabLabel(s))+'</button>'; }).join('');
     bar.querySelectorAll('[data-tab]').forEach(function(b){ b.addEventListener('click',function(){ if(b.getAttribute('aria-disabled')==='true') return; navTo(b.getAttribute('data-tab'), true); }); });
   }
   function navTo(slug, push){
