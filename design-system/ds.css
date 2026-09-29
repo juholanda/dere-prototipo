@@ -422,7 +422,7 @@ textarea.input--compact{min-height:64px}   /* editores inline (linha de conta, t
 
 /* Status (cor + dot + rótulo) */
 .status{display:inline-flex;align-items:center;gap:var(--space-1-5);padding:var(--space-1) var(--space-2);border-radius:var(--radius-pill);white-space:nowrap;
-  font-size:var(--text-sm);font-weight:600;background:var(--color-surface-2);color:var(--color-text-onmuted);border:1px solid color-mix(in srgb, currentColor 25%, transparent)}
+  font-size:var(--text-sm);font-weight:600;background:var(--color-surface-2);color:var(--color-text-onmuted)}
 .status__dot{width:6px;height:6px;border-radius:50%;background:currentColor}
 .status__check{flex:0 0 auto}
 .status--success{background:var(--color-success-bg);color:var(--color-success-fg)}
@@ -480,8 +480,8 @@ textarea.input--compact{min-height:64px}   /* editores inline (linha de conta, t
 .table--stickyactions tbody tr{background:var(--color-surface)}
 .table--stickyactions th:last-child:not([colspan]),
 .table--stickyactions td:last-child:not([colspan]){position:sticky;right:0;z-index:1}
-.table--stickyactions td:last-child:not([colspan]){background:inherit;box-shadow:inset 1px 0 0 var(--color-border)}
-.table--stickyactions th:last-child:not([colspan]){background:var(--color-surface);box-shadow:inset 1px 0 0 var(--color-border)}
+.table--stickyactions td:last-child:not([colspan]){background:inherit;box-shadow:inset 1px 0 0 var(--color-border-strong)}
+.table--stickyactions th:last-child:not([colspan]){background:var(--color-surface);box-shadow:inset 1px 0 0 var(--color-border-strong)}
 /* Wrapper de tabela: em tela menor a tabela NÃO encolhe nem corta o conteúdo (status, botão);
    ela rola na horizontal dentro do wrapper. Combine com .table--stickyactions p/ a ação ficar à vista. */
 .table-wrap{overflow-x:auto;scrollbar-width:thin}
