@@ -480,8 +480,8 @@ textarea.input--compact{min-height:64px}   /* editores inline (linha de conta, t
 .table--stickyactions tbody tr{background:var(--color-surface)}
 .table--stickyactions th:last-child:not([colspan]),
 .table--stickyactions td:last-child:not([colspan]){position:sticky;right:0;z-index:1}
-.table--stickyactions td:last-child:not([colspan]){background:inherit;box-shadow:inset 1px 0 0 var(--color-border-strong)}
-.table--stickyactions th:last-child:not([colspan]){background:var(--color-surface);box-shadow:inset 1px 0 0 var(--color-border-strong)}
+.table--stickyactions td:last-child:not([colspan]){background:inherit;box-shadow:inset 1px 0 0 var(--color-border)}
+.table--stickyactions th:last-child:not([colspan]){background:var(--color-surface);box-shadow:inset 1px 0 0 var(--color-border)}
 /* Wrapper de tabela: em tela menor a tabela NÃO encolhe nem corta o conteúdo (status, botão);
    ela rola na horizontal dentro do wrapper. Combine com .table--stickyactions p/ a ação ficar à vista. */
 .table-wrap{overflow-x:auto;scrollbar-width:thin}
