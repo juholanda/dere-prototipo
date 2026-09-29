@@ -853,6 +853,13 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 .dalert__title{font-weight:700;color:var(--color-text);margin:0;font-size:var(--text-base)}
 .dalert__text{font-size:var(--text-sm);color:var(--color-text-onmuted);margin:var(--space-1) 0 0;line-height:1.55}
 .dalert__body{flex:1;min-width:0}
+/* Anel de progresso (competência: N de M eventos). Valor via --pct (0-100). */
+.progress-ring{position:relative;width:60px;height:60px;flex:0 0 auto;border-radius:var(--radius-pill);background:conic-gradient(var(--color-primary) calc(var(--pct,0)*1%), var(--color-border) 0)}
+.progress-ring::after{content:"";position:absolute;inset:5px;background:var(--color-surface);border-radius:var(--radius-pill)}
+.progress-ring__val{position:absolute;inset:0;display:grid;place-items:center;font-size:var(--text-xl);font-weight:500;color:var(--color-heading);font-variant-numeric:tabular-nums}
+.progress-ring--sm{width:44px;height:44px}
+.progress-ring--sm::after{inset:4px}
+.progress-ring--sm .progress-ring__val{font-size:var(--text-sm)}
 .dalert__act{flex:0 0 auto;align-self:center;white-space:nowrap}
 /* Barra de filtro ativo (padrão reutilizável): fica logo acima de uma tabela/lista, com um ícone de funil,
    o rótulo "Filtrando por" e um chip removível (× limpa o recorte). Use sempre que um KPI/atalho recortar a lista abaixo. */

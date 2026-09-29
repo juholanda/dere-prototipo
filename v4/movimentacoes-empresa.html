@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Movimentações Mensais · MAG Seguros</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=8bb44280">
+  <link rel="stylesheet" href="../design-system/ds.css?v=93938557">
   <script src="../design-system/ds-tailwind.js"></script>
   <style>
     /* ===== app-shell ===== */
@@ -58,9 +58,11 @@
     .mesesbar::-webkit-scrollbar{height:6px}
     .mesesbar::-webkit-scrollbar-thumb{background:var(--color-border-strong);border-radius:var(--radius-pill)}
     .mesescard{margin-bottom:var(--space-6);padding:var(--space-6)}
-    .mesescard__h{display:flex;align-items:baseline;justify-content:space-between;gap:var(--space-4);margin-bottom:var(--space-4)}
-    .mesesbar__lbl{display:block;font-size:var(--text-xs);font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--color-text-muted);margin:0}
-    .mescount{font-size:var(--text-sm);color:var(--color-text-onmuted);font-variant-numeric:tabular-nums;white-space:nowrap}
+    .mesescard__h{display:flex;align-items:center;gap:var(--space-4);margin-bottom:var(--space-6)}
+    .mesesbar__lbl{display:block;font-size:var(--text-2xl);font-weight:600;letter-spacing:-.01em;color:var(--color-heading);margin:0}
+    .mescount{font-size:var(--text-sm);color:var(--color-text-muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+    /* Sufixo do "Prazo da competência atual" no cabeçalho (estado nada): data forte + "faltam N dias" menor/muted. */
+    .kv__vsub{font-size:var(--text-xs);font-weight:400;color:var(--color-text-muted)}
     /* barra de fechamento do mês no card dos meses: bloco coeso (competência + situação + ação), sempre visível */
     .mesfech{display:flex;align-items:center;justify-content:space-between;gap:var(--space-4) var(--space-6);flex-wrap:wrap;margin-top:var(--space-6);padding:var(--space-4) var(--space-6);background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-lg)}
     .mesfech__info{display:flex;flex-direction:column;gap:var(--space-2);min-width:0}
@@ -105,17 +107,22 @@
     .moremenu__btn{padding-left:var(--space-3);padding-right:var(--space-3)}
     .moremenu__btn svg{width:20px;height:20px}
     .moremenu__panel{position:absolute;top:calc(100% + var(--space-2));right:0;z-index:20;min-width:210px;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-base);box-shadow:var(--shadow-lg);padding:var(--space-2);display:flex;flex-direction:column;gap:2px}
-    .mchip{flex:0 0 auto;display:inline-flex;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-4);border:1px solid var(--color-border);border-top:3px solid var(--color-border-strong);border-radius:var(--radius-base);background:var(--color-surface);font-size:var(--text-base);color:var(--color-text);cursor:pointer;font-family:inherit;transition:border-color .12s}
-    .mchip__n{font-size:var(--text-xs);font-weight:700;color:var(--color-text-muted);font-variant-numeric:tabular-nums}
+    /* Régua de meses (frame 10390:9549): caixa vertical, barra colorida no topo (= situação), rótulo "Mmm/26". */
+    .mchip{flex:1 1 0;min-width:64px;display:flex;flex-direction:column;align-items:stretch;padding:0;border:1px solid var(--color-border);border-radius:var(--radius-base);background:var(--color-surface);cursor:pointer;font-family:inherit;overflow:hidden;transition:border-color .12s}
+    .mchip__bar{height:4px;width:100%;background:var(--color-border-strong)}
+    .mchip__lbl{padding:var(--space-2) var(--space-3);text-align:center;font-size:var(--text-sm);font-weight:500;color:var(--color-text-onmuted);white-space:nowrap}
+    .mchip__lbl--muted{color:var(--color-text-muted)}
+    .mchip__lbl--pend{color:var(--color-warning-fg)}
     .mchip:hover:not(:disabled){border-color:var(--color-primary)}
     .mchip:focus-visible{outline:none;box-shadow:var(--ring)}
-    .mchip:disabled{cursor:default;color:var(--color-text-muted)}
-    .mchip.is-cur{border-color:var(--color-primary);background:var(--color-primary-subtle);color:var(--color-primary-darker);font-weight:600;box-shadow:inset 0 0 0 1px var(--color-primary)}
-    .mtop--fech{border-top-color:var(--color-success-fg)}
-    .mtop--proc{border-top-color:var(--color-warning)}
-    .mtop--atraso{border-top-color:var(--color-danger)}
-    .mtop--avencer{border-top-color:var(--color-border)}
-    .mchip__now{font-size:var(--text-2xs);font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--color-primary);margin-left:var(--space-1)}
+    .mchip:disabled{cursor:default}
+    .mchip.is-cur{border-color:var(--color-primary);box-shadow:inset 0 0 0 1px var(--color-primary)}
+    .mchip.is-cur .mchip__bar{background:var(--color-primary)}
+    .mchip.is-cur .mchip__lbl{font-weight:700}
+    .mchip__bar--fech{background:var(--color-success-fg)}
+    .mchip__bar--proc{background:var(--color-warning)}
+    .mchip__bar--atraso{background:var(--color-danger)}
+    .mchip__bar--avencer{background:var(--color-border-strong)}
     /* barra de abas fixa: ao trocar de aba o conteúdo troca no lugar, sem a página saltar pro topo */
     #evtabsWrap{position:sticky;top:0;z-index:5;background:var(--slate-100);padding-top:var(--space-2);margin-top:0}
     :root[data-theme="dark"] #evtabsWrap{background:var(--color-bg)}
@@ -294,19 +301,27 @@
     .emptyev__t{font-size:var(--text-lg);font-weight:700;color:var(--color-heading);margin:0}
     .emptyev__x{font-size:var(--text-sm);color:var(--color-text-onmuted);margin:0 0 var(--space-3);max-width:46ch;line-height:1.5}
     /* estado vazio = dois cartões de importação (padrão do Plano de Contas): planilha × ERP */
-    .create-opts{display:grid;grid-template-columns:repeat(2,minmax(0,480px));gap:var(--space-6);justify-content:center;margin-top:var(--space-8)}
-    @media(max-width:680px){.create-opts{grid-template-columns:minmax(0,480px)}}
-    .create-opt{border:1px solid var(--color-border);border-radius:var(--radius-2xl);padding:var(--space-6);background:var(--color-surface);text-align:center;display:flex;flex-direction:column;align-items:center;transition:border-color .14s,box-shadow .14s}
+    .create-opts{display:flex;gap:var(--space-6);justify-content:center;padding-inline:calc(var(--space-8) * 2)}
+    @media(max-width:680px){.create-opts{flex-direction:column;padding-inline:0}}
+    .create-opt{flex:1 1 0;min-width:0;border:1px solid var(--color-border);border-radius:var(--radius-2xl);padding:var(--space-6);background:var(--color-surface-2);text-align:center;display:flex;flex-direction:column;align-items:center;gap:var(--space-6);transition:border-color .14s,box-shadow .14s}
     .create-opt:hover{border-color:var(--color-primary);box-shadow:var(--shadow-sm)}
-    .create-opt__ic{width:48px;height:48px;border-radius:var(--radius-lg);background:var(--color-primary-subtle);color:var(--color-primary);display:grid;place-items:center;margin-bottom:var(--space-4)}
+    .create-opt__ic{width:48px;height:48px;border-radius:var(--radius-base);background:var(--color-border);color:var(--color-primary);display:grid;place-items:center;flex:0 0 auto}
     .create-opt__ic svg{width:24px;height:24px}
-    .create-opt h3{font-size:var(--text-base);font-weight:700;margin:0 0 var(--space-2);color:var(--color-heading)}
+    .create-opt h3{font-size:var(--text-base);font-weight:600;letter-spacing:-.01em;margin:0 0 var(--space-2);color:var(--color-heading)}
     .create-opt p{font-size:var(--text-sm);color:var(--color-text-muted);margin:0 0 var(--space-4);line-height:1.5;max-width:54ch}
     .create-opt .btn{margin-top:var(--space-1)}
     .create-opt__tpl{display:inline-flex;align-items:center;gap:var(--space-1-5);margin-top:var(--space-4);font-size:var(--text-sm);font-weight:600;color:var(--color-primary);text-decoration:none;background:none;border:0;cursor:pointer}
     .create-opt__tpl:hover{text-decoration:underline}
     .create-opt__tpl:focus-visible{outline:none;box-shadow:var(--ring);border-radius:var(--radius-sm)}
     .create-opt__tpl svg{width:15px;height:15px;flex:0 0 auto}
+    .create-opt__acts{display:flex;gap:var(--space-2);justify-content:center;flex-wrap:wrap}
+    /* Card da competência (estado "nada importado"): anel + título + ações + import */
+    .compcard{display:flex;flex-direction:column;gap:var(--space-8)}
+    .compcard__top{display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);flex-wrap:wrap}
+    .compcard__id{display:flex;align-items:center;gap:var(--space-4)}
+    .compcard__t{font-size:var(--text-base);font-weight:600;color:var(--color-heading);margin:0;letter-spacing:-.01em}
+    .compcard__x{font-size:var(--text-sm);color:var(--color-text-onmuted);margin:2px 0 0}
+    .compcard__lead{display:flex;flex-direction:column;gap:var(--space-1)}
     /* modal "lendo a planilha": ícone + passo atual + barra de progresso */
     .impproc{text-align:center;padding:var(--space-8) var(--space-6)}
     .impproc__ic{width:var(--space-14);height:var(--space-14);margin:0 auto var(--space-4);border-radius:var(--radius-lg);display:grid;place-items:center;background:var(--color-primary-subtle);color:var(--color-primary)}
@@ -507,7 +522,9 @@
               </div>
               <div class="cometa">
                 <div><p class="kv__k">Regime principal</p><p class="kv__v" id="coRegime">Serviços Financeiros</p></div>
-                <div><p class="kv__k">PGCC vigente</p><p class="kv__v" id="coPgcc">Versão 2</p></div>
+                <div id="coPgccMeta"><p class="kv__k">PGCC vigente</p><p class="kv__v" id="coPgcc">Versão 2</p></div>
+                <!-- Estado "nada importado" (frame 10390:9549): troca PGCC por "Prazo da competência atual" -->
+                <div id="coPrazoMeta" hidden><p class="kv__k">Prazo da competência atual</p><p class="kv__v"><span id="coPrazoMetaD"></span> <span class="kv__vsub" id="coPrazoMetaSub"></span></p></div>
               </div>
             </div>
           </div>
@@ -573,6 +590,15 @@
       <div class="modal__header modal__header--icon"><span class="modal__ic modal__ic--primary" id="confirmIc" aria-hidden="true"></span><h3 class="modal__title" id="confirmTitle"></h3><button class="icon-btn" type="button" data-modal-close aria-label="Fechar" style="flex:0 0 auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg></button></div>
       <div class="modal__body" id="confirmBody"></div>
       <div class="modal__footer"><button class="btn btn--ghost" type="button" data-modal-close>Cancelar</button><button class="btn btn--primary" type="button" id="confirmGo"></button></div>
+    </div>
+  </div>
+
+  <!-- Modal informativo: tentar fechar/transmitir com eventos incompletos (decisão do PO: botão habilitado + aviso). -->
+  <div class="scrim" id="fecharBlockModal" hidden>
+    <div class="modal modal--md" role="dialog" aria-modal="true" aria-labelledby="fecharBlockTitle" aria-describedby="fecharBlockBody">
+      <div class="modal__header modal__header--icon"><span class="modal__ic modal__ic--warning" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg></span><h3 class="modal__title" id="fecharBlockTitle">Conclua os eventos antes de fechar</h3><button class="icon-btn" type="button" data-modal-close aria-label="Fechar" style="flex:0 0 auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg></button></div>
+      <div class="modal__body" id="fecharBlockBody"><p>O fechamento da competência só estará disponível após a conclusão de todos os eventos da Movimentação Mensal. Importe (ou integre) as informações necessárias para a conclusão dos eventos.</p></div>
+      <div class="modal__footer"><button class="btn btn--primary" type="button" data-modal-close>Entendi</button></div>
     </div>
   </div>
 
@@ -647,6 +673,8 @@
     upload:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>',
     send:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg>',
     download:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>',
+    unplug:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m19 5 3-3"/><path d="m2 22 3-3"/><path d="M6.3 20.3a2.4 2.4 0 0 0 3.4 0L12 18l-6-6-2.3 2.3a2.4 2.4 0 0 0 0 3.4Z"/><path d="M7.5 13.5 10 11"/><path d="M10.5 16.5 13 14"/><path d="m12 6 6 6 2.3-2.3a2.4 2.4 0 0 0 0-3.4l-2.6-2.6a2.4 2.4 0 0 0-3.4 0Z"/></svg>',
+    calcheck:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v4M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18m-9 6 2 2 4-4"/></svg>',
     erp:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22v-5"/><path d="M9 8V2"/><path d="M15 8V2"/><path d="M18 8v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V8Z"/></svg>',
     ext:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>',
     chev:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>',
@@ -1116,7 +1144,7 @@
       stageSub=s.ready
         ? (applicable.length+' de '+applicable.length+' concluídos · pronto para fechar.')
         : (s.comRecibo+' de '+applicable.length+' concluídos · '+(faltam===1?'falta 1 evento':'faltam '+faltam+' eventos')+' com recibo para fechar.');
-      action='<button class="btn btn--primary" type="button"'+(s.ready?' data-fechar':' aria-disabled="true" aria-describedby="fechHint" data-blocked="1"')+'>'+ICO.lock+'Fechar competência</button>';
+      action='<button class="btn btn--primary" type="button"'+(s.ready?' data-fechar':' data-blocked="1"')+'>'+ICO.lock+'Fechar competência</button>';
     }
     var readyHint=(!s.closed && s.started && !s.ready)?'<span id="fechHint" class="sr-only">O fechamento fica disponível quando todos os eventos tiverem recibo.</span>':'';
     // BLOCO SÓ DO FECHAMENTO acima dos eventos (a PO): situação + contador + AÇÃO (Fechar/Reabrir) +
@@ -1154,27 +1182,49 @@
     return '<div class="evnavgrid">'+cards+'</div>';
   }
   /* Importação da COMPETÊNCIA (uma planilha alimenta todos os eventos), padrão do Plano de Contas: baixar template · importar planilha · conectar ERP. */
-  function importCTA(M){
+  /* Os 2 cartões de importação (planilha × ERP), botões/ícones do frame: Importar dados (upload) · Baixar template (download) · Conectar ERP (unplug). */
+  function importOpts(M){
     var firstEv=(ORDER.filter(function(x){return M.ev[x].st!=='na';})[0])||'d1101';
-    var cards='<div class="create-opts">'+
+    return '<div class="create-opts">'+
       '<div class="create-opt">'+
-        '<span class="create-opt__ic" aria-hidden="true">'+ICO.download+'</span>'+
+        '<span class="create-opt__ic" aria-hidden="true">'+ICO.upload+'</span>'+
         '<h3>Importar planilha</h3>'+
         '<p>Envie a movimentação do mês em CSV ou Excel. Baixe o template para preencher a planilha no formato correto.</p>'+
-        '<button class="btn btn--primary" type="button" data-import-run data-ev="'+firstEv+'">'+ICO.upload+'Importar planilha</button>'+
-        '<button class="create-opt__tpl" type="button" data-template>'+ICO.download+'Baixar template de importação</button>'+
+        '<div class="create-opt__acts">'+
+          '<button class="btn btn--secondary" type="button" data-import-run data-ev="'+firstEv+'">'+ICO.upload+'Importar dados</button>'+
+          '<button class="btn btn--tertiary" type="button" data-template>'+ICO.download+'Baixar template</button>'+
+        '</div>'+
       '</div>'+
       '<div class="create-opt">'+
-        '<span class="create-opt__ic" aria-hidden="true">'+ICO.erp+'</span>'+
-        '<h3>Integrar com ERP <span class="tag" style="vertical-align:middle">Em breve</span></h3>'+
-        '<p>Conecte seu ERP ou sistema contábil para trazer a movimentação do mês automaticamente. A integração está em desenvolvimento; até lá, use a importação por planilha.</p>'+
-        '<button class="btn btn--secondary" type="button" data-erp>'+ICO.erp+'Conectar ERP</button>'+
+        '<span class="create-opt__ic" aria-hidden="true">'+ICO.unplug+'</span>'+
+        '<h3>Integrar com ERP</h3>'+
+        '<p>Conecte seu ERP ou sistema contábil para trazer a movimentação do mês automaticamente.</p>'+
+        '<div class="create-opt__acts">'+
+          '<button class="btn btn--secondary" type="button" data-erp>'+ICO.unplug+'Conectar ERP</button>'+
+        '</div>'+
       '</div>'+
     '</div>';
-    return '<section class="sec impcta" style="margin-top:0"><article class="card">'+
-      '<div class="card__h"><span class="card__ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span><h2>Adicionar movimentações mensais</h2></div>'+
-      '<div class="card__body">'+cards+'</div></article></section>';
   }
+  var MES_FULL=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  /* Card da competência no estado "nada importado" (frame 10390:9549): anel de progresso N/M + título +
+     Fechar competência (habilitado → abre o modal se incompleto) + "Adicione os dados" + os 2 cartões de importação. */
+  function nadaCompCard(M){
+    var applicable=ORDER.filter(function(k){return M.ev[k].st!=='na';});
+    var total=applicable.length, done=applicable.filter(function(k){return M.ev[k].st==='recibo';}).length;
+    var pct=total?Math.round(done/total*100):0;
+    var mi=parseInt(M.per.slice(5),10)-1, ano=M.per.slice(0,4), mesNome=MES_FULL[mi]||'';
+    return '<section class="sec" style="margin-top:0"><article class="card"><div class="card__body compcard">'+
+      '<div class="compcard__top">'+
+        '<div class="compcard__id">'+
+          '<div class="progress-ring" style="--pct:'+pct+'" role="img" aria-label="'+done+' de '+total+' eventos concluídos"><span class="progress-ring__val">'+done+'/'+total+'</span></div>'+
+          '<div><p class="compcard__t">Competência - '+esc(mesNome)+'/ '+ano+'</p><p class="compcard__x">'+done+'/'+total+' eventos concluídos</p></div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="compcard__lead"><p class="compcard__t">Adicione os dados da competência</p><p class="compcard__x">Importe a planilha ou conecte seu ERP para carregar os dados de '+esc((mesNome||'').toLowerCase())+'</p></div>'+
+      importOpts(M)+
+    '</div></article></section>';
+  }
+  function importCTA(M){ return nadaCompCard(M); }   /* fallback (aba de evento travada deep-linked) usa o mesmo card */
   function visaoPanel(M){
     // Contribuinte sem PGCC vigente: não há como apurar/transmitir nada no mês.
     if(SEMPGCC[emp]){
@@ -1190,7 +1240,7 @@
     var started=applicable.some(function(k){return M.ev[k].st!=='pendente' || M.ev[k].prep;});
     var ready=(applicable.length>0 && comRecibo===applicable.length);
     // Nada importado ainda → a competência inteira mostra a importação (padrão do Plano de Contas). Sem "importar" por evento.
-    if(!started && !closed) return prazoBanner(M)+importCTA(M);
+    if(!started && !closed) return nadaCompCard(M);
 
     // EVENTOS: lista única (tabela). "Não se aplica" (na) sempre no fim da lista.
     var evOrder=ORDER.filter(function(k){return M.ev[k].st!=='na';}).concat(ORDER.filter(function(k){return M.ev[k].st==='na';}));
@@ -1681,7 +1731,7 @@
 
   /* ===== modais: comprovante · versões · confirmação (fechar/reabrir) ===== */
   function openModal(id){ var m=document.getElementById(id); if(!m) return; m.hidden=false; document.body.style.overflow='hidden'; }
-  function closeAllModals(){ ['compModal','versoesModal','confirmModal','extratoModal','impModal'].forEach(function(id){var m=document.getElementById(id); if(m) m.hidden=true;}); document.body.style.overflow=''; }
+  function closeAllModals(){ ['compModal','versoesModal','confirmModal','extratoModal','impModal','fecharBlockModal'].forEach(function(id){var m=document.getElementById(id); if(m) m.hidden=true;}); document.body.style.overflow=''; }
   /* Importar planilha: mostra o modal "lendo…" com os passos, e ao terminar revela o evento preparado. */
   /* ===== JORNADA FELIZ do Simple2u (demo oficial, caminho sem erros) =====
      importar → transmitir cada evento (protocolo → recibo, ~4s) → fechar (D-1199) → extrato (D-9199).
@@ -1987,6 +2037,7 @@
     if(ev.target.closest('[data-erp]')){ fillConfirm('erp'); openModal('confirmModal'); return; }
     if(ev.target.closest('[data-extrato]')){ document.getElementById('extratoBody').innerHTML=extratoInner(MESES[perIdx]); openModal('extratoModal'); return; }
     if(ev.target.closest('[data-fechar]')){ fillConfirm('fechar'); openModal('confirmModal'); bindFecharForm(); return; }
+    if(ev.target.closest('[data-blocked]')){ openModal('fecharBlockModal'); return; }
     if(ev.target.closest('[data-reabrir]')){ fillConfirm('reabrir'); openModal('confirmModal'); return; }
     var cp=ev.target.closest('[data-copy-recibo]');
     if(cp){ var num=cp.getAttribute('data-copy-recibo');
@@ -2016,6 +2067,22 @@
   /* ===== render das views (hub + páginas de evento) + navegação ===== */
   function renderPanels(){
     var M=MESES[perIdx];
+    // Estado "nada importado" (frame 10390:9549): sem KPIs e sem o fechBar do card de meses (o fechamento vai no card da competência).
+    var nada=!monthStarted(M);
+    var mv=document.querySelector('.mvstats'); if(mv) mv.style.display=nada?'none':'';
+    var mfb=document.getElementById('mesFechBar'); if(mfb) mfb.style.display=nada?'none':'';
+    // Cabeçalho: no estado nada troca "PGCC vigente" por "Prazo da competência atual" (frame 10390:9549).
+    var pgccMeta=document.getElementById('coPgccMeta'), prazoMeta=document.getElementById('coPrazoMeta');
+    if(pgccMeta) pgccMeta.hidden=nada;
+    if(prazoMeta){
+      prazoMeta.hidden=!nada;
+      if(nada && M.prazo){
+        var pd=document.getElementById('coPrazoMetaD'), ps=document.getElementById('coPrazoMetaSub');
+        if(pd) pd.textContent=M.prazo;
+        if(ps){ var pp=M.prazo.split('/'), vc=new Date(+pp[2],+pp[1]-1,+pp[0]), hj=new Date(2026,8,28), dd=Math.round((vc-hj)/86400000);
+          ps.textContent=(dd>0?('faltam '+dd+' dias'):(dd===0?'vence hoje':('venceu há '+(-dd)+' dias'))); }
+      }
+    }
     var html='';
     TABS.forEach(function(slug){
       var isEv=!!SLUG2EV[slug];
@@ -2077,8 +2144,10 @@
   function renderTabBar(){
     var wrap=document.getElementById('evtabsWrap'), bar=document.getElementById('evtabs'); if(!bar) return;
     if(TABS.length<=1){ if(wrap) wrap.hidden=true; bar.innerHTML=''; return; }
+    // Estado "nada importado" (frame 10390:9549): sem abas de evento — só o card da competência na Visão geral.
+    if(!monthStarted(MESES[perIdx])){ if(wrap) wrap.hidden=true; bar.innerHTML=''; return; }
     if(wrap) wrap.hidden=false;
-    var locked=!monthStarted(MESES[perIdx]);   // mês sem nada importado: trava as abas de evento
+    var locked=false;   // com algo importado, as abas de evento ficam habilitadas
     bar.innerHTML=TABS.map(function(s){
       var a=(s===tab), isEv=(s!=='visao'), na=!!NA_SLUGS[s], dis=(na || (locked && isEv));
       var icHtml = isEv ? '<span class="tab__ic" aria-hidden="true">'+EV_META[SLUG2EV[s]].ic+'</span>' : '';
@@ -2174,29 +2243,32 @@
       if(anyRej){ pill=['status--danger','<span class="status__dot"></span>Com rejeição']; sub='Um evento foi rejeitado pela Receita. Corrija e reenvie para poder fechar.'; }
       else if(anyProc){ pill=['status--info','<span class="status__dot"></span>Em processamento']; sub=s.comRecibo+' de '+s.applicable.length+' com recibo · aguardando o processamento dos demais eventos.'; }
       else { pill=['status--neutral','<span class="status__dot"></span>Em preparação']; sub=s.comRecibo+' de '+s.applicable.length+' com recibo · '+(falta===1?'falta 1 evento':'faltam '+falta+' eventos')+' para transmitir.'; }
-      action='<button class="btn btn--primary" type="button" aria-disabled="true" data-blocked="1" title="Todos os eventos precisam de recibo para o fechamento.">'+ICO.lock+'Fechar competência</button>';
+      action='<button class="btn btn--primary" type="button" data-blocked="1">'+ICO.lock+'Fechar competência</button>';
     }
     el.innerHTML='<div class="mesfech">'+
       '<div class="mesfech__info"><span class="mesfech__ttl">'+ttl+'</span>'+
         '<div class="mesfech__row"><span class="status '+pill[0]+'">'+pill[1]+'</span><span class="mesfech__sub">'+sub+'</span></div></div>'+
       '<div class="mesfech__act">'+action+'</div></div>';
   }
-  /* Régua de meses: 12 chips 01→12, cor = situação do mês (MESMA fonte da lista, ANUAL.meses):
+  /* Régua de meses (frame 10390:9549): 12 caixas "Mmm/26", barra colorida no topo = situação (ANUAL.meses):
      verde fechado · âmbar em preparação/processamento · vermelho em atraso · cinza a vencer/não iniciado.
-     Barrinha superior + rótulo acessível (nunca só cor). Clicar navega a competência; futuros desabilitados. */
-  var MTOP={ fech:'mtop--fech', proc:'mtop--proc', prep:'mtop--proc', atraso:'mtop--atraso', avencer:'mtop--avencer', none:'mtop--avencer' };
+     Mês selecionado = borda azul + barra azul; rótulo âmbar quando o mês está pendente. Clicar navega a competência. */
+  var BARCLS={ fech:'mchip__bar--fech', proc:'mchip__bar--proc', prep:'mchip__bar--proc', atraso:'mchip__bar--atraso', avencer:'mchip__bar--avencer', none:'mchip__bar--avencer' };
   function renderMesesStrip(){
     var bar=document.getElementById('mesesbar'); if(!bar) return;
     var curPer=MESES[perIdx].per, S=ANUAL.meses||[];
     bar.innerHTML=MES3.map(function(mn,i){
-      var mm=i+1, per='2026-'+(mm<10?'0'+mm:mm), num=(mm<10?'0'+mm:''+mm);
+      var mm=i+1, per='2026-'+(mm<10?'0'+mm:mm);
       var state=S[i]||'none', idx=perList().indexOf(per), has=idx>=0, isCur=(mm===9), sel=(per===curPer);
-      var lbl=MESLBL[state]||state;
-      var now = isCur ? '<span class="mchip__now">atual</span>' : '';
-      var a11y = cap(mn)+' de 2026, '+lbl+(isCur?', mês atual':'');
-      return '<button class="mchip '+(MTOP[state]||'mtop--avencer')+(sel?' is-cur':'')+'" type="button" aria-current="'+(sel?'true':'false')+'" aria-label="'+esc(a11y)+'"'
-        +(has?' data-goper="'+per+'"':' disabled')
-        +'><span class="mchip__n" aria-hidden="true">'+num+'</span>'+cap(mn)+now+'</button>';
+      // Rótulo âmbar = competência atual ainda aberta (pendente); futuros = muted; demais = onmuted. (frame 10390:9549)
+      var isFechado=(state==='fech'), pend=(isCur&&!isFechado), future=(!isCur&&(state==='avencer'||state==='none'));
+      var lblMod = pend?' mchip__lbl--pend':(future?' mchip__lbl--muted':'');
+      var a11y = cap(mn)+' de 2026, '+(MESLBL[state]||state)+(isCur?', mês atual':'');
+      return '<button class="mchip'+(sel?' is-cur':'')+'" type="button" aria-current="'+(sel?'true':'false')+'" aria-label="'+esc(a11y)+'"'
+        +(has?' data-goper="'+per+'"':' disabled')+'>'
+        +'<span class="mchip__bar '+(BARCLS[state]||'mchip__bar--avencer')+'" aria-hidden="true"></span>'
+        +'<span class="mchip__lbl'+lblMod+'">'+cap(mn)+'/26</span>'
+        +'</button>';
     }).join('');
     bar.querySelectorAll('[data-goper]').forEach(function(b){
       b.addEventListener('click',function(){ var i=perList().indexOf(b.getAttribute('data-goper')); if(i>=0) setPer(i,true); });
