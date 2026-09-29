@@ -779,8 +779,8 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 /* Select custom: gatilho estilizado + dropdown com opções formatadas (o <select> nativo não estiliza <option>) */
 .cselect{position:relative}
 .cselect__value{display:inline-flex;align-items:center;gap:var(--space-1)}
-.cselect__panel [role="option"]{gap:var(--space-2)}
-.anowarn{color:var(--color-warning-fg);flex:0 0 auto}   /* ⚠ de ano com pendência no seletor de Ano-calendário */
+.cselect__panel [role="option"]{display:flex;align-items:center;gap:var(--space-2)}   /* ícone (⚠) fica inline, não quebra pra baixo */
+.anowarn{color:var(--color-warning-fg);flex:0 0 auto;display:inline-block;vertical-align:middle}   /* ⚠ de ano com pendência no seletor de Ano-calendário (inline, nunca quebra pra baixo) */
 .cselect__trigger{width:100%;height:var(--control-h);display:flex;align-items:center;gap:var(--space-2);padding:0 var(--space-3);background:var(--color-surface);color:var(--color-text);border:1px solid var(--color-field-border);border-radius:var(--radius-base);font-family:var(--font-sans);font-size:var(--text-base);cursor:pointer;text-align:left;transition:border-color .12s,box-shadow .12s}
 .cselect__trigger:hover:not(:disabled){border-color:var(--color-text-muted)}
 .cselect__trigger:focus-visible,.cselect__trigger[aria-expanded="true"]{outline:none;border-color:var(--color-primary);box-shadow:0 0 0 3px color-mix(in srgb, var(--color-primary) 22%, transparent)}

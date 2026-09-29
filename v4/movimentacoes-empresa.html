@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Movimentações Mensais · MAG Seguros</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=cdca8474">
+  <link rel="stylesheet" href="../design-system/ds.css?v=e9480be0">
   <script src="../design-system/ds-tailwind.js"></script>
   <style>
     /* ===== app-shell ===== */
@@ -481,9 +481,9 @@
         <div class="wrap">
           <!-- Contadores do ano-calendário: apurado (CBS/IBS) + próximo prazo (contador) -->
           <div class="mvstats">
-            <div class="stat"><p class="stat__label">CBS apurada no ano</p><p class="stat__value" id="coCbsAno">&mdash;</p></div>
-            <div class="stat"><p class="stat__label">IBS apurado no ano</p><p class="stat__value" id="coIbsAno">&mdash;</p></div>
-            <div class="stat"><p class="stat__label">Próximo prazo</p><p class="stat__value" id="coPrazo">&mdash;</p><p class="stat__delta" id="coPrazoSub"></p></div>
+            <div class="stat"><span class="stat__ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg></span><p class="stat__label">CBS apurada no ano</p><p class="stat__value" id="coCbsAno">&mdash;</p></div>
+            <div class="stat"><span class="stat__ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect width="4" height="7" x="7" y="10" rx="1"/><rect width="4" height="12" x="15" y="5" rx="1"/></svg></span><p class="stat__label">IBS apurado no ano</p><p class="stat__value" id="coIbsAno">&mdash;</p></div>
+            <div class="stat"><span class="stat__ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span><p class="stat__label">Próximo prazo</p><p class="stat__value" id="coPrazo">&mdash;</p><p class="stat__delta" id="coPrazoSub"></p></div>
           </div>
           <!-- Régua de meses (card próprio, separado da identidade): navega a competência SEM sair da tela.
                Barrinha superior de cada chip = situação do mês (verde fechado, âmbar mês corrente, cinza a vencer). -->
