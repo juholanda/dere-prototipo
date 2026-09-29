@@ -61,10 +61,13 @@
     .mesescard__h{display:flex;align-items:baseline;justify-content:space-between;gap:var(--space-4);margin-bottom:var(--space-4)}
     .mesesbar__lbl{display:block;font-size:var(--text-xs);font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--color-text-muted);margin:0}
     .mescount{font-size:var(--text-sm);color:var(--color-text-onmuted);font-variant-numeric:tabular-nums;white-space:nowrap}
-    /* barra de fechamento do mês no card dos meses (situação + contador + ação, sempre visível) */
-    .mesfech{display:flex;align-items:center;gap:var(--space-4);flex-wrap:wrap;margin-top:var(--space-6);padding-top:var(--space-6);border-top:1px solid var(--color-divider)}
-    .mesfech__sub{font-size:var(--text-sm);color:var(--color-text-onmuted);flex:1 1 220px;min-width:0}
-    .mesfech__act{display:flex;gap:var(--space-2);flex:0 0 auto;flex-wrap:wrap}
+    /* barra de fechamento do mês no card dos meses: bloco coeso (competência + situação + ação), sempre visível */
+    .mesfech{display:flex;align-items:center;justify-content:space-between;gap:var(--space-4) var(--space-6);flex-wrap:wrap;margin-top:var(--space-6);padding:var(--space-4) var(--space-6);background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-lg)}
+    .mesfech__info{display:flex;flex-direction:column;gap:var(--space-2);min-width:0}
+    .mesfech__ttl{font-size:var(--text-base);font-weight:700;color:var(--color-heading)}
+    .mesfech__row{display:flex;align-items:center;gap:var(--space-3);flex-wrap:wrap}
+    .mesfech__sub{font-size:var(--text-sm);color:var(--color-text-onmuted)}
+    .mesfech__act{display:flex;gap:var(--space-3);flex:0 0 auto;flex-wrap:wrap}
     .mchip{flex:0 0 auto;display:inline-flex;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-4);border:1px solid var(--color-border);border-top:3px solid var(--color-border-strong);border-radius:var(--radius-base);background:var(--color-surface);font-size:var(--text-base);color:var(--color-text);cursor:pointer;font-family:inherit;transition:border-color .12s}
     .mchip__n{font-size:var(--text-xs);font-weight:700;color:var(--color-text-muted);font-variant-numeric:tabular-nums}
     .mchip:hover:not(:disabled){border-color:var(--color-primary)}
@@ -738,13 +741,16 @@
   (function(){
     var curEv = EMPEV[emp] ? EMPEV[emp] : MESES[0].ev;
     var MES3f=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
-    function evAll(st){ var o={}; ORDER.forEach(function(k){ var na=(curEv[k]&&curEv[k].st==='na'); o[k]=Object.assign({}, curEv[k], {st: na?'na':st}); }); return o; }
-    function evFor(state){ return state==='fech'?evAll('recibo'):state==='proc'?evAll('protocolo'):evAll('pendente'); }
+    function evAll(st, prep){ var o={}; ORDER.forEach(function(k){ var na=(curEv[k]&&curEv[k].st==='na'); o[k]=Object.assign({}, curEv[k], {st: na?'na':st}, (prep&&!na)?{prep:true}:{}); }); return o; }
+    function evFor(state){ return state==='fech'?evAll('recibo'):state==='proc'?evAll('protocolo'):state==='prep'?evAll('pendente',true):evAll('pendente'); }
     var S=ANUAL.meses, arr=[];
     for(var m=9;m>=1;m--){                       // set(corrente) → jan, na ordem novo→antigo
       var i=m-1, state=S[i]||'none', cur=(m===9), per='2026-'+(m<10?'0'+m:m);
-      var ev = cur ? curEv : evFor(state);
-      var fech = cur ? MESES[0].fech : (state==='fech'?'fechado':'bloqueado');
+      // s2u = jornada demo interativa (o demobar controla o mês corrente). Os demais DERIVAM do ANUAL,
+      // inclusive o mês corrente — assim régua, situação e fechamento batem entre si e com a lista.
+      var demo=(cur && emp==='s2u');
+      var ev = demo ? curEv : evFor(state);
+      var fech = demo ? MESES[0].fech : (state==='fech'?'fechado':'bloqueado');
       var base = cur ? MESES[0] : (MESES[1]||MESES[0]);
       arr.push(Object.assign({}, base, {per:per, txt:MES3f[i]+' 2026', cur:cur,
         prazo:'15/'+((m+1)<10?'0'+(m+1):(m+1))+'/2026', fech:fech, ev:ev, anoState:state}));
@@ -1914,27 +1920,38 @@
   function renderFechBar(){
     var el=document.getElementById('mesFechBar'); if(!el) return;
     if(SEMPGCC[emp]){ el.innerHTML=''; return; }
-    var M=MESES[perIdx], s=fechState(M), pill, sub, action;
+    var M=MESES[perIdx], s=fechState(M), pill, sub, action, ttl='Competência de '+M.txt.replace(' ',' de ');
+    var chk='<svg class="status__check" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
     if(s.closed){
-      pill=['status--success','Fechada']; sub='Competência fechada · todos os eventos com recibo.';
-      action='<button class="btn btn--ghost btn--sm" type="button" data-reabrir>'+ICO.lock+'Reabrir</button>'+
-        (emp==='s2u' ? '<button class="btn btn--secondary btn--sm" type="button" data-extrato>'+ICO.receipt+'Ver extrato</button>'
-                     : '<a class="btn btn--secondary btn--sm" href="movimentacoes-extrato.html?emp='+emp+'&per='+M.per+'">'+ICO.receipt+'Ver extrato</a>');
+      pill=['status--success', chk+'Fechada']; sub='Todos os eventos do mês com recibo.';
+      action='<button class="btn btn--ghost" type="button" data-reabrir>'+ICO.lock+'Reabrir</button>'+
+        (emp==='s2u' ? '<button class="btn btn--secondary" type="button" data-extrato>'+ICO.receipt+'Ver extrato</button>'
+                     : '<a class="btn btn--secondary" href="movimentacoes-extrato.html?emp='+emp+'&per='+M.per+'">'+ICO.receipt+'Ver extrato</a>');
     } else if(s.fproc){
-      pill=['status--info','Em processamento']; sub='Fechamento transmitido · aguardando o recibo da Receita.';
-      action='<button class="btn btn--primary btn--sm" type="button" disabled>'+ICO.lock+'Aguardando recibo</button>';
+      pill=['status--info', '<span class="status__dot"></span>Em processamento']; sub='Fechamento transmitido; aguardando o recibo da Receita.';
+      action='<button class="btn btn--primary" type="button" disabled>'+ICO.lock+'Aguardando recibo</button>';
     } else if(!s.started){
-      pill=['status--idle','Não iniciada']; sub='Nada preparado ainda neste mês. Comece pelo balancete.';
+      pill=['status--idle', '<span class="status__dot"></span>Não iniciada']; sub='Nada preparado ainda. Comece pelo balancete (D-1101).';
       var fk=s.applicable[0], fs=fk?EV_META[fk].slug:'visao';
-      action='<a class="btn btn--primary btn--sm" href="?emp='+emp+'&per='+M.per+'&ev='+fs+'" data-tab="'+fs+'" data-importar data-ev="'+esc(fk||'')+'">'+ICO.upload+'Importar balancete</a>';
+      action='<a class="btn btn--primary" href="?emp='+emp+'&per='+M.per+'&ev='+fs+'" data-tab="'+fs+'" data-importar data-ev="'+esc(fk||'')+'">'+ICO.upload+'Importar balancete</a>';
+    } else if(s.ready){
+      pill=['status--neutral', '<span class="status__dot"></span>Pronto para fechar'];
+      sub=s.applicable.length+' de '+s.applicable.length+' eventos com recibo.';
+      action='<button class="btn btn--primary" type="button" data-fechar>'+ICO.lock+'Fechar competência</button>';
     } else {
-      pill=['status--neutral','Em preparação']; var faltam=s.applicable.length-s.comRecibo;
-      sub=s.ready ? (s.applicable.length+' de '+s.applicable.length+' eventos com recibo · pronto para fechar.')
-                  : (s.comRecibo+' de '+s.applicable.length+' com recibo · '+(faltam===1?'falta 1 evento':'faltam '+faltam+' eventos')+' para fechar.');
-      action='<button class="btn btn--primary btn--sm" type="button"'+(s.ready?' data-fechar':' aria-disabled="true" data-blocked="1" title="Todos os eventos precisam de recibo para o fechamento."')+'>'+ICO.lock+'Fechar competência</button>';
+      // Não pronto: distingue rejeição × em processamento (protocolo) × em preparação (ainda não transmitido).
+      var anyRej=s.applicable.some(function(k){ return M.ev[k].st==='rejeitado'; });
+      var anyProc=s.applicable.some(function(k){ return M.ev[k].st==='protocolo'; });
+      var falta=s.applicable.length-s.comRecibo;
+      if(anyRej){ pill=['status--danger','<span class="status__dot"></span>Com rejeição']; sub='Um evento foi rejeitado pela Receita. Corrija e reenvie para poder fechar.'; }
+      else if(anyProc){ pill=['status--info','<span class="status__dot"></span>Em processamento']; sub=s.comRecibo+' de '+s.applicable.length+' com recibo · aguardando o processamento dos demais eventos.'; }
+      else { pill=['status--neutral','<span class="status__dot"></span>Em preparação']; sub=s.comRecibo+' de '+s.applicable.length+' com recibo · '+(falta===1?'falta 1 evento':'faltam '+falta+' eventos')+' para transmitir.'; }
+      action='<button class="btn btn--primary" type="button" aria-disabled="true" data-blocked="1" title="Todos os eventos precisam de recibo para o fechamento.">'+ICO.lock+'Fechar competência</button>';
     }
-    el.innerHTML='<div class="mesfech"><span class="status status--sm '+pill[0]+'"><span class="status__dot"></span>'+pill[1]+'</span>'+
-      '<span class="mesfech__sub">'+sub+'</span><span class="mesfech__act">'+action+'</span></div>';
+    el.innerHTML='<div class="mesfech">'+
+      '<div class="mesfech__info"><span class="mesfech__ttl">'+ttl+'</span>'+
+        '<div class="mesfech__row"><span class="status '+pill[0]+'">'+pill[1]+'</span><span class="mesfech__sub">'+sub+'</span></div></div>'+
+      '<div class="mesfech__act">'+action+'</div></div>';
   }
   /* Régua de meses: 12 chips 01→12, cor = situação do mês (MESMA fonte da lista, ANUAL.meses):
      verde fechado · âmbar em preparação/processamento · vermelho em atraso · cinza a vencer/não iniciado.
