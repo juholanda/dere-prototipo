@@ -1280,7 +1280,7 @@
     var sent=!!(x.transm&&x.transm!=='—'&&(x.recibo||x.protocolo));
     var num=x.recibo?('Recibo '+x.recibo.slice(0,10)+'…'+x.recibo.slice(-4)):(x.protocolo?('Protocolo '+x.protocolo.slice(0,10)+'…'):'—');
     var comp=sent?'<button class="btn btn--secondary btn--sm" type="button" data-comprovante data-ev="'+evKey+'" data-ver="'+x.n+'">'+ICO.receipt+'Comprovante</button>':'<span class="muted">—</span>';
-    return '<tr><th scope="row"><span class="soltipo">'+solTipo(x)+'</span>'+(vig?' <span class="tag tag--vig">Vigente</span>':'')+'</th>'+
+    return '<tr><th scope="row"><span class="soltipo">'+solTipo(x)+'</span>'+(vig?' <span class="tag tag--vig">Em vigor</span>':'')+'</th>'+
       '<td><span class="status status--sm '+s[0]+'"><span class="status__dot"></span>'+s[1]+'</span></td>'+
       '<td>'+esc(x.resp||'Ana Prado')+'</td>'+
       '<td class="mono">'+esc(x.transm&&x.transm!=='—'?x.transm:'—')+'</td>'+
