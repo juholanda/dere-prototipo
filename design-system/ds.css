@@ -1568,6 +1568,7 @@ body.has-decisionbar .content{scroll-padding-bottom:96px}
 /* Campo rotulado (rótulo padrão .field__label em cima + controle). Rótulo maior/escuro que o .flbl do filtro;
    usado no seletor de Ano-calendário (lista + detalhe), pra ambos ficarem idênticos. */
 .fano{display:flex;flex-direction:column;gap:var(--space-2);min-width:0}
+.fano .cselect{min-width:168px}   /* largura única do seletor de Ano-calendário (lista = detalhe) */
 .filterf .select,.filterf .input{min-width:0}
 .filterf.is-disabled .flbl{color:var(--color-text-muted)}
 .filterf--esc{flex:0 0 auto;width:240px;max-width:100%}

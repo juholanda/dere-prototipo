@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Movimentações Mensais</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=12b8d439">
+  <link rel="stylesheet" href="../design-system/ds.css?v=cdca8474">
   <script src="../design-system/ds-tailwind.js"></script>
   <script src="../design-system/ds-dialog.js"></script>
   <style>
@@ -28,7 +28,7 @@
     /* seletor de competência = MESMO do Painel (.filterf--comp + .compnav do ds); Exportar alinhado ao controle */
     /* cabeçalho quebra a competência para baixo do título quando não couber (evita "Atual" estourar a margem), sempre à direita */
     .page-h__row{flex-wrap:wrap;row-gap:var(--space-3)}
-    .page-h__act{display:flex;align-items:flex-end;gap:var(--space-4);flex-wrap:wrap;margin-left:auto}
+    .page-h__act{display:flex;align-items:flex-start;gap:var(--space-4);flex-wrap:wrap;margin-left:auto}
 
     /* KPIs / totalizadores da competência */
     .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:var(--space-4);margin-bottom:var(--space-6)}
@@ -207,7 +207,7 @@
               <div class="page-h__act">
                 <div class="fano">
                   <label class="field__label" id="lblAno">Ano-calendário</label>
-                  <div class="cselect" id="anoWrap" style="min-width:168px">
+                  <div class="cselect" id="anoWrap">
                     <button class="cselect__trigger" type="button" data-cselect-btn aria-haspopup="listbox" aria-expanded="false" aria-labelledby="lblAno anoVal"><span class="cselect__value" id="anoVal">2026</span><span class="cselect__chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span></button>
                     <div class="cselect__panel" data-cselect-panel hidden role="listbox" aria-label="Ano-calendário">
                       <button type="button" role="option" data-val="2026" data-pend="1" class="is-selected">2026</button>

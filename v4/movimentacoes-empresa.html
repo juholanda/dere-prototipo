@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Movimentações Mensais · MAG Seguros</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=12b8d439">
+  <link rel="stylesheet" href="../design-system/ds.css?v=cdca8474">
   <script src="../design-system/ds-tailwind.js"></script>
   <style>
     /* ===== app-shell ===== */
@@ -443,7 +443,7 @@
               <div class="page-h__act">
                 <div class="fano">
                   <label class="field__label" id="lblAno">Ano-calendário</label>
-                  <div class="cselect" data-cselect id="anoWrap" style="min-width:150px">
+                  <div class="cselect" data-cselect id="anoWrap">
                     <button class="cselect__trigger" type="button" data-cselect-btn aria-haspopup="listbox" aria-expanded="false" aria-labelledby="lblAno anoVal"><span class="cselect__value" data-cselect-label id="anoVal">2026</span><span class="cselect__chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span></button>
                     <div class="cselect__panel" data-cselect-panel hidden role="listbox" aria-label="Ano-calendário">
                       <button type="button" role="option" data-val="2026" class="is-selected">2026</button>
@@ -1859,15 +1859,11 @@
     renderTabBar();
     if(push) history.pushState({per:MESES[perIdx].per, ev:slug}, '', '?emp='+emp+'&per='+MESES[perIdx].per+'&ev='+slug);
     var p=document.getElementById('panel-'+slug); if(p){ p.focus({preventScroll:true}); }
-    // sem "saltar" ao trocar de aba: painel com altura mínima da área visível (evita o scroll colapsar
-    // quando um painel é curto) + barra de abas fixa. Clique de aba fixa a barra no topo; carga/mês começa do topo.
+    // Sem scroll automático: nem trocar de ABA nem trocar de MÊS movem a tela — a posição fica onde está.
+    // O painel ganha altura mínima da área visível pra um painel curto não colapsar o scroll (sem salto).
     try{
-      var mc=document.getElementById('conteudo'), wrap=document.getElementById('evtabsWrap'), pan=document.getElementById('panels');
+      var mc=document.getElementById('conteudo'), pan=document.getElementById('panels');
       if(mc && pan) pan.style.minHeight = mc.clientHeight + 'px';
-      if(mc){
-        if(!push){ mc.scrollTop=0; window.scrollTo(0,0); }
-        else if(wrap){ var d=wrap.getBoundingClientRect().top - mc.getBoundingClientRect().top; if(Math.abs(d)>1) mc.scrollTop += d; }
-      }
     }catch(e){}
   }
 
