@@ -83,7 +83,9 @@
     .solgrp{margin-bottom:var(--space-6)}
     .solgrp:last-child{margin-bottom:0}
     .solgrp__t{font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.04em;color:var(--color-text-muted);font-weight:700;margin:0 0 var(--space-3)}
+    .solgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:var(--space-3)}
     .solcard{border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-4);margin-bottom:var(--space-3);background:var(--color-surface)}
+    .solgrid .solcard{margin-bottom:0}
     .solcard:last-child{margin-bottom:0}
     .solcard--current{border-color:var(--color-success-fg);box-shadow:inset 0 0 0 1px var(--color-success-bg)}
     .solcard__top{display:flex;align-items:center;justify-content:space-between;gap:var(--space-2);margin-bottom:var(--space-2)}
@@ -1205,16 +1207,56 @@
      (mesmo padrão do page-h/sec__h do Plano de Contas). O valor entra no subtítulo. */
   /* Cabeçalho do evento como corpo de card (com background): título+código+situação à esquerda,
      ações na lateral direita, e o alerta da situação (se houver) logo abaixo. */
+  /* Cabeçalho do evento (SEMPRE, abaixo da aba, acima das tabelas): título + código + STATUS + info de
+     transmissão (quando foi enviada · recibo) + AÇÕES à direita. As ações moram AQUI, não na barra fixa. */
   function evHead(evKey, M){
     var meta=EV_META[evKey], e=M.ev[evKey];
-    var hasVal=(e.val && e.val!=='—');
-    var subExtra=hasVal?' · '+esc(e.valLbl||'Base no mês')+': <strong>'+e.val+'</strong>':'';
     var acts=evActions(evKey,M), alert=evAlert(evKey,M);
-    return '<div class="card__body evdetail__head"><div class="sec__h" style="margin:0">'+
+    var vv=(VERS[M.per]||{})[evKey]||{atual:[],prep:[],ant:[]};
+    var a0=(vv.atual||[]).concat(vv.prep||[],vv.ant||[])[0];
+    var info;
+    if(a0 && a0.transm && a0.transm!=='—'){
+      var num=a0.recibo?('Recibo '+a0.recibo.slice(0,9)+'…'+a0.recibo.slice(-4)):(a0.protocolo?('Protocolo '+a0.protocolo.slice(0,9)+'…'):'');
+      info='Transmitida em '+a0.transm+(num?' · '+num:'');
+    } else { info='Ainda não transmitida à Receita.'; }
+    return '<article class="card"><div class="card__body evdetail__head"><div class="sec__h" style="margin:0">'+
       '<div class="sec__ht"><div class="dethead__title"><h2 style="margin:0">'+esc(meta.name)+'</h2><span class="tag">'+meta.code+'</span>'+pill(e.st)+'</div>'+
-      '<p class="sec__hint">'+esc(e.sub)+subExtra+'</p></div>'+
+      '<p class="sec__hint">'+esc(info)+'</p></div>'+
       (acts?'<div class="sec__act">'+acts+'</div>':'')+
-      '</div>'+(alert?'<div class="evdetail__alert">'+alert+'</div>':'')+'</div>';
+      '</div>'+(alert?'<div class="evdetail__alert">'+alert+'</div>':'')+'</div></article>';
+  }
+  /* Totalizadores do balancete (retorno D-9101, grupo gTotalCodTrib) — SÓ aparecem quando há recibo. */
+  function totalizadoresBlock(M){
+    var ct=(M.total&&M.total.codtrib)||CT_SEG[M.per]||[]; if(!ct.length) return '';
+    var SALDO={'220110001':1,'220210001':1,'220310001':1};
+    var rows=ct.map(function(r){
+      var iss=r.iss?'Sim':'Não', sI=SALDO[r.cod]?(r.saldoIni||'—'):'—', sF=SALDO[r.cod]?(r.saldoFim||'—'):'—';
+      return '<tr><th scope="row" class="mono">'+esc(r.cod)+'</th><td>'+esc(r.desc)+'</td><td>'+iss+'</td><td class="col--num strong">'+esc(r.base)+'</td><td class="col--num">'+sI+'</td><td class="col--num">'+sF+'</td></tr>';
+    }).join('');
+    var totalStr=(M.total&&(M.total.baseFull||M.total.base))||'—';
+    var recPGCC=rec31(1011,M.per,2);
+    return '<div class="dtblock"><h3 class="dtsub">Totalizadores do balancete</h3>'+
+      '<p class="dtsub__x">O que a Receita devolveu por código de tributação no retorno D-9101 (gTotalCodTrib). Recibo do PGCC usado no mapeamento: <span class="mono">'+esc(recPGCC.slice(0,10)+'…'+recPGCC.slice(-4))+'</span>.</p>'+
+      '<div class="table-wrap table-wrap--boxed"><table class="table dtable"><thead><tr><th scope="col">Código (codTrib)</th><th scope="col">Classificação (Tabela 11)</th><th scope="col">Sujeito ao ISS</th><th scope="col" class="col--num">Base apurada</th><th scope="col" class="col--num">Saldo inicial</th><th scope="col" class="col--num">Saldo final</th></tr></thead>'+
+      '<tbody>'+rows+'</tbody>'+
+      '<tfoot><tr class="cttot"><th scope="row" colspan="3">Base total apurada</th><td class="col--num strong">'+esc(totalStr)+'</td><td colspan="2"></td></tr></tfoot>'+
+      '</table></div></div>';
+  }
+  /* Solicitações como SEÇÃO embaixo (não trilho lateral): Vigente/Anteriores/Em preparação, cards lado a lado. */
+  function solSection(evKey, M){
+    var v=(VERS[M.per]||{})[evKey]||{atual:[],prep:[],ant:[]};
+    var all=v.atual.concat(v.prep, v.ant);
+    var inprep=all.filter(function(x){return x.sit==='pendente'||x.sit==='protocolo'||x.sit==='rejeitado';});
+    var vig=all.filter(function(x){return x.sit==='recibo'||x.sit==='advertencia';});
+    var ant=all.filter(function(x){return x.sit==='substituida';});
+    var e=M.ev[evKey];
+    var nova=(e.st==='recibo'||e.st==='advertencia')?'<button class="btn btn--secondary" type="button" data-alterar data-ev="'+evKey+'">'+ICO.doc+'Nova solicitação</button>':'';
+    function grp(title,list,cur){ return list.length?'<div class="solgrp"><p class="solgrp__t">'+title+'</p><div class="solgrid">'+list.map(function(x){return solCard(x,evKey,cur);}).join('')+'</div></div>':''; }
+    var body=grp('Em preparação',inprep,false)+grp('Vigente',vig,true)+grp('Anteriores',ant,false);
+    if(!body) body='<div class="solempty">'+ICO.info+'<p>Nenhuma solicitação ainda. Ela nasce quando você transmite o balancete à Receita.</p></div>';
+    return '<section class="sec" style="margin-top:var(--space-8)"><section class="card"><div class="card__body">'+
+      '<div class="cardhd"><div class="cardhd__toprow"><h2 class="cardhd__t">Solicitações</h2>'+(nova?'<div class="cardhd__side">'+nova+'</div>':'')+'</div>'+
+      '<p class="cardhd__x">Cada envio deste evento à Receita (inclusão, alteração), com o status.</p></div>'+body+'</div></section></section>';
   }
   var VST={ pgcc:['warning','Fora do PGCC'], saldo:['danger','Saldo não confere'] };
   function balanceteRow(r){
@@ -1542,10 +1584,13 @@
     var contentHead=(evKey==='d1101')?'':'<p class="sec__hint" style="margin:0 0 var(--space-4)">'+chint+'</p>';
     // sem tab-dentro-de-tab: o Detalhe do evento aparece direto; as Versões vêm como SEÇÃO abaixo (não como aba interna).
     var detBody=(alert?'<div style="margin-bottom:var(--space-4)">'+alert+'</div>':'')+'<article class="card"><div class="card__body">'+contentHead+content+'</div></article>';
-    // Balancete (referência do átomo): esquerda = totalizador + balancete em vigor; direita = trilho de solicitações.
+    // Balancete (REFERÊNCIA): cabeçalho (status+envio+ações) → totalizadores (só com recibo) → contas → Solicitações embaixo.
     if(evKey==='d1101'){
-      var mainCol='<div class="evatom__main">'+evTotalbar(evKey,M)+'<div style="margin-top:var(--space-4)">'+detBody+'</div></div>';
-      return '<section class="sec" style="margin-top:0"><div class="evatom">'+mainCol+solRail(evKey,M)+'</div></section>';
+      var hasRec=(e.st==='recibo'||e.st==='advertencia');
+      var tot=hasRec?totalizadoresBlock(M):'';
+      return '<section class="sec" style="margin-top:0">'+evHead(evKey,M)+
+        '<div style="margin-top:var(--space-6)"><article class="card"><div class="card__body">'+tot+content+'</div></article></div>'+
+        solSection(evKey,M)+'</section>';
     }
     var verBody='<section class="sec" style="margin-top:var(--space-8)"><div class="sec__h"><div class="sec__ht"><h2>Solicitações</h2><p class="sec__hint">Solicitações transmitidas deste evento nesta competência.</p></div></div><article class="card"><div class="card__body">'+versoesInner(evKey,M)+'</div></article></section>';
     return '<section class="sec" style="margin-top:0">'+detBody+verBody+'</section>';
@@ -1911,11 +1956,10 @@
       setBar('');
     } else {
       var evKey=SLUG2EV[slug];
-      // Cabeçalho NÃO carrega status/recibo/tipo do evento: "Movimentações Mensais" não é uma solicitação
-      // e não tem recibo. O status da solicitação (evento) mora dentro do painel (card Solicitações) e
-      // as ações vão na barra fixa (.decisionbar). Nada de "Tipo: Retificação" no topo.
+      // Cabeçalho da TELA não carrega status/recibo do evento. O Balancete leva status + ações no CABEÇALHO
+      // DO PAINEL (evHead) → sem barra fixa. Os outros eventos ainda usam a barra fixa até serem replicados.
       meta_.innerHTML='';
-      setBar(evActions(evKey, M));
+      setBar(evKey==='d1101' ? '' : evActions(evKey, M));
     }
     dn.innerHTML='';
     bcTail.querySelectorAll('[data-tab]').forEach(function(a){ a.addEventListener('click',function(ev){ ev.preventDefault(); navTo(a.getAttribute('data-tab'), true); }); });
