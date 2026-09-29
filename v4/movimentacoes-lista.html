@@ -293,9 +293,9 @@
     {id:'seg', nome:'MAG Seguros', cnpj:'33.608.308/0001-73', regime:'Serviços Financeiros', sit:'fechada',
       ev:{d1101:'ok',d1106:'ok',d1121:'ok',d2101:'na',d1199:'ok'}, ibs:210000, cbs:141000, is:0,
       recibo:'0001-202609-A7K2P9', reciboData:'12/10/2026 14:22', ocorr:{n:1,t:'avi'}},
-    {id:'fin', nome:'MAG Finanças', cnpj:'21.995.256/0001-56', regime:'Serviços Financeiros', sit:'processando',
-      ev:{d1101:'ok',d1106:'na',d1121:'ok',d2101:'ok',d1199:'proc'}, ibs:336000, cbs:224000, is:0,
-      recibo:'', reciboData:'12/10/2026 09:41', ocorr:null},
+    {id:'fin', nome:'MAG Finanças', cnpj:'21.995.256/0001-56', regime:'Serviços Financeiros', sit:'naoiniciada',
+      ev:{d1101:'none',d1106:'none',d1121:'none',d2101:'none',d1199:'na'}, ibs:null, cbs:null, is:null,
+      recibo:'', reciboData:'', ocorr:null},
     {id:'sic', nome:'Sicoob Seguradora', cnpj:'26.314.512/0001-16', regime:'Serviços Financeiros', sit:'pendente',
       ev:{d1101:'ok',d1106:'ok',d1121:'na',d2101:'na',d1199:'prep'}, ibs:153000, cbs:102000, is:0,
       recibo:'', reciboData:'', ocorr:null},
@@ -314,7 +314,7 @@
   var ANO_ATUAL=2026, anoSel=2026;
   var ANUAL={
     seg:{ cbsAno:1269000, ibsAno:1890000, meses:['fech','fech','fech','fech','fech','fech','fech','fech','fech','avencer','avencer','avencer'] },
-    fin:{ cbsAno:1792000, ibsAno:2688000, meses:['fech','fech','fech','fech','fech','fech','fech','fech','proc','avencer','avencer','avencer'] },
+    fin:{ cbsAno:1792000, ibsAno:2688000, meses:['fech','fech','fech','fech','fech','fech','fech','fech','none','avencer','avencer','avencer'] },
     sic:{ cbsAno:816000,  ibsAno:1224000, meses:['fech','fech','fech','fech','fech','fech','fech','fech','prep','avencer','avencer','avencer'] },
     cap:{ cbsAno:705000,  ibsAno:1058000, meses:['fech','fech','fech','fech','fech','atraso','atraso','atraso','none','avencer','avencer','avencer'] },
     s2u:{ cbsAno:null,    ibsAno:null,    meses:['atraso','atraso','atraso','atraso','atraso','atraso','atraso','atraso','none','avencer','avencer','avencer'] }

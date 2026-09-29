@@ -57,7 +57,7 @@
     .mesesbar{display:flex;gap:var(--space-2);overflow-x:auto;scrollbar-width:thin;padding-bottom:var(--space-1);-webkit-overflow-scrolling:touch}
     .mesesbar::-webkit-scrollbar{height:6px}
     .mesesbar::-webkit-scrollbar-thumb{background:var(--color-border-strong);border-radius:var(--radius-pill)}
-    .mesescard{margin-bottom:var(--space-6);padding:var(--space-6)}
+    .mesescard{margin-bottom:var(--space-8);padding:var(--space-6)}
     .mesescard__h{display:flex;align-items:center;gap:var(--space-4);margin-bottom:var(--space-6)}
     .mesesbar__lbl{display:block;font-size:var(--text-2xl);font-weight:600;letter-spacing:-.01em;color:var(--color-heading);margin:0}
     .mescount{font-size:var(--text-sm);color:var(--color-text-muted);font-variant-numeric:tabular-nums;white-space:nowrap}
@@ -317,7 +317,7 @@
     .create-opt__tpl svg{width:15px;height:15px;flex:0 0 auto}
     .create-opt__acts{display:flex;gap:var(--space-2);justify-content:center;flex-wrap:wrap}
     /* Card da competência (estado "nada importado"): anel + título + ações + import */
-    .compcard{display:flex;flex-direction:column;gap:var(--space-8)}
+    .compcard{display:flex;flex-direction:column;gap:var(--space-8);padding-bottom:var(--space-12)}
     .compcard__top{display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);flex-wrap:wrap}
     .compcard__id{display:flex;align-items:center;gap:var(--space-4)}
     .compcard__t{font-size:var(--text-base);font-weight:600;color:var(--color-heading);margin:0;letter-spacing:-.01em}
@@ -534,12 +534,7 @@
         <span class="sr-only" id="compLive" role="status" aria-live="polite" aria-atomic="true"></span>
 
         <div class="wrap">
-          <!-- Contadores do ano-calendário: apurado (CBS/IBS) + próximo prazo (contador) -->
-          <div class="mvstats">
-            <div class="stat"><span class="stat__ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg></span><p class="stat__label">CBS apurada no ano</p><p class="stat__value" id="coCbsAno">&mdash;</p></div>
-            <div class="stat"><span class="stat__ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect width="4" height="7" x="7" y="10" rx="1"/><rect width="4" height="12" x="15" y="5" rx="1"/></svg></span><p class="stat__label">IBS apurado no ano</p><p class="stat__value" id="coIbsAno">&mdash;</p></div>
-            <div class="stat"><span class="stat__ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span><p class="stat__label">Próximo prazo</p><p class="stat__value" id="coPrazo">&mdash;</p><p class="stat__delta" id="coPrazoSub"></p></div>
-          </div>
+          <!-- Totalizadores anuais (CBS/IBS) removidos do detalhe: vivem só na LISTAGEM (decisão PO + frame 10390:9549). -->
           <!-- Régua de meses (card próprio, separado da identidade): navega a competência SEM sair da tela.
                Barrinha superior de cada chip = situação do mês (verde fechado, âmbar mês corrente, cinza a vencer). -->
           <section class="card mesescard" aria-labelledby="mesesLbl">
@@ -762,11 +757,11 @@
       d1106:{st:'recibo',   sub:'Condicional (seguradora) · 9 ativos de reserva técnica', valLbl:'Base (vApur)', val:'R$ 88.000,00'},
       d1121:{st:'recibo',   sub:'Condicional · 5 documentos', valLbl:'Deduzido no mês', val:'R$ 62.000,00'},
       d2101:{st:'na',       sub:NAtit, valLbl:'', val:'—'} },
-    fin:{ /* banco / serviços financeiros: balancete + títulos; sem reserva técnica */
-      d1101:{st:'recibo',   sub:'Obrigatório todo mês · 71 contas analíticas', valLbl:'Base apurada', val:'R$ 6.800.000,00'},
-      d1106:{st:'na',       sub:'Sem reserva técnica no PGCC deste contribuinte', valLbl:'', val:'—'},
-      d1121:{st:'na',       sub:'Sem deduções a utilizar neste período', valLbl:'', val:'—'},
-      d2101:{st:'recibo',   sub:'Serviços financeiros · 8 títulos de dívida com oferta pública', valLbl:'Base (juros × Selic)', val:'R$ 240.000,00'} },
+    fin:{ /* MAG Finanças: começa VAZIO (nada importado) — 4 eventos aplicáveis, todos a importar (frame 10390:9549, "0/4") */
+      d1101:{st:'pendente', sub:'Obrigatório todo mês · ainda não importado', valLbl:'', val:'—'},
+      d1106:{st:'pendente', sub:'Condicional (aplicações financeiras) · ainda não importado', valLbl:'', val:'—'},
+      d1121:{st:'pendente', sub:'Condicional (deduções) · ainda não importado', valLbl:'', val:'—'},
+      d2101:{st:'pendente', sub:'Serviços financeiros · ainda não importado', valLbl:'', val:'—'} },
     cap:{ /* capitalização: MÊS NÃO INICIADO — nada importado ainda (demonstra o estado inicial "ainda não enviei, mas vou") */
       d1101:{st:'pendente', sub:'Obrigatório todo mês · ainda não importado', valLbl:'', val:'—'},
       d1106:{st:'pendente', sub:'Condicional (capitalização) · ainda não importado', valLbl:'', val:'—'},
@@ -795,7 +790,7 @@
      NÃO fabricar aqui: situação, acumulado e estado de cada mês têm que BATER com a lista, linha a linha. */
   var ANUAL=({
     seg:{ sit:'emdia',      cbsAno:1269000, ibsAno:1890000, meses:['fech','fech','fech','fech','fech','fech','fech','fech','fech','avencer','avencer','avencer'] },
-    fin:{ sit:'pendencias', cbsAno:1792000, ibsAno:2688000, meses:['fech','fech','fech','fech','fech','fech','fech','fech','proc','avencer','avencer','avencer'] },
+    fin:{ sit:'pendencias', cbsAno:1792000, ibsAno:2688000, meses:['fech','fech','fech','fech','fech','fech','fech','fech','none','avencer','avencer','avencer'] },
     sic:{ sit:'pendencias', cbsAno:816000,  ibsAno:1224000, meses:['fech','fech','fech','fech','fech','fech','fech','fech','prep','avencer','avencer','avencer'] },
     cap:{ sit:'atraso',     cbsAno:705000,  ibsAno:1058000, meses:['fech','fech','fech','fech','fech','atraso','atraso','atraso','none','avencer','avencer','avencer'] },
     s2u:{ sit:'atraso',     cbsAno:null,    ibsAno:null,    meses:['atraso','atraso','atraso','atraso','atraso','atraso','atraso','atraso','none','avencer','avencer','avencer'] }
@@ -2068,18 +2063,17 @@
   /* ===== render das views (hub + páginas de evento) + navegação ===== */
   function renderPanels(){
     var M=MESES[perIdx];
-    // Estado "nada importado" (frame 10390:9549): sem KPIs e sem o fechBar do card de meses (o fechamento vai no card da competência).
+    // Estado "nada importado" (frame 10390:9549): sem o fechBar do card de meses (o fechamento vai no card da competência).
     var nada=!monthStarted(M);
-    var mv=document.querySelector('.mvstats'); if(mv) mv.style.display=nada?'none':'';
     var mfb=document.getElementById('mesFechBar'); if(mfb) mfb.style.display=nada?'none':'';
-    // Cabeçalho: no estado nada troca "PGCC vigente" por "Prazo da competência atual" (frame 10390:9549).
+    // Cabeçalho (KPIs anuais removidos do detalhe): "Prazo da competência atual" SEMPRE visível; PGCC só quando há dados.
     var pgccMeta=document.getElementById('coPgccMeta'), prazoMeta=document.getElementById('coPrazoMeta');
     if(pgccMeta) pgccMeta.hidden=nada;
     if(prazoMeta){
-      prazoMeta.hidden=!nada;
+      prazoMeta.hidden=false;
       // "Prazo da competência atual" = SEMPRE a competência corrente (a aberta), não a selecionada na régua.
       var curM=MESES.filter(function(x){return x.cur;})[0]||MESES[0];
-      if(nada && curM && curM.prazo){
+      if(curM && curM.prazo){
         var pd=document.getElementById('coPrazoMetaD'), ps=document.getElementById('coPrazoMetaSub');
         if(pd) pd.textContent=curM.prazo;
         if(ps){ var pp=curM.prazo.split('/'), vc=new Date(+pp[2],+pp[1]-1,+pp[0]), hj=new Date(2026,8,28), dd=Math.round((vc-hj)/86400000);
