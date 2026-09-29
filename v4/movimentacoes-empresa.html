@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Movimentações Mensais · MAG Seguros</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=93938557">
+  <link rel="stylesheet" href="../design-system/ds.css?v=199e262d">
   <script src="../design-system/ds-tailwind.js"></script>
   <style>
     /* ===== app-shell ===== */
@@ -307,8 +307,9 @@
     .create-opt:hover{border-color:var(--color-primary);box-shadow:var(--shadow-sm)}
     .create-opt__ic{width:48px;height:48px;border-radius:var(--radius-base);background:var(--color-border);color:var(--color-primary);display:grid;place-items:center;flex:0 0 auto}
     .create-opt__ic svg{width:24px;height:24px}
-    .create-opt h3{font-size:var(--text-base);font-weight:600;letter-spacing:-.01em;margin:0 0 var(--space-2);color:var(--color-heading)}
-    .create-opt p{font-size:var(--text-sm);color:var(--color-text-muted);margin:0 0 var(--space-4);line-height:1.5;max-width:54ch}
+    .create-opt__txt{display:flex;flex-direction:column;align-items:center;gap:var(--space-2)}
+    .create-opt h3{font-size:var(--text-base);font-weight:600;letter-spacing:-.01em;margin:0;color:var(--color-heading)}
+    .create-opt p{font-size:var(--text-sm);color:var(--color-text-muted);margin:0;line-height:1.5;max-width:54ch}
     .create-opt .btn{margin-top:var(--space-1)}
     .create-opt__tpl{display:inline-flex;align-items:center;gap:var(--space-1-5);margin-top:var(--space-4);font-size:var(--text-sm);font-weight:600;color:var(--color-primary);text-decoration:none;background:none;border:0;cursor:pointer}
     .create-opt__tpl:hover{text-decoration:underline}
@@ -1188,8 +1189,8 @@
     return '<div class="create-opts">'+
       '<div class="create-opt">'+
         '<span class="create-opt__ic" aria-hidden="true">'+ICO.upload+'</span>'+
-        '<h3>Importar planilha</h3>'+
-        '<p>Envie a movimentação do mês em CSV ou Excel. Baixe o template para preencher a planilha no formato correto.</p>'+
+        '<div class="create-opt__txt"><h3>Importar planilha</h3>'+
+        '<p>Envie a movimentação do mês em CSV ou Excel. Baixe o template para preencher a planilha no formato correto.</p></div>'+
         '<div class="create-opt__acts">'+
           '<button class="btn btn--secondary" type="button" data-import-run data-ev="'+firstEv+'">'+ICO.upload+'Importar dados</button>'+
           '<button class="btn btn--tertiary" type="button" data-template>'+ICO.download+'Baixar template</button>'+
@@ -1197,8 +1198,8 @@
       '</div>'+
       '<div class="create-opt">'+
         '<span class="create-opt__ic" aria-hidden="true">'+ICO.unplug+'</span>'+
-        '<h3>Integrar com ERP</h3>'+
-        '<p>Conecte seu ERP ou sistema contábil para trazer a movimentação do mês automaticamente.</p>'+
+        '<div class="create-opt__txt"><h3>Integrar com ERP</h3>'+
+        '<p>Conecte seu ERP ou sistema contábil para trazer a movimentação do mês automaticamente.</p></div>'+
         '<div class="create-opt__acts">'+
           '<button class="btn btn--secondary" type="button" data-erp>'+ICO.unplug+'Conectar ERP</button>'+
         '</div>'+
@@ -2076,10 +2077,12 @@
     if(pgccMeta) pgccMeta.hidden=nada;
     if(prazoMeta){
       prazoMeta.hidden=!nada;
-      if(nada && M.prazo){
+      // "Prazo da competência atual" = SEMPRE a competência corrente (a aberta), não a selecionada na régua.
+      var curM=MESES.filter(function(x){return x.cur;})[0]||MESES[0];
+      if(nada && curM && curM.prazo){
         var pd=document.getElementById('coPrazoMetaD'), ps=document.getElementById('coPrazoMetaSub');
-        if(pd) pd.textContent=M.prazo;
-        if(ps){ var pp=M.prazo.split('/'), vc=new Date(+pp[2],+pp[1]-1,+pp[0]), hj=new Date(2026,8,28), dd=Math.round((vc-hj)/86400000);
+        if(pd) pd.textContent=curM.prazo;
+        if(ps){ var pp=curM.prazo.split('/'), vc=new Date(+pp[2],+pp[1]-1,+pp[0]), hj=new Date(2026,8,28), dd=Math.round((vc-hj)/86400000);
           ps.textContent=(dd>0?('faltam '+dd+' dias'):(dd===0?'vence hoje':('venceu há '+(-dd)+' dias'))); }
       }
     }
@@ -2120,7 +2123,8 @@
     bcTail.innerHTML='<span>'+esc(CO.nome)+'</span>';
     title.textContent='Movimentações Mensais';
     badge.innerHTML='';
-    document.getElementById('pageSub').textContent='Acompanhe os eventos da competência e o fechamento do mês.';
+    // Frame 10390:9549 não tem subtítulo no cabeçalho desta tela — só o H1.
+    (function(){ var ps=document.getElementById('pageSub'); if(ps){ ps.textContent=''; ps.hidden=true; } })();
     if(isHub){
       meta_.innerHTML='';
       setBar('');
