@@ -1,0 +1,239 @@
+<title>Modelo de Solicitações</title>
+<style>
+  :root{
+    --bg:#eef1f6; --surface:#ffffff; --surface-2:#f5f7fb; --ink:#0f1b2d; --muted:#5b6b82; --line:#dbe2ec;
+    --primary:#1351b4; --primary-2:#e7eefb; --navy:#071d41;
+    --gray:#64748b; --gray-bg:#eef2f7;
+    --blue:#1d4ed8; --blue-bg:#e5edfb;
+    --amber:#b45309; --amber-bg:#fdf0dc;
+    --green:#15803d; --green-bg:#e3f4e9;
+    --red:#b91c1c; --red-bg:#fbe6e6;
+    --radius:12px; --radius-sm:8px;
+    --font:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  }
+  :root:not([data-theme="light"]){ @media (prefers-color-scheme:dark){
+    --bg:#0b1220; --surface:#111a2b; --surface-2:#0e1626; --ink:#e7edf6; --muted:#93a1b8; --line:#243349;
+    --primary:#5b8bef; --primary-2:#16233c; --navy:#0a1730;
+    --gray-bg:#1a2536; --blue-bg:#152742; --amber-bg:#2e2410; --green-bg:#122a1c; --red-bg:#2c1414;
+  }}
+  :root[data-theme="dark"]{
+    --bg:#0b1220; --surface:#111a2b; --surface-2:#0e1626; --ink:#e7edf6; --muted:#93a1b8; --line:#243349;
+    --primary:#5b8bef; --primary-2:#16233c; --navy:#0a1730;
+    --gray-bg:#1a2536; --blue-bg:#152742; --amber-bg:#2e2410; --green-bg:#122a1c; --red-bg:#2c1414;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.5;font-size:15px}
+  .wrap{max-width:1080px;margin:0 auto;padding:40px 16px 80px}
+  header.top{background:var(--navy);color:#fff;border-radius:var(--radius);padding:28px 28px;margin-bottom:28px}
+  header.top h1{margin:0 0 6px;font-size:26px;letter-spacing:-.01em}
+  header.top p{margin:0;color:#c7d4ea;font-size:14px;max-width:70ch}
+  .eyebrow{font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:#93b2e6;margin-bottom:8px}
+  h2{font-size:19px;letter-spacing:-.01em;margin:36px 0 4px;display:flex;align-items:center;gap:10px}
+  h2 .n{width:26px;height:26px;flex:0 0 auto;border-radius:7px;background:var(--primary);color:#fff;display:grid;place-items:center;font-size:13px;font-weight:800}
+  .lead{color:var(--muted);margin:0 0 16px;max-width:78ch}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:760px){.grid2{grid-template-columns:1fr}}
+  .worldhd{display:flex;align-items:center;gap:10px;margin:0 0 4px;font-weight:800;font-size:16px}
+  .worldhd .tag{font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px;background:var(--primary-2);color:var(--primary)}
+  .worldsub{color:var(--muted);font-size:13px;margin:0 0 14px}
+  .pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:12.5px;font-weight:600;border:1px solid transparent;white-space:nowrap}
+  .pill .dot{width:7px;height:7px;border-radius:50%}
+  .g{background:var(--gray-bg);color:var(--gray)} .g .dot{background:var(--gray)}
+  .b{background:var(--blue-bg);color:var(--blue)} .b .dot{background:var(--blue)}
+  .a{background:var(--amber-bg);color:var(--amber)} .a .dot{background:var(--amber)}
+  .v{background:var(--green-bg);color:var(--green)} .v .dot{background:var(--green)}
+  .r{background:var(--red-bg);color:var(--red)} .r .dot{background:var(--red)}
+  .row{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+  .lvl{border-left:3px solid var(--line);padding:2px 0 2px 16px;margin:16px 0}
+  .lvl h3{margin:0 0 2px;font-size:15px}
+  .lvl p{margin:0 0 8px;color:var(--muted);font-size:13px}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:4px}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);font-weight:700;background:var(--surface-2)}
+  td b{color:var(--ink)}
+  .mock{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--radius);padding:14px}
+  .mockbar{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:10px}
+  .mockbar.hd{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+  .mockbar .t{font-weight:700}
+  .mockbar .s{font-size:12px;color:var(--muted);margin-top:3px}
+  .btnrow{display:flex;gap:8px;flex-wrap:wrap}
+  .btn{font-size:12.5px;font-weight:600;padding:6px 12px;border-radius:7px;border:1px solid var(--line);background:var(--surface)}
+  .btn.p{background:var(--primary);color:#fff;border-color:var(--primary)}
+  .lbl{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:14px 0 6px}
+  .note{font-size:12.5px;color:var(--muted);background:var(--surface-2);border:1px dashed var(--line);border-radius:var(--radius-sm);padding:10px 12px;margin-top:8px}
+  .decide{border-left:3px solid var(--amber);background:var(--amber-bg);border-radius:var(--radius-sm);padding:12px 14px;margin:10px 0;font-size:13.5px}
+  .decide b{color:var(--amber)}
+  .src{font-size:12px;color:var(--muted)}
+  .flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:8px 0}
+  .flow .step{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:12.5px;font-weight:600}
+  .flow .arr{color:var(--muted);font-weight:700}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="eyebrow">a-DeRE · Reforma Tributária</div>
+    <h1>Modelo de Solicitações &amp; Status</h1>
+    <p>Uma visão única que casa D-1001, D-1011, os eventos mensais (Balancete, Aplicações, Deduções, Títulos) e o Fechamento. Toda regra abaixo vem da documentação oficial (XSDs, Manual 1.1.0, Leiautes 1.2.0). O que é decisão de produto está marcado.</p>
+  </header>
+
+  <div class="card">
+    <div class="worldhd">A ideia única</div>
+    <p class="lead" style="margin:0">Em toda tela existe <b>o que está EM VIGOR</b> (o que está válido hoje na Receita) e as <b>SOLICITAÇÕES</b> — cada envio que você fez à Receita. Uma solicitação nasce quando você <b>transmite</b> (antes disso é preparação interna). É o mesmo átomo nos quatro lugares; muda só o <b>tipo de resultado</b>: no cadastro é o <b>cadastro vigente</b> (por vigência), no mensal é a <b>competência</b>.</p>
+  </div>
+
+  <h2><span class="n">1</span>Dois mundos de status</h2>
+  <p class="lead">A diferença real (Manual §3): o cadastro tem <b>vigência</b> (linha do tempo por datas); o mensal tem <b>competência</b> (por mês, referenciando o recibo anterior). Por isso o conjunto de status do "resultado" é diferente nos dois.</p>
+  <div class="grid2">
+    <div class="card">
+      <div class="worldhd">Cadastro <span class="tag">D-1001 · D-1011</span></div>
+      <p class="worldsub">Modelo de Vigência / Linha do Tempo. Um cadastro vale por um período (iniValid–fimValid).</p>
+      <div class="lbl">Status do cadastro (derivado)</div>
+      <div class="row">
+        <span class="pill g"><span class="dot"></span>Sem cadastro</span>
+        <span class="pill v"><span class="dot"></span>Vigente</span>
+        <span class="pill g"><span class="dot"></span>Excluído</span>
+        <span class="pill g"><span class="dot"></span>Encerrado (período antigo)</span>
+      </div>
+      <div class="lbl">Tem além do mensal</div>
+      <p class="worldsub" style="margin:0"><b>Linha do tempo</b> (as vigências no tempo) + <b>Histórico</b> (log). Exclusão remove <b>um período de validade</b>, não "o cadastro".</p>
+    </div>
+    <div class="card">
+      <div class="worldhd">Mensal <span class="tag">D-1101/1106/1121/2101 · Fechamento D-1199</span></div>
+      <p class="worldsub">Modelo de Recibo. Uma declaração por competência (mês). Manutenção referencia o recibo anterior.</p>
+      <div class="lbl">Status da competência (derivado)</div>
+      <div class="row">
+        <span class="pill g"><span class="dot"></span>Não iniciada</span>
+        <span class="pill a"><span class="dot"></span>Em preparação</span>
+        <span class="pill b"><span class="dot"></span>Em processamento</span>
+        <span class="pill v"><span class="dot"></span>Fechada</span>
+        <span class="pill r"><span class="dot"></span>Em atraso</span>
+      </div>
+      <div class="lbl">Tem além do cadastro</div>
+      <p class="worldsub" style="margin:0"><b>Fechamento (D-1199)</b> por competência. Sem linha do tempo de vigência. "Em processamento" da competência = <b>fechamento transmitido</b> (todos os eventos já com recibo).</p>
+    </div>
+  </div>
+
+  <h2><span class="n">2</span>Os 3 níveis de status (valem nos dois mundos)</h2>
+  <p class="lead">O que confundia era misturar níveis. São três objetos diferentes, um dentro do outro. Cores por <b>significado</b> (cinza=parado, azul=em andamento, âmbar=precisa de você, verde=aceito, vermelho=erro).</p>
+
+  <div class="lvl">
+    <h3>Nível A — a SOLICITAÇÃO (o envio de um evento)</h3>
+    <p>O mesmo em cadastro e mensal. Nasce na transmissão. cdRetorno só tem Sucesso/Erro; "advertência" é sucesso com aviso → verde.</p>
+    <div class="lbl" style="margin-top:4px">Preparação (interno a-DeRE, antes de transmitir)</div>
+    <div class="row">
+      <span class="pill g"><span class="dot"></span>Rascunho</span>
+      <span class="pill a"><span class="dot"></span>Aguardando revisão</span>
+      <span class="pill a"><span class="dot"></span>Em revisão</span>
+      <span class="pill r"><span class="dot"></span>Ajustes solicitados</span>
+    </div>
+    <div class="lbl">Na Receita (a solicitação em si)</div>
+    <div class="row">
+      <span class="pill b"><span class="dot"></span>Em processamento</span>
+      <span class="pill v"><span class="dot"></span>Processada com sucesso</span>
+      <span class="pill v"><span class="dot"></span>Processada com advertências</span>
+      <span class="pill r"><span class="dot"></span>Rejeitada pela Receita</span>
+      <span class="pill g"><span class="dot"></span>Substituída</span>
+    </div>
+    <div class="note">Protocolo (provisório, na entrega) ≠ Recibo (definitivo, só no sucesso). A solicitação tem um <b>tipo</b>: Inclusão, Alteração ou Exclusão (Deduções também tem Retificação).</div>
+  </div>
+
+  <div class="lvl">
+    <h3>Nível B — o RESULTADO (o que está em vigor, derivado das solicitações aceitas)</h3>
+    <p>É o que vai no <b>cabeçalho</b>: só "tem algo valendo ou não". O status detalhado de cada envio fica no nível A (nas solicitações).</p>
+    <div class="lbl">Cadastro (D-1001/D-1011) — no cabeçalho</div>
+    <div class="row"><span class="pill v"><span class="dot"></span>Vigente</span><span class="pill g"><span class="dot"></span>Sem cadastro vigente</span><span class="pill g"><span class="dot"></span>Excluído</span></div>
+    <div class="lbl">Evento mensal (Balancete, Títulos…) — no cabeçalho</div>
+    <div class="row"><span class="pill v"><span class="dot"></span>Em vigor</span><span class="pill g"><span class="dot"></span>Sem balancete</span></div>
+    <div class="lbl">Competência (o mês) — na régua e na barra de fechamento</div>
+    <div class="row"><span class="pill g"><span class="dot"></span>Não iniciada</span><span class="pill a"><span class="dot"></span>Em preparação</span><span class="pill b"><span class="dot"></span>Em processamento</span><span class="pill v"><span class="dot"></span>Fechada</span><span class="pill r"><span class="dot"></span>Em atraso</span></div>
+  </div>
+
+  <div class="lvl">
+    <h3>Nível C — o CONTRIBUINTE no ano (só na listagem)</h3>
+    <p>Rollup anual, para o operador ver a carteira. Atravessa competências/anos.</p>
+    <div class="row"><span class="pill v"><span class="dot"></span>Em dia</span><span class="pill a"><span class="dot"></span>Com pendências</span><span class="pill r"><span class="dot"></span>Em atraso</span></div>
+  </div>
+
+  <h2><span class="n">3</span>Como aparece na tela — o mesmo átomo</h2>
+  <p class="lead">A tela mostra <b>o que está NA TELA</b>, e o cabeçalho reflete o status disso. Dois casos:</p>
+  <div class="grid2" style="margin-bottom:14px">
+    <div class="card">
+      <div class="worldhd" style="font-size:15px">Caso 1 — há algo em vigor</div>
+      <p class="worldsub" style="margin:0">A tela mostra a versão <b>vigente</b> → cabeçalho <span class="pill v"><span class="dot"></span>Em vigor</span> / <span class="pill v"><span class="dot"></span>Vigente</span>. Se você começa uma <b>alteração</b>, ela NÃO toma a tela: aparece um <b>banner "alteração em andamento · Continuar"</b> no topo e a alteração vive na seção Solicitações.</p>
+    </div>
+    <div class="card">
+      <div class="worldhd" style="font-size:15px">Caso 2 — nada em vigor (1ª inclusão)</div>
+      <p class="worldsub" style="margin:0">Não há vigente ainda → a tela mostra a <b>própria preparação</b> (é tudo que há) → o cabeçalho mostra o status dela: <span class="pill a"><span class="dot"></span>Em preparação</span> / <span class="pill b"><span class="dot"></span>Em processamento</span> / <span class="pill r"><span class="dot"></span>Rejeitada pela Receita</span>.</p>
+    </div>
+  </div>
+  <p class="lead">Sempre: <b>conteúdo em vigor</b> (ou a preparação, no caso 2) → <b>Solicitações embaixo</b> (cada envio com o seu status). O cadastro acrescenta Linha do tempo + Histórico. Nada de trilho lateral.</p>
+  <div class="grid2">
+    <div class="mock" aria-label="Tela de um evento mensal (ex.: Balancete)">
+      <div class="lbl" style="margin:0 0 8px">Mensal — ex.: Balancete</div>
+      <div class="mockbar hd">
+        <div><div class="t">Balancete · D-1101 &nbsp;<span class="pill v"><span class="dot"></span>Em vigor</span></div><div class="s">Balancete válido hoje na Receita &nbsp;·&nbsp; o status de cada envio fica nas Solicitações</div></div>
+        <div class="btnrow"><span class="btn">Comprovante</span><span class="btn p">Alterar</span></div>
+      </div>
+      <div class="mockbar"><div class="t" style="font-size:13px">Totalizadores (só com recibo)</div><div class="s">gTotalCodTrib do D-9101 · base por codTrib</div></div>
+      <div class="mockbar"><div class="t" style="font-size:13px">Contas analíticas</div><div class="s">tabela conta a conta (largura total)</div></div>
+      <div class="mockbar"><div class="t" style="font-size:13px">Solicitações</div><div class="s">Vigente: Alteração ✓ · Anteriores: Inclusão (substituída)</div></div>
+    </div>
+    <div class="mock" aria-label="Tela de um cadastro (ex.: Info do Contribuinte)">
+      <div class="lbl" style="margin:0 0 8px">Cadastro — ex.: D-1001</div>
+      <div class="mockbar hd">
+        <div><div class="t">Informações do Contribuinte &nbsp;<span class="pill v"><span class="dot"></span>Vigente</span></div><div class="s">Vigência 01/2026 → atual &nbsp;·&nbsp; o status de cada envio fica nas Solicitações</div></div>
+        <div class="btnrow"><span class="btn">Comprovante</span><span class="btn p">Alterar</span></div>
+      </div>
+      <div class="mockbar"><div class="t" style="font-size:13px">Dados em vigor</div><div class="s">blocos do cadastro válido hoje</div></div>
+      <div class="mockbar"><div class="t" style="font-size:13px">Solicitações</div><div class="s">Vigente + Anteriores + Em preparação</div></div>
+      <div class="mockbar"><div class="t" style="font-size:13px">Linha do tempo &nbsp;·&nbsp; Histórico</div><div class="s">só no cadastro (vigência no tempo + log)</div></div>
+    </div>
+  </div>
+
+  <h2><span class="n">3b</span>A seção Solicitações — uma TABELA, não cartões pobres</h2>
+  <p class="lead">Cada envio é uma linha com o que importa: quem transmitiu, se já foi à Receita, o status, quando, o recibo e o comprovante. (Foi o que a versão anterior já tinha — recupero isso.)</p>
+  <div class="card" style="padding:0;overflow:hidden">
+    <table>
+      <thead><tr><th>Tipo</th><th>Status</th><th>Responsável</th><th>Transmitida em</th><th>Última atualização</th><th>Recibo / Protocolo</th><th></th></tr></thead>
+      <tbody>
+        <tr><td><b>Alteração</b></td><td><span class="pill v"><span class="dot"></span>Processada com sucesso</span></td><td>Ana Prado</td><td>12/09/2026 09:40</td><td>12/09/2026 09:41</td><td class="src" style="font-variant-numeric:tabular-nums">Recibo …0002</td><td><span class="btn">Comprovante</span></td></tr>
+        <tr><td><b>Inclusão</b></td><td><span class="pill b"><span class="dot"></span>Em processamento</span></td><td>Ana Prado</td><td>18/09/2026 16:20</td><td>—</td><td class="src" style="font-variant-numeric:tabular-nums">Protocolo …19dg</td><td><span class="btn">Comprovante</span></td></tr>
+        <tr><td><b>Inclusão</b></td><td><span class="pill g"><span class="dot"></span>Substituída</span></td><td>Marcos Lima</td><td>08/09/2026 10:00</td><td>08/09/2026 10:01</td><td class="src" style="font-variant-numeric:tabular-nums">Recibo …0001</td><td><span class="btn">Comprovante</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note">Colunas: <b>tipo</b> (Inclusão/Alteração/Exclusão) · <b>status</b> · <b>responsável</b> (quem transmitiu) · <b>transmitida em</b> · <b>última atualização</b> (processamento) · <b>recibo/protocolo</b> · <b>comprovante</b>. Em preparação = ainda NÃO foi à Receita; a partir de "Em processamento" já foi. Na exclusão aparece também o <b>motivo</b>.</div>
+
+  <h2><span class="n">4</span>Tipos de solicitação &amp; fluxo</h2>
+  <p class="lead">Inclusão · Alteração (substitui o anterior) · Exclusão (com motivo). Só Deduções tem Retificação. Fechamento e Reabertura só aceitam Inclusão.</p>
+  <div class="flow">
+    <span class="step">Importar</span><span class="arr">→</span>
+    <span class="step">Transmitir (nasce a solicitação)</span><span class="arr">→</span>
+    <span class="step">Protocolo</span><span class="arr">→</span>
+    <span class="step">Recibo (processada)</span><span class="arr">→</span>
+    <span class="step">Fechar competência (D-1199)</span>
+  </div>
+  <div class="note">Depois de <b>fechada</b>, a competência trava: para alterar/excluir um evento é preciso <b>Reabrir (D-1198)</b> e depois <b>fechar de novo</b>. Excluir um evento só é livre <b>antes</b> do fechamento.</div>
+
+  <h2><span class="n">5</span>Cenários — o que a tela mostra em cada estado</h2>
+  <table>
+    <thead><tr><th style="width:150px">Estado</th><th>Em vigor (esquerda)</th><th>Solicitações (embaixo)</th><th style="width:180px">Ação no cabeçalho</th></tr></thead>
+    <tbody>
+      <tr><td><span class="pill g"><span class="dot"></span>Não iniciada</span></td><td>vazio → importar</td><td>Nenhuma solicitação ainda</td><td>Importar (na competência)</td></tr>
+      <tr><td><span class="pill a"><span class="dot"></span>Em preparação</span></td><td>dados a transmitir</td><td>1 · Em preparação</td><td><b>Transmitir</b></td></tr>
+      <tr><td><span class="pill b"><span class="dot"></span>Em processamento</span></td><td>dados enviados</td><td>Em processamento (protocolo)</td><td>Aguardar recibo</td></tr>
+      <tr><td><span class="pill v"><span class="dot"></span>Processada com sucesso</span></td><td>dados vigentes + totalizadores</td><td>Vigente + Anteriores</td><td><b>Alterar</b> · Comprovante</td></tr>
+      <tr><td><span class="pill r"><span class="dot"></span>Rejeitada pela Receita</span></td><td>nada em vigor</td><td>Rejeitada + apontamento (MSxxxx)</td><td><b>Corrigir e reenviar</b></td></tr>
+      <tr><td><span class="pill g"><span class="dot"></span>Excluída</span></td><td>banner "Sem balancete nesta competência"</td><td>Inclusão + Exclusão (com motivo)</td><td><b>Reincluir</b></td></tr>
+      <tr><td><span class="pill v"><span class="dot"></span>Fechada</span></td><td>dados vigentes (travado)</td><td>histórico</td><td><b>Reabrir competência</b></td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="n">6</span>3 decisões suas (a doc não define — é produto)</h2>
+  <div class="decide"><b>1.</b> Estado "excluído" no mensal → banner "Sem balancete nesta competência" + botão <b>Reincluir</b>. Fecha?</div>
+  <div class="decide"><b>2.</b> D-1001 excluído → rótulo "Excluído / sem cadastro vigente" (a doc fala em "remover período de validade", não nesse rótulo). Usamos?</div>
+  <div class="decide"><b>3.</b> Retificação (tpOper=4) só no D-1121 → mostrar como um 4º tipo de solicitação apenas nele. Ok?</div>
+
+  <p class="src" style="margin-top:24px">Fontes: <b>XSDs</b> evtBalancete/evtRetornoBalan/evtRelDeducoes/evtFechMensal/evtReabertMensal · <b>Manual do Usuário 1.1.0</b> (§2.3.5.1 bloqueio pós-fechamento, §3 modelos de vigência × recibo) · <b>Leiautes 1.2.0</b> · <b>Mensagens de Erro 1.0.0</b>. Regras citadas em documentos/analise-solicitacoes-cenarios.md.</p>
+</div>
