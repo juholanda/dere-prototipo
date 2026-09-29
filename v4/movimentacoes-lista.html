@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Movimentações Mensais</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=f7125032">
+  <link rel="stylesheet" href="../design-system/ds.css?v=8bb44280">
   <script src="../design-system/ds-tailwind.js"></script>
   <script src="../design-system/ds-dialog.js"></script>
   <style>
@@ -56,12 +56,12 @@
     /* tabela */
     .card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-2xl);box-shadow:var(--shadow-sm);overflow:hidden}
     .table{margin:0}
-    .table--fixed{table-layout:fixed;min-width:1200px}
+    .table--fixed{table-layout:fixed}
     .table--fixed td:not(.col-act):not(.col-num){overflow:hidden;text-overflow:ellipsis}
     .table--fixed .evemp .celltitle,.table--fixed .evemp .cellcnpj{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .table td{padding-top:var(--space-4);padding-bottom:var(--space-4);font-size:var(--text-base);vertical-align:middle}
     .table th:first-child,.table td:first-child{padding-left:var(--space-6)}
-    .table th:last-child,.table td:last-child{padding-right:var(--space-6)}
+    .table th:last-child,.table td:last-child{padding-right:var(--space-4)}
     .table tbody tr[data-href]{cursor:pointer}
     .table tbody tr[data-href]:hover{background:var(--color-primary-subtle)}
     .table tbody tr:last-child td{border-bottom:0}
@@ -69,7 +69,7 @@
     .table th.col-num,.table td.col-num{text-align:right;white-space:nowrap}
     .col-act{text-align:right}
     .rowbtn{white-space:nowrap}
-    .celltitle{font-size:var(--text-base);font-weight:600;color:var(--color-heading)}
+    .celltitle{font-size:var(--text-base);font-weight:600;color:var(--color-heading);line-height:1.4}
     .cellcnpj{font-size:var(--text-sm);color:var(--color-text-muted);font-variant-numeric:tabular-nums;margin-top:2px}
     .evemp{display:flex;align-items:center;gap:var(--space-3);min-width:0}
     .evemp > div{min-width:0}
@@ -232,7 +232,7 @@
           <div class="dalert dalert--warning" role="status">
             <span class="dalert__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>
             <div class="dalert__body"><p class="dalert__title">Próximo fechamento · competência 09/2026</p><p class="dalert__text">Entrega do fechamento até <strong>15/10/2026</strong>. O prazo é improrrogável; recomendamos concluir o envio com antecedência.</p></div>
-            <div class="dalert__act"><span class="tag" id="prazoChip">faltam — dias</span></div>
+            <div class="dalert__act"><span class="status status--sm status--neutral" id="prazoChip"><span class="status__dot" aria-hidden="true"></span><span id="prazoChipTxt">faltam — dias</span></span></div>
           </div>
 
           <!-- totalizadores da competência -->
@@ -252,12 +252,12 @@
             <div class="table-wrap">
               <table class="table table--fixed" aria-labelledby="lst-h">
                 <colgroup>
-                  <col style="width:28%"><col style="width:16%"><col style="width:24%"><col style="width:22%"><col style="width:10%">
+                  <col style="width:23%"><col style="width:23%"><col style="width:23%"><col style="width:23%"><col style="width:8%">
                 </colgroup>
                 <thead>
                   <tr>
                     <th scope="col" class="sortable is-sorted" data-sort="emp" aria-sort="ascending"><button type="button" class="th-btn">Contribuinte <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
-                    <th scope="col" class="sortable" data-sort="anosit" aria-sort="none"><button type="button" class="th-btn">Situação <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
+                    <th scope="col" class="sortable" data-sort="anosit" aria-sort="none"><button type="button" class="th-btn">Situação na Receita <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
                     <th scope="col" class="sortable" data-sort="andamento" aria-sort="none"><button type="button" class="th-btn">Andamento anual <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
                     <th scope="col" class="sortable col-num" data-sort="cbsano" aria-sort="none"><button type="button" class="th-btn">CBS anual apurada <span class="th-sort"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></span></button></th>
                     <th scope="col"><span class="sr-only">Abrir</span></th>
@@ -479,7 +479,7 @@
   function setPrazo(){
     var due=new Date(2026,9,15), today=new Date(2026,8,23); // 15/10/2026 e 23/09/2026
     var d=Math.round((due-today)/86400000);
-    document.getElementById('prazoChip').textContent = d>0 ? ('faltam '+d+' dias') : (d===0?'vence hoje':('venceu há '+Math.abs(d)+' dias'));
+    document.getElementById('prazoChipTxt').textContent = d>0 ? ('faltam '+d+' dias') : (d===0?'vence hoje':('venceu há '+Math.abs(d)+' dias'));
   }
 
   setPrazo(); kpis(); renderRows();

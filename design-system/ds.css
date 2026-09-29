@@ -846,12 +846,12 @@ button.avatar:focus-visible{outline:none;box-shadow:var(--ring)}
 .dalert--info{border-left-color:var(--color-info)}
 .dalert--success{border-left-color:var(--color-success-fg)}
 .dalert__ic{flex:0 0 auto;margin-top:1px;color:var(--color-warning)}
-.dalert__ic svg{width:20px;height:20px}
+.dalert__ic svg{width:22px;height:22px}
 .dalert--danger .dalert__ic{color:var(--color-danger)}
 .dalert--info .dalert__ic{color:var(--color-info)}
 .dalert--success .dalert__ic{color:var(--color-success-fg)}
-.dalert__title{font-weight:700;color:var(--color-heading);margin:0;font-size:var(--text-base)}
-.dalert__text{font-size:var(--text-sm);color:var(--color-text);margin:var(--space-1) 0 0;line-height:1.55}
+.dalert__title{font-weight:700;color:var(--color-text);margin:0;font-size:var(--text-base)}
+.dalert__text{font-size:var(--text-sm);color:var(--color-text-onmuted);margin:var(--space-1) 0 0;line-height:1.55}
 .dalert__body{flex:1;min-width:0}
 .dalert__act{flex:0 0 auto;align-self:center;white-space:nowrap}
 /* Barra de filtro ativo (padrão reutilizável): fica logo acima de uma tabela/lista, com um ícone de funil,
