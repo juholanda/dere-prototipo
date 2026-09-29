@@ -63,7 +63,8 @@
     .table th:first-child,.table td:first-child{padding-left:var(--space-6)}
     .table th:last-child,.table td:last-child{padding-right:var(--space-4)}
     .table tbody tr[data-href]{cursor:pointer}
-    .table tbody tr[data-href]:hover{background:var(--color-primary-subtle)}
+    .table tbody tr[data-href]:hover{background:var(--color-surface-2)}
+    .table tbody tr[data-href]:hover .rowarrow{background:color-mix(in srgb,var(--color-primary) 14%,var(--color-surface));color:var(--color-primary)}
     .table tbody tr:last-child td{border-bottom:0}
     /* cabeçalho e célula das colunas numéricas alinhados à direita (o th do ds vem left por padrão, então subo a especificidade) */
     .table th.col-num,.table td.col-num{text-align:right;white-space:nowrap}
