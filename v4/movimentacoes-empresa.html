@@ -1605,6 +1605,49 @@
       '<div class="totalbar__lead"><p class="totalbar__k">Evento em vigor</p><p class="totalbar__t">'+esc(meta.name)+' · '+meta.code+'</p><p class="totalbar__desc">'+esc(e.sub||'')+'</p></div>'+
       '<div class="totalbar__num"><span class="totalbar__nk">'+esc(e.valLbl||'Base apurada')+'</span><span class="totalbar__nv'+(naVal?' totalbar__nv--na':'')+'">'+esc(val)+'</span></div></div>';
   }
+  /* Retorno D-91xx por evento (numeração oficial): D-9101 Balancete · D-9106 Aplicações · D-9112 Deduções · D-9121 Títulos. */
+  var EV_RET={ d1101:'D-9101', d1106:'D-9106', d1121:'D-9112', d2101:'D-9121' };
+  function fakeHash(seed){ var A='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'; var s=String(seed||'x').replace(/[^0-9A-Za-z]/g,'')||'x'; var out=''; for(var i=0;i<43;i++){ var code=(s.charCodeAt(i%s.length)||65)*(i*7+13); out+=A[Math.abs(code)%64]; } return out+'='; }
+  /* Informações do processamento (retorno evtRetorno D-91xx, fonte: evtRetornoBalan-v1_0_0.xsd): situação
+     (cdRetorno/descRetorno), protocolo do lote, recibo (nrRecibo), seqEvento, dhRecepcao, dhProcess, tpEv, perApur,
+     nrReciboPGCC, hash e OCORRÊNCIAS (código + descrição + tipo Erro/Aviso + localização). Só quando houve envio. */
+  function procInfoBlock(evKey, M){
+    if(!hasEnvio(evKey,M)) return '';
+    var v=(VERS[M.per]||{})[evKey]||{atual:[],prep:[],ant:[]};
+    var all=(v.atual||[]).concat(v.prep||[], v.ant||[]);
+    var sent=all.filter(function(x){return x.protocolo||x.recibo;});
+    var a=sent[0]; if(!a) return '';
+    var e=M.ev[evKey];
+    var isErr=(e.st==='rejeitado'), isProc=(e.st==='protocolo'), isAdv=(e.st==='advertencia'), hasRec=(e.st==='recibo'||isAdv);
+    var sitPill=isErr?'<span class="status status--sm status--danger"><span class="status__dot"></span>Erro · cdRetorno 0</span>'
+      :isProc?'<span class="status status--sm status--info"><span class="status__dot"></span>Em processamento</span>'
+      :'<span class="status status--sm status--success"><span class="status__dot"></span>Sucesso · cdRetorno 1</span>';
+    var seq=String(Math.max(0, sent.length-1)).padStart(2,'0');
+    var perFmt=M.per.slice(5)+'/'+M.per.slice(0,4);
+    var recPGCC=rec31(1011,M.per,2);
+    var hashv=fakeHash(a.recibo||a.protocolo||evKey);
+    function row(k,val,cls){ return '<div class="receipt__row"><span class="receipt__k">'+k+'</span><span class="receipt__v'+(cls?' '+cls:'')+'">'+esc(val)+'</span></div>'; }
+    var colL='<div class="receipt__rows">'+
+      '<div class="receipt__row"><span class="receipt__k">Situação</span><span class="receipt__v">'+sitPill+'</span></div>'+
+      row('Tipo de evento (tpEv)', EV_META[evKey].code, 'receipt__v--mono')+
+      row('Período de apuração (perApur)', perFmt, 'receipt__v--mono')+
+      row('Sequência (seqEvento)', seq, 'receipt__v--mono')+
+      row('Protocolo do lote', a.protocolo||'—', 'receipt__v--mono')+'</div>';
+    var colR='<div class="receipt__rows">'+
+      row('Recibo (nrRecibo)', hasRec?a.recibo:(isProc?'aguardando processamento':'—'), hasRec?'receipt__v--mono receipt__v--strong':'receipt__v--wait')+
+      row('Recepção (dhRecepcao)', a.transm||'—', 'receipt__v--mono')+
+      row('Processamento (dhProcess)', hasRec?a.proc:'—', 'receipt__v--mono')+
+      row('Recibo do PGCC (nrReciboPGCC)', recPGCC.slice(0,10)+'…'+recPGCC.slice(-4), 'receipt__v--mono')+
+      row('Hash do arquivo', hashv.slice(0,14)+'…'+hashv.slice(-5), 'receipt__v--mono')+'</div>';
+    var occ=a.ocorr||(isAdv?[{codigo:'MS0207',descricao:'Saldo final do código 220110001 diverge do total das contas informadas; revise o mapeamento na próxima alteração.',tipo:'2',localizacao:'infoTotBalan/gTotalCodTrib'}]:isErr?[{codigo:'MS1043',descricao:'Há conta do balancete sem codTrib no PGCC vigente; classifique-a no Plano de Contas e reenvie.',tipo:'1',localizacao:'infoConta/codTrib'}]:[]);
+    var occHtml=occ.length?occ.map(function(o){ var warn=(o.tipo==='2'); return '<div class="alert '+(warn?'alert--warning':'alert--danger')+'"><span class="alert__icon" aria-hidden="true">'+ICO.alert+'</span><div><p class="alert__title">'+(warn?'Aviso':'Erro')+' · '+esc(o.codigo)+'</p><p class="alert__text">'+esc(o.descricao)+'</p><p class="alert__text" style="margin-top:var(--space-1)"><b>Localização:</b> '+esc(o.localizacao)+'</p></div></div>'; }).join(''):
+      '<div class="alert alert--success"><span class="alert__icon" aria-hidden="true">'+ICO.check+'</span><div><p class="alert__title">Nenhuma ocorrência</p><p class="alert__text">A Receita processou o evento sem erros nem avisos.</p></div></div>';
+    return '<section class="sec" style="margin-top:var(--space-6)"><article class="card"><div class="card__body">'+
+      '<div class="cardhd"><h2 class="cardhd__t">Informações do processamento</h2><p class="cardhd__x">O que a Receita registrou ao processar este envio (retorno '+EV_RET[evKey]+'). Situação, protocolo, recibo, sequência e ocorrências.</p></div>'+
+      '<div class="grid grid-cols-1 md:grid-cols-2 gap-x-8">'+colL+colR+'</div>'+
+      '<div class="flex flex-col gap-3" style="margin-top:var(--space-5)">'+occHtml+'</div>'+
+    '</div></article></section>';
+  }
   function eventPanel(evKey, M){
     var meta=EV_META[evKey], e=M.ev[evKey];
     var chint = evKey==='d1101'?'Contas analíticas do balancete (infoConta): saldos, movimento e a base apurada (vApur) por conta. A a-DeRE confere cada conta antes de transmitir.'
@@ -1626,12 +1669,13 @@
     var content = evKey==='d1101'?balanceteContent(M) : evKey==='d1106'?aplicacoesContent(M) : evKey==='d2101'?titulosContent(M) : deducoesContent(M);
     // Balancete já traz seus próprios subtítulos; os outros levam o chint como subtítulo do conteúdo.
     var contentHead=(evKey==='d1101')?'':'<p class="sec__hint" style="margin:0 0 var(--space-4)">'+chint+'</p>';
-    // PADRÃO ÚNICO de todos os eventos (padronizado com o Balancete): cabeçalho (status + info de envio + AÇÕES no topo)
-    // → totalizadores do retorno (só quando há recibo) → conteúdo → Solicitações embaixo. Sem barra fixa.
+    // PADRÃO ÚNICO de todos os eventos: cabeçalho (status + info de envio + AÇÕES) → Informações do processamento
+    // (retorno D-91xx) → contas analíticas (conta a conta) → totalizadores/base total (embaixo) → Solicitações.
     var hasRec=(e.st==='recibo'||e.st==='advertencia');
     var tot=(hasRec && evKey==='d1101')?totalizadoresBlock(M):'';   // TODO: totalizadores próprios de D-9106 (Aplicações) e D-9121 (Títulos)
     return '<section class="sec" style="margin-top:0">'+evHead(evKey,M)+
-      '<div style="margin-top:var(--space-6)"><article class="card"><div class="card__body">'+tot+contentHead+content+'</div></article></div>'+
+      procInfoBlock(evKey,M)+
+      '<div style="margin-top:var(--space-6)"><article class="card"><div class="card__body">'+contentHead+content+tot+'</div></article></div>'+
       solSection(evKey,M)+'</section>';
   }
 
