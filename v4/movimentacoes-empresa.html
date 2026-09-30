@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Movimentações Mensais · MAG Seguros</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=902a7680">
+  <link rel="stylesheet" href="../design-system/ds.css?v=40d83305">
   <script src="../design-system/ds-tailwind.js"></script>
   <style>
     /* ===== app-shell ===== */
@@ -327,6 +327,12 @@
     .compcard__x{font-size:var(--text-sm);color:var(--color-text-onmuted);margin:2px 0 0}
     .compcard__lead{display:flex;flex-direction:column;gap:var(--space-1)}
     .compcard__lead .compcard__x{margin-top:0}   /* no lead o gap título→desc é só o flex (4px), sem a margem do ring-row */
+    /* Carregamento inline da importação (frame 10390:10324): dentro do card, sem pop-up, navegável. */
+    .imploader{display:flex;flex-direction:column;align-items:center;gap:var(--space-8);text-align:center;padding:var(--space-4) 0 var(--space-2)}
+    .imploader__head{display:flex;flex-direction:column;gap:var(--space-1)}
+    .imploader__t{font-size:var(--text-xl);font-weight:600;line-height:1.35;color:var(--color-heading);margin:0}
+    .imploader__lead{font-size:var(--text-sm);color:var(--color-text-muted);margin:0}
+    .imploader__proc{width:min(560px,100%)}
     /* modal "lendo a planilha": ícone + passo atual + barra de progresso */
     .impproc{text-align:center;padding:var(--space-8) var(--space-6)}
     .impproc__ic{width:var(--space-14);height:var(--space-14);margin:0 auto var(--space-4);border-radius:var(--radius-lg);display:grid;place-items:center;background:var(--color-primary-subtle);color:var(--color-primary)}
@@ -1225,6 +1231,63 @@
     '</div></article></section>';
   }
   function importCTA(M){ return nadaCompCard(M); }   /* fallback (aba de evento travada deep-linked) usa o mesmo card */
+
+  /* ===== Importação ASSÍNCRONA e INLINE (frame 10390:10324) =====
+     Ao importar, o card da competência mostra o PROGRESSO no lugar dos cartões (sem pop-up).
+     É assíncrona: o timer continua e a pessoa pode navegar; ao voltar, o card retoma o estado. */
+  var IMP={};   // key = emp|per -> {step, steps, marks, total}
+  function impKey(M){ return emp+'|'+M.per; }
+  var IMP_STEPS=['Lendo dados da planilha importada','Separando os eventos do mês (balancete, aplicações…)','Conferindo as contas contra o Plano de Contas vigente','Validando saldos e movimentos do balancete','Calculando a base tributável por conta'];
+  function paintImp(M){
+    var st=IMP[impKey(M)]; if(!st) return;
+    var stepsEl=document.getElementById('impSteps'); if(!stepsEl) return;   // não visível: mantém só o estado
+    var active=st.step;
+    stepsEl.innerHTML=IMP_STEPS.map(function(s,i){
+      var cls=i<active?' is-done':(i===active?' is-active':'');
+      var ic=i<active?('<span class="ldstep__ic">'+ICO.check+'</span>')
+            :(i===active?'<span class="ldstep__ic"><span class="ldspin"></span></span>'
+            :'<span class="ldstep__ic"><span class="ldstep__dot"></span></span>');
+      var suf=(i===active && !/…\)?$/.test(s))?'…':'';
+      return '<div class="ldstep'+cls+'">'+ic+'<span>'+esc(s)+suf+'</span></div>';
+    }).join('');
+    var n=active>0?st.marks[active-1]:0, pct=Math.round(n/st.total*100);
+    var nEl=document.getElementById('impN'), bar=document.getElementById('impBar'), wrap=document.getElementById('impBarWrap');
+    if(nEl)nEl.textContent=n; if(bar)bar.style.width=pct+'%'; if(wrap)wrap.setAttribute('aria-valuenow',pct);
+  }
+  function startImport(M){
+    var key=impKey(M); if(IMP[key]) return;
+    IMP[key]={step:0, marks:[9,18,34,49,57], total:57};
+    renderPanels(); navTo(tab,false); paintImp(M);
+    (function tick(){ setTimeout(function(){
+      var st=IMP[key]; if(!st) return;   // cancelado
+      st.step++;
+      if(st.step<IMP_STEPS.length){ paintImp(M); tick(); }
+      else { paintImp(M); setTimeout(function(){
+        if(!IMP[key]) return; delete IMP[key]; applyImported(M);
+        try{ localStorage.setItem('adere.mov.imp.'+emp+'.'+M.per,'1'); }catch(e){}
+        renderPanels(); navTo(tab,false); movToast('Movimentação de '+M.txt+' importada.');
+      }, 560); }
+    }, 780); })();
+  }
+  function cancelImport(M){ delete IMP[impKey(M)]; renderPanels(); navTo(tab,false); }
+  function importLoadingCard(M){
+    var mi=parseInt(M.per.slice(5),10)-1, ano=M.per.slice(0,4), mesNome=MES_FULL[mi]||'';
+    var total=ORDER.filter(function(k){return M.ev[k].st!=='na';}).length;
+    return '<section class="sec" style="margin-top:0"><article class="card"><div class="card__body compcard">'+
+      '<div class="compcard__top"><div class="compcard__id">'+
+        '<div class="progress-ring" style="--pct:0" role="img" aria-label="0 de '+total+' eventos concluídos"><span class="progress-ring__val">0/'+total+'</span></div>'+
+        '<div><p class="compcard__title">Competência - '+esc(mesNome)+'/ '+ano+'</p><p class="compcard__x">0/'+total+' eventos concluídos</p></div>'+
+      '</div></div>'+
+      '<div class="imploader">'+
+        '<div class="imploader__head"><p class="imploader__t">Importando a movimentação mensal…</p>'+
+        '<p class="imploader__lead">Validando a planilha de '+esc((mesNome||'').toLowerCase())+' de '+ano+' contra o Plano de Contas vigente.</p></div>'+
+        '<div class="ldsteps ldsteps--plain" id="impSteps"></div>'+
+        '<div class="ldproc imploader__proc"><div class="ldproc__top" style="justify-content:center"><span><b id="impN">0</b> de <b id="impT">57</b> linhas processadas</span></div>'+
+        '<div class="ldprocbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Progresso da importação" id="impBarWrap"><i id="impBar"></i></div></div>'+
+        '<button class="btn btn--secondary" type="button" data-imp-cancel>Cancelar</button>'+
+      '</div>'+
+    '</div></article></section>';
+  }
   function visaoPanel(M){
     // Contribuinte sem PGCC vigente: não há como apurar/transmitir nada no mês.
     if(SEMPGCC[emp]){
@@ -1239,6 +1302,8 @@
     // "iniciado" = algum evento já foi importado (prep) ou transmitido. Importar é da competência (uma planilha alimenta tudo).
     var started=applicable.some(function(k){return M.ev[k].st!=='pendente' || M.ev[k].prep;});
     var ready=(applicable.length>0 && comRecibo===applicable.length);
+    // Importação em andamento (assíncrona, inline) → card de carregamento no lugar dos cartões.
+    if(IMP[impKey(M)]) return importLoadingCard(M);
     // Nada importado ainda → a competência inteira mostra a importação (padrão do Plano de Contas). Sem "importar" por evento.
     if(!started && !closed) return nadaCompCard(M);
 
@@ -2032,7 +2097,8 @@
     var ab=ev.target.closest('[data-alterar]'); if(ab){ fillConfirm('alterar', ab.getAttribute('data-ev')); openModal('confirmModal'); return; }
     var ib=ev.target.closest('[data-importar]'); if(ib){ fillConfirm('importar', ib.getAttribute('data-ev')); openModal('confirmModal'); return; }
     var tb=ev.target.closest('[data-transmitir]'); if(tb){ fillConfirm('transmitir', tb.getAttribute('data-ev')); openModal('confirmModal'); return; }
-    var irun=ev.target.closest('[data-import-run]'); if(irun){ runImport(irun.getAttribute('data-ev')); return; }
+    var irun=ev.target.closest('[data-import-run]'); if(irun){ startImport(MESES[perIdx]); return; }
+    if(ev.target.closest('[data-imp-cancel]')){ cancelImport(MESES[perIdx]); return; }
     if(ev.target.closest('[data-template]')){ ev.preventDefault(); fillConfirm('template'); openModal('confirmModal'); return; }
     if(ev.target.closest('[data-erp]')){ fillConfirm('erp'); openModal('confirmModal'); return; }
     if(ev.target.closest('[data-extrato]')){ document.getElementById('extratoBody').innerHTML=extratoInner(MESES[perIdx]); openModal('extratoModal'); return; }
