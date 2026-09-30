@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>a-DeRE · Movimentações Mensais · MAG Seguros</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../design-system/ds.css?v=199e262d">
+  <link rel="stylesheet" href="../design-system/ds.css?v=f535bec5">
   <script src="../design-system/ds-tailwind.js"></script>
   <style>
     /* ===== app-shell ===== */
@@ -59,7 +59,7 @@
     .mesesbar::-webkit-scrollbar-thumb{background:var(--color-border-strong);border-radius:var(--radius-pill)}
     .mesescard{margin-bottom:var(--space-8);padding:var(--space-6)}
     .mesescard__h{display:flex;align-items:center;gap:var(--space-4);margin-bottom:var(--space-6)}
-    .mesesbar__lbl{display:block;font-size:var(--text-2xl);font-weight:600;letter-spacing:-.01em;color:var(--color-heading);margin:0}
+    .mesesbar__lbl{display:block;font-size:var(--text-2xl);font-weight:600;line-height:1.24;letter-spacing:-.025em;color:var(--color-heading);margin:0}
     .mescount{font-size:var(--text-sm);color:var(--color-text-muted);font-variant-numeric:tabular-nums;white-space:nowrap}
     /* Sufixo do "Prazo da competência atual" no cabeçalho (estado nada): data forte + "faltam N dias" menor/muted. */
     .kv__vsub{font-size:var(--text-xs);font-weight:400;color:var(--color-text-muted)}
@@ -308,8 +308,9 @@
     .create-opt__ic{width:48px;height:48px;border-radius:var(--radius-base);background:var(--color-border);color:var(--color-primary);display:grid;place-items:center;flex:0 0 auto}
     .create-opt__ic svg{width:24px;height:24px}
     .create-opt__txt{display:flex;flex-direction:column;align-items:center;gap:var(--space-2)}
-    .create-opt h3{font-size:var(--text-base);font-weight:600;letter-spacing:-.01em;margin:0;color:var(--color-heading)}
-    .create-opt p{font-size:var(--text-sm);color:var(--color-text-muted);margin:0;line-height:1.5;max-width:54ch}
+    /* Título/descrição do cartão: <p> (não <h3>, que o DS força a 18px !important) — frame = 16 SemiBold 1.35 + 14 Regular 1.5. */
+    .create-opt__t{font-size:var(--text-base);font-weight:600;line-height:1.35;letter-spacing:-.01em;margin:0;color:var(--color-heading)}
+    .create-opt__d{font-size:var(--text-sm);color:var(--color-text-muted);margin:0;line-height:1.5;width:100%;text-align:center}
     .create-opt .btn{margin-top:var(--space-1)}
     .create-opt__tpl{display:inline-flex;align-items:center;gap:var(--space-1-5);margin-top:var(--space-4);font-size:var(--text-sm);font-weight:600;color:var(--color-primary);text-decoration:none;background:none;border:0;cursor:pointer}
     .create-opt__tpl:hover{text-decoration:underline}
@@ -320,7 +321,7 @@
     .compcard{display:flex;flex-direction:column;gap:var(--space-8);padding-bottom:var(--space-12)}
     .compcard__top{display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);flex-wrap:wrap}
     .compcard__id{display:flex;align-items:center;gap:var(--space-4)}
-    .compcard__t{font-size:var(--text-base);font-weight:600;color:var(--color-heading);margin:0;letter-spacing:-.01em}
+    .compcard__t{font-size:var(--text-base);font-weight:600;line-height:1.35;color:var(--color-heading);margin:0;letter-spacing:-.01em}
     .compcard__x{font-size:var(--text-sm);color:var(--color-text-onmuted);margin:2px 0 0}
     .compcard__lead{display:flex;flex-direction:column;gap:var(--space-1)}
     /* modal "lendo a planilha": ícone + passo atual + barra de progresso */
@@ -1184,8 +1185,8 @@
     return '<div class="create-opts">'+
       '<div class="create-opt">'+
         '<span class="create-opt__ic" aria-hidden="true">'+ICO.upload+'</span>'+
-        '<div class="create-opt__txt"><h3>Importar planilha</h3>'+
-        '<p>Envie a movimentação do mês em CSV ou Excel. Baixe o template para preencher a planilha no formato correto.</p></div>'+
+        '<div class="create-opt__txt"><p class="create-opt__t">Importar planilha</p>'+
+        '<p class="create-opt__d">Envie a movimentação do mês em CSV ou Excel. Baixe o template para preencher a planilha no formato correto.</p></div>'+
         '<div class="create-opt__acts">'+
           '<button class="btn btn--secondary" type="button" data-import-run data-ev="'+firstEv+'">'+ICO.upload+'Importar dados</button>'+
           '<button class="btn btn--tertiary" type="button" data-template>'+ICO.download+'Baixar template</button>'+
@@ -1193,8 +1194,8 @@
       '</div>'+
       '<div class="create-opt">'+
         '<span class="create-opt__ic" aria-hidden="true">'+ICO.unplug+'</span>'+
-        '<div class="create-opt__txt"><h3>Integrar com ERP</h3>'+
-        '<p>Conecte seu ERP ou sistema contábil para trazer a movimentação do mês automaticamente.</p></div>'+
+        '<div class="create-opt__txt"><p class="create-opt__t">Integrar com ERP</p>'+
+        '<p class="create-opt__d">Conecte seu ERP ou sistema contábil para trazer a movimentação do mês automaticamente.</p></div>'+
         '<div class="create-opt__acts">'+
           '<button class="btn btn--secondary" type="button" data-erp>'+ICO.unplug+'Conectar ERP</button>'+
         '</div>'+
