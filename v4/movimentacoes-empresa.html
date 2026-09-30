@@ -333,6 +333,16 @@
     .imploader__t{font-size:var(--text-xl);font-weight:600;line-height:1.35;color:var(--color-heading);margin:0}
     .imploader__lead{font-size:var(--text-sm);color:var(--color-text-muted);margin:0}
     .imploader__proc{width:min(560px,100%)}
+    /* Fechamento (frame 10390:9022): 2 colunas — Informações gerais + Eventos (tabela). */
+    .fech2col{display:grid;grid-template-columns:minmax(300px,340px) minmax(0,1fr);gap:var(--space-6);align-items:start}
+    @media(max-width:900px){.fech2col{grid-template-columns:1fr}}
+    .fech2col__t{font-size:var(--text-base);font-weight:600;line-height:1.35;letter-spacing:-.01em;color:var(--color-heading);margin:0 0 var(--space-4)}
+    .infocard{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-2xl);padding:var(--space-6);display:flex;flex-direction:column;gap:var(--space-4)}
+    .inforow{display:flex;align-items:center;justify-content:space-between;gap:var(--space-4)}
+    .infok{font-size:var(--text-sm);font-weight:600;color:var(--color-text-onmuted);white-space:nowrap}
+    .infov{font-size:var(--text-base);color:var(--color-text);text-align:right;font-variant-numeric:tabular-nums}
+    .evcell{display:inline-flex;align-items:center;gap:var(--space-3);font-weight:600;color:var(--color-text)}
+    .evcell svg{width:16px;height:16px;flex:0 0 auto;color:var(--color-text-muted)}
     /* modal "lendo a planilha": ícone + passo atual + barra de progresso */
     .impproc{text-align:center;padding:var(--space-8) var(--space-6)}
     .impproc__ic{width:var(--space-14);height:var(--space-14);margin:0 auto var(--space-4);border-radius:var(--radius-lg);display:grid;place-items:center;background:var(--color-primary-subtle);color:var(--color-primary)}
@@ -694,7 +704,7 @@
   var EV_META={
     d1101:{code:'D-1101', name:'Balancete', short:'Balancete', slug:'balancete', ic:ICO.bar},
     d1106:{code:'D-1106', name:'Aplicações financeiras', short:'Aplicações', slug:'aplicacoes', ic:ICO.trend},
-    d1121:{code:'D-1121', name:'Débitos e deduções', short:'Débitos e deduções', slug:'deducoes', ic:ICO.doc},
+    d1121:{code:'D-1121', name:'Deduções', short:'Deduções', slug:'deducoes', ic:ICO.doc},
     d2101:{code:'D-2101', name:'Títulos de dívida', short:'Títulos', slug:'titulos', ic:ICO.card}
   };
   // Ordem das abas/eventos = frame 10390:9022: Balancete · Títulos de dívida · Aplicações financeiras · Débitos e deduções.
@@ -1176,6 +1186,39 @@
     var evCard=cardSection('Eventos da competência', 'Cada evento é transmitido separadamente; o fechamento (D-1199) exige recibo em todos os exigidos.', '<div class="fechinner'+mod+'">'+(listaView||'')+'</div>', {divider:false});
     return evCard;
   }
+  /* Fechamento (frame 10390:9022): 2 colunas — "Informações gerais" (card) + "Eventos da competência" (TABELA:
+     Evento · Situação na Receita · Transmitido em · Recibo). Substitui os cards de eventos. */
+  function infoRow(k, v){ return '<div class="inforow"><span class="infok">'+k+'</span><span class="infov">'+v+'</span></div>'; }
+  function fechInfoEventos(M, applicable, s){
+    var sit=s.closed?['status--success','Fechada']:s.fproc?['status--info','Em processamento']:s.started?['status--neutral','Em preparação']:['status--idle','Não iniciada'];
+    var sitPill='<span class="status status--sm '+sit[0]+'"><span class="status__dot"></span>'+sit[1]+'</span>';
+    var vn=(String(CO.pgcc).match(/\d+/)||['1'])[0];
+    var extIc='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-1px;margin-left:2px"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>';
+    var pgccLink='<a class="colink" href="plano-contas-detalhe.html?emp='+emp+'&v='+vn+'" target="_blank" rel="noopener">'+esc(CO.pgcc)+extIc+'</a>';
+    var fechEm='—', fechPor='—', fechRec='—';
+    if(s.closed){ var rn=rec31(1199,M.per,1); fechEm=rec31?( '15/10/2026 09:41'):'—'; fechPor='Ricardo Alves'; fechRec='<span class="mono">'+esc(rn.slice(0,10)+'…'+rn.slice(-4))+'</span>'; }
+    var info='<div class="infocard">'+
+      infoRow('Situação', sitPill)+
+      infoRow('PGCC da competência', pgccLink)+
+      infoRow('Prazo da competência', esc(M.prazo||'—'))+
+      infoRow('Fechado em', fechEm)+
+      infoRow('Fechado por', fechPor)+
+      infoRow('Recibo do fechamento', fechRec)+
+    '</div>';
+    var rows=applicable.map(function(k){
+      var e=M.ev[k], meta=EV_META[k];
+      var vv=(VERS[M.per]||{})[k]||{atual:[],prep:[],ant:[]};
+      var a0=(vv.atual||[]).concat(vv.prep||[],vv.ant||[])[0];
+      var transm=(a0&&a0.transm&&a0.transm!=='—')?esc(a0.transm):'—';
+      var rec=(a0&&a0.recibo)?('<span class="mono">'+esc(a0.recibo.slice(0,9)+'…'+a0.recibo.slice(-4))+'</span>'):'—';
+      return '<tr><th scope="row"><span class="evcell">'+meta.ic+esc(meta.name)+'</span></th><td>'+pill(e.st)+'</td><td>'+transm+'</td><td>'+rec+'</td></tr>';
+    }).join('');
+    var table='<div class="table-wrap table-wrap--boxed"><table class="table dtable"><thead><tr><th scope="col">Evento</th><th scope="col">Situação na Receita</th><th scope="col">Transmitido em</th><th scope="col">Recibo</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+    return '<section class="sec" style="margin-top:0"><div class="fech2col">'+
+      '<div><p class="fech2col__t">Informações gerais</p>'+info+'</div>'+
+      '<div><p class="fech2col__t">Eventos da competência</p>'+table+'</div>'+
+    '</div></section>';
+  }
   /* EVENTOS EM CARDS: mesma navegação da lista, em cards (para comparar list × cards). Cada card leva à página do evento. */
   function eventCards(M){
     var cards=ORDER.map(function(k){
@@ -1309,24 +1352,9 @@
     // Nada importado ainda → a competência inteira mostra a importação (padrão do Plano de Contas). Sem "importar" por evento.
     if(!started && !closed) return nadaCompCard(M);
 
-    // EVENTOS: lista única (tabela). "Não se aplica" (na) sempre no fim da lista.
-    var evOrder=ORDER.filter(function(k){return M.ev[k].st!=='na';}).concat(ORDER.filter(function(k){return M.ev[k].st==='na';}));
-    // Indicação MACRO: as ABAS navegam; aqui é só o panorama do status de cada evento (não é mais lista clicável).
-    var tiles=evOrder.map(function(kk){
-      var e=M.ev[kk], meta=EV_META[kk], na=(e.st==='na'), hasVal=(!na&&e.val&&e.val!=='—');
-      var corr=(e.sub||'').match(/\d+ a corrigir[^·]*/);
-      return '<div class="evmacro__it'+(na?' is-na':'')+'">'+
-        '<div class="evmacro__hd"><span class="evmacro__ic">'+meta.ic+'</span><span class="evmacro__nm">'+esc(meta.name)+'</span><span class="tag">'+meta.code+'</span></div>'+
-        '<div>'+(na?'<span class="evna">Não se aplica</span>':pill(e.st))+'</div>'+
-        (hasVal?'<div class="evmacro__vl">'+e.val+'<span class="evmacro__cap">'+esc(e.valLbl)+'</span></div>':'')+
-        (corr?'<div class="evmacro__cap"><span class="subwarn">'+ICO.alert+esc(corr[0])+'</span></div>':'')+
-        '</div>';
-    }).join('');
-    var listaView='<div class="evmacro">'+tiles+'</div>';
-
-    // A lista de eventos mora DENTRO do card de Fechamento (no lugar dos antigos checkpoints); não há mais um card "Eventos da competência" repetido embaixo.
-    var band=fechBand(M, applicable, {closed:closed, started:started, ready:ready, comRecibo:comRecibo, fproc:!!M.fechProc}, listaView);
-    return (closed?'':prazoBanner(M)) + band + ((started||closed)?apuracaoSection(M, closed):'');   // Histórico do mês removido (a PO tirou)
+    // Fechamento (frame 10390:9022): 2 colunas (Informações gerais + Eventos em TABELA) + Resumo da apuração.
+    var s={closed:closed, started:started, ready:ready, comRecibo:comRecibo, fproc:!!M.fechProc};
+    return fechInfoEventos(M, applicable, s) + ((started||closed)?apuracaoSection(M, closed):'');
   }
 
   /* ===== ABA DE EVENTO ===== */
