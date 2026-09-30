@@ -322,8 +322,11 @@
     .compcard__top{display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);flex-wrap:wrap}
     .compcard__id{display:flex;align-items:center;gap:var(--space-4)}
     .compcard__t{font-size:var(--text-base);font-weight:600;line-height:1.35;color:var(--color-heading);margin:0;letter-spacing:-.01em}
+    /* Título da competência ("Competência - Setembro/ 2026") = estilo Título de seção do frame: 20/600/1.24/-0.5 */
+    .compcard__title{font-size:var(--text-2xl);font-weight:600;line-height:1.24;letter-spacing:-.025em;color:var(--color-heading);margin:0}
     .compcard__x{font-size:var(--text-sm);color:var(--color-text-onmuted);margin:2px 0 0}
     .compcard__lead{display:flex;flex-direction:column;gap:var(--space-1)}
+    .compcard__lead .compcard__x{margin-top:0}   /* no lead o gap título→desc é só o flex (4px), sem a margem do ring-row */
     /* modal "lendo a planilha": ícone + passo atual + barra de progresso */
     .impproc{text-align:center;padding:var(--space-8) var(--space-6)}
     .impproc__ic{width:var(--space-14);height:var(--space-14);margin:0 auto var(--space-4);border-radius:var(--radius-lg);display:grid;place-items:center;background:var(--color-primary-subtle);color:var(--color-primary)}
@@ -1214,7 +1217,7 @@
       '<div class="compcard__top">'+
         '<div class="compcard__id">'+
           '<div class="progress-ring" style="--pct:'+pct+'" role="img" aria-label="'+done+' de '+total+' eventos concluídos"><span class="progress-ring__val">'+done+'/'+total+'</span></div>'+
-          '<div><p class="compcard__t">Competência - '+esc(mesNome)+'/ '+ano+'</p><p class="compcard__x">'+done+'/'+total+' eventos concluídos</p></div>'+
+          '<div><p class="compcard__title">Competência - '+esc(mesNome)+'/ '+ano+'</p><p class="compcard__x">'+done+'/'+total+' eventos concluídos</p></div>'+
         '</div>'+
       '</div>'+
       '<div class="compcard__lead"><p class="compcard__t">Adicione os dados da competência</p><p class="compcard__x">Importe a planilha ou conecte seu ERP para carregar os dados de '+esc((mesNome||'').toLowerCase())+'</p></div>'+
