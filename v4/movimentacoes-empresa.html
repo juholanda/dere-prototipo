@@ -693,11 +693,12 @@
 
   var EV_META={
     d1101:{code:'D-1101', name:'Balancete', short:'Balancete', slug:'balancete', ic:ICO.bar},
-    d1106:{code:'D-1106', name:'Aplicações Financeiras', short:'Aplicações', slug:'aplicacoes', ic:ICO.trend},
-    d1121:{code:'D-1121', name:'Deduções', short:'Deduções', slug:'deducoes', ic:ICO.doc},
+    d1106:{code:'D-1106', name:'Aplicações financeiras', short:'Aplicações', slug:'aplicacoes', ic:ICO.trend},
+    d1121:{code:'D-1121', name:'Débitos e deduções', short:'Débitos e deduções', slug:'deducoes', ic:ICO.doc},
     d2101:{code:'D-2101', name:'Títulos de dívida', short:'Títulos', slug:'titulos', ic:ICO.card}
   };
-  var ORDER=['d1101','d1106','d1121','d2101'];
+  // Ordem das abas/eventos = frame 10390:9022: Balancete · Títulos de dívida · Aplicações financeiras · Débitos e deduções.
+  var ORDER=['d1101','d2101','d1106','d1121'];
   var SLUG2EV={balancete:'d1101', aplicacoes:'d1106', deducoes:'d1121', titulos:'d2101'};
   /* Vocabulário de status único (mesmo estado, mesma palavra em toda a tela): pílula do evento, da versão e título do comprovante. */
   /* Nível 1 (card / competência): situação SIMPLES do evento no mês. O detalhe (sucesso/advertência) é do nível 2 (versão), dentro do evento. */
@@ -1082,7 +1083,8 @@
       (closed?(emp==='s2u'
         ?'<button class="btn btn--secondary btn--sm apurhero__act" type="button" data-extrato><span class="rowchev" aria-hidden="true">'+ICO.receipt+'</span>Ver extrato (D-9199)</button>'
         :'<a class="btn btn--secondary btn--sm apurhero__act" href="movimentacoes-extrato.html?emp='+emp+'&per='+M.per+'"><span class="rowchev" aria-hidden="true">'+ICO.receipt+'</span>Ver extrato (D-9199)</a>'):'')+'</div>';
-    return cardSection('Apuração do mês', hint, hero+tiles+codtribBlock(M, est), {divider:true});
+    var _mi=parseInt(M.per.slice(5),10)-1, _ano=M.per.slice(0,4), _mes=(MES_FULL[_mi]||'');
+    return cardSection('Resumo da apuração - '+_mes+'/ '+_ano, hint, hero+tiles+codtribBlock(M, est), {divider:true});
   }
 
   /* HISTÓRICO DO MÊS: linha do tempo do que foi transmitido na competência (agrega as versões de todos
@@ -2202,7 +2204,7 @@
     dn.innerHTML='';
     bcTail.querySelectorAll('[data-tab]').forEach(function(a){ a.addEventListener('click',function(ev){ ev.preventDefault(); navTo(a.getAttribute('data-tab'), true); }); });
   }
-  function tabLabel(slug){ if(slug==='visao') return 'Visão geral'; var k=SLUG2EV[slug]; return k?EV_META[k].name:slug; }
+  function tabLabel(slug){ if(slug==='visao') return 'Fechamento'; var k=SLUG2EV[slug]; return k?EV_META[k].name:slug; }
   // Mês "iniciado" = já tem algo importado/preparado. Enquanto vazio, não há evento pra ver:
   // só a Visão geral (com o CTA de importar) fica acessível; as abas de evento ficam travadas.
   function monthStarted(M){
