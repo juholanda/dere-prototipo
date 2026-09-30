@@ -351,6 +351,12 @@
     .verselect{display:inline-flex;align-items:center;gap:var(--space-4);padding:var(--space-2) var(--space-3);border:1px solid var(--color-border-strong);border-radius:var(--radius-base);background:var(--color-surface);font-family:inherit;font-size:var(--text-sm);color:var(--color-text);cursor:pointer}
     .verselect svg{color:var(--color-text-muted);flex:0 0 auto}
     .fech2col--bal{grid-template-columns:minmax(300px,360px) minmax(0,1fr)}
+    /* Card único da competência: anel + abas + conteúdo empilhados dentro do mesmo bg. */
+    .compwrap__body{display:flex;flex-direction:column;gap:var(--space-8);padding:var(--space-6)}
+    .compwrap #evtabsWrap{position:static;background:transparent;padding-top:0;margin-top:0}
+    .compwrap .panels{display:flex;flex-direction:column;gap:var(--space-8)}
+    .compwrap .sec{margin-top:0}
+    .compcard-nada{display:flex;flex-direction:column;gap:var(--space-8);padding-bottom:var(--space-6)}
     /* modal "lendo a planilha": ícone + passo atual + barra de progresso */
     .impproc{text-align:center;padding:var(--space-8) var(--space-6)}
     .impproc__ic{width:var(--space-14);height:var(--space-14);margin:0 auto var(--space-4);border-radius:var(--radius-lg);display:grid;place-items:center;background:var(--color-primary-subtle);color:var(--color-primary)}
@@ -568,17 +574,18 @@
           <section class="card mesescard" aria-labelledby="mesesLbl">
             <div class="mesescard__h"><span class="mesesbar__lbl" id="mesesLbl">Meses de 2026</span><span class="mescount" id="mesesCount"></span></div>
             <div class="mesesbar" id="mesesbar" aria-label="Meses de 2026"></div>
-            <!-- Fechamento do mês SELECIONADO: fica aqui (no bloco dos meses), sempre visível, independente da aba. -->
-            <div id="mesFechBar"></div>
           </section>
-          <!-- Abas da competência: troca instantânea entre a visão geral e cada evento (sem entrar e sair) -->
-          <div class="tabscroll" id="evtabsWrap"><div class="tabs" id="evtabs" role="tablist" aria-label="Seções da competência"></div></div>
-
-          <!-- NAV DO DETALHE: vazio no hub da competência; "voltar" na página de um evento -->
-          <div id="detnav"></div>
-
-          <!-- VIEW: hub da competência OU página de um evento -->
-          <div class="panels" id="panels"></div>
+          <!-- CARD ÚNICO da competência (frame 10390:9022 / 10468:16711): anel + abas + conteúdo, tudo dentro do mesmo bg. -->
+          <section class="card compwrap"><div class="card__body compwrap__body">
+            <!-- Cabeçalho da competência: anel N/M + título + "Importar dados" -->
+            <div id="mesFechBar"></div>
+            <!-- Abas da competência -->
+            <div class="tabscroll" id="evtabsWrap"><div class="tabs" id="evtabs" role="tablist" aria-label="Seções da competência"></div></div>
+            <!-- NAV DO DETALHE: vazio no hub; "voltar" na página de um evento -->
+            <div id="detnav"></div>
+            <!-- VIEW: hub da competência OU página de um evento -->
+            <div class="panels" id="panels"></div>
+          </div></section>
         </div>
 
         <!-- Barra fixa de ação do evento (transmitir / alterar / corrigir), padrão .decisionbar do DS. Só nas páginas de evento; o hub tem o Fechamento no card. -->
@@ -1102,7 +1109,9 @@
         ?'<button class="btn btn--secondary btn--sm apurhero__act" type="button" data-extrato><span class="rowchev" aria-hidden="true">'+ICO.receipt+'</span>Ver extrato (D-9199)</button>'
         :'<a class="btn btn--secondary btn--sm apurhero__act" href="movimentacoes-extrato.html?emp='+emp+'&per='+M.per+'"><span class="rowchev" aria-hidden="true">'+ICO.receipt+'</span>Ver extrato (D-9199)</a>'):'')+'</div>';
     var _mi=parseInt(M.per.slice(5),10)-1, _ano=M.per.slice(0,4), _mes=(MES_FULL[_mi]||'');
-    return cardSection('Resumo da apuração - '+_mes+'/ '+_ano, hint, hero+tiles+codtribBlock(M, est), {divider:true});
+    // Seção direta (SEM card) — vive dentro do card único da competência (frame 10390:9022), sem cartão-dentro-de-cartão.
+    return '<section class="sec"><p class="fech2col__t">Resumo da apuração - '+_mes+'/ '+_ano+'</p>'+
+      '<p class="sec__hint" style="margin:0 0 var(--space-4)">'+hint+'</p>'+hero+tiles+codtribBlock(M, est)+'</section>';
   }
 
   /* HISTÓRICO DO MÊS: linha do tempo do que foi transmitido na competência (agrega as versões de todos
@@ -1268,20 +1277,12 @@
   /* Card da competência no estado "nada importado" (frame 10390:9549): anel de progresso N/M + título +
      Fechar competência (habilitado → abre o modal se incompleto) + "Adicione os dados" + os 2 cartões de importação. */
   function nadaCompCard(M){
-    var applicable=ORDER.filter(function(k){return M.ev[k].st!=='na';});
-    var total=applicable.length, done=applicable.filter(function(k){return M.ev[k].st==='recibo';}).length;
-    var pct=total?Math.round(done/total*100):0;
-    var mi=parseInt(M.per.slice(5),10)-1, ano=M.per.slice(0,4), mesNome=MES_FULL[mi]||'';
-    return '<section class="sec" style="margin-top:0"><article class="card"><div class="card__body compcard">'+
-      '<div class="compcard__top">'+
-        '<div class="compcard__id">'+
-          '<div class="progress-ring" style="--pct:'+pct+'" role="img" aria-label="'+done+' de '+total+' eventos concluídos"><span class="progress-ring__val">'+done+'/'+total+'</span></div>'+
-          '<div><p class="compcard__title">Competência - '+esc(mesNome)+'/ '+ano+'</p><p class="compcard__x">'+done+'/'+total+' eventos concluídos</p></div>'+
-        '</div>'+
-      '</div>'+
+    // O anel/título já vêm no cabeçalho do card (mesFechBar). Aqui só "Adicione os dados" + os cartões de importação.
+    var mi=parseInt(M.per.slice(5),10)-1, mesNome=MES_FULL[mi]||'';
+    return '<section class="sec" style="margin-top:0"><div class="compcard-nada">'+
       '<div class="compcard__lead"><p class="compcard__t">Adicione os dados da competência</p><p class="compcard__x">Importe a planilha ou conecte seu ERP para carregar os dados de '+esc((mesNome||'').toLowerCase())+'</p></div>'+
       importOpts(M)+
-    '</div></article></section>';
+    '</div></section>';
   }
   function importCTA(M){ return nadaCompCard(M); }   /* fallback (aba de evento travada deep-linked) usa o mesmo card */
 
@@ -1325,21 +1326,15 @@
   function cancelImport(M){ delete IMP[impKey(M)]; renderPanels(); navTo(tab,false); }
   function importLoadingCard(M){
     var mi=parseInt(M.per.slice(5),10)-1, ano=M.per.slice(0,4), mesNome=MES_FULL[mi]||'';
-    var total=ORDER.filter(function(k){return M.ev[k].st!=='na';}).length;
-    return '<section class="sec" style="margin-top:0"><article class="card"><div class="card__body compcard">'+
-      '<div class="compcard__top"><div class="compcard__id">'+
-        '<div class="progress-ring" style="--pct:0" role="img" aria-label="0 de '+total+' eventos concluídos"><span class="progress-ring__val">0/'+total+'</span></div>'+
-        '<div><p class="compcard__title">Competência - '+esc(mesNome)+'/ '+ano+'</p><p class="compcard__x">0/'+total+' eventos concluídos</p></div>'+
-      '</div></div>'+
-      '<div class="imploader">'+
+    // Anel/título vêm no cabeçalho do card (mesFechBar); aqui só o progresso.
+    return '<section class="sec" style="margin-top:0"><div class="imploader">'+
         '<div class="imploader__head"><p class="imploader__t">Importando a movimentação mensal…</p>'+
         '<p class="imploader__lead">Validando a planilha de '+esc((mesNome||'').toLowerCase())+' de '+ano+' contra o Plano de Contas vigente.</p></div>'+
         '<div class="ldsteps ldsteps--plain" id="impSteps"></div>'+
         '<div class="ldproc imploader__proc"><div class="ldproc__top" style="justify-content:center"><span><b id="impN">0</b> de <b id="impT">57</b> linhas processadas</span></div>'+
         '<div class="ldprocbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Progresso da importação" id="impBarWrap"><i id="impBar"></i></div></div>'+
         '<button class="btn btn--secondary" type="button" data-imp-cancel>Cancelar</button>'+
-      '</div>'+
-    '</div></article></section>';
+    '</div></section>';
   }
   function visaoPanel(M){
     // Contribuinte sem PGCC vigente: não há como apurar/transmitir nada no mês.
@@ -1841,7 +1836,7 @@
       '<div><p class="fech2col__t">Informações gerais</p>'+info+'</div>'+
       '<div><p class="fech2col__t">Totalizadores do balancete</p>'+(tot||'<div class="empty empty--sm"><p class="empty__text">Os totalizadores por codTrib aparecem após a apuração.</p></div>')+'</div>'+
     '</div></section>';
-    var contas='<section class="sec"><article class="card"><div class="card__body">'+balanceteContent(M)+'</div></article></section>';
+    var contas='<section class="sec">'+balanceteContent(M)+'</section>';   // dentro do card único: tabela boxed, sem cartão-dentro-de-cartão
     return versionRow + col2 + contas;
   }
   function eventPanel(evKey, M){
@@ -2215,9 +2210,9 @@
   /* ===== render das views (hub + páginas de evento) + navegação ===== */
   function renderPanels(){
     var M=MESES[perIdx];
-    // Estado "nada importado" (frame 10390:9549): sem o fechBar do card de meses (o fechamento vai no card da competência).
+    // O anel/cabeçalho da competência (mesFechBar) aparece SEMPRE no topo do card único (frame 10390:9022/9549).
     var nada=!monthStarted(M);
-    var mfb=document.getElementById('mesFechBar'); if(mfb) mfb.style.display=nada?'none':'';
+    var mfb=document.getElementById('mesFechBar'); if(mfb) mfb.style.display='';
     // Cabeçalho (KPIs anuais removidos do detalhe): "Prazo da competência atual" SEMPRE visível; PGCC só quando há dados.
     var pgccMeta=document.getElementById('coPgccMeta'), prazoMeta=document.getElementById('coPrazoMeta');
     if(pgccMeta) pgccMeta.hidden=nada;
@@ -2241,6 +2236,17 @@
     });
     document.getElementById('panels').innerHTML=html;
     bindPanelInteractions();
+  }
+  /* Ação da barra fixa na aba Fechamento (frame 10390:9022): "Fechar competência" (ou Reabrir/Ver extrato).
+     Bloqueada (data-blocked) abre o aviso "Conclua os eventos antes de fechar". */
+  function fechAction(M){
+    var s=fechState(M);
+    if(!s.started) return '';   // nada: a ação é importar (nos cartões), não fechar
+    if(s.closed) return '<button class="btn btn--ghost" type="button" data-reabrir>'+ICO.lock+'Reabrir</button>'+
+      (emp==='s2u'?'<button class="btn btn--secondary" type="button" data-extrato>'+ICO.receipt+'Ver extrato (D-9199)</button>':'<a class="btn btn--secondary" href="movimentacoes-extrato.html?emp='+emp+'&per='+M.per+'">'+ICO.receipt+'Ver extrato (D-9199)</a>');
+    if(s.fproc) return '<button class="btn btn--primary btn--lg" type="button" disabled>'+ICO.lock+'Aguardando recibo</button>';
+    if(s.ready) return '<button class="btn btn--primary btn--lg" type="button" data-fechar>'+ICO.send+'Fechar competência</button>';
+    return '<button class="btn btn--primary btn--lg" type="button" data-blocked="1">'+ICO.send+'Fechar competência</button>';
   }
   /* NAV do detalhe: no hub fica vazio; na página do evento mostra "voltar" + atualiza a trilha do topo. */
   function renderDetnav(slug){
@@ -2273,13 +2279,12 @@
     (function(){ var ps=document.getElementById('pageSub'); if(ps){ ps.textContent=''; ps.hidden=true; } })();
     if(isHub){
       meta_.innerHTML='';
-      setBar('');
+      setBar(fechAction(M));   // barra fixa da aba Fechamento: "Fechar competência" (frame 10390:9022)
     } else {
       var evKey=SLUG2EV[slug];
-      // Cabeçalho da TELA não carrega status/recibo do evento. O Balancete leva status + ações no CABEÇALHO
-      // DO PAINEL (evHead) → sem barra fixa. Os outros eventos ainda usam a barra fixa até serem replicados.
       meta_.innerHTML='';
-      setBar('');   // ações de TODO evento agora vão no cabeçalho do painel (evHead), não na barra fixa
+      // Balancete (novo layout) leva a ação na barra fixa (Transmitir); os outros eventos ainda usam o evHead.
+      setBar(evKey==='d1101' ? evActions(evKey, M) : '');
     }
     dn.innerHTML='';
     bcTail.querySelectorAll('[data-tab]').forEach(function(a){ a.addEventListener('click',function(ev){ ev.preventDefault(); navTo(a.getAttribute('data-tab'), true); }); });
@@ -2364,41 +2369,23 @@
   }
   /* Barra de fechamento no card dos MESES (sempre visível, independe da aba). Reusa os MESMOS data-* das ações
      (data-fechar/data-reabrir/data-extrato/data-importar) — o handler global já cuida do fluxo/confirmação. */
+  /* Cabeçalho da competência (topo do card único, frame 10390:9022): anel N/M + "Competência - <mês>/ <ano>"
+     + "N/M eventos concluídos" · à direita "Importar dados" (reimportar) quando já há dados. A ação de
+     fechar/transmitir vive na barra fixa inferior (.decisionbar). */
   function renderFechBar(){
     var el=document.getElementById('mesFechBar'); if(!el) return;
     if(SEMPGCC[emp]){ el.innerHTML=''; return; }
-    var M=MESES[perIdx], s=fechState(M), pill, sub, action, ttl='Competência de '+M.txt.replace(' ',' de ');
-    var chk='<svg class="status__check" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
-    if(s.closed){
-      pill=['status--success', chk+'Fechada']; sub='Todos os eventos do mês com recibo.';
-      action='<button class="btn btn--ghost" type="button" data-reabrir>'+ICO.lock+'Reabrir</button>'+
-        (emp==='s2u' ? '<button class="btn btn--secondary" type="button" data-extrato>'+ICO.receipt+'Ver extrato</button>'
-                     : '<a class="btn btn--secondary" href="movimentacoes-extrato.html?emp='+emp+'&per='+M.per+'">'+ICO.receipt+'Ver extrato</a>');
-    } else if(s.fproc){
-      pill=['status--info', '<span class="status__dot"></span>Em processamento']; sub='Fechamento transmitido; aguardando o recibo da Receita.';
-      action='<button class="btn btn--primary" type="button" disabled>'+ICO.lock+'Aguardando recibo</button>';
-    } else if(!s.started){
-      pill=['status--idle', '<span class="status__dot"></span>Não iniciada']; sub='Nada preparado ainda. Comece pelo balancete (D-1101).';
-      var fk=s.applicable[0], fs=fk?EV_META[fk].slug:'visao';
-      action='<a class="btn btn--primary" href="?emp='+emp+'&per='+M.per+'&ev='+fs+'" data-tab="'+fs+'" data-importar data-ev="'+esc(fk||'')+'">'+ICO.upload+'Importar balancete</a>';
-    } else if(s.ready){
-      pill=['status--neutral', '<span class="status__dot"></span>Pronto para fechar'];
-      sub=s.applicable.length+' de '+s.applicable.length+' eventos com recibo.';
-      action='<button class="btn btn--primary" type="button" data-fechar>'+ICO.lock+'Fechar competência</button>';
-    } else {
-      // Não pronto: distingue rejeição × em processamento (protocolo) × em preparação (ainda não transmitido).
-      var anyRej=s.applicable.some(function(k){ return M.ev[k].st==='rejeitado'; });
-      var anyProc=s.applicable.some(function(k){ return M.ev[k].st==='protocolo'; });
-      var falta=s.applicable.length-s.comRecibo;
-      if(anyRej){ pill=['status--danger','<span class="status__dot"></span>Com rejeição']; sub='Um evento foi rejeitado pela Receita. Corrija e reenvie para poder fechar.'; }
-      else if(anyProc){ pill=['status--info','<span class="status__dot"></span>Em processamento']; sub=s.comRecibo+' de '+s.applicable.length+' com recibo · aguardando o processamento dos demais eventos.'; }
-      else { pill=['status--neutral','<span class="status__dot"></span>Em preparação']; sub=s.comRecibo+' de '+s.applicable.length+' com recibo · '+(falta===1?'falta 1 evento':'faltam '+falta+' eventos')+' para transmitir.'; }
-      action='<button class="btn btn--primary" type="button" data-blocked="1">'+ICO.lock+'Fechar competência</button>';
-    }
-    el.innerHTML='<div class="mesfech">'+
-      '<div class="mesfech__info"><span class="mesfech__ttl">'+ttl+'</span>'+
-        '<div class="mesfech__row"><span class="status '+pill[0]+'">'+pill[1]+'</span><span class="mesfech__sub">'+sub+'</span></div></div>'+
-      '<div class="mesfech__act">'+action+'</div></div>';
+    var M=MESES[perIdx];
+    var applicable=ORDER.filter(function(k){return M.ev[k].st!=='na';});
+    var total=applicable.length, done=applicable.filter(function(k){return M.ev[k].st==='recibo';}).length;
+    var pct=total?Math.round(done/total*100):0;
+    var mi=parseInt(M.per.slice(5),10)-1, ano=M.per.slice(0,4), mesNome=MES_FULL[mi]||'';
+    var nada=!monthStarted(M);
+    var act = nada ? '' : '<div class="compcard__act"><button class="btn btn--secondary" type="button" data-import-run data-ev="'+(applicable[0]||'d1101')+'">'+ICO.upload+'Importar dados</button></div>';
+    el.innerHTML='<div class="compcard__top"><div class="compcard__id">'+
+      '<div class="progress-ring" style="--pct:'+pct+'" role="img" aria-label="'+done+' de '+total+' eventos concluídos"><span class="progress-ring__val">'+done+'/'+total+'</span></div>'+
+      '<div><p class="compcard__title">Competência - '+esc(mesNome)+'/ '+ano+'</p><p class="compcard__x">'+done+'/'+total+' eventos concluídos</p></div>'+
+    '</div>'+act+'</div>';
   }
   /* Régua de meses (frame 10390:9549): 12 caixas "Mmm/26", barra colorida no topo = situação (ANUAL.meses):
      verde fechado · âmbar em preparação/processamento · vermelho em atraso · cinza a vencer/não iniciado.
